@@ -1,0 +1,10 @@
+node_modules
+dist
+coverage
+.env
+.env.*
+*.log
+public/cmaps
+public/standard_fonts
+public/pdfjs
+public/pdf.worker.min.mjs

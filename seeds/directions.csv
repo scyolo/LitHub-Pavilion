@@ -1,0 +1,10 @@
+code,name,min_score,enabled
+llm,大语言模型,2.0,1
+specdec,投机解码,2.0,1
+agent,智能体,2.0,1
+cv,计算机视觉,2.0,1
+multimodal,多模态学习,2.0,1
+rl,强化学习,2.0,1
+nlp,自然语言处理,2.0,1
+retrieval,信息检索与 RAG,2.0,1
+alignment,安全与对齐,2.0,1

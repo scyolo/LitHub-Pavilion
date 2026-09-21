@@ -1,0 +1,43 @@
+direction_code,keyword,field,weight,enabled
+llm,large language models?,both,1.0,1
+llm,\bllms?\b,both,1.0,1
+llm,\bgpt(-?\d|\b),both,1.0,1
+llm,\bllama\b,both,1.0,1
+llm,instruction tun(ing|ed),both,1.0,1
+specdec,speculative (decoding|sampling|inference),both,1.0,1
+specdec,draft model,both,1.0,1
+specdec,self-speculative,both,1.0,1
+agent,multi-?agents?,both,1.0,1
+agent,autonomous agents?,both,1.0,1
+agent,llm agents?,both,1.0,1
+agent,\bagentic\b,both,1.0,1
+agent,\btool (use|calling)\b,both,1.0,1
+agent,\bagents?\b,both,0.5,1
+cv,\bcomputer vision\b,both,1.0,1
+cv,\bobject detection\b,both,1.0,1
+cv,\bimage (classification|segmentation|recognition)\b,both,1.0,1
+cv,\b(semantic|instance) segmentation\b,both,1.0,1
+cv,\b3d reconstruction\b,both,1.0,1
+cv,\bvision transformers?\b,both,1.0,1
+multimodal,\bmulti[- ]?modal\b,both,1.0,1
+multimodal,\bvision[- ]language\b,both,1.0,1
+multimodal,\bvisual question answering\b,both,1.0,1
+multimodal,\bimage[- ]text\b,both,1.0,1
+rl,\breinforcement learning\b,both,1.0,1
+rl,\bpolicy gradient\b,both,1.0,1
+rl,\bmarkov decision\b,both,1.0,1
+rl,\bactor[- ]critic\b,both,1.0,1
+nlp,\bnatural language processing\b,both,1.0,1
+nlp,\bmachine translation\b,both,1.0,1
+nlp,\bnamed entity recognition\b,both,1.0,1
+nlp,\brelation extraction\b,both,1.0,1
+nlp,\btext summarization\b,both,1.0,1
+retrieval,\bretrieval[- ]augmented\b,both,1.0,1
+retrieval,\binformation retrieval\b,both,1.0,1
+retrieval,\bdense retrieval\b,both,1.0,1
+retrieval,\brag\b,title,1.0,1
+alignment,\b(rlhf|dpo)\b,both,1.0,1
+alignment,\b(ai|llm|language model) safety\b,both,1.0,1
+alignment,\bpreference (alignment|optimization)\b,both,1.0,1
+alignment,\b(red[- ]teaming|jailbreak)\b,both,1.0,1
+alignment,\breward models?\b,both,1.0,1

@@ -1,0 +1,29 @@
+abbr,name,dblp_stream,dblp_toc_pattern,type,issn,openalex_source_id,s2_venue,ccf_level,ccf_area,active
+AAAI,AAAI Conference on Artificial Intelligence,conf/aaai,aaai{year},conf,,,AAAI,A,人工智能,1
+NeurIPS,Annual Conference on Neural Information Processing Systems,conf/nips,nips{year},conf,,,NeurIPS,A,人工智能,1
+ICML,International Conference on Machine Learning,conf/icml,icml{year},conf,,,ICML,A,人工智能,1
+ICLR,International Conference on Learning Representations,conf/iclr,iclr{year},conf,,,ICLR,A,人工智能,1
+ACL,Annual Meeting of the Association for Computational Linguistics,conf/acl,acl{year},conf,,,ACL,A,人工智能,1
+CVPR,IEEE/CVF Conference on Computer Vision and Pattern Recognition,conf/cvpr,cvpr{year},conf,,,CVPR,A,人工智能,1
+ICCV,International Conference on Computer Vision,conf/iccv,iccv{year},conf,,,ICCV,A,人工智能,1
+IJCAI,International Joint Conference on Artificial Intelligence,conf/ijcai,ijcai{year},conf,,,IJCAI,A,人工智能,1
+EMNLP,Empirical Methods in Natural Language Processing,conf/emnlp,emnlp{year},conf,,,EMNLP,B,人工智能,1
+COLING,International Conference on Computational Linguistics,conf/coling,coling{year},conf,,,COLING,B,人工智能,1
+ECCV,European Conference on Computer Vision,conf/eccv,eccv{year},conf,,,ECCV,B,人工智能,1
+ECAI,European Conference on Artificial Intelligence,conf/ecai,ecai{year},conf,,,,B,人工智能,1
+AAMAS,International Conference on Autonomous Agents and Multi-Agent Systems,conf/amas,amas{year},conf,,,AAMAS,B,人工智能,1
+UAI,Conference on Uncertainty in Artificial Intelligence,conf/uai,uai{year},conf,,,UAI,B,人工智能,1
+ICAPS,International Conference on Automated Planning and Scheduling,conf/icaps,icaps{year},conf,,,,B,人工智能,1
+KR,International Conference on Principles of Knowledge Representation and Reasoning,conf/kr,kr{year},conf,,,KR,B,人工智能,1
+ECML-PKDD,European Conference on Machine Learning and Principles and Practice of Knowledge Discovery in Databases,conf/ecml,ecml{year},conf,,,ECML-PKDD,B,人工智能,1
+ICRA,International Conference on Robotics and Automation,conf/icra,icra{year},conf,,,,B,人工智能,1
+AI,Artificial Intelligence,journals/ai,,journal,0004-3702,,,A,人工智能,1
+TPAMI,IEEE Transactions on Pattern Analysis and Machine Intelligence,journals/pami,,journal,0162-8828,,,A,人工智能,1
+IJCV,International Journal of Computer Vision,journals/ijcv,,journal,0920-5691,,,A,人工智能,1
+JMLR,Journal of Machine Learning Research,journals/jmlr,,journal,1533-7928,,,A,人工智能,1
+JAIR,Journal of Artificial Intelligence Research,journals/jair,,journal,1076-9757,,,B,人工智能,1
+TACL,Transactions of the Association for Computational Linguistics,journals/tacl,,journal,2307-387X,,,B,人工智能,1
+CL,Computational Linguistics,journals/cl,,journal,0891-2017,,,B,人工智能,1
+TASLP,IEEE/ACM Transactions on Audio Speech and Language Processing,journals/taslp,,journal,2329-9290,,,B,人工智能,1
+TNNLS,IEEE Transactions on Neural Networks and Learning Systems,journals/tnn,,journal,2162-237X,,,B,人工智能,1
+PR,Pattern Recognition,journals/pr,,journal,0031-3203,,,B,人工智能,1

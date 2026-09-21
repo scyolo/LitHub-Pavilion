@@ -1,0 +1,13 @@
+host,owner,note
+arxiv.org,arXiv,预印本自存档（优先级最高）
+export.arxiv.org,arXiv,arXiv 程序化下载端点
+proceedings.neurips.cc,NeurIPS,官方论文集（2026-09 实测本网络可能不可达，候选链自动降级）
+papers.nips.cc,NeurIPS,官方论文集旧域
+proceedings.mlr.press,PMLR,ICML/UAI/AISTATS 官方
+openreview.net,OpenReview,ICLR 及 NeurIPS/ICML 投稿系统
+aclanthology.org,ACL Anthology,ACL/EMNLP/COLING/CoNLL/TACL 官方库
+openaccess.thecvf.com,CVF,CVPR/ICCV/ECCV 官方库
+ojs.aaai.org,AAAI,AAAI/ICAPS/KR 官方 OJS
+ijcai.org,IJCAI,IJCAI 官方论文集
+jmlr.org,JMLR,JMLR 官方
+jmlr.csail.mit.edu,JMLR,JMLR 官方旧域

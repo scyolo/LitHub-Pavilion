@@ -1,0 +1,16 @@
+__pycache__
+.pytest_cache
+.ruff_cache
+.venv
+.env
+.env.*
+data
+papers
+backup
+backups
+*.db
+*.db-*
+*.pdf
+*.pyc
+*.log
+tests
