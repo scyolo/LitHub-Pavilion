@@ -129,6 +129,7 @@ npm run dev
 | `STARTUP_YEAR_FROM` / `STARTUP_YEAR_TO` | `2023` / 当前年 | 启动范围；持续增量取配置范围最后两年 |
 | `SNAPSHOT_ENABLED` | `true` | 每轮结束导出完整只读数据 |
 | `SNAPSHOT_DIR` | 本地 `frontend/static/snapshot` | Docker 固定使用 `/app/data/snapshot` |
+| `SNAPSHOT_STATE_FILE` | `backend/data/snapshot-state.json` | 私有发布回执，不得放进公开静态目录 |
 | `PAGES_PUBLISH_ENABLED` | `false` | 发布覆盖配置自动设为 `true` |
 | `PAGES_REPOSITORY` | 模板 `scyolo/LitHub-Pavilion` | 必须改为有权限的目标仓库 |
 | `PAGES_RETRY_SECONDS` | `300` | 上传重试及线上版本检查周期 |

@@ -1,5 +1,6 @@
 """共享测试夹具：临时 SQLite 库 + FTS 表 + API TestClient。"""
 from datetime import datetime, timedelta, timezone
+from pathlib import Path
 
 import pytest
 from fastapi.testclient import TestClient
@@ -94,6 +95,7 @@ def client(engine, session_factory, monkeypatch):
     monkeypatch.setattr(main_module.settings, "startup_crawl_enabled", False)
     monkeypatch.setattr(main_module.settings, "snapshot_enabled", False)
     monkeypatch.setattr(main_module.settings, "pages_publish_enabled", False)
+    monkeypatch.setattr(main_module.settings, "snapshot_state_file", Path(engine.url.database).parent / "private-receipt.json")
 
     app = main_module.create_app()
     with TestClient(app) as c:

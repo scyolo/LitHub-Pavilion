@@ -10,6 +10,11 @@ from app.config import Settings
 from app.services.pipeline import CrawlPipeline
 
 
+@pytest.fixture(autouse=True)
+def private_sync_receipt(tmp_path, monkeypatch):
+    monkeypatch.setenv("SNAPSHOT_STATE_FILE", str(tmp_path / "private" / "snapshot-state.json"))
+
+
 @pytest.mark.asyncio
 async def test_startup_collects_history_then_recent_years_once(session_factory, monkeypatch):
     complete = AsyncMock()
@@ -165,6 +170,20 @@ def test_lifespan_starts_and_stops_site_sync(client):
     assert not status["site_sync"]["startup_crawl_enabled"]
 
 
+def test_disabled_publication_ignores_an_existing_deployed_receipt(session_factory, tmp_path):
+    import json
+    from app.services.site_sync import SiteSync
+
+    receipt = tmp_path / "private" / "receipt.json"
+    receipt.parent.mkdir()
+    receipt.write_text(json.dumps({"repository": "owner/repo", "publication_status": "deployed", "revision": "a" * 64,
+                                   "commit": "b" * 40}), encoding="utf-8")
+    config = Settings(_env_file=None, pages_publish_enabled=False, pages_repository="owner/repo", snapshot_state_file=receipt)
+    sync = SiteSync(session_factory, CrawlPipeline(session_factory), config=config)
+    assert sync.status()["publication_status"] == "disabled"
+    assert sync.status()["commit"] is None
+
+
 def test_empty_end_year_and_configured_weekly_range(monkeypatch):
     monkeypatch.setenv("STARTUP_YEAR_TO", "")
     config = Settings(_env_file=None, startup_year_from=2023)
@@ -239,6 +258,9 @@ async def test_deployment_is_confirmed_by_online_revision_and_failed_build_is_re
     await sync.retry_publication()
     assert sync.status()["publication_status"] == "deployed"
     assert publisher.await_count == 2
+    assert config.snapshot_state_file.is_file()
+    assert not config.snapshot_dir.with_name("snapshot-state.json").exists()
+    assert config.snapshot_state_file.parent != config.snapshot_dir.parent
     restarted = module.SiteSync(session_factory, CrawlPipeline(session_factory), config=config)
     await restarted.refresh()
     assert restarted.status()["publication_status"] == "deployed"

@@ -26,6 +26,7 @@ class Settings(BaseSettings):
     startup_year_to: int | None = Field(default=None, ge=2000, le=2100)
     snapshot_enabled: bool = True
     snapshot_dir: Path = PROJECT_ROOT / "frontend" / "static" / "snapshot"
+    snapshot_state_file: Path = BACKEND_ROOT / "data" / "snapshot-state.json"
     pages_publish_enabled: bool = False
     pages_repository: str = ""
     pages_site_url: str = ""
@@ -94,7 +95,7 @@ class Settings(BaseSettings):
     def optional_end_year(cls, value):
         return None if isinstance(value, str) and not value.strip() else value
 
-    @field_validator("snapshot_dir", "pages_token_file", mode="before")
+    @field_validator("snapshot_dir", "snapshot_state_file", "pages_token_file", mode="before")
     @classmethod
     def stable_snapshot_path(cls, value):
         path = Path(value)
