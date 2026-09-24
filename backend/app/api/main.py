@@ -15,6 +15,7 @@ from app.config import settings
 from app.db import get_engine, get_session
 from app.services.pipeline import CrawlPipeline
 from app.services.scheduler import start_scheduler
+from app.services.site_sync import SiteSync
 
 logging.basicConfig(level=settings.log_level, format="%(asctime)s %(levelname)s %(name)s %(message)s")
 
@@ -26,7 +27,11 @@ async def lifespan(app: FastAPI):
         from app.bootstrap import initialize_database
         initialize_database(engine)
     pipeline = CrawlPipeline(get_session)
+    sync = SiteSync(get_session, pipeline)
+    pipeline.on_complete = sync.refresh
     app.state.pipeline = pipeline
+    app.state.site_sync = sync
+    sync.start()
     app.state.scheduler = start_scheduler(pipeline) if settings.scheduler_enabled else None
     try:
         yield
@@ -34,6 +39,7 @@ async def lifespan(app: FastAPI):
         scheduler = getattr(app.state, "scheduler", None)
         if scheduler is not None:
             scheduler.shutdown(wait=False)
+        await sync.shutdown()
         await pipeline.shutdown()
 
 

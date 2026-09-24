@@ -91,6 +91,9 @@ def client(engine, session_factory, monkeypatch):
     monkeypatch.setattr(db_module, "_SessionLocal", session_factory)
     monkeypatch.setattr(main_module, "start_scheduler", lambda pipeline: None)
     monkeypatch.setattr(main_module.settings, "initialize_on_startup", False)
+    monkeypatch.setattr(main_module.settings, "startup_crawl_enabled", False)
+    monkeypatch.setattr(main_module.settings, "snapshot_enabled", False)
+    monkeypatch.setattr(main_module.settings, "pages_publish_enabled", False)
 
     app = main_module.create_app()
     with TestClient(app) as c:

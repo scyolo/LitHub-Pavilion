@@ -37,8 +37,9 @@ class CrawlRun:
 
 
 class CrawlPipeline:
-    def __init__(self, session_factory):
+    def __init__(self, session_factory, on_complete=None):
         self.session_factory = session_factory
+        self.on_complete = on_complete
         self.status = CrawlRun()
         self._task = None
         self._closing = False
@@ -73,6 +74,14 @@ class CrawlPipeline:
             self.status.last_error = type(exc).__name__
             log.exception("Background task failed")
             self._mark_interrupted()
+        else:
+            if self.on_complete is not None:
+                try:
+                    await self.on_complete()
+                except asyncio.CancelledError:
+                    raise
+                except Exception:
+                    log.error("Collection completed, but snapshot update failed; see local sync status")
         finally:
             self.status.running = False
             self.status.current = None
@@ -113,6 +122,22 @@ class CrawlPipeline:
         except asyncio.CancelledError:
             await asyncio.gather(task, return_exceptions=True)
             raise
+
+    async def submit_startup(self, years):
+        years = sorted(set(years))
+        if not years or len(years) > 30 or any(type(year) is not int or not 2000 <= year <= 2100 for year in years):
+            raise ValueError("Startup collection requires 1–30 valid years")
+        run_id = "s-" + uuid.uuid4().hex[:12]
+        return self._start(lambda: self._run_startup(years, run_id), run_id=run_id)
+
+    async def _run_startup(self, years, run_id):
+        recent_from = datetime.now(timezone.utc).year - 1
+        historical = [year for year in years if year < recent_from]
+        recent = [year for year in years if year >= recent_from]
+        if historical:
+            await self._run("backfill", years=historical, run_id=run_id + "-history")
+        if recent and not self._stopping:
+            await self._run("weekly", years=recent, run_id=run_id + "-recent")
 
     async def submit_weekly(self, run_id=None):
         run_id = run_id or "c-" + uuid.uuid4().hex[:12]
@@ -233,7 +258,7 @@ class CrawlPipeline:
             probe = await self._probe()
             run.error = probe.reason
             session.commit()
-            years = sorted(set(years or [datetime.now(timezone.utc).year - 1, datetime.now(timezone.utc).year]))
+            years = sorted(set(settings.weekly_years if years is None else years))
             venues = session.query(Venue).filter(Venue.active == 1, Venue.ccf_level.in_(("A", "B"))).all()
             completed = 0
             total = len(venues) * len(years)

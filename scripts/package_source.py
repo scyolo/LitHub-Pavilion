@@ -8,7 +8,7 @@ from zipfile import ZIP_DEFLATED, ZipFile
 ROOT = Path(__file__).resolve().parents[1]
 EXCLUDE_PARTS = {"__pycache__", ".pytest_cache", ".ruff_cache", ".venv", "node_modules", "dist", "data", "papers", "backups", "backup", ".mimosa", ".zcode", "artifacts", "release-artifacts"}
 TEXT_SUFFIXES = {".py", ".js", ".jsx", ".json", ".css", ".html", ".csv", ".md", ".txt", ".yml", ".yaml", ".toml", ".ini", ".conf"}
-ROOT_FILES = {"README.md", "SECURITY.md", "CONTRIBUTING.md", "docker-compose.yml", ".gitignore", ".gitattributes", ".dockerignore", ".env.example", "发布验收.md"}
+ROOT_FILES = {"README.md", "SECURITY.md", "CONTRIBUTING.md", "docker-compose.yml", "docker-compose.pages.yml", ".gitignore", ".gitattributes", ".dockerignore", ".env.example", "发布验收.md", "静态快照与自动更新验收.md", "frontend/static/README.md"}
 SECRET_PATTERNS = [
     re.compile(r"-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----"),
     re.compile(r"gh[pousr]_[A-Za-z0-9]{30,}"),
@@ -21,7 +21,9 @@ def source_files():
     paths = [ROOT / name for name in ROOT_FILES if (ROOT / name).is_file()]
     for directory in ("backend/app", "backend/scripts", "backend/tests", "frontend/src", "seeds", "scripts", ".github"):
         for path in (ROOT / directory).rglob("*"):
-            if not path.is_file() or any(part in EXCLUDE_PARTS for part in path.relative_to(ROOT).parts):
+            relative = path.relative_to(ROOT)
+            parts = relative.parts[3:] if relative.as_posix().startswith("frontend/src/data/") else relative.parts
+            if not path.is_file() or any(part in EXCLUDE_PARTS for part in parts):
                 continue
             if path.suffix in TEXT_SUFFIXES:
                 paths.append(path)

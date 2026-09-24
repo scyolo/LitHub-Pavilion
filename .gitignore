@@ -22,6 +22,10 @@ coverage/
 *.pdf
 *.part
 data/
+!frontend/src/data/
+!frontend/src/data/**
+frontend/static/snapshot/
+.secrets/
 papers/
 backup/
 backups/

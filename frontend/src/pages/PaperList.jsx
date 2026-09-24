@@ -23,6 +23,8 @@ export default function PaperList() {
     queryKey: ["papers", requestParams],
     queryFn: ({ signal }) => isSearch ? api.search(requestParams, signal) : api.papers(requestParams, signal),
     placeholderData: keepPreviousData,
+    refetchInterval: api.isSnapshot ? false : 30000,
+    refetchIntervalInBackground: false,
     retry: (count, error) => error.status >= 400 && error.status < 500 ? false : count < 1,
   });
   const data = result.data;

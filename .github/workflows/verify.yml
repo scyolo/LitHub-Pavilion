@@ -35,6 +35,15 @@ jobs:
       - run: npm ci --no-audit
       - run: npm test
       - run: npm run build
+      - name: Build with a GitHub Pages repository base
+        env:
+          VITE_DATA_MODE: snapshot
+          VITE_BASE_PATH: /LitHub-Pavilion/
+        run: npm run build
+      - name: Build automatic local data mode
+        env:
+          VITE_DATA_MODE: auto
+        run: npm run build
   containers:
     runs-on: ubuntu-latest
     steps:
@@ -42,6 +51,9 @@ jobs:
       - name: Build and start an empty installation
         env:
           SCHEDULER_ENABLED: 'false'
+          STARTUP_CRAWL_ENABLED: 'false'
+          SNAPSHOT_ENABLED: 'false'
+          PAGES_PUBLISH_ENABLED: 'false'
           WEB_PORT: '8180'
         run: docker compose -p lithub-ci up -d --build --wait --wait-timeout 180
       - name: Verify empty application

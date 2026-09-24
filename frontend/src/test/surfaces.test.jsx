@@ -28,7 +28,7 @@ describe("new research surfaces", () => {
     expect(screen.queryByRole("button", { name: /下载.*PDF/ })).not.toBeInTheDocument();
   });
   it("keeps external paper links separate from detail navigation", () => {
-    const paper = { id: 74, title: "A Study of Agents", venue: "AAAI", venue_type: "conf", year: 2025, level: "A", directions: ["agent"], authors_preview: ["Author One"], authors_count: 1, citation_count: 2, official_url: "https://doi.org/10.1/test", oa_url: "https://arxiv.org/abs/2501.12345", venue_confirmed: 0 };
+    const paper = { id: 74, title: "A Study of Agents", venue: "AAAI", venue_type: "conf", year: 2025, level: "A", directions: ["agent"], authors_preview: ["Author One"], authors_count: 1, citation_count: 2, official_url: "https://doi.org/10.5555/test", oa_url: "https://arxiv.org/abs/2501.12345", venue_confirmed: 0 };
     render(<PaperCard paper={paper} />, { wrapper });
     expect(screen.getByRole("link", { name: paper.title })).toHaveAttribute("href", "/papers/74");
     expect(screen.getByRole("link", { name: "官方链接" })).toHaveAttribute("target", "_blank");

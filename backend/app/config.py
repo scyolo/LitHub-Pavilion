@@ -1,4 +1,5 @@
 """Validated application settings with stable, module-relative data paths."""
+from datetime import datetime, timezone
 from pathlib import Path
 from zoneinfo import ZoneInfo
 
@@ -19,6 +20,17 @@ class Settings(BaseSettings):
     seeds_dir: Path = PROJECT_ROOT / "seeds"
     initialize_on_startup: bool = True
     scheduler_enabled: bool = True
+    startup_crawl_enabled: bool = True
+    startup_year_from: int = Field(default=2023, ge=2000, le=2100)
+    startup_year_to: int | None = Field(default=None, ge=2000, le=2100)
+    snapshot_enabled: bool = True
+    snapshot_dir: Path = PROJECT_ROOT / "frontend" / "static" / "snapshot"
+    pages_publish_enabled: bool = False
+    pages_repository: str = ""
+    pages_site_url: str = ""
+    pages_token_file: Path = Path("/run/secrets/github_token")
+    pages_retry_seconds: int = Field(default=300, ge=60, le=86400)
+    pages_deploy_retry_seconds: int = Field(default=1800, ge=300, le=86400)
     dblp_base_url: str = "https://dblp.org"
     s2_api_key: str = Field(default="", repr=False)
     contact_email: str = ""
@@ -69,6 +81,34 @@ class Settings(BaseSettings):
     @property
     def effective_user_agent(self) -> str:
         return self.user_agent.format(contact=self.contact_email or "not-configured")
+
+    @property
+    def startup_years(self) -> list[int]:
+        end = self.startup_year_to or datetime.now(timezone.utc).year
+        return list(range(self.startup_year_from, end + 1))
+
+    @field_validator("startup_year_to", mode="before")
+    @classmethod
+    def optional_end_year(cls, value):
+        return None if isinstance(value, str) and not value.strip() else value
+
+    @field_validator("snapshot_dir", "pages_token_file", mode="before")
+    @classmethod
+    def stable_snapshot_path(cls, value):
+        path = Path(value)
+        return path if path.is_absolute() else PROJECT_ROOT / path
+
+    @property
+    def weekly_years(self) -> list[int]:
+        return self.startup_years[-2:]
+
+    @model_validator(mode="after")
+    def bounded_startup_range(self):
+        if not 1 <= len(self.startup_years) <= 30:
+            raise ValueError("Startup collection range must contain 1–30 years")
+        if self.pages_publish_enabled and not self.snapshot_enabled:
+            raise ValueError("Pages publication requires snapshot export to be enabled")
+        return self
 
     @model_validator(mode="after")
     def apply_rate_tier(self):

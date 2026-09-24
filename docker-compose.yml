@@ -19,6 +19,17 @@ services:
       SEEDS_DIR: /app/seeds
       INITIALIZE_ON_STARTUP: "true"
       SCHEDULER_ENABLED: ${SCHEDULER_ENABLED:-true}
+      STARTUP_CRAWL_ENABLED: ${STARTUP_CRAWL_ENABLED:-true}
+      STARTUP_YEAR_FROM: ${STARTUP_YEAR_FROM:-2023}
+      STARTUP_YEAR_TO: ${STARTUP_YEAR_TO:-}
+      SNAPSHOT_ENABLED: ${SNAPSHOT_ENABLED:-true}
+      SNAPSHOT_DIR: /app/data/snapshot
+      PAGES_PUBLISH_ENABLED: ${PAGES_PUBLISH_ENABLED:-false}
+      PAGES_REPOSITORY: ${PAGES_REPOSITORY:-scyolo/LitHub-Pavilion}
+      PAGES_TOKEN_FILE: /run/secrets/github_token
+      PAGES_RETRY_SECONDS: ${PAGES_RETRY_SECONDS:-300}
+      PAGES_DEPLOY_RETRY_SECONDS: ${PAGES_DEPLOY_RETRY_SECONDS:-1800}
+      PAGES_SITE_URL: ${PAGES_SITE_URL:-}
       PDF_DOWNLOAD_ENABLED: "false"
       S2_API_KEY: ${S2_API_KEY:-}
       CONTACT_EMAIL: ${CONTACT_EMAIL:-}
@@ -51,6 +62,8 @@ services:
       - ALL
     ports:
       - "127.0.0.1:${WEB_PORT:-8080}:8080"
+    volumes:
+      - lithub-data:/var/lib/lithub:ro
     depends_on:
       api:
         condition: service_healthy
