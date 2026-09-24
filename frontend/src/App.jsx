@@ -41,7 +41,7 @@ export default function App() {
   const [menuOpen, setMenuOpen] = useState(false);
   const { data: crawl } = useCrawlStatus();
   const { data: directions } = useQuery({ queryKey: ["directions"], queryFn: ({ signal }) => api.directions(signal) });
-  const pageName = location.pathname.startsWith("/admin") ? "采集管理" : location.pathname.startsWith("/venues") ? "会议与期刊" : location.pathname.startsWith("/papers/") ? "论文详情" : location.pathname.startsWith("/papers") ? "论文探索" : "研究总览";
+  const pageName = location.pathname.startsWith("/admin") ? (api.isSnapshot ? "快照与更新" : "采集管理") : location.pathname.startsWith("/venues") ? "会议与期刊" : location.pathname.startsWith("/papers/") ? "论文详情" : location.pathname.startsWith("/papers") ? "论文探索" : "研究总览";
 
   useEffect(() => {
     document.documentElement.dataset.theme = theme;
@@ -62,11 +62,11 @@ export default function App() {
 
   return (
     <div className="app-shell">
-      <a className="skip-link" href="#main-content">跳转至主要内容</a>
+      <a className="skip-link" href="#main-content" onClick={(event) => { event.preventDefault(); document.getElementById("main-content")?.focus(); }}>跳转至主要内容</a>
       {menuOpen && <button className="sidebar-backdrop" aria-label="关闭导航" onClick={() => setMenuOpen(false)} />}
       <aside className={`sidebar ${menuOpen ? "open" : ""}`} aria-label="主导航">
         <NavLink to="/" className="brand"><span className="brand-symbol"><Icon name="radar" size={27} /></span><span className="brand-copy"><strong>{APP_NAME}</strong><small>{APP_DESCRIPTION}</small></span></NavLink>
-        <div className="workspace-label"><span className="status-dot" />个人研究空间<span className="local-tag">LOCAL</span></div>
+        <div className="workspace-label"><span className="status-dot" />个人研究空间<span className="local-tag">{api.isSnapshot ? "SNAPSHOT" : "LOCAL"}</span></div>
         <div className="nav-section-title">工作台 <span>WORKSPACE</span></div>
         <nav className="main-nav">{NAVIGATION.map((item) => <NavLink key={item.to} to={item.to} end={item.end} className={({ isActive }) => `nav-item ${isActive ? "active" : ""}`}><Icon name={item.icon} size={19} /><span>{item.name}</span><Icon name="chevron" size={13} /></NavLink>)}</nav>
         <div className="nav-section-title topic-nav-heading">研究方向 <span>TOPICS</span></div>
@@ -76,7 +76,7 @@ export default function App() {
           return <NavLink key={d.code} to={paperHref(null, { direction: d.code })} className={`topic-nav-link ${selected && location.pathname === "/papers" ? "selected" : ""}`}><span className="topic-dot" style={{ background: t.color }} />{d.name}</NavLink>;
         })}</nav>
         <div className="sidebar-bottom">
-          <NavLink to="/admin" className={({ isActive }) => `nav-item ${isActive ? "active" : ""}`}><Icon name="sliders" size={19} /><span>采集管理</span><Icon name="chevron" size={13} /></NavLink>
+          <NavLink to="/admin" className={({ isActive }) => `nav-item ${isActive ? "active" : ""}`}><Icon name="sliders" size={19} /><span>{api.isSnapshot ? "快照与更新" : "采集管理"}</span><Icon name="chevron" size={13} /></NavLink>
           <div className="sidebar-note"><Icon name="shield" size={16} /><div><strong>仅追踪 CCF A / B</strong><p>保留元数据与官方链接<br />不下载、不存储 PDF</p></div></div>
           <div className="sidebar-footer"><span className="avatar">R</span><div><strong>Researcher</strong><small>专注下一篇好论文</small></div><span className="online-dot" /></div>
         </div>
@@ -86,17 +86,17 @@ export default function App() {
           <button className="icon-button mobile-menu" aria-label="打开导航" aria-expanded={menuOpen} onClick={() => setMenuOpen(!menuOpen)}><Icon name="menu" size={21} /></button>
           <div className="breadcrumb">工作台 <Icon name="chevron" size={12} /><span>{pageName}</span></div>
           <div className="topbar-search"><SearchInput key={location.pathname} automatic={false} label="全局检索论文" placeholder="检索论文标题、摘要…" onCommit={(q) => navigate(paperHref(null, { q }))} /></div>
-          <span className={`topbar-sync ${crawl?.running ? "busy" : ""}`}><span className="status-dot" />{crawl?.running ? "正在同步" : "每周更新"}</span>
+          <span className={`topbar-sync ${crawl?.running ? "busy" : ""}`}><span className="status-dot" />{api.isSnapshot ? "快照浏览" : crawl?.running ? "正在同步" : "本地模式"}</span>
           <button className="icon-button theme-toggle" title={theme === "dark" ? "切换浅色主题" : "切换深色主题"} aria-label={theme === "dark" ? "切换浅色主题" : "切换深色主题"} onClick={() => setTheme(theme === "dark" ? "light" : "dark")}><Icon name={theme === "dark" ? "sun" : "moon"} size={19} /></button>
         </header>
-        <main id="main-content" className="page-content">
+        <main id="main-content" className="page-content" tabIndex={-1}>
           <PageBoundary key={location.pathname}><Suspense fallback={<LoadingState />}><Routes>
             <Route path="/" element={<Home />} /><Route path="/papers" element={<PaperList />} /><Route path="/papers/:id" element={<PaperDetail />} />
             <Route path="/venues" element={<Venues />} /><Route path="/admin" element={<Admin />} />
             <Route path="*" element={<div className="state-box"><h1>这个页面不存在</h1><NavLink to="/" className="button primary">返回研究总览</NavLink></div>} />
           </Routes></Suspense></PageBoundary>
         </main>
-        <footer className="page-footer"><span>{APP_NAME} <span>·</span> {APP_DESCRIPTION}</span><span>本地数据 · CCF A/B 配置目录 · {crawl?.schedule?.next_crawl_at ? `下次采集 ${formatDate(crawl.schedule.next_crawl_at)}` : "每周同步"}</span></footer>
+        <footer className="page-footer"><span>{APP_NAME} <span>·</span> {APP_DESCRIPTION}</span><span>{api.isSnapshot ? `公开快照 · CCF A/B 配置目录 · ${formatDate(crawl?.generated_at)}` : `本地数据 · CCF A/B 配置目录 · ${crawl?.schedule?.next_crawl_at ? `下次采集 ${formatDate(crawl.schedule.next_crawl_at)}` : "按需同步"}`}</span></footer>
       </div>
     </div>
   );

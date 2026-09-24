@@ -1,6 +1,6 @@
 # Security and data policy
 
-LitHub Pavilion is a single-user, local research tool. It has no authentication and must not be exposed to the Internet or an untrusted LAN. The provided Compose file publishes only `127.0.0.1:8080` and keeps the API inside its private container network.
+LitHub Pavilion's API and collection management are single-user and local. They have no authentication and must not be exposed to the Internet or an untrusted LAN. The provided Compose file publishes only `127.0.0.1:8080` and keeps the API inside its private container network. The separately built, read-only snapshot frontend may be published to GitHub Pages; it contains no API, credentials, database, private notes or PDF archives.
 
 ## Request boundaries
 

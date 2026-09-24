@@ -75,6 +75,7 @@ def status(request: Request):
         "schedule": _schedule(request),
         "pdf_download_enabled": settings.pdf_download_enabled,
         "mode": paper_mode(),
+        "site_sync": request.app.state.site_sync.status(),
     }
 
 

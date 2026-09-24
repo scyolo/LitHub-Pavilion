@@ -47,25 +47,65 @@ export function formatDate(value, includeTime = false) {
 
 export function safeExternalUrl(value) {
   if (typeof value !== "string" || !value.trim()) return null;
+  const text = value.trim();
+  if (/[\s\\\u0000-\u001f\u007f<>"]/.test(text) || /%(?:0[0-9a-f]|1[0-9a-f]|7f)/i.test(text) || /%(?![0-9a-f]{2})/i.test(text)) return null;
   try {
-    const url = new URL(value.trim());
-    if (!new Set(["http:", "https:"]).has(url.protocol) || url.username || url.password) return null;
+    const url = new URL(text);
+    if (!["http:", "https:"].includes(url.protocol) || url.username || url.password) return null;
     const host = url.hostname.toLowerCase().replace(/\.$/, "");
     if (!host || host === "localhost" || host.endsWith(".localhost") || host.endsWith(".local") || host.endsWith(".localdomain")) return null;
-    if (/^(127\.|10\.|192\.168\.|169\.254\.|0\.)/.test(host)) return null;
-    if (/^172\.(1[6-9]|2\d|3[01])\./.test(host) || host.includes(":")) return null;
+    if (host.includes(":")) return null;
+    if (/^\d+\.\d+\.\d+\.\d+$/.test(host)) {
+      const [a, b, c] = host.split(".").map(Number);
+      if (a === 0 || a === 10 || a === 127 || a >= 224 || (a === 100 && b >= 64 && b <= 127)
+        || (a === 169 && b === 254) || (a === 172 && b >= 16 && b <= 31) || (a === 192 && b === 168)
+        || (a === 192 && b === 0 && [0, 2].includes(c)) || (a === 192 && b === 88 && c === 99)
+        || (a === 198 && [18, 19].includes(b)) || (a === 198 && b === 51 && c === 100)
+        || (a === 203 && b === 0 && c === 113)) return null;
+    } else if (!host.includes(".") || !host.split(".").every((label) => /^[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?$/.test(label))) return null;
     return url.href;
   } catch {
     return null;
   }
 }
 
+function doiLink(value) {
+  if (typeof value !== "string") return null;
+  let id = value.trim();
+  if (/^https?:/i.test(id)) {
+    const safe = safeExternalUrl(id);
+    if (!safe) return null;
+    const url = new URL(safe);
+    if (!["doi.org", "dx.doi.org"].includes(url.hostname)) return null;
+    id = url.pathname.replace(/^\//, "");
+  } else id = id.replace(/^doi:\s*/i, "").replace(/^(?:dx\.)?doi\.org\//i, "");
+  try { id = decodeURIComponent(id).trim().toLowerCase(); } catch { return null; }
+  if (!/^10\.\d{4,9}\/[^\s]+$/.test(id) || /[\\\u0000-\u001f\u007f<>"]/.test(id) || id.split("/").some((part) => [".", ".."].includes(part))) return null;
+  return safeExternalUrl("https://doi.org/" + id.split("/").map(encodeURIComponent).join("/"));
+}
+
+function arxivLink(value) {
+  if (typeof value !== "string") return null;
+  let id = value.trim();
+  if (/^https?:/i.test(id)) {
+    const safe = safeExternalUrl(id);
+    if (!safe) return null;
+    const url = new URL(safe);
+    if (!["arxiv.org", "www.arxiv.org", "export.arxiv.org"].includes(url.hostname) || !/^\/(abs|pdf)\//.test(url.pathname)) return null;
+    id = url.pathname.slice(5).replace(/\.pdf$/, "");
+  } else id = id.replace(/^arxiv:\s*/i, "");
+  return /^(?:\d{2}(?:0[1-9]|1[0-2])\.\d{4,5}|[a-z][a-z.-]*\/\d{7})(?:v[1-9]\d*)?$/i.test(id) ? `https://arxiv.org/abs/${id}` : null;
+}
+
 export function paperLinks(paper) {
-  const arxiv = /^\d{4}\.\d{4,5}(v\d+)?$/.test(paper.arxiv_id || "")
-    ? `https://arxiv.org/abs/${paper.arxiv_id}` : null;
+  const official = safeExternalUrl(paper.official_url);
+  const key = typeof paper.dblp_key === "string" ? paper.dblp_key.trim() : "";
+  const dblp = /^(?:conf|journals|books|reference|series)\/[A-Za-z0-9._/-]+$/.test(key)
+    && key.split("/").length >= 3 && key.split("/").every((part) => part && part !== "." && part !== "..")
+    ? `https://dblp.org/rec/${key}` : null;
   return {
-    official: safeExternalUrl(paper.official_url),
-    oa: safeExternalUrl(paper.oa_url) || arxiv,
+    official: doiLink(paper.doi) || (official && ["doi.org", "dx.doi.org"].includes(new URL(official).hostname) ? doiLink(official) : official) || dblp,
+    oa: safeExternalUrl(paper.oa_url) || arxivLink(paper.arxiv_id),
   };
 }
 

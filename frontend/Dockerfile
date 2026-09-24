@@ -4,7 +4,8 @@ COPY package.json package-lock.json ./
 RUN npm ci --no-audit
 COPY index.html vite.config.js postcss.config.js tailwind.config.js ./
 COPY src ./src
-RUN npm run build
+COPY static ./static
+RUN VITE_DATA_MODE=auto npm run build
 
 FROM nginxinc/nginx-unprivileged:1.28-alpine
 COPY --from=build /app/dist /usr/share/nginx/html

@@ -10,7 +10,7 @@ export default function PaperDetail() {
   const { id } = useParams();
   const location = useLocation();
   const [copied, setCopied] = useState(false);
-  const query = useQuery({ queryKey: ["paper", id], queryFn: ({ signal }) => api.paper(id, signal) });
+  const query = useQuery({ queryKey: ["paper", id], queryFn: ({ signal }) => api.paper(id, signal), refetchInterval: api.isSnapshot ? false : 30000, refetchIntervalInBackground: false });
   const paper = query.data;
   const candidateFrom = location.state?.from;
   const from = typeof candidateFrom === "string" && /^\/papers(?:\?|$)/.test(candidateFrom) && !candidateFrom.includes("\\") ? candidateFrom : "/papers";
@@ -21,7 +21,7 @@ export default function PaperDetail() {
   const venue = paper.venue || {};
 
   async function copyCitation() {
-    const text = `${(paper.authors || []).map((a) => a.name).join(", ")}. ${paper.title}. ${venue.abbr}, ${paper.year}.${paper.doi ? ` https://doi.org/${paper.doi}` : ""}`;
+    const text = `${(paper.authors || []).map((a) => a.name).join(", ")}. ${paper.title}. ${venue.abbr}, ${paper.year}.${links.official ? ` ${links.official}` : ""}`;
     try { await navigator.clipboard.writeText(text); setCopied(true); } catch { setCopied(false); }
   }
 

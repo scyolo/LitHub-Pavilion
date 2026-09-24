@@ -1,0 +1,9 @@
+services:
+  api:
+    environment:
+      PAGES_PUBLISH_ENABLED: "true"
+    secrets:
+      - github_token
+secrets:
+  github_token:
+    file: ./.secrets/github_token
