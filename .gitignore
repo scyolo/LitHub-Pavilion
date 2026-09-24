@@ -26,6 +26,7 @@ data/
 !frontend/src/data/**
 frontend/static/snapshot/
 .secrets/
+docker-compose.override.yml
 papers/
 backup/
 backups/

@@ -1,6 +1,7 @@
 """Validated application settings with stable, module-relative data paths."""
 from datetime import datetime, timezone
 from pathlib import Path
+from typing import Literal
 from zoneinfo import ZoneInfo
 
 from pydantic import Field, field_validator, model_validator
@@ -32,6 +33,7 @@ class Settings(BaseSettings):
     pages_retry_seconds: int = Field(default=300, ge=60, le=86400)
     pages_deploy_retry_seconds: int = Field(default=1800, ge=300, le=86400)
     dblp_base_url: str = "https://dblp.org"
+    outbound_dns_mode: Literal["system", "https"] = "system"
     s2_api_key: str = Field(default="", repr=False)
     contact_email: str = ""
     dblp_rps: float = Field(default=1.0, gt=0, le=1)
