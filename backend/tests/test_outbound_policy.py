@@ -30,7 +30,7 @@ async def test_network_connect_pins_the_validated_ip(monkeypatch):
     import app.collectors.http_client as module
 
     monkeypatch.setattr(module, "_check_resolved_ips", lambda host: ["93.184.216.34"])
-    backend = module.PublicNetworkBackend()
+    backend = module.PublicNetworkBackend(dns_mode="system")
     backend.backend = AsyncMock()
     await backend.connect_tcp("example.org", 443)
     assert backend.backend.connect_tcp.await_args.args[0] == "93.184.216.34"

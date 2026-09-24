@@ -6,7 +6,7 @@ LitHub Pavilion's API and collection management are single-user and local. They 
 
 - API values are validated; SQL values use bound parameters/ORM expressions.
 - Browser-origin state-changing requests from non-loopback sites are rejected. This is not a replacement for login if a public deployment is required.
-- Outbound data-source clients use HTTPS, public-host validation and DNS-validated numeric IP connections with original TLS SNI. No automatic redirect following or environment proxy is enabled.
+- Outbound data-source clients use HTTPS, public-host validation and DNS-validated numeric IP connections with original TLS SNI. No automatic redirect following or environment proxy is enabled. Optional `OUTBOUND_DNS_MODE=https` uses a fixed public HTTPS DNS resolver on Fake-IP networks; answers are still validated, bounded and pinned, and private/reserved targets remain rejected.
 - Rendered external links reject credentials, control characters, unsafe schemes and local/private literal targets.
 - No automatic PDF downloading is part of this release. Existing archive files are preserved, including during metadata deletion and link maintenance.
 

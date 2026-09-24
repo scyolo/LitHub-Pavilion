@@ -51,7 +51,7 @@ docker compose up -d --build --wait
 docker compose -f docker-compose.yml -f docker-compose.pages.yml up -d --build --wait
 ```
 
-此后启动 Docker 就会执行配置范围采集，并在任务结束后导出、上传、触发 Pages 构建。已有论文在后台采集期间仍可浏览；本地管理页“静态快照与网站发布”分别显示导出、上传、待部署确认和已上线状态。
+此后启动 Docker 就会执行配置范围采集，并在任务结束后导出、上传、触发 Pages 构建。若希望日常直接使用 `docker compose up -d --build`，可在本机 `.env` 设 `PAGES_PUBLISH_ENABLED=true`，并用被 Git 忽略的 `docker-compose.override.yml` 声明同样的 token secret 挂载。已有论文在后台采集期间仍可浏览；本地管理页“静态快照与网站发布”分别显示导出、上传、待部署确认和已上线状态。
 
 默认站点为 `https://账号.github.io/仓库名/`；账号站点仓库 `账号.github.io` 使用根路径。自定义域名需设置 `PAGES_SITE_URL=https://你的域名/`（包含实际站点基路径，禁止内网地址、查询参数及片段）。
 
@@ -123,11 +123,13 @@ npm run dev
 |---|---|---|
 | `S2_API_KEY` | 空 | Semantic Scholar API key，可选 |
 | `CONTACT_EMAIL` | 空 | 上游请求的联系信息，建议填写真实邮箱 |
+| `OUTBOUND_DNS_MODE` | `system` | Fake-IP 网络可设 `https`，仍只允许公网目标 |
 | `SCHEDULER_ENABLED` | `true` | 是否注册自动任务 |
 | `STARTUP_CRAWL_ENABLED` | `true` | 启动时后台采集；不受定时开关影响 |
 | `STARTUP_YEAR_FROM` / `STARTUP_YEAR_TO` | `2023` / 当前年 | 启动范围；持续增量取配置范围最后两年 |
 | `SNAPSHOT_ENABLED` | `true` | 每轮结束导出完整只读数据 |
 | `SNAPSHOT_DIR` | 本地 `frontend/static/snapshot` | Docker 固定使用 `/app/data/snapshot` |
+| `SNAPSHOT_STATE_FILE` | `backend/data/snapshot-state.json` | 私有发布回执，不得放进公开静态目录 |
 | `PAGES_PUBLISH_ENABLED` | `false` | 发布覆盖配置自动设为 `true` |
 | `PAGES_REPOSITORY` | 模板 `scyolo/LitHub-Pavilion` | 必须改为有权限的目标仓库 |
 | `PAGES_RETRY_SECONDS` | `300` | 上传重试及线上版本检查周期 |
@@ -157,7 +159,7 @@ npm run dev
 3. 新记录只有直接 DBLP TOC 来源才标为已关联；手工指定 venue 或 S2 的 key 前缀不等于已核验发表年份与主会录用。旧数据保留原标记，并继续显示核验提示。
 4. 方向使用关键词规则，可多标签重叠；引用数来自上游而非实时评估。摘要缺失/纯标点占位不伪装为有效摘要。
 5. 在线英文检索基于 FTS5 `porter unicode61`，静态版在 Worker 内对标题和完整摘要建立词干索引，均按所有英文词项交集匹配。中文分词不在当前范围，接口明确报错。外链做安全校验，不保证每个出版站均可访问。
-6. 外部元数据 HTTP 客户端只连接 DNS 解析并验证后的公网 IP，保留原主机 TLS SNI；禁止自动重定向和环境代理。企业代理网络需要显式适配，不能关闭边界检查来访问私网。
+6. 外部元数据 HTTP 客户端只连接 DNS 解析并验证后的公网 IP，保留原主机 TLS SNI；禁止自动重定向和环境代理。Fake-IP/TUN 网络把域名映射到 `198.18.*` 等非公网地址时，设置 `OUTBOUND_DNS_MODE=https`，使用固定公网 HTTPS DNS 解析器取得真实 IPv4 地址；仍检查每条结果、固定连接目标并验证证书，不允许私网地址，不修改系统代理。默认 `system` 保持系统 DNS 行为。
 
 ## 维护
 

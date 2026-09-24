@@ -1,6 +1,7 @@
 """Validated application settings with stable, module-relative data paths."""
 from datetime import datetime, timezone
 from pathlib import Path
+from typing import Literal
 from zoneinfo import ZoneInfo
 
 from pydantic import Field, field_validator, model_validator
@@ -25,6 +26,7 @@ class Settings(BaseSettings):
     startup_year_to: int | None = Field(default=None, ge=2000, le=2100)
     snapshot_enabled: bool = True
     snapshot_dir: Path = PROJECT_ROOT / "frontend" / "static" / "snapshot"
+    snapshot_state_file: Path = BACKEND_ROOT / "data" / "snapshot-state.json"
     pages_publish_enabled: bool = False
     pages_repository: str = ""
     pages_site_url: str = ""
@@ -32,6 +34,7 @@ class Settings(BaseSettings):
     pages_retry_seconds: int = Field(default=300, ge=60, le=86400)
     pages_deploy_retry_seconds: int = Field(default=1800, ge=300, le=86400)
     dblp_base_url: str = "https://dblp.org"
+    outbound_dns_mode: Literal["system", "https"] = "system"
     s2_api_key: str = Field(default="", repr=False)
     contact_email: str = ""
     dblp_rps: float = Field(default=1.0, gt=0, le=1)
@@ -92,7 +95,7 @@ class Settings(BaseSettings):
     def optional_end_year(cls, value):
         return None if isinstance(value, str) and not value.strip() else value
 
-    @field_validator("snapshot_dir", "pages_token_file", mode="before")
+    @field_validator("snapshot_dir", "snapshot_state_file", "pages_token_file", mode="before")
     @classmethod
     def stable_snapshot_path(cls, value):
         path = Path(value)

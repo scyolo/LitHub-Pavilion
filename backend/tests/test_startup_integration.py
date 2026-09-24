@@ -18,7 +18,8 @@ def test_lifespan_collects_and_exports_without_blocking_health(engine, session_f
     monkeypatch.setattr(database, "_SessionLocal", session_factory)
     for name, value in {"initialize_on_startup": False, "scheduler_enabled": False, "startup_crawl_enabled": True,
                         "startup_year_from": 2024, "startup_year_to": 2024, "snapshot_enabled": True,
-                        "snapshot_dir": tmp_path / "public", "pages_publish_enabled": False}.items():
+                        "snapshot_dir": tmp_path / "public", "snapshot_state_file": tmp_path / "private" / "receipt.json",
+                        "pages_publish_enabled": False}.items():
         monkeypatch.setattr(main.settings, name, value)
     collect = AsyncMock(return_value=([], False))
     monkeypatch.setattr(CrawlPipeline, "_probe", AsyncMock(return_value=SimpleNamespace(ok=True, reason="isolated fixture")))

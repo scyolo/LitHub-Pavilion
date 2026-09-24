@@ -42,10 +42,12 @@ class SiteSync:
             "revision": None, "generated_at": None, "paper_count": None, "commit": None,
             "last_attempt_at": None, "message": None,
         }
-        self._state_path = self.config.snapshot_dir.with_name(self.config.snapshot_dir.name + "-state.json")
+        self._state_path = self.config.snapshot_state_file
         self._restore_dispatch()
 
     def _restore_dispatch(self):
+        if not self.config.pages_publish_enabled:
+            return
         try:
             if self._state_path.is_symlink() or self._state_path.stat().st_size > 4096:
                 return
@@ -85,8 +87,8 @@ class SiteSync:
         if self._startup_task:
             await asyncio.shield(self._startup_task)
 
-    async def _worker(self, function, *args):
-        task = asyncio.create_task(asyncio.to_thread(function, *args))
+    async def _worker(self, function, *args, **kwargs):
+        task = asyncio.create_task(asyncio.to_thread(function, *args, **kwargs))
         try:
             return await asyncio.shield(task)
         except asyncio.CancelledError:
@@ -152,6 +154,7 @@ class SiteSync:
 
     async def _save_receipt(self):
         try:
+            await self._worker(self._state_path.parent.mkdir, parents=True, exist_ok=True)
             await self._worker(_atomic_write, self._state_path, _json_bytes({
                 "repository": self.config.pages_repository, "site_url": self.config.pages_site_url,
                 "publication_status": self._state["publication_status"], "dispatched_at": self._dispatched_at,
