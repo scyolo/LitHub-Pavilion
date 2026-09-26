@@ -1,3 +1,5 @@
+import { createSnapshotEngine } from "../data/snapshot-engine.js";
+
 export const generated_at = "2026-09-21T08:00:00+00:00";
 export function snapshotFixture() {
   const venues = [
@@ -20,4 +22,22 @@ export function snapshotFixture() {
     };
   });
   return { manifest: { schema_version: 1, generated_at, paper_count: papers.length, revision: "a".repeat(64) }, catalog: { venues, directions, logs: [], last_crawl: null }, papers };
+}
+
+export function withOverview(fixture = snapshotFixture()) {
+  const engine = createSnapshotEngine(fixture);
+  const scopes = [];
+  for (const level of [null, "A", "B"]) {
+    for (const type of [null, "conf", "journal"]) {
+      const { generated_at: time, last_crawl: crawl, ...dashboard } = engine.dashboard({ level, type });
+      const latest = fixture.papers.filter((paper) => (!level || paper.level === level) && (!type || paper.venue_type === type))
+        .sort((a, b) => b.year - a.year || b.id - a.id).slice(0, 5).map((paper) => {
+          const { abstract, authors, direction_details, arxiv_id, dblp_key, updated_at, ...card } = paper;
+          return card;
+        });
+      scopes.push({ level, type, dashboard, latest });
+    }
+  }
+  fixture.catalog.overview = { version: 1, scopes };
+  return fixture;
 }

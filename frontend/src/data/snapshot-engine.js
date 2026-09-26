@@ -1,5 +1,5 @@
 import { stemmer } from "stemmer";
-import { safeExternalUrl } from "../lib/presentation.js";
+import { publicationSortKey, safeExternalUrl } from "../lib/presentation.js";
 
 export function readerError(message, status = 400, code = "INVALID_PARAM") {
   return Object.assign(new Error(message), { status, code });
@@ -17,8 +17,8 @@ function parseParams(params = {}, search = false) {
   if (venue === "") throw readerError("venue 必须是非空缩写");
   const page = Number(values.page ?? 1), size = Number(values.size ?? 20);
   if (!Number.isSafeInteger(page) || page < 1 || !Number.isSafeInteger(size) || size < 1 || size > 100) throw readerError("page>=1 且 1<=size<=100");
-  const sort = values.sort ?? (search ? "relevance" : "created_desc");
-  if (!["created_desc", "year_desc", "citation_desc", ...(search ? ["relevance"] : [])].includes(sort)) throw readerError("不支持的论文排序");
+  const sort = values.sort ?? (search ? "relevance" : "publication_desc");
+  if (!["publication_desc", "created_desc", "year_desc", "citation_desc", ...(search ? ["relevance"] : [])].includes(sort)) throw readerError("不支持的论文排序");
   return { ...values, directions, venue, page, size, sort };
 }
 
@@ -40,6 +40,8 @@ export function createSnapshotEngine({ manifest, catalog, papers }) {
   }
   const timestamp = Date.parse(manifest.generated_at), currentYear = new Date(timestamp).getUTCFullYear();
   const timestamps = new Map(papers.map((paper) => [paper.id, Date.parse(paper.created_at) || 0]));
+  const publicationDates = new Map(papers.map((paper) => [paper.id, publicationSortKey(paper)]));
+  const dashboards = new Map();
   let index;
   function searchIndex() {
     if (index) return index;
@@ -76,6 +78,7 @@ export function createSnapshotEngine({ manifest, catalog, papers }) {
     return (a, b) => {
       let difference;
       if (sort === "relevance") difference = scores.get(a.id) - scores.get(b.id);
+      else if (sort === "publication_desc") difference = publicationDates.get(b.id).localeCompare(publicationDates.get(a.id));
       else if (sort === "year_desc") difference = b.year - a.year;
       else if (sort === "citation_desc") difference = (b.citation_count || 0) - (a.citation_count || 0);
       else difference = timestamps.get(b.id) - timestamps.get(a.id);
@@ -104,10 +107,15 @@ export function createSnapshotEngine({ manifest, catalog, papers }) {
       }
     }
     const rows = candidates.filter((paper) => matches(paper, filters)).sort(compare(filters.sort, scores));
-    return { total: rows.length, page: filters.page, size: filters.size, items: rows.slice((filters.page - 1) * filters.size, filters.page * filters.size).map((paper) => isSearch ? { ...paper, score: Number(scores.get(paper.id).toFixed(4)) } : paper) };
+    return { total: rows.length, page: filters.page, size: filters.size, items: rows.slice((filters.page - 1) * filters.size, filters.page * filters.size).map((paper) => {
+      const { abstract, authors, direction_details, arxiv_id, dblp_key, updated_at, ...card } = paper;
+      return isSearch ? { ...card, score: Number(scores.get(paper.id).toFixed(4)) } : card;
+    }) };
   }
   function dashboard(params = {}) {
     const filters = parseParams(params);
+    const key = JSON.stringify(filters);
+    if (dashboards.has(key)) return dashboards.get(key);
     const rows = papers.filter((paper) => matches(paper, filters));
     const by_level = { A: 0, B: 0 }, by_type = { conf: 0, journal: 0 };
     const annual = Array.from({ length: Math.max(0, currentYear - 2023 + 1) }, (_, i) => ({ year: i + 2023, A: 0, B: 0, total: 0 }));
@@ -129,15 +137,19 @@ export function createSnapshotEngine({ manifest, catalog, papers }) {
       years.set(paper.year, (years.get(paper.year) || 0) + 1);
     }
     const configured = catalog.venues.filter((venue) => (!filters.level || venue.level === filters.level) && (!filters.type || venue.type === filters.type));
-    return {
+    const result = {
       generated_at: manifest.generated_at, total: rows.length, with_oa_link, with_abstract, confirmed_count, recent_count, by_level, by_type, annual,
       directions: catalog.directions.map((direction) => ({ ...direction, paper_count: directionCounts.get(direction.code) || 0 })).filter((direction) => direction.enabled || direction.paper_count),
       configured_venues: configured.length, venues_with_papers: venueCounts.size, last_crawl: catalog.last_crawl,
       venues: configured.filter((venue) => !filters.venue || venue.abbr === filters.venue).map((venue) => ({ ...venue, paper_count: venueCounts.get(venue.abbr) || 0,
         years: [...(venueYears.get(venue.abbr) || new Map())].sort(([a], [b]) => a - b).map(([year, count]) => ({ year, count })) })),
     };
+    if (dashboards.size >= 32) dashboards.clear();
+    dashboards.set(key, result);
+    return result;
   }
   return {
+    latest: (params = {}) => listing({ ...params, page: 1, size: 5, sort: "publication_desc" }, false),
     papers: (params = {}) => listing(params, false),
     search: (params = {}) => listing(params, true),
     paper: (id) => {

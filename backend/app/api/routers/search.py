@@ -35,7 +35,7 @@ def _build_match_expr(q: str) -> str:
 def search(
     q: str = Query(..., max_length=300),
     filters: PaperFilters = Depends(paper_filters),
-    sort: Literal["relevance", "created_desc", "year_desc", "citation_desc"] = "relevance",
+    sort: Literal["relevance", "publication_desc", "created_desc", "year_desc", "citation_desc"] = "relevance",
     page: int = 1,
     size: int = 20,
     db: Session = Depends(get_db),

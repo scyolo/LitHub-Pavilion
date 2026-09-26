@@ -29,6 +29,9 @@ def _make_engine(database_url: str) -> Engine:
             cur.execute("PRAGMA busy_timeout=5000")
             cur.execute("PRAGMA foreign_keys=ON")
             cur.close()
+            from app.publication import publication_date_key
+
+            dbapi_conn.create_function("publication_sort_key", 2, publication_date_key, deterministic=True)
 
         return engine
     return create_engine(database_url, pool_pre_ping=True)

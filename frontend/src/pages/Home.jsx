@@ -17,7 +17,7 @@ export default function Home() {
   const scope = filteredParams({ level: filters.level, type: filters.type });
   const dashboard = useDashboard(scope);
   const data = dashboard.data;
-  const latest = useQuery({ queryKey: ["papers", "latest", scope], queryFn: ({ signal }) => api.papers({ ...scope, size: 5, sort: "created_desc" }, signal), refetchInterval: api.isSnapshot ? false : 30000 });
+  const latest = useQuery({ queryKey: ["papers", "latest", scope], queryFn: ({ signal }) => api.latest(scope, signal), refetchInterval: api.isSnapshot ? false : 30000 });
   const openPapers = (extra) => navigate(paperHref(null, { ...scope, ...extra }));
 
   return <div className="dashboard-page page-enter">
@@ -44,7 +44,7 @@ export default function Home() {
         })}</div>
       </section>
       <div className="dashboard-bottom">
-        <section className="recent-section"><SectionTitle icon="clock" title="最近收录" note="按入库时间排序，不等同于首次发表时间"><Link className="text-link" to={paperHref(null, scope)}>全部论文<Icon name="arrow" size={14} /></Link></SectionTitle>
+        <section className="recent-section"><SectionTitle icon="clock" title="最新发表" note="按上游发布日期倒序；缺少日期时按归属年份"><Link className="text-link" to={paperHref(null, scope)}>全部论文<Icon name="arrow" size={14} /></Link></SectionTitle>
           {latest.isPending ? <LoadingState rows={3} /> : latest.error ? <ErrorState message={latest.error.message} onRetry={() => latest.refetch()} /> : latest.data?.items.length ? <div className="paper-stack">{latest.data.items.map((p) => <PaperCard key={p.id} paper={p} compactMode />)}</div> : <EmptyState title="这个范围还没有论文" message="数据可能尚未回填，可以在采集管理中查看进度。" />}
         </section>
         <aside className="insights-sidebar">

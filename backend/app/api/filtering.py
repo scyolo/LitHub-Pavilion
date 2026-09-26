@@ -13,6 +13,7 @@ LEVELS = ("A", "B")
 VENUE_TYPES = ("conf", "journal")
 PDF_STATUSES = ("pending", "downloaded", "failed", "closed")
 PAPER_SORTS = {
+    "publication_desc": (func.publication_sort_key(Paper.publication_date, Paper.year).desc(), Paper.id.desc()),
     "year_desc": (Paper.year.desc(), Paper.id.desc()),
     "citation_desc": (Paper.citation_count.desc(), Paper.id.desc()),
     "created_desc": (Paper.created_at.desc(), Paper.id.desc()),

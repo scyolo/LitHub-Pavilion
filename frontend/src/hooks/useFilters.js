@@ -12,7 +12,7 @@ export function useFilters() {
         else next.set(key, String(value));
       });
       if (resetPage) next.delete("page");
-      if (Object.hasOwn(changes, "q") && !Object.hasOwn(changes, "sort")) next.delete("sort");
+      if (Object.hasOwn(changes, "q") && !String(changes.q || "").trim() && next.get("sort") === "relevance") next.delete("sort");
       return next;
     }, { replace });
   }

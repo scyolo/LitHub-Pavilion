@@ -361,6 +361,7 @@ class CrawlPipeline:
                             rows = session.query(Paper).filter(Paper.id.in_(ids)).all()
                             result = await enrich_papers(session, rows, client)
                             errors += (result or {}).get("failed", 0)
+                        await self._db_call(self._tag_owned, ids)
                     count += len(ids)
                     last_id = ids[-1]
                     self.status.progress = str(count)

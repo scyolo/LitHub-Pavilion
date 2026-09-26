@@ -98,6 +98,19 @@ describe("backend-free reader surfaces", () => {
     await waitFor(() => expect(window.location.hash).not.toContain("page="));
     expect(screen.getByRole("button", { name: "上一页", exact: true })).toBeDisabled();
   });
+  it("preserves explicit publication ordering while changing and clearing searches", async () => {
+    renderReader("/papers?sort=publication_desc");
+    await screen.findByText("3 篇论文");
+    expect(screen.getByLabelText("论文排序")).toHaveValue("publication_desc");
+    const search = screen.getByRole("searchbox", { name: "搜索论文" });
+    fireEvent.change(search, { target: { value: "planning" } });
+    fireEvent.submit(search.closest("form"));
+    await screen.findByText("1 篇论文");
+    expect(window.location.hash).toContain("sort=publication_desc");
+    fireEvent.click(screen.getByRole("button", { name: "清空搜索" }));
+    await screen.findByText("3 篇论文");
+    expect(screen.getByLabelText("论文排序")).toHaveValue("publication_desc");
+  });
   it("shows missing-paper errors without replacing them with another paper", async () => {
     renderReader("/papers/404");
     expect(await screen.findByText("论文不存在")).toBeInTheDocument();

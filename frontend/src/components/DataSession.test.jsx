@@ -52,6 +52,20 @@ it("replaces query caches across complete revisions and API recovery without mix
   expect(screen.queryByRole("button", { name: "连接本地后端" })).not.toBeInTheDocument();
 });
 
+it("keeps the first query client when catalog and full data become ready", async () => {
+  mock.snapshot = { status: "loading", revision: null, generation: 0 };
+  mock.query.mockResolvedValue("Initial record");
+  render(<DataSession><Reader /></DataSession>);
+  await screen.findByText("Initial record");
+  for (const verification of ["catalog", "full"]) {
+    act(() => {
+      mock.snapshot = { ...mock.snapshot, status: "ready", revision: "one", generation: 0, verification };
+      for (const notify of mock.snapshotListeners) notify();
+    });
+  }
+  expect(mock.query).toHaveBeenCalledTimes(1);
+});
+
 it("checks connection on focus and cleans up listeners when unmounted", async () => {
   mock.query.mockResolvedValue("Ready");
   const view = render(<DataSession><Reader /></DataSession>);

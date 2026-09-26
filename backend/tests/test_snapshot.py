@@ -53,6 +53,59 @@ def test_export_matches_public_scope_and_preserves_complete_details(session_fact
         assert forbidden not in payload
 
 
+def test_export_includes_nine_verified_overview_scopes(session_factory, db, api_catalog, tmp_path):
+    from app.services.snapshot import export_snapshot
+    from app.publication import publication_sort_key
+
+    manifest = export_snapshot(session_factory, tmp_path, generated_at=api_catalog["now"])
+    catalog, papers = load_snapshot(tmp_path, manifest)
+    assert catalog["overview"]["version"] == 1
+    scopes = catalog["overview"]["scopes"]
+    assert len(scopes) == 9
+    for scope in scopes:
+        rows = [p for p in papers if (not scope["level"] or p["level"] == scope["level"])
+                and (not scope["type"] or p["venue_type"] == scope["type"])]
+        assert scope["dashboard"]["total"] == len(rows)
+        expected = sorted(rows, key=lambda p: (publication_sort_key(p), p["id"]), reverse=True)[:5]
+        assert [p["id"] for p in scope["latest"]] == [p["id"] for p in expected]
+        assert all("abstract" not in p and "note" not in p for p in scope["latest"])
+
+
+@pytest.mark.parametrize("mutation", ["count", "scope", "private", "preview"])
+def test_overview_is_cross_validated_even_after_resigning(session_factory, sample_paper, tmp_path, mutation):
+    from app.services.snapshot import export_snapshot, validate_snapshot, _write_content, _json_bytes, manifest_revision
+    manifest = export_snapshot(session_factory, tmp_path)
+    catalog, _ = load_snapshot(tmp_path, manifest)
+    overview = catalog["overview"]
+    if mutation == "count":
+        overview["scopes"][0]["dashboard"]["total"] += 1
+    elif mutation == "scope":
+        overview["scopes"].pop()
+    elif mutation == "private":
+        overview["scopes"][0]["latest"][0]["note"] = "private"
+    else:
+        overview["scopes"][0]["latest"][0]["abstract_preview"] = None
+    manifest["catalog"] = _write_content(tmp_path, "catalog", _json_bytes(catalog))
+    manifest["revision"] = manifest_revision(manifest)
+    (tmp_path / "manifest.json").write_bytes(_json_bytes(manifest))
+    with pytest.raises(ValueError, match="overview"):
+        validate_snapshot(tmp_path)
+
+
+def test_legacy_catalog_remains_valid_and_upgrades_without_changing_data_time(session_factory, sample_paper, tmp_path):
+    from app.services.snapshot import export_snapshot, validate_snapshot, _write_content, _json_bytes, manifest_revision
+    manifest = export_snapshot(session_factory, tmp_path, generated_at=datetime(2026, 1, 1, tzinfo=timezone.utc))
+    catalog, _ = load_snapshot(tmp_path, manifest)
+    catalog.pop("overview", None)
+    manifest["catalog"] = _write_content(tmp_path, "catalog", _json_bytes(catalog))
+    manifest["revision"] = manifest_revision(manifest)
+    (tmp_path / "manifest.json").write_bytes(_json_bytes(manifest))
+    assert validate_snapshot(tmp_path) == manifest
+    upgraded = export_snapshot(session_factory, tmp_path, generated_at=datetime(2026, 2, 1, tzinfo=timezone.utc))
+    assert upgraded["generated_at"] == manifest["generated_at"]
+    assert "overview" in load_snapshot(tmp_path, upgraded)[0]
+
+
 def test_unchanged_data_keeps_revision_and_generation_time(session_factory, sample_paper, tmp_path):
     from app.services.snapshot import export_snapshot
 
