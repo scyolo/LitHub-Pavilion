@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { paperLinks, parseFilters, percent, safeExternalUrl } from "./presentation.js";
+import { paperLinks, parseFilters, percent, publicationSortKey, safeExternalUrl } from "./presentation.js";
 
 describe("link-only presentation", () => {
   it.each(["javascript:alert(1)", "data:text/html,test", "https://localhost/a", "https://localhost./a", "https://printer.localdomain/a", "http://127.0.0.1/x", "https://10.0.0.1/a", "https://name:secret@example.org", "file:///x"])("rejects unsafe external URLs: %s", (url) => {
@@ -25,9 +25,20 @@ describe("link-only presentation", () => {
   it("handles zero totals honestly", () => expect(percent(0, 0)).toBe("—"));
 });
 
+describe("publication dates", () => {
+  it.each([
+    ["2026-03-02", 2024, "2026-03-02"], ["2024-02-29", 2025, "2024-02-29"],
+    ["2025-02-29", 2026, "2026-00-00"], ["2026-04-31", 2025, "2025-00-00"],
+    [null, 2026, "2026-00-00"], ["2026-03", 2024, "2024-00-00"],
+    ["2026-01-01T00:00:00Z", 2025, "2025-00-00"], [null, null, ""],
+  ])("validates %s with year %s", (publication_date, year, expected) => {
+    expect(publicationSortKey({ publication_date, year })).toBe(expected);
+  });
+});
+
 describe("filter URL state", () => {
   it("normalizes unsupported sort modes", () => {
-    expect(parseFilters("sort=unknown").sort).toBe("created_desc");
+    expect(parseFilters("sort=unknown").sort).toBe("publication_desc");
     expect(parseFilters("q=agent&sort=unknown").sort).toBe("relevance");
   });
   it.each(["abc", "NaN", "-1", "0", "1.5"])("normalizes invalid page %s", (page) => expect(parseFilters(`page=${page}`).page).toBe(1));

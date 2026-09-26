@@ -7,6 +7,7 @@ import { formatDate, paperHref, topic } from "./lib/presentation.js";
 import { APP_NAME, APP_DESCRIPTION } from "./lib/brand.js";
 import Icon from "./components/Icon.jsx";
 import SearchInput from "./components/SearchInput.jsx";
+import PageScroll from "./components/PageScroll.jsx";
 import { LoadingState } from "./components/States.jsx";
 
 const Home = lazy(() => import("./pages/Home.jsx"));
@@ -48,7 +49,7 @@ export default function App() {
     try { localStorage.setItem("papertracker-theme", theme); } catch { /* Storage may be disabled in private browsing. */ }
   }, [theme]);
   useEffect(() => { setMenuOpen(false); }, [location.pathname, location.search]);
-  useEffect(() => { document.title = `${pageName} · ${APP_NAME}`; window.scrollTo({ top: 0 }); }, [location.pathname, pageName]);
+  useEffect(() => { document.title = `${pageName} · ${APP_NAME}`; }, [pageName]);
   useEffect(() => {
     function onKey(event) {
       if (event.key === "/" && !["INPUT", "TEXTAREA", "SELECT"].includes(event.target.tagName) && !event.target.isContentEditable) {
@@ -62,6 +63,7 @@ export default function App() {
 
   return (
     <div className="app-shell">
+      <PageScroll />
       <a className="skip-link" href="#main-content" onClick={(event) => { event.preventDefault(); document.getElementById("main-content")?.focus(); }}>跳转至主要内容</a>
       {menuOpen && <button className="sidebar-backdrop" aria-label="关闭导航" onClick={() => setMenuOpen(false)} />}
       <aside className={`sidebar ${menuOpen ? "open" : ""}`} aria-label="主导航">

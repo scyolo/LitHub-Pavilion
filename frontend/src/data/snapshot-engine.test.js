@@ -52,6 +52,19 @@ describe("static reader query contract", () => {
     expect(() => api.trigger({ scope: "weekly" })).toThrow("只读");
     expect(api.crawlStatus()).toMatchObject({ mode: "snapshot", read_only: true, schedule: null });
   });
+  it("defaults to publication dates, falls back to year and keeps details out of list transfers", async () => {
+    const { createSnapshotEngine } = await import("./snapshot-engine.js");
+    const data = fixture();
+    data.papers[0].publication_date = "2026-05-01";
+    data.papers[1].publication_date = "2026-05-01";
+    data.papers[2].publication_date = "invalid";
+    const api = createSnapshotEngine(data);
+    expect(api.papers().items.map((p) => p.id)).toEqual([23, 11, 35]);
+    expect(api.papers({ sort: "created_desc" }).items.map((p) => p.id)).toEqual([35, 11, 23]);
+    expect(api.search({ q: "model", sort: "publication_desc" }).items.map((p) => p.id)).toEqual([23, 11, 35]);
+    expect(api.papers().items[0]).not.toHaveProperty("abstract");
+    expect(api.paper(23).abstract).toBe("A model planning system");
+  });
   it("rejects duplicate ids instead of silently replacing paper details", async () => {
     const { createSnapshotEngine } = await import("./snapshot-engine.js");
     const data = fixture();

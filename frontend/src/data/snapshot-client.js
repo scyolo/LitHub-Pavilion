@@ -4,7 +4,7 @@ let worker;
 let nextId = 0;
 const waiting = new Map();
 const listeners = new Set();
-let state = { status: "idle", revision: null, generated_at: null, paper_count: null, loaded: 0, total: 0, error: null };
+let state = { status: "idle", revision: null, generation: 0, verification: null, generated_at: null, paper_count: null, loaded: 0, total: 0, error: null };
 
 export function getSnapshotState() { return state; }
 export function subscribeSnapshot(listener) { listeners.add(listener); return () => listeners.delete(listener); }

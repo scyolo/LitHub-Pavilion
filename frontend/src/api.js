@@ -22,7 +22,7 @@ async function request(path, { params, signal, timeout = 8000, ...options } = {}
   signal?.addEventListener("abort", abort, { once: true });
   const timer = setTimeout(abort, timeout);
   try {
-    const response = await fetch(url, { signal: controller.signal, ...options });
+    const response = await fetch(url, { ...options, signal: controller.signal, mode: "same-origin", credentials: "same-origin", redirect: "error" });
     const text = await response.text();
     let body;
     try { body = text ? JSON.parse(text) : null; } catch {
@@ -43,6 +43,7 @@ async function request(path, { params, signal, timeout = 8000, ...options } = {}
 }
 
 const liveApi = {
+  latest: (params, signal) => request("/api/papers", { params: { ...params, page: 1, size: 5, sort: "publication_desc" }, signal }),
   papers: (params, signal) => request("/api/papers", { params, signal }),
   paper: (id, signal) => request("/api/papers/" + encodeURIComponent(id), { signal }),
   search: (params, signal) => request("/api/search", { params, signal }),
@@ -55,7 +56,7 @@ const liveApi = {
 };
 
 const staticApi = {
-  ...Object.fromEntries(["papers", "paper", "search", "dashboard", "venues", "crawlLogs"].map((method) => [method, (params, signal) => snapshotCall(method, params, signal)])),
+  ...Object.fromEntries(["latest", "papers", "paper", "search", "dashboard", "venues", "crawlLogs"].map((method) => [method, (params, signal) => snapshotCall(method, params, signal)])),
   ...Object.fromEntries(["directions", "stats", "crawlStatus"].map((method) => [method, (signal) => snapshotCall(method, undefined, signal)])),
 };
 

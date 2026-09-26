@@ -109,6 +109,17 @@ describe("data source selection", () => {
     expect(fetcher).toHaveBeenCalledTimes(1);
     expect(snapshotCall).not.toHaveBeenCalled();
   });
+  it("restricts live API requests to the current origin and rejects redirects", async () => {
+    const fetcher = vi.fn(async () => response({ items: [], total: 0 }));
+    vi.stubGlobal("fetch", fetcher);
+    const { api } = await setup("api");
+    await api.papers({ q: "https://attacker.example/", venue: "//attacker.example" });
+    const [url, options] = fetcher.mock.calls[0];
+    expect(url.origin).toBe(window.location.origin);
+    expect(url.pathname).toBe("/api/papers");
+    expect(url.searchParams.get("q")).toBe("https://attacker.example/");
+    expect(options).toMatchObject({ mode: "same-origin", redirect: "error", credentials: "same-origin" });
+  });
   it("keeps explicit API-only mode strict", async () => {
     vi.stubGlobal("fetch", vi.fn().mockRejectedValue(new TypeError("Failed to fetch")));
     const { api, snapshotCall } = await setup("api");

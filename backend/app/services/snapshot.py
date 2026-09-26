@@ -11,6 +11,7 @@ from pathlib import Path
 from app.api.filtering import PaperFilters, paper_query, venue_scope
 from app.api.serializers import abstract_text, paper_card, safe_http_url
 from app.models import Author, CrawlLog, Direction, Paper, PaperAuthor, PaperDirection, Venue
+from app.services.snapshot_overview import OverviewBuilder
 
 SCHEMA_VERSION = 1
 MAX_FILE_BYTES = 8 * 1024 * 1024
@@ -161,9 +162,7 @@ def export_snapshot(session_factory, directory: Path, *, chunk_size: int = 500,
         count = query.count()
         if not count and (not allow_empty or (previous and previous["paper_count"] > 0)):
             raise ValueError("Refusing to replace the website with an empty snapshot")
-        catalog_data = _json_bytes(_catalog(db))
-        catalog = _write_content(directory, "catalog", catalog_data)
-        total_bytes += len(catalog_data)
+        catalog_value = _catalog(db)
         last_id = 0
         while True:
             papers = query.filter(Paper.id > last_id).order_by(Paper.id).limit(chunk_size).all()
@@ -184,10 +183,24 @@ def export_snapshot(session_factory, directory: Path, *, chunk_size: int = 500,
                 chunks.append({**_write_content(directory, "papers", content), "count": len(group)})
             last_id = papers[-1].id
             db.expunge_all()
+    timestamp = (generated_at or datetime.now(timezone.utc)).astimezone(timezone.utc).isoformat()
+    if previous and count == previous["paper_count"] and chunks == previous["chunks"]:
+        old_catalog, _ = _load_entry(directory, previous["catalog"], "catalog")
+        if {key: value for key, value in old_catalog.items() if key != "overview"} == catalog_value:
+            timestamp = previous["generated_at"]
+    overview = OverviewBuilder(catalog_value, timestamp)
+    for entry in chunks:
+        rows, _ = _load_entry(directory, entry, "papers")
+        overview.add(rows)
+    catalog_value["overview"] = overview.result()
+    catalog_data = _json_bytes(catalog_value)
+    if total_bytes + len(catalog_data) > MAX_SNAPSHOT_BYTES:
+        raise ValueError("Snapshot exceeds the total size limit")
+    catalog = _write_content(directory, "catalog", catalog_data)
     manifest = {
         "schema_version": SCHEMA_VERSION, "paper_count": count,
         "catalog": catalog, "chunks": chunks,
-        "generated_at": (generated_at or datetime.now(timezone.utc)).astimezone(timezone.utc).isoformat(),
+        "generated_at": timestamp,
     }
     manifest["revision"] = manifest_revision(manifest)
     if previous and previous["revision"] == manifest["revision"]:
@@ -258,7 +271,7 @@ def _validate_contents(directory: Path, manifest: dict) -> None:
     if manifest_revision(manifest) != manifest["revision"]:
         raise ValueError("Snapshot revision does not match its contents")
     catalog, total_bytes = _load_entry(directory, manifest["catalog"], "catalog")
-    _check_keys(catalog, {"venues", "directions", "logs", "last_crawl"}, "catalog")
+    _check_keys(catalog, {"venues", "directions", "logs", "last_crawl"} | ({"overview"} if "overview" in catalog else set()), "catalog")
     if not all(isinstance(catalog[name], list) for name in ("venues", "directions", "logs")):
         raise ValueError("Invalid snapshot catalog lists")
     venues = {}
@@ -282,6 +295,7 @@ def _validate_contents(directory: Path, manifest: dict) -> None:
     if catalog["last_crawl"] is not None:
         _check_keys(catalog["last_crawl"], (_LOG_KEYS - {"task_type"}) | {"failed_units"}, "last collection")
     ids = set()
+    overview = OverviewBuilder(catalog, manifest["generated_at"]) if "overview" in catalog else None
     for entry in manifest["chunks"]:
         rows, length = _load_entry(directory, entry, "papers")
         total_bytes += length
@@ -314,6 +328,10 @@ def _validate_contents(directory: Path, manifest: dict) -> None:
                     raise ValueError("Invalid paper direction")
             if sorted(row["directions"]) != sorted(detail["code"] for detail in row["direction_details"]):
                 raise ValueError("Paper direction details do not match")
+        if overview is not None:
+            overview.add(rows)
+    if overview is not None and _json_bytes(catalog["overview"]) != _json_bytes(overview.result()):
+        raise ValueError("Public overview does not match the complete snapshot")
     if len(ids) != manifest["paper_count"]:
         raise ValueError("Snapshot paper count does not match")
 

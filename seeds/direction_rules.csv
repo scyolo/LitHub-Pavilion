@@ -19,7 +19,7 @@ cv,\bimage (classification|segmentation|recognition)\b,both,1.0,1
 cv,\b(semantic|instance) segmentation\b,both,1.0,1
 cv,\b3d reconstruction\b,both,1.0,1
 cv,\bvision transformers?\b,both,1.0,1
-multimodal,\bmulti[- ]?modal\b,both,1.0,1
+multimodal,\bmulti[- ]?modal\b(?!\s+(?:optim(?:iz|is)ation|functions?|problems?|landscapes?)),both,1.0,1
 multimodal,\bvision[- ]language\b,both,1.0,1
 multimodal,\bvisual question answering\b,both,1.0,1
 multimodal,\bimage[- ]text\b,both,1.0,1
@@ -41,3 +41,33 @@ alignment,\b(ai|llm|language model) safety\b,both,1.0,1
 alignment,\bpreference (alignment|optimization)\b,both,1.0,1
 alignment,\b(red[- ]teaming|jailbreak)\b,both,1.0,1
 alignment,\breward models?\b,both,1.0,1
+llm,\bchatgpt\b,both,1.0,1
+llm,\b(?:language|reasoning)[- ]models?\b,both,1.0,1
+llm,\b(?:prompt engineering|in[- ]context learning|chain[- ]of[- ]thought)\b,both,1.0,1
+specdec,\bdraft[- ](?:verification|verify)\b,both,1.0,1
+specdec,\bself[- ]drafting\b,both,1.0,1
+specdec,\bspeculative[- ](?:decoding|sampling|inference)\b,both,1.0,1
+agent,\b(?:gui|web|browser|coding|software|conversational|embodied)[- ]agents?\b,both,1.0,1
+agent,\b(?:language[- ]model|llm)[- ](?:based[- ])?agents?\b,both,1.0,1
+agent,\btool[- ](?:use|using|calling|augmented)\b,both,1.0,1
+cv,\bimage[- ](?:restoration|generation|synthesis|denoising|deblurring|enhancement|reconstruction|super[- ]resolution)\b,both,1.0,1
+cv,\b(?:monocular[- ])?depth[- ]estimation\b,both,1.0,1
+cv,\b(?:video|action)[- ](?:recognition|understanding|generation|segmentation)\b,both,1.0,1
+cv,\b(?:pose estimation|object tracking|optical flow|point clouds?|gaussian splatting|neural radiance fields?)\b,both,1.0,1
+cv,\b(?:medical image|image registration|visual recognition|semantic segmentation)\b,both,1.0,1
+multimodal,\baudio[- ]visual\b,both,1.0,1
+multimodal,\b(?:cross[- ]modal|multi[- ]modality|multi[- ]modalities)\b,both,1.0,1
+multimodal,\b(?:text[- ]to[- ]image|text[- ]to[- ]video|video[- ]language|audio[- ]language)\b,both,1.0,1
+rl,\b(?:offline|online|deep|model[- ]based|model[- ]free|safe|multi[- ]agent)[- ]rl\b,both,1.0,1
+rl,\b(?:q[- ]learning|temporal[- ]difference learning|reward shaping|policy optimization)\b,both,1.0,1
+nlp,\b(?:dialogue|dialog|document|abstractive|extractive|multi[- ]document)[- ]summari[sz]ation\b,both,1.0,1
+nlp,\btext[- ](?:classification|generation|understanding|simplification)\b,both,1.0,1
+nlp,\b(?:sentiment analysis|question answering|dialogue systems?|coreference resolution|semantic parsing|dependency parsing)\b,both,1.0,1
+nlp,\b(?:natural language inference|information extraction|event extraction|word embeddings?)\b,both,1.0,1
+retrieval,\bretrieval[- ]augmentation\b,both,1.0,1
+retrieval,\b(?:neural|sparse|document|passage|cross[- ]modal)[- ]retrieval\b,both,1.0,1
+retrieval,\b(?:learning[- ]to[- ]rank|document[- ]ranking|passage[- ]ranking|search[- ]ranking)\b,both,1.0,1
+alignment,\bjailbreak(?:ing|s|ers)?\b,both,1.0,1
+alignment,\bsafety[- ](?:evaluation|alignment|benchmark(?:s|ing)?|assessment|guardrails?)\b,both,1.0,1
+alignment,\b(?:prompt[- ]injection|harmful[- ](?:content|requests?|prompts?)|toxic[- ](?:content|generation))\b,both,1.0,1
+alignment,\b(?:human[- ]feedback|constitutional[- ]ai|preference[- ]learning)\b,both,1.0,1

@@ -114,11 +114,23 @@ export function paperHref(id, params = {}) {
   return `${id ? `/papers/${id}` : "/papers"}${qs.size ? `?${qs}` : ""}`;
 }
 
+export function publicationSortKey(paper) {
+  const value = paper.publication_date;
+  if (typeof value === "string" && /^[0-9]{4}-[0-9]{2}-[0-9]{2}$/.test(value)) {
+    const [year, month, day] = value.split("-").map(Number);
+    const leap = year % 4 === 0 && (year % 100 !== 0 || year % 400 === 0);
+    const days = [31, leap ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+    if (year > 0 && month >= 1 && month <= 12 && day >= 1 && day <= days[month - 1]) return value;
+  }
+  const year = typeof paper.year === "string" && /^[0-9]{4}$/.test(paper.year) ? Number(paper.year) : paper.year;
+  return Number.isInteger(year) && year >= 1 && year <= 9999 ? `${String(year).padStart(4, "0")}-00-00` : "";
+}
+
 export function parseFilters(search) {
   const params = new URLSearchParams(search);
   const page = Number(params.get("page"));
   const size = Number(params.get("size"));
-  const allowedSorts = ["relevance", "created_desc", "year_desc", "citation_desc"];
+  const allowedSorts = ["relevance", "publication_desc", "created_desc", "year_desc", "citation_desc"];
   const sort = params.get("sort");
   return {
     q: params.get("q") || "",
@@ -128,7 +140,7 @@ export function parseFilters(search) {
     venue: params.get("venue") || "",
     year: params.get("year") || "",
     access: ["oa", "official"].includes(params.get("access")) ? params.get("access") : "",
-    sort: allowedSorts.includes(sort) ? sort : (params.get("q") ? "relevance" : "created_desc"),
+    sort: allowedSorts.includes(sort) && (sort !== "relevance" || params.get("q")?.trim()) ? sort : (params.get("q")?.trim() ? "relevance" : "publication_desc"),
     page: Number.isSafeInteger(page) && page > 0 ? page : 1,
     size: [10, 20, 50].includes(size) ? size : 20,
   };

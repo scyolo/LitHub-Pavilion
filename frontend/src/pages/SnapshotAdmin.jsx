@@ -19,7 +19,7 @@ export default function SnapshotAdmin() {
   const data = dashboard.data;
   async function check() {
     setChecking(true);
-    try { setNotice(await api.refreshSnapshot() ? "已载入新的完整快照。" : "当前已是最新发布的快照。"); }
+    try { setNotice(await api.refreshSnapshot() ? (api.getSnapshotState().verification === "catalog" ? "新的首页摘要已校验，完整论文数据将在检索时加载。" : "已载入新的完整快照。") : "当前已是最新发布的快照。"); }
     catch { setNotice("暂时无法检查更新，已有快照仍可继续浏览。"); }
     finally { setChecking(false); }
   }

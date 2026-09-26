@@ -16,7 +16,7 @@ export default function DataSession({ children }) {
   const source = useSyncExternalStore(api.subscribeData, api.getDataState);
   const state = useSyncExternalStore(api.subscribeSnapshot, api.getSnapshotState);
   const snapshot = source.source === "snapshot";
-  const cacheKey = `${source.source}:${source.generation}:${snapshot ? state.revision || "initial" : "live"}`;
+  const cacheKey = `${source.source}:${source.generation}:${snapshot ? state.generation ?? state.revision ?? "initial" : "live"}`;
   const clients = useRef(new Map());
   if (!clients.current.has(cacheKey)) clients.current.set(cacheKey, newClient(snapshot));
   const current = clients.current.get(cacheKey);
@@ -42,8 +42,8 @@ export default function DataSession({ children }) {
   }, [snapshot]);
   const busy = state.status === "loading" || state.status === "updating";
   const message = state.error
-    ? `${state.revision ? "继续使用上次完整快照。" : ""}${state.error}`
-    : state.generated_at ? `${api.isAuto ? "后端未连接，正在浏览本地快照" : "公开快照"} · ${formatDate(state.generated_at, true)} · 浏览、检索和原文链接无需本地后端`
+    ? `${state.revision ? state.verification === "catalog" ? "首页摘要仍可浏览，完整检索数据尚未就绪。" : "继续使用上次完整快照。" : ""}${state.error}`
+    : state.generated_at ? `${api.isAuto ? "后端未连接，正在浏览本地快照" : "公开快照"} · ${formatDate(state.generated_at, true)} · ${busy && state.total > 1 ? `正在校验检索数据 ${state.loaded} / ${state.total}` : state.verification === "catalog" ? "首页摘要已校验，论文与全文检索按需加载" : "浏览、检索和原文链接无需本地后端"}`
       : `正在载入论文快照${state.total ? ` · ${state.loaded} / ${state.total} 个文件` : ""}，本地后端无需启动`;
   return <QueryClientProvider client={current}>
     {snapshot && <div className={`snapshot-banner ${state.error ? "snapshot-warning" : ""}`} role="status">

@@ -23,7 +23,7 @@ _bad_request = bad_request
 @router.get("")
 def list_papers(
     filters: PaperFilters = Depends(paper_filters),
-    sort: str = "created_desc",
+    sort: str = "publication_desc",
     page: int = 1,
     size: int = 20,
     db: Session = Depends(get_db),
@@ -31,7 +31,7 @@ def list_papers(
     if page < 1 or not 1 <= size <= 100:
         raise _bad_request("page>=1 且 1<=size<=100")
     if sort not in PAPER_SORTS:
-        raise _bad_request("sort 仅支持 year_desc|citation_desc|created_desc")
+        raise _bad_request("sort 仅支持 publication_desc|year_desc|citation_desc|created_desc")
     query = paper_query(db, filters)
     total = query.count()
     items = (
