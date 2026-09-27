@@ -1,12 +1,10 @@
-"""清洗工具测试：标题/作者/DOI/slug/摘要重建/相似度。"""
+"""清洗工具测试：标题、作者、DOI、arXiv 标识和摘要重建。"""
 from app.cleaning import (
     clean_author_name,
     clean_title,
     normalize_arxiv_id,
     normalize_doi,
     rebuild_abstract,
-    similar_titles,
-    title_slug,
 )
 
 
@@ -32,23 +30,6 @@ def test_normalize_arxiv_id():
     assert normalize_arxiv_id("https://arxiv.org/abs/2401.12345v2") == "2401.12345"
     assert normalize_arxiv_id("https://arxiv.org/pdf/2211.11639.pdf") == "2211.11639"
     assert normalize_arxiv_id("not-an-id") is None
-
-
-def test_slug_rules():
-    # 截前 20 字符（设计方案 4.3）
-    assert title_slug("Fast Inference via Speculative Decoding!") == "fast-inference-via-s"
-    assert title_slug("  Hello, World!! ") == "hello-world"
-    # 纯非 ASCII → paper
-    assert title_slug("大语言模型") == "paper"
-
-
-def test_similar_titles():
-    assert similar_titles("fast inference llm", "fast inference llm")
-    assert not similar_titles("completely different", "another thing entirely")
-    # 归一化编辑距离 0.95 阈值：仅差末尾一个字符
-    a = "speculative decoding for fast language models"
-    b = "speculative decoding for fast language model"
-    assert similar_titles(a, b)
 
 
 def test_rebuild_abstract():

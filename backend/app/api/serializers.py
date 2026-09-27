@@ -9,7 +9,6 @@ from urllib.parse import quote, unquote, urlsplit, urlunsplit
 
 from sqlalchemy.orm import Session
 
-from app.config import settings
 from app.models import Author, Direction, Paper, PaperAuthor, PaperDirection
 
 _UNSAFE_URL = re.compile(r"[\s\\\x00-\x1f\x7f<>\"]")
@@ -157,10 +156,6 @@ def paper_links(paper: Paper) -> dict[str, str | None]:
         ):
             official = "https://dblp.org/rec/" + key
     return {"official_url": official, "oa_url": oa_link(paper.oa_url, paper.arxiv_id)}
-
-
-def paper_mode() -> str:
-    return "downloads" if settings.pdf_download_enabled else "links"
 
 
 def directions_for(db: Session, paper_ids: list[int]) -> dict[int, list[str]]:

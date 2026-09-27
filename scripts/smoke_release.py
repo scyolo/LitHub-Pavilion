@@ -31,7 +31,11 @@ def main():
     assert dashboard["configured_venues"] == 28
     assert len(dashboard["directions"]) == 9
     status, _, body = get("/api/crawl/status")
-    assert status == 200 and json.loads(body)["mode"] == "links"
+    assert status == 200
+    crawl = json.loads(body)
+    assert crawl["mode"] == "links" and "pdf_download_enabled" not in crawl
+    status, _, body = get("/api/papers/1/pdf")
+    assert status == 404
     status, _, body = get("/api/search?q=speculative")
     assert status == 200 and json.loads(body)["total"] == 0
     status, _, body = get("/api/venues")

@@ -9,7 +9,7 @@ import { ErrorState, LoadingState, SectionTitle } from "../components/States.jsx
 import SnapshotAdmin from "./SnapshotAdmin.jsx";
 
 const STATES = { running: "运行中", interrupted: "未正常结束", success: "已完成", partial: "部分完成", failed: "失败" };
-const TYPES = { weekly: "周增量", backfill: "历史回填", reclassify: "方向重算", monthly: "引用更新", pdf_backlog: "旧版 PDF 任务" };
+const TYPES = { weekly: "周增量", backfill: "历史回填", reclassify: "方向重算", monthly: "引用更新" };
 const SNAPSHOT_STATES = { disabled: "未启用", pending: "等待导出", exporting: "正在导出", ready: "快照已就绪", waiting_for_data: "等待首次采集", failed: "导出失败" };
 const PUBLISH_STATES = { disabled: "未启用发布", pending: "等待发布", needs_credentials: "待配置令牌", publishing: "正在上传", dispatched: "已触发构建，待确认上线", deployed: "已确认上线", failed: "发布失败，自动重试" };
 

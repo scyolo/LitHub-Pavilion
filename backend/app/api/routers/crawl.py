@@ -6,8 +6,6 @@ from sqlalchemy.orm import Session
 
 from app.api.deps import get_db
 from app.api.schemas import CrawlTriggerRequest
-from app.api.serializers import paper_mode
-from app.config import settings
 from app.models import CrawlLog
 
 router = APIRouter(prefix="/api/crawl", tags=["crawl"])
@@ -19,11 +17,6 @@ async def trigger(body: CrawlTriggerRequest, request: Request):
     run_id = "c-" + uuid.uuid4().hex[:12]
     if body.scope == "weekly":
         accepted = await pipeline.submit_weekly(run_id=run_id)
-    elif body.scope == "pdf":
-        raise HTTPException(
-            status_code=400,
-            detail={"code": "PDF_DOWNLOAD_DISABLED", "message": "当前版本仅保存官方和开放链接，不支持批量下载 PDF"},
-        )
     else:
         years = body.years or [2023, 2024, 2025]
         accepted = await pipeline.submit_backfill(years=years, run_id=run_id)
@@ -58,7 +51,7 @@ def _schedule(request: Request) -> dict | None:
 
     return {
         "timezone": str(scheduler.timezone),
-        "next_crawl_at": next_at({"weekly_crawl", "weekly_crawl_peak"}),
+        "next_crawl_at": next_at({"weekly_crawl"}),
         "next_links_at": next_at({"links_backfill"}),
     }
 
@@ -73,8 +66,7 @@ def status(request: Request):
         "progress": pipeline.status.progress,
         "last_error": pipeline.status.last_error,
         "schedule": _schedule(request),
-        "pdf_download_enabled": settings.pdf_download_enabled,
-        "mode": paper_mode(),
+        "mode": "links",
         "site_sync": request.app.state.site_sync.status(),
     }
 

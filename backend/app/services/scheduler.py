@@ -1,7 +1,6 @@
-"""调度器（4.1）：单进程 AsyncIOScheduler，cron 任务与状态。
+"""单进程 AsyncIOScheduler，串行提交元数据、链接维护和引用更新任务。
 
-全部任务经 pipeline.submit_* 原子占位提交（P1-6）：定时任务与手动触发/彼此重叠时，
-后到者等待已有任务完成并记 WARNING，不丢弃该次提交。
+定时任务与手动任务重叠时，等待已有任务结束，不丢弃该次提交。
 """
 import asyncio
 import logging
@@ -35,28 +34,16 @@ def start_scheduler(pipeline: CrawlPipeline) -> AsyncIOScheduler:
         coalesce=True,
         misfire_grace_time=86400,
     )
-    # 每日 05:00 PDF 补下载（仅下载模式注册；链接模式下不注册）
-    if settings.pdf_download_enabled:
-        scheduler.add_job(
-            pipeline.submit_pdf_backlog,
-            CronTrigger(hour=5, minute=0, timezone=settings.timezone),
-            id="pdf_backlog",
-            max_instances=1,
-            coalesce=True,
-            misfire_grace_time=86400,
-        )
-    else:
-        # 链接模式自愈：每周二 06:30（紧跟周一采集）用 OpenAlex 预算补 oa_url，
-        # 预算不足时下周继续，直至覆盖完整（用户要求每周一次，非每日）
-        scheduler.add_job(
-            submit_when_idle,
-            CronTrigger(day_of_week="tue", hour=6, minute=30, timezone=settings.timezone),
-            args=[pipeline.submit_links_backfill],
-            id="links_backfill",
-            max_instances=1,
-            coalesce=True,
-            misfire_grace_time=86400,
-        )
+    # 上游预算不足时保留链接维护断点，下一周继续。
+    scheduler.add_job(
+        submit_when_idle,
+        CronTrigger(day_of_week="tue", hour=6, minute=30, timezone=settings.timezone),
+        args=[pipeline.submit_links_backfill],
+        id="links_backfill",
+        max_instances=1,
+        coalesce=True,
+        misfire_grace_time=86400,
+    )
     # 每月 1 日 06:00：引用数分级刷新（F-022）
     scheduler.add_job(
         submit_when_idle,

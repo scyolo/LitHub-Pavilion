@@ -4,7 +4,7 @@ from unittest.mock import AsyncMock
 
 import pytest
 
-from app.security import PdfUrlRejected, UrlRejected, _check_resolved_ips, public_url_host
+from app.security import UrlRejected, _check_resolved_ips, public_url_host
 
 
 @pytest.mark.parametrize("url", [
@@ -21,7 +21,7 @@ def test_outbound_url_rejects_non_public_targets(url):
 @pytest.mark.parametrize("address", ["127.0.0.1", "10.0.0.1", "100.64.0.1", "169.254.169.254", "::1", "fc00::1", "224.0.0.1"])
 def test_actual_dns_resolution_rejects_every_private_address(monkeypatch, address):
     monkeypatch.setattr(socket, "getaddrinfo", lambda *a, **k: [(socket.AF_INET, socket.SOCK_STREAM, 6, "", (address, 443))])
-    with pytest.raises(PdfUrlRejected):
+    with pytest.raises(UrlRejected):
         _check_resolved_ips("example.org")
 
 

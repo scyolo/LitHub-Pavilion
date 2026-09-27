@@ -1,48 +1,52 @@
-"""SSRF 校验器测试（6.4）：https-only、白名单、DNS 解析后拒绝私网/保留地址。"""
+"""Public-host/DNS checks and safe paper links use no live network access."""
+import socket
+
 import pytest
 
-from app.security import PdfUrlRejected, validate_pdf_url
-
-WHITELIST = {"arxiv.org", "export.arxiv.org", "aclanthology.org"}
+from app.security import UrlRejected, _check_resolved_ips, public_url_host
 
 
-@pytest.mark.asyncio
-async def test_rejects_http_scheme():
-    with pytest.raises(PdfUrlRejected):
-        await validate_pdf_url("http://arxiv.org/pdf/2401.12345", WHITELIST)
+@pytest.mark.parametrize("url", [
+    "http://api.openalex.org/works", "https://localhost:8000/private", "", "https://10.0.0.5/",
+])
+def test_remote_sources_require_public_https_urls(url):
+    with pytest.raises(UrlRejected):
+        public_url_host(url)
 
 
-@pytest.mark.asyncio
-async def test_rejects_non_whitelist_host():
-    with pytest.raises(PdfUrlRejected):
-        await validate_pdf_url("https://evil.example.com/paper.pdf", WHITELIST)
+def test_public_host_and_deduplicated_dns_answers(monkeypatch):
+    monkeypatch.setattr(socket, "getaddrinfo", lambda *args, **kwargs: [
+        (socket.AF_INET, socket.SOCK_STREAM, 6, "", ("93.184.216.34", 443)),
+        (socket.AF_INET, socket.SOCK_STREAM, 6, "", ("93.184.216.34", 443)),
+    ])
+    host = public_url_host("https://api.openalex.org/works")
+    assert host == "api.openalex.org"
+    assert _check_resolved_ips(host) == ["93.184.216.34"]
 
 
-@pytest.mark.asyncio
-async def test_allows_whitelisted_host(monkeypatch):
-    import app.security as sec
-
-    monkeypatch.setattr(sec, "_check_resolved_ips", lambda host: ["93.184.216.34"])
-    host = await validate_pdf_url("https://export.arxiv.org/pdf/2401.12345", WHITELIST)
-    assert host == "export.arxiv.org"
-
-
-@pytest.mark.asyncio
-@pytest.mark.parametrize("bad_ip", ["127.0.0.1", "169.254.169.254", "10.0.0.5", "192.168.1.1", "::1"])
-async def test_rejects_private_and_reserved_resolution(monkeypatch, bad_ip):
-    import app.security as sec
-
-    monkeypatch.setattr(sec, "_check_resolved_ips", lambda host: (_ for _ in ()).throw(PdfUrlRejected(f"解析到禁止地址 {bad_ip}")))
-    with pytest.raises(PdfUrlRejected):
-        await validate_pdf_url("https://arxiv.org/pdf/2401.12345", WHITELIST)
+@pytest.mark.parametrize("bad_ip", ["127.0.0.1", "169.254.169.254", "10.0.0.5", "192.168.1.1", "::1", "198.18.0.1", "::ffff:127.0.0.1"])
+def test_mixed_public_private_dns_answers_are_rejected(monkeypatch, bad_ip):
+    monkeypatch.setattr(socket, "getaddrinfo", lambda *args, **kwargs: [
+        (socket.AF_INET, socket.SOCK_STREAM, 6, "", ("93.184.216.34", 443)),
+        (socket.AF_INET, socket.SOCK_STREAM, 6, "", (bad_ip, 443)),
+    ])
+    with pytest.raises(UrlRejected):
+        _check_resolved_ips("api.openalex.org")
 
 
-@pytest.mark.asyncio
-async def test_rejects_localhost_and_empty():
-    with pytest.raises(PdfUrlRejected):
-        await validate_pdf_url("https://localhost:8000/secret.pdf", WHITELIST)
-    with pytest.raises(PdfUrlRejected):
-        await validate_pdf_url(None, WHITELIST)
+def test_empty_dns_answer_is_rejected(monkeypatch):
+    monkeypatch.setattr(socket, "getaddrinfo", lambda *args, **kwargs: [])
+    with pytest.raises(UrlRejected):
+        _check_resolved_ips("api.openalex.org")
+
+
+def test_dns_failure_is_rejected(monkeypatch):
+    def fail(*args, **kwargs):
+        raise socket.gaierror("not resolved")
+
+    monkeypatch.setattr(socket, "getaddrinfo", fail)
+    with pytest.raises(UrlRejected):
+        _check_resolved_ips("api.openalex.org")
 
 
 @pytest.mark.parametrize("url", [

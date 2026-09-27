@@ -7,7 +7,8 @@ on:
     branches: [main]
     paths:
       - 'frontend/**'
-      - 'backend/app/services/snapshot.py'
+      - 'backend/app/**'
+      - 'backend/requirements*.txt'
       - 'scripts/prepare_pages.py'
       - '.github/workflows/pages.yml'
 permissions:

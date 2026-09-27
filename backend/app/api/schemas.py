@@ -10,7 +10,7 @@ Year = Annotated[int, Field(ge=2023, le=2100, strict=True)]
 
 class CrawlTriggerRequest(BaseModel):
     model_config = ConfigDict(extra="forbid")
-    scope: Literal["weekly", "backfill", "pdf"]
+    scope: Literal["weekly", "backfill"]
     years: list[Year] | None = Field(default=None, min_length=1, max_length=20)
 
     @model_validator(mode="after")

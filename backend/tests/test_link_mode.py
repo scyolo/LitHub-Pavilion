@@ -1,17 +1,21 @@
-"""链接模式（v1.3 默认）行为测试：入库即 closed+oa_url、oa_url 只填不覆盖、OA 链接提取、统计计数。"""
-from app.config import settings
+"""链接维护行为测试：新记录仅存链接、历史状态自愈、OA 补全和统计。"""
+from types import SimpleNamespace
+
+import httpx
+import pytest
+
 from app.services.enrichment import set_oa_url_if_empty
 
 
-def test_new_paper_is_closed_with_oa_url(db, sample_venue, monkeypatch):
-    """链接模式：新入库论文直接 closed（链接态），OA 链接随记录写入。"""
-    monkeypatch.setattr(settings, "pdf_download_enabled", False)
+@pytest.mark.parametrize("source,venue_key", [("dblp", "conf/nips/lm2025"), ("openalex", "W123")])
+def test_new_paper_is_closed_with_oa_url(db, sample_venue, source, venue_key):
+    """所有来源的新论文都只保存链接，不依赖下载模式配置。"""
     from app.collectors.dblp import RawPaper
     from app.services.pipeline import upsert_paper
 
     raw = RawPaper(
-        source="openalex",
-        venue_key="W123",
+        source=source,
+        venue_key=venue_key,
         title="Link Mode Paper",
         year=2025,
         authors=["Adam Zhao"],
@@ -22,32 +26,20 @@ def test_new_paper_is_closed_with_oa_url(db, sample_venue, monkeypatch):
     db.commit()
     assert created
     assert paper.pdf_status == "closed"
+    assert paper.pdf_path is None
+    assert paper.pdf_source is None
     assert paper.oa_url == "https://arxiv.org/pdf/2501.00001"
     assert paper.official_url == "https://doi.org/10.1/lm.1"
 
 
-def test_download_mode_new_paper_is_pending(db, sample_venue, monkeypatch):
-    """下载模式（开关打开）：新论文仍走 pending 等待下载管线。"""
-    monkeypatch.setattr(settings, "pdf_download_enabled", True)
+@pytest.mark.parametrize("previous_status", ["pending", "failed"])
+def test_ingest_selfheals_pending_and_failed_rows(db, sample_venue, sample_paper, previous_status):
+    """存量待下载/失败状态在元数据更新时自愈，无需切换模式。"""
     from app.collectors.dblp import RawPaper
     from app.services.pipeline import upsert_paper
 
-    raw = RawPaper(
-        source="dblp", venue_key="conf/nips/lm2025", title="DL Mode Paper",
-        year=2025, authors=["Adam Zhao"], doi="10.1/dl.1",
-    )
-    paper, _ = upsert_paper(db, raw, sample_venue)
+    sample_paper.pdf_status = previous_status
     db.commit()
-    assert paper.pdf_status == "pending"
-
-
-def test_link_mode_selfheals_pending_rows(db, sample_venue, sample_paper, monkeypatch):
-    """链接模式：存量 pending 在被触碰时自愈为 closed。"""
-    monkeypatch.setattr(settings, "pdf_download_enabled", False)
-    from app.collectors.dblp import RawPaper
-    from app.services.pipeline import upsert_paper
-
-    assert sample_paper.pdf_status == "pending"
     raw = RawPaper(
         source="dblp", venue_key="conf/nips/test2024fast", title="Fast Inference via Speculative Decoding",
         year=2024, authors=["Adam Zhao"], doi="10.5555/test.001",
@@ -56,6 +48,50 @@ def test_link_mode_selfheals_pending_rows(db, sample_venue, sample_paper, monkey
     db.commit()
     assert created is False
     assert paper.pdf_status == "closed"
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("source_url,expected", [
+    (" HTTPS://Repository.Example.org/paper.pdf ", "https://repository.example.org/paper.pdf"),
+    ("javascript:alert(1)", None),
+    ("http://127.0.0.1/private.pdf", None),
+    ("https://user:password@repository.example.org/paper.pdf", None),
+])
+async def test_link_maintenance_needs_only_current_settings_and_sanitizes_sources(
+    db, session_factory, sample_paper, monkeypatch, source_url, expected,
+):
+    from app.services import links_backfill
+
+    sample_paper.pdf_status = "failed"
+    sample_paper.openalex_id = "W123"
+    db.commit()
+    requests = []
+
+    def respond(request):
+        requests.append(request)
+        return httpx.Response(200, json={"results": [{
+            "id": "https://openalex.org/W123",
+            "best_oa_location": {"pdf_url": source_url},
+        }]})
+
+    monkeypatch.setattr(links_backfill, "settings", SimpleNamespace(
+        openalex_rps=2.0, links_max_batches=1, contact_email="",
+    ))
+    monkeypatch.setattr(links_backfill, "make_client", lambda: httpx.AsyncClient(transport=httpx.MockTransport(respond)))
+    result = await links_backfill.run_links_backfill(session_factory)
+
+    assert len(requests) == 1
+    assert requests[0].url.host == "api.openalex.org"
+    assert requests[0].url.params["filter"] == "openalex:W123"
+    assert result["flipped"] == 1
+    assert result["openalex_filled"] == int(expected is not None)
+    assert result["remaining"] == int(expected is None)
+    assert result["paused"] is False
+    db.refresh(sample_paper)
+    assert sample_paper.pdf_status == "closed"
+    assert sample_paper.oa_url == expected
+    assert sample_paper.pdf_path is None
+    assert sample_paper.pdf_source is None
 
 
 def test_set_oa_url_if_empty_first_wins(db, sample_paper):

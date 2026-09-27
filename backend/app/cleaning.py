@@ -1,7 +1,6 @@
-"""数据清洗工具：标题归一化、作者名规范化、DOI 规范化、slug、摘要重建。"""
+"""数据清洗工具：标题归一化、作者名规范化、DOI 规范化和摘要重建。"""
 import re
 import unicodedata
-from difflib import SequenceMatcher
 
 _WS = re.compile(r"\s+")
 _NON_ALNUM = re.compile(r"[^a-z0-9]+")
@@ -101,25 +100,6 @@ def normalize_arxiv_id(raw: str | None) -> str | None:
     if not m:
         return None
     return m.group(1)
-
-
-def title_slug(title: str) -> str:
-    """4.3 slug 规则：NFKD→ascii→lower→非 [a-z0-9] 段→'-'→合并→截 20→去尾 '-'。"""
-    text = unicodedata.normalize("NFKD", title or "")
-    text = "".join(ch for ch in text if not unicodedata.combining(ch))
-    text = _NON_ALNUM.sub("-", text.lower())
-    text = re.sub(r"-+", "-", text).strip("-")
-    text = text[:20].rstrip("-")
-    return text or "paper"
-
-
-def similar_titles(a_norm: str, b_norm: str, threshold: float = 0.95) -> bool:
-    """4.2 同篇校验：norm 相等或归一化编辑距离相似度 ≥ threshold。"""
-    if not a_norm or not b_norm:
-        return False
-    if a_norm == b_norm:
-        return True
-    return SequenceMatcher(None, a_norm, b_norm).ratio() >= threshold
 
 
 def rebuild_abstract(inv_index: dict[str, list[int]] | None) -> str | None:

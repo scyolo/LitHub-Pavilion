@@ -1,6 +1,6 @@
 # Contributor checks
 
-Use Python 3.11/3.12 and Node 22. Install backend development requirements in a virtual environment and run `npm ci` in `frontend/`.
+Use Python 3.11/3.12 and Node 22. Install backend development requirements in a virtual environment and run `npm ci` in `frontend/`. [ARCHITECTURE.md](ARCHITECTURE.md) defines the single supported website: local metadata collection and management, with a backend-free public snapshot reader. Do not reintroduce PDF download/file-serving paths or a second frontend.
 
 Before changing behavior:
 1. Add a regression test in a temporary database or use `httpx.MockTransport`. Do not depend on a live upstream API in unit tests.

@@ -10,7 +10,7 @@ from sqlalchemy.engine import make_url
 from sqlalchemy.orm import Session
 
 from app.config import settings
-from app.models import Base, Direction, DirectionRule, FTS_DDL, PdfWhitelist, Venue
+from app.models import Base, Direction, DirectionRule, FTS_DDL, Venue
 
 
 def _rows(directory: Path, filename: str):
@@ -42,9 +42,6 @@ def seed_missing(session: Session, directory: Path) -> None:
         exists = session.query(DirectionRule.id).filter(DirectionRule.direction_id == direction_id, DirectionRule.keyword == row["keyword"]).first()
         if not exists:
             session.add(DirectionRule(direction_id=direction_id, keyword=row["keyword"], field=row["field"], weight=float(row["weight"]), enabled=int(row["enabled"])))
-    for row in _rows(directory, "pdf_whitelist.csv"):
-        if session.get(PdfWhitelist, row["host"]) is None:
-            session.add(PdfWhitelist(host=row["host"], owner=row["owner"], note=row["note"], enabled=1))
     session.commit()
 
 

@@ -20,19 +20,21 @@ def test_real_abstract_is_preserved():
     assert abstract_text("提出一种图像分割方法。") == "提出一种图像分割方法。"
 
 
-def test_adjacent_topics_extend_without_replacing_existing_labels(db, sample_paper, sample_direction):
+def test_current_topics_reindex_preserves_manual_labels_and_is_idempotent(db, sample_paper, sample_direction):
+    from app.config import settings
     from app.models import Direction, PaperDirection
-    from scripts.extend_topics import extend_topics
+    from app.services.topic_index import reindex_topics
 
     sample_paper.title = "Multimodal Reinforcement Learning with Vision-Language Models"
     sample_paper.abstract = "We study reinforcement learning and multimodal reasoning."
     db.add(PaperDirection(paper_id=sample_paper.id, direction_id=sample_direction.id, score=0, source="manual"))
     db.commit()
-    result = extend_topics(db)
+    result = reindex_topics(db, settings.seeds_dir)
     assert result["added_labels"]["multimodal"] == 1
     assert result["added_labels"]["rl"] == 1
     manual = db.get(PaperDirection, (sample_paper.id, sample_direction.id))
     assert manual.source == "manual"
-    second = extend_topics(db)
+    second = reindex_topics(db, settings.seeds_dir)
     assert sum(second["added_labels"].values()) == 0
-    assert db.query(Direction).count() == 7
+    assert sum(second["removed_labels"].values()) == 0
+    assert db.query(Direction).count() == 9

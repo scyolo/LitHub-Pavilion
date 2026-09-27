@@ -20,11 +20,9 @@ def _best_oa(work: dict) -> str | None:
 
 
 async def run_links_backfill(session_factory) -> dict:
-    if settings.pdf_download_enabled:
-        raise ValueError("Link backfill requires link-only mode")
-    stats = {"flipped": 0, "pdf_removed": 0, "arxiv_filled": 0, "openalex_filled": 0, "paused": False}
+    stats = {"flipped": 0, "arxiv_filled": 0, "openalex_filled": 0, "paused": False}
     with session_factory() as session:
-        # Legacy downloaded rows and their paths stay intact; switching mode is not deletion consent.
+        # Historical archive metadata remains intact; this job only maintains external links.
         rows = session.query(Paper).filter(Paper.pdf_status.in_(("pending", "failed"))).all()
         for paper in rows:
             paper.pdf_status = "closed"

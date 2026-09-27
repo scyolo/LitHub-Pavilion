@@ -1,12 +1,11 @@
 """API 行为测试：列表筛选、详情、错误信封、POST 201+Location、检索。"""
 from datetime import datetime, timedelta, timezone
 from types import SimpleNamespace
-from unittest.mock import Mock
+from unittest.mock import AsyncMock, Mock
 
 import pytest
 from sqlalchemy import event
 
-from app.config import settings
 from app.models import CrawlLog
 
 
@@ -40,10 +39,13 @@ def test_detail_contains_all_fields(client, sample_paper):
     assert resp.status_code == 200
     body = resp.json()
     for key in (
-        "title", "abstract", "authors", "venue", "directions", "pdf_status",
-        "pdf_url", "oa_url", "official_url", "venue_confirmed", "publication_date",
+        "title", "abstract", "authors", "venue", "directions", "pdf_status", "pdf_source",
+        "oa_url", "official_url", "venue_confirmed", "publication_date", "mode",
     ):
         assert key in body
+    assert "pdf_url" not in body
+    assert "pdf_path" not in body
+    assert body["mode"] == "links"
     assert body["venue"]["abbr"] == "NeurIPS"
 
 
@@ -59,6 +61,13 @@ def test_create_paper_returns_201_with_location(client, sample_venue):
     )
     assert resp.status_code == 201
     assert resp.headers["location"] == f"/api/papers/{resp.json()['id']}"
+    created = client.get(resp.headers["location"]).json()
+    assert created["pdf_status"] == "closed"
+    assert created["pdf_source"] is None
+    assert created["mode"] == "links"
+    assert created["official_url"] == "https://doi.org/10.5555/manual.001"
+    assert created["venue_confirmed"] == 0
+    assert "pdf_url" not in created
     # 重复 dblp_key/doi → 409
     resp2 = client.post(
         "/api/papers",
@@ -169,6 +178,7 @@ def test_list_search_dashboard_share_filtered_scope(client, api_catalog, filters
 @pytest.mark.parametrize("params", [
     {"level": "C"}, {"level": ""}, {"type": "workshop"}, {"type": ""},
     {"access": "downloaded"}, {"access": ""}, {"year": "24"},
+    {"access": "oa", "pdf_status": "bad"}, {"access": "downloaded", "pdf_status": "downloaded"},
     {"year": "02024"}, {"year": "2024.0"}, {"direction": ",llm"},
 ])
 def test_filter_validation_is_consistently_400(client, params):
@@ -196,12 +206,21 @@ def test_list_and_search_reject_invalid_legacy_parameters(client, params):
         assert client.get(path, params={**params, "q": "radar"}).status_code == 400
 
 
-def test_list_search_keep_pdf_status_filter(client, api_catalog):
+@pytest.mark.parametrize("path", ["/api/papers", "/api/search", "/api/stats/dashboard"])
+def test_filters_expose_oa_and_archive_status_but_no_file_availability(client, path):
+    operation = client.get("/openapi.json").json()["paths"][path]["get"]
+    query_parameters = {parameter["name"] for parameter in operation["parameters"] if parameter["in"] == "query"}
+    assert {"access", "pdf_status"} <= query_parameters
+    assert "has_pdf" not in query_parameters
+
+
+@pytest.mark.parametrize("access,expected_ids", [("official", [71]), ("oa", [])])
+def test_list_search_keep_pdf_status_filter(client, api_catalog, access, expected_ids):
     for path in ("/api/papers", "/api/search"):
-        response = client.get(path, params={"q": "radar", "pdf_status": "downloaded", "access": "official"})
+        response = client.get(path, params={"q": "radar", "pdf_status": "downloaded", "access": access})
         assert response.status_code == 200
-        assert response.json()["total"] == 1
-        assert response.json()["items"][0]["id"] == 71
+        assert response.json()["total"] == len(expected_ids)
+        assert [item["id"] for item in response.json()["items"]] == expected_ids
 
 
 @pytest.mark.parametrize("sort,expected", [
@@ -313,18 +332,69 @@ def test_cards_share_new_fields_and_preserve_legacy_fields(client, api_catalog):
     assert detail["publication_date"] is None
 
 
-@pytest.mark.parametrize("enabled,mode", [(False, "links"), (True, "downloads")])
-def test_detail_and_status_report_configured_mode(client, sample_paper, monkeypatch, enabled, mode):
-    monkeypatch.setattr(settings, "pdf_download_enabled", enabled)
-    assert client.get(f"/api/papers/{sample_paper.id}").json()["mode"] == mode
-    status = client.get("/api/crawl/status").json()
-    assert status["mode"] == mode
-    assert status["pdf_download_enabled"] is enabled
+def test_detail_and_status_report_only_link_mode(client, sample_paper):
+    detail = client.get(f"/api/papers/{sample_paper.id}")
+    assert detail.status_code == 200
+    assert detail.json()["mode"] == "links"
+    response = client.get("/api/crawl/status")
+    assert response.status_code == 200
+    status = response.json()
+    assert status["mode"] == "links"
+    assert "pdf_download_enabled" not in status
     assert status["schedule"] is None
-    assert {"running", "run_id", "current", "progress", "last_error"} <= status.keys()
+    assert {"running", "run_id", "current", "progress", "last_error", "site_sync"} <= status.keys()
 
 
-def test_crawl_schedule_reads_registered_jobs_without_mutation(client, monkeypatch):
+def test_pdf_download_scope_is_not_advertised(client):
+    schema = client.get("/openapi.json").json()["components"]["schemas"]["CrawlTriggerRequest"]
+    assert schema["properties"]["scope"]["enum"] == ["weekly", "backfill"]
+
+
+@pytest.mark.parametrize("payload", [{"scope": "pdf"}, {"scope": "pdf", "years": [2025]}])
+def test_pdf_download_scope_is_rejected_before_submitting_any_task(client, monkeypatch, payload):
+    pipeline = SimpleNamespace(submit_weekly=AsyncMock(), submit_backfill=AsyncMock())
+    monkeypatch.setattr(client.app.state, "pipeline", pipeline)
+    response = client.post("/api/crawl/trigger", json=payload)
+    assert response.status_code == 400
+    error = response.json()["error"]
+    assert error["code"] == "INVALID_PARAM"
+    assert any(detail["field"] == "body.scope" for detail in error["details"])
+    pipeline.submit_weekly.assert_not_awaited()
+    pipeline.submit_backfill.assert_not_awaited()
+
+
+@pytest.mark.parametrize("accepted", [True, False])
+@pytest.mark.parametrize("payload,method,extra", [
+    ({"scope": "weekly"}, "submit_weekly", {}),
+    ({"scope": "backfill"}, "submit_backfill", {"years": [2023, 2024, 2025]}),
+    ({"scope": "backfill", "years": [2025, 2023]}, "submit_backfill", {"years": [2023, 2025]}),
+])
+def test_supported_crawl_scopes_keep_submission_and_busy_contract(client, monkeypatch, accepted, payload, method, extra):
+    pipeline = SimpleNamespace(
+        submit_weekly=AsyncMock(return_value=accepted),
+        submit_backfill=AsyncMock(return_value=accepted),
+    )
+    monkeypatch.setattr(client.app.state, "pipeline", pipeline)
+    response = client.post("/api/crawl/trigger", json=payload)
+    submitted = getattr(pipeline, method)
+    submitted.assert_awaited_once()
+    call = submitted.await_args
+    assert call.args == ()
+    assert set(call.kwargs) == {"run_id", *extra}
+    assert call.kwargs["run_id"].startswith("c-")
+    for key, value in extra.items():
+        assert call.kwargs[key] == value
+    other = pipeline.submit_backfill if method == "submit_weekly" else pipeline.submit_weekly
+    other.assert_not_awaited()
+    if accepted:
+        assert response.status_code == 202
+        assert response.json() == {"run_id": call.kwargs["run_id"]}
+    else:
+        assert response.status_code == 409
+        assert response.json()["error"]["code"] == "ALREADY_RUNNING"
+
+
+def test_crawl_schedule_reads_current_jobs_and_ignores_retired_jobs(client, monkeypatch):
     now = datetime.now(timezone.utc)
     peak = now + timedelta(days=1)
     regular = now + timedelta(days=4)
@@ -339,7 +409,7 @@ def test_crawl_schedule_reads_registered_jobs_without_mutation(client, monkeypat
     ]
     monkeypatch.setattr(client.app.state, "scheduler", scheduler)
     data = client.get("/api/crawl/status").json()
-    assert data["schedule"] == {"timezone": "Asia/Shanghai", "next_crawl_at": peak.isoformat(), "next_links_at": links.isoformat()}
+    assert data["schedule"] == {"timezone": "Asia/Shanghai", "next_crawl_at": regular.isoformat(), "next_links_at": links.isoformat()}
     assert "private" not in str(data) and "api_key" not in str(data)
     scheduler.get_jobs.assert_called_once_with()
     scheduler.add_job.assert_not_called()

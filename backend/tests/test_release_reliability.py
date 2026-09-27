@@ -6,7 +6,6 @@ import httpx
 import pytest
 
 from app.collectors.dblp import ProbeResult, RawPaper, fetch_toc, probe_dblp
-from app.config import settings
 from app.models import CrawlLog, CrawlState, Paper
 from app.ratelimit import AsyncTokenBucket
 from app.services.pipeline import CrawlPipeline
@@ -70,8 +69,7 @@ async def test_duplicate_submission_and_shutdown_are_safe(session_factory, monke
 async def test_links_backfill_preserves_local_archive(session_factory, sample_paper, tmp_path, monkeypatch):
     from app.services.links_backfill import run_links_backfill
 
-    monkeypatch.setattr(settings, "pdf_download_enabled", False)
-    monkeypatch.setattr(settings, "papers_root", tmp_path)
+    monkeypatch.setenv("PDF_DOWNLOAD_ENABLED", "true")
     archive = tmp_path / "keep.pdf"
     archive.write_bytes(b"%PDF-user-archive")
     with session_factory() as session:
@@ -83,9 +81,10 @@ async def test_links_backfill_preserves_local_archive(session_factory, sample_pa
         session.commit()
     stats = await run_links_backfill(session_factory)
     assert archive.read_bytes() == b"%PDF-user-archive"
-    assert stats.get("pdf_removed", 0) == 0
+    assert stats["flipped"] == 0
     with session_factory() as session:
-        assert session.get(Paper, sample_paper.id).pdf_path == "keep.pdf"
+        paper = session.get(Paper, sample_paper.id)
+        assert (paper.pdf_path, paper.pdf_status, paper.pdf_source) == ("keep.pdf", "downloaded", "arxiv")
 
 
 @pytest.mark.asyncio
@@ -138,12 +137,11 @@ def test_cross_site_writes_are_rejected_without_changing_data(client, sample_pap
     assert client.get(f"/api/papers/{sample_paper.id}").status_code == 200
 
 
-def test_delete_does_not_follow_external_pdf_path(client, db, sample_paper, tmp_path, monkeypatch):
+def test_delete_does_not_follow_external_pdf_path(client, db, sample_paper, tmp_path):
     root = tmp_path / "papers"
     root.mkdir()
     outside = tmp_path / "do-not-delete.pdf"
     outside.write_bytes(b"original")
-    monkeypatch.setattr(settings, "papers_root", root)
     sample_paper.pdf_path = "../do-not-delete.pdf"
     db.commit()
     response = client.delete(f"/api/papers/{sample_paper.id}")

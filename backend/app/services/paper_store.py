@@ -5,7 +5,6 @@ from sqlalchemy.orm import Session
 from app.api.serializers import abstract_text, arxiv_url, safe_http_url
 from app.cleaning import author_name_norm, normalize_arxiv_id, normalize_doi, normalize_title
 from app.collectors.dblp import RawPaper, stream_prefix
-from app.config import settings
 from app.models import Author, Paper, PaperAuthor, Venue
 
 
@@ -39,7 +38,7 @@ def upsert_paper(session: Session, raw: RawPaper, venue: Venue, author_cache: di
             publication_date=raw.publication_date, dblp_mdate=raw.mdate,
             venue_confirmed=int(raw.extra.get("provenance") == "dblp_toc"),
             citation_count=max(0, int(raw.extra.get("cited_by_count") or 0)),
-            pdf_status="pending" if settings.pdf_download_enabled else "closed",
+            pdf_status="closed",
         )
         session.add(paper)
         session.flush()
@@ -65,7 +64,7 @@ def upsert_paper(session: Session, raw: RawPaper, venue: Venue, author_cache: di
             paper.year = raw.year
         if raw.mdate:
             paper.dblp_mdate = raw.mdate
-        if not settings.pdf_download_enabled and paper.pdf_status in ("pending", "failed"):
+        if paper.pdf_status in ("pending", "failed"):
             paper.pdf_status = "closed"
     if arxiv_id and not paper.arxiv_id:
         clash = session.query(Paper.id).filter(Paper.arxiv_id == arxiv_id, Paper.id != paper.id).first()

@@ -6,6 +6,8 @@
 
 **采用“本地 Docker 采集 → 导出公开静态快照 → GitHub Pages 浏览”的模式，不下载 PDF。只有静态网站可以公开；无认证的后端与管理接口仍仅限本机。**
 
+详见 [当前架构](ARCHITECTURE.md)：仅保留这一套网站及采集发布链路，不提供 PDF 下载、归档服务或恢复下载模式的开关。
+
 ## 功能
 
 - 研究总览：年度 A/B 图表、主题分布、开放链接覆盖、最近收录；点击图表可进入论文列表。
@@ -171,7 +173,6 @@ npm run dev
 python -m scripts.backup        # 新建快照并 quick_check，不删除旧备份
 python -m scripts.rebuild_fts   # 原子重建 FTS 索引并校验主表一致性
 python -m scripts.seed          # 仅增加缺失种子，不覆盖现有 source ID / active 等配置
-python -m scripts.extend_topics # 先备份，再增补六个相邻方向标签；保留人工标签
 python -m scripts.reindex_topics # 先校验备份，再增补九方向规则并重算；保留手工标签及自定义规则设置
 ```
 
@@ -199,26 +200,28 @@ npm audit --omit=dev
 隔离容器验证（不动现有库）：
 
 ```bash
-WEB_PORT=8180 SCHEDULER_ENABLED=false STARTUP_CRAWL_ENABLED=false SNAPSHOT_ENABLED=false PAGES_PUBLISH_ENABLED=false docker compose -p lithub-release-check up -d --build --wait
+WEB_PORT=8180 SCHEDULER_ENABLED=false STARTUP_CRAWL_ENABLED=false SNAPSHOT_ENABLED=false PAGES_PUBLISH_ENABLED=false docker compose -f docker-compose.yml -p lithub-release-check up -d --build --wait
 python scripts/smoke_release.py
-docker compose -p lithub-release-check down
+docker compose -f docker-compose.yml -p lithub-release-check down
 ```
 
-Windows PowerShell 可先设置 `$env:WEB_PORT='8180'; $env:SCHEDULER_ENABLED='false'; $env:STARTUP_CRAWL_ENABLED='false'; $env:SNAPSHOT_ENABLED='false'; $env:PAGES_PUBLISH_ENABLED='false'` 再执行 Compose 命令。测试夹具也禁用所有真实采集/导出/发布副作用。只关闭调度器不会关闭启动采集。
+Windows PowerShell 可先设置 `$env:WEB_PORT='8180'; $env:SCHEDULER_ENABLED='false'; $env:STARTUP_CRAWL_ENABLED='false'; $env:SNAPSHOT_ENABLED='false'; $env:PAGES_PUBLISH_ENABLED='false'` 再执行 Compose 命令。显式 `-f docker-compose.yml` 排除本机发布覆盖配置，不挂载发布令牌；测试夹具也禁用所有真实采集/导出/发布副作用。只关闭调度器不会关闭启动采集。
 
 ## 项目结构
 
 ```text
-backend/app/api/           共享筛选、序列化、API 和本地写请求保护
-backend/app/collectors/    数据适配与公网地址绑定传输
-backend/app/services/      任务编排、入库、补全、链接维护和标签
+backend/app/api/           本地 API、共享筛选/序列化和写请求保护
+backend/app/collectors/    元数据适配与公网地址绑定传输
+backend/app/services/      采集、索引、链接维护、快照导出与发布
 backend/app/bootstrap.py   非破坏数据库初始化
-backend/scripts/           备份、索引维护、种子与标签扩展
+backend/scripts/           备份、九方向索引维护、种子和快照导出
 backend/tests/             隔离数据库/模拟网络回归测试
-frontend/src/              研究工作台、图表、卡片与交互测试
-seeds/                    配置来源和方向规则
-scripts/smoke_release.py   固定本机测试端口的 Docker 冒烟
-.github/workflows/         自动测试流水线
+frontend/src/              唯一 React 网站、快照 Worker 与交互测试
+frontend/static/           公开资源目录；生成快照不进入源码 Git
+seeds/                    来源、方向和方向规则
+scripts/prepare_pages.py  校验并整理当前/上一版公开快照
+scripts/smoke_release.py  固定本机测试端口的 Docker 冒烟
+.github/workflows/         自动测试与 GitHub Pages 发布
 ```
 
-`系统设计方案.md`、`设计审查报告.md`、`界面改版与验收.md` 为历史设计/验收记录。运行方式、安全边界和当前版本限制以本 README 和代码为准。界面结构参考 [CCF 论文雷达](https://szy12021130.github.io/ccf-a-radar/#/)，未复制其数据集或品牌资产。
+架构说明统一见 [ARCHITECTURE.md](ARCHITECTURE.md)，旧设计和验收文档已移出当前源码，可从 Git 历史查阅。[静态快照与自动更新验收](静态快照与自动更新验收.md) 保留为当前发布链路的历史证据；运行方式、安全边界和最新验证命令以本 README 和代码为准。界面结构参考 [CCF 论文雷达](https://szy12021130.github.io/ccf-a-radar/#/)，未复制其数据集或品牌资产。

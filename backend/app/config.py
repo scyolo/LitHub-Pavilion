@@ -17,7 +17,6 @@ class Settings(BaseSettings):
         env_file_encoding="utf-8", extra="ignore",
     )
     database_url: str = "sqlite:///" + (BACKEND_ROOT / "data" / "papers.db").as_posix()
-    papers_root: Path = BACKEND_ROOT / "papers"
     seeds_dir: Path = PROJECT_ROOT / "seeds"
     initialize_on_startup: bool = True
     scheduler_enabled: bool = True
@@ -40,9 +39,6 @@ class Settings(BaseSettings):
     dblp_rps: float = Field(default=1.0, gt=0, le=1)
     s2_rps: float = Field(default=0.5, gt=0, le=1)
     openalex_rps: float = Field(default=2.0, gt=0, le=2)
-    arxiv_interval_s: float = Field(default=3.0, ge=3)
-    pdf_daily_limit: int = Field(default=5000, ge=1, le=5000)
-    pdf_download_enabled: bool = False
     links_max_batches: int = Field(default=20, ge=1, le=200)
     s2_bulk_queries: list[str] = Field(default_factory=lambda: [
         "language model", "agent", "decoding", "inference", "learning", "planning", "reasoning",

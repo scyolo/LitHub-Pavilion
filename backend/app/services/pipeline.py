@@ -155,10 +155,6 @@ class CrawlPipeline:
         run_id = "m-" + uuid.uuid4().hex[:12]
         return self._start(lambda: self._maintenance("monthly", run_id), run_id=run_id)
 
-    async def submit_pdf_backlog(self):
-        # The published product is link-only. Retained API rejects download requests explicitly.
-        return False
-
     async def submit_links_backfill(self):
         from app.services.links_backfill import run_links_backfill
         run_id = "l-" + uuid.uuid4().hex[:12]

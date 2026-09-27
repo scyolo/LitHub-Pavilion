@@ -35,4 +35,5 @@ def test_default_paths_do_not_depend_on_cwd(tmp_path, monkeypatch):
     config = Settings(_env_file=None)
     assert str(BACKEND_ROOT).replace("\\", "/") in config.database_url
     assert Path(config.seeds_dir).is_absolute()
-    assert Path(config.papers_root).is_absolute()
+    assert Path(config.snapshot_dir).is_absolute()
+    assert Path(config.snapshot_state_file).is_absolute()

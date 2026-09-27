@@ -8,7 +8,7 @@ from zipfile import ZIP_DEFLATED, ZipFile
 ROOT = Path(__file__).resolve().parents[1]
 EXCLUDE_PARTS = {"__pycache__", ".pytest_cache", ".ruff_cache", ".venv", "node_modules", "dist", "data", "papers", "backups", "backup", ".mimosa", ".zcode", "artifacts", "release-artifacts"}
 TEXT_SUFFIXES = {".py", ".js", ".jsx", ".json", ".css", ".html", ".csv", ".md", ".txt", ".yml", ".yaml", ".toml", ".ini", ".conf"}
-ROOT_FILES = {"README.md", "SECURITY.md", "CONTRIBUTING.md", "docker-compose.yml", "docker-compose.pages.yml", ".gitignore", ".gitattributes", ".dockerignore", ".env.example", "发布验收.md", "静态快照与自动更新验收.md", "frontend/static/README.md"}
+ROOT_FILES = {"README.md", "ARCHITECTURE.md", "SECURITY.md", "CONTRIBUTING.md", "LICENSE", "docker-compose.yml", "docker-compose.pages.yml", ".gitignore", ".gitattributes", ".dockerignore", ".env.example", "静态快照与自动更新验收.md", "frontend/static/README.md"}
 SECRET_PATTERNS = [
     re.compile(r"-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----"),
     re.compile(r"gh[pousr]_[A-Za-z0-9]{30,}"),

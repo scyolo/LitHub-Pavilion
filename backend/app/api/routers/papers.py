@@ -1,22 +1,19 @@
-"""论文接口：列表筛选 / 详情 / 手工 CRUD / PDF Range 流式（4.4、6.1）。"""
-import re
+"""论文接口：列表筛选、详情和手工 CRUD；仅提供来源链接，不托管 PDF。"""
+from urllib.parse import unquote
 
-from fastapi import APIRouter, Depends, HTTPException, Header
+from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import JSONResponse
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
-from urllib.parse import unquote
 
 from app.api.deps import get_db
 from app.api.filtering import PAPER_SORTS, PaperFilters, bad_request, paper_filters, paper_query
 from app.api.schemas import PaperCreateRequest, PaperPatchRequest
-from app.api.serializers import abstract_text, arxiv_url, authors_for, directions_for, doi_url, paper_card, paper_links, paper_mode
-from app.config import settings
+from app.api.serializers import abstract_text, arxiv_url, authors_for, directions_for, doi_url, paper_card, paper_links
 from app.models import Author, Direction, Paper, PaperAuthor, PaperDirection, Venue
 
 router = APIRouter(prefix="/api/papers", tags=["papers"])
 
-_RANGE_RE = re.compile(r"bytes=(\d*)-(\d*)$")
 _bad_request = bad_request
 
 
@@ -74,7 +71,7 @@ def create_paper(body: PaperCreateRequest, db: Session = Depends(get_db)):
         doi=doi, arxiv_id=arxiv_id,
         official_url=doi_link or arxiv_link or "https://dblp.org/rec/" + body.dblp_key,
         oa_url=arxiv_link,
-        pdf_status="pending" if settings.pdf_download_enabled else "closed",
+        pdf_status="closed",
         venue_confirmed=0,
     )
     db.add(paper)
@@ -128,8 +125,7 @@ def get_paper(paper_id: int, db: Session = Depends(get_db)):
         "citation_count": paper.citation_count,
         "pdf_status": paper.pdf_status,
         "pdf_source": paper.pdf_source,
-        "pdf_url": f"/api/papers/{paper.id}/pdf",
-        "mode": paper_mode(),
+        "mode": "links",
         **paper_links(paper),
         "doi": paper.doi,
         "arxiv_id": paper.arxiv_id,
@@ -183,88 +179,3 @@ def delete_paper(paper_id: int, db: Session = Depends(get_db)):
     # 删除元数据不删除文件；已有存档可由用户检查后单独清理。
     db.delete(paper)
     db.commit()
-
-
-@router.get("/{paper_id}/pdf")
-def get_pdf(
-    paper_id: int,
-    download: bool = False,
-    range_header: str | None = Header(default=None, alias="Range"),
-    db: Session = Depends(get_db),
-):
-    paper = db.query(Paper).filter(Paper.id == paper_id).one_or_none()
-    if paper is None:
-        raise HTTPException(status_code=404, detail={"code": "PAPER_NOT_FOUND", "message": "论文不存在"})
-    if paper.pdf_status == "closed":
-        # 版权策略固化在接口层：未归档 PDF 一律不给流，仅提示合法展示路径
-        raise HTTPException(
-            status_code=403,
-            detail={
-                "code": "PDF_CLOSED",
-                "message": "该论文为闭源出版，未归档 PDF",
-                **paper_links(paper),
-            },
-        )
-
-    path = (settings.papers_root / paper.pdf_path) if paper.pdf_path else None
-    if path is None:
-        raise HTTPException(status_code=404, detail={"code": "PDF_NOT_FOUND", "message": "PDF 未就绪"})
-    root = settings.papers_root.resolve()
-    resolved = path.resolve()
-    if not resolved.is_relative_to(root) or not resolved.is_file():
-        # 路径越界一律 404，不泄露目录结构（6.4）
-        raise HTTPException(status_code=404, detail={"code": "PDF_NOT_FOUND", "message": "PDF 未就绪"})
-
-    size = resolved.stat().st_size
-    start, end = 0, size - 1
-    status_code = 200
-    if range_header:
-        m = _RANGE_RE.match(range_header.strip())
-        if m and (m.group(1) or m.group(2)):
-            if m.group(1) == "":
-                # bytes=-N：末尾 N 字节
-                suffix = int(m.group(2))
-                start = max(0, size - suffix)
-                end = size - 1
-            else:
-                start = int(m.group(1))
-                end = int(m.group(2)) if m.group(2) else size - 1
-                end = min(end, size - 1)
-            if start > end or start >= size:
-                raise HTTPException(
-                    status_code=416,
-                    detail={"code": "RANGE_NOT_SATISFIABLE", "message": "Range 不满足"},
-                    headers={"Content-Range": f"bytes */{size}"},
-                )
-            status_code = 206
-
-    from fastapi.responses import StreamingResponse
-
-    def _stream(begin: int, stop: int):
-        with resolved.open("rb") as fh:
-            fh.seek(begin)
-            remaining = stop - begin + 1
-            while remaining > 0:
-                buf = fh.read(min(65536, remaining))
-                if not buf:
-                    break
-                remaining -= len(buf)
-                yield buf
-
-    headers = {
-        "Accept-Ranges": "bytes",
-        "Content-Type": "application/pdf",
-        "Cache-Control": "public, max-age=86400",
-    }
-    if status_code == 206:
-        headers["Content-Range"] = f"bytes {start}-{end}/{size}"
-    content_length = end - start + 1
-    headers["Content-Length"] = str(content_length)
-    if download:
-        headers["Content-Disposition"] = f'attachment; filename="{paper.id:06d}.pdf"'
-    return StreamingResponse(
-        _stream(start, end),
-        status_code=status_code,
-        headers=headers,
-        media_type="application/pdf",
-    )

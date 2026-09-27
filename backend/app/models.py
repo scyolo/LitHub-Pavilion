@@ -1,4 +1,4 @@
-"""ORM 模型（对应设计方案 5.2 表结构）。时间戳一律 ISO8601 UTC 文本。"""
+"""ORM models for local metadata and collection state; timestamps use ISO8601 UTC text."""
 from datetime import datetime, timezone
 
 from sqlalchemy import CheckConstraint, Float, ForeignKey, Index, Integer, Text, text
@@ -55,7 +55,8 @@ class Paper(Base):
     arxiv_id: Mapped[str | None] = mapped_column(Text, unique=True)
     s2_id: Mapped[str | None] = mapped_column(Text, unique=True)
     citation_count: Mapped[int] = mapped_column(Integer, default=0)
-    pdf_status: Mapped[str] = mapped_column(Text, default="pending")
+    # Existing databases and schema-v1 snapshots retain archive metadata, not file-serving behavior.
+    pdf_status: Mapped[str] = mapped_column(Text, default="closed")
     pdf_path: Mapped[str | None] = mapped_column(Text)
     pdf_source: Mapped[str | None] = mapped_column(Text)
     official_url: Mapped[str] = mapped_column(Text)
@@ -175,15 +176,6 @@ class CrawlState(Base):
     scope_key: Mapped[str] = mapped_column(Text, unique=True)
     cursor: Mapped[str] = mapped_column(Text)
     updated_at: Mapped[str] = mapped_column(Text, default=utcnow_iso, onupdate=utcnow_iso)
-
-
-class PdfWhitelist(Base):
-    __tablename__ = "pdf_whitelist"
-
-    host: Mapped[str] = mapped_column(Text, primary_key=True)
-    owner: Mapped[str] = mapped_column(Text, default="")
-    note: Mapped[str] = mapped_column(Text, default="")
-    enabled: Mapped[int] = mapped_column(Integer, default=1)
 
 
 FTS_DDL = [
