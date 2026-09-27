@@ -213,6 +213,55 @@ def export_snapshot(session_factory, directory: Path, *, chunk_size: int = 500,
     return manifest
 
 
+def ensure_snapshot_overview(directory: Path, manifest: dict | None = None) -> dict:
+    """Derive a catalog from validated public rows without changing their data timestamp."""
+    directory = Path(directory)
+    if manifest is None:
+        manifest = validate_snapshot(directory)
+    else:
+        _validate_contents(directory, manifest)
+    catalog, _ = _load_entry(directory, manifest["catalog"], "catalog")
+    if "overview" in catalog:
+        return manifest
+    builder = OverviewBuilder(catalog, manifest["generated_at"])
+    for entry in manifest["chunks"]:
+        rows, _ = _load_entry(directory, entry, "papers")
+        builder.add(rows)
+    catalog["overview"] = builder.result()
+    upgraded = {**manifest, "catalog": _write_content(directory, "catalog", _json_bytes(catalog))}
+    upgraded["revision"] = manifest_revision(upgraded)
+    _validate_contents(directory, upgraded)
+    return upgraded
+
+
+def snapshot_matches_database(session_factory, directory: Path, manifest: dict | None = None) -> bool:
+    """Compare every public field and relationship against one database read transaction."""
+    directory = Path(directory)
+    current = validate_snapshot(directory)
+    if manifest is not None and current != manifest:
+        return False
+    catalog, _ = _load_entry(directory, current["catalog"], "catalog")
+    if "overview" not in catalog:
+        return False
+    with session_factory() as db:
+        if db.bind.dialect.name == "sqlite":
+            db.connection().exec_driver_sql("BEGIN")
+        query = paper_query(db, PaperFilters())
+        if query.count() != current["paper_count"]:
+            return False
+        if _catalog(db) != {key: value for key, value in catalog.items() if key != "overview"}:
+            return False
+        for entry in current["chunks"]:
+            rows, _ = _load_entry(directory, entry, "papers")
+            papers = query.filter(Paper.id.in_([row["id"] for row in rows])).all()
+            expected = {row["id"]: row for row in _paper_rows(db, papers)}
+            if len(expected) != len(rows) or any(expected.get(row["id"]) != row for row in rows):
+                return False
+            db.expunge_all()
+    latest, _ = _read_json(directory / "manifest.json", max_bytes=1024 * 1024)
+    return latest == current
+
+
 def _reject_constant(value):
     raise ValueError("Snapshot JSON contains a non-finite number")
 

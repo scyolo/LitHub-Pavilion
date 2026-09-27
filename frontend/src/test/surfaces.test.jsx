@@ -5,6 +5,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import Admin from "../pages/Admin.jsx";
 import PaperCard from "../components/PaperCard.jsx";
 import { AnnualChart } from "../components/Charts.jsx";
+import { api } from "../api.js";
 
 vi.mock("../api.js", () => ({ api: {
   crawlStatus: vi.fn(async () => ({ running: false, schedule: null })),
@@ -26,6 +27,20 @@ describe("new research surfaces", () => {
     expect(await screen.findByText("当前空闲")).toBeInTheDocument();
     expect(await screen.findByText("暂无采集日志。可以手动同步一次元数据。")).toBeInTheDocument();
     expect(screen.queryByRole("button", { name: /下载.*PDF/ })).not.toBeInTheDocument();
+  });
+  it.each([
+    [true, "截至核对时一致"],
+    [false, "数据库已更新，等待同步"],
+    [null, "尚未完成一致性核对"],
+  ])("distinguishes database freshness from an uploaded snapshot: %s", async (consistent, message) => {
+    api.crawlStatus.mockResolvedValueOnce({ running: false, schedule: null, site_sync: {
+      snapshot_status: consistent === false ? "stale" : "ready", publication_status: "dispatched",
+      database_consistent: consistent, database_checked_at: "2026-09-27T00:00:00Z",
+      generated_at: "2026-09-26T00:00:00Z", paper_count: 2, startup_crawl_enabled: false,
+    } });
+    render(<Admin />, { wrapper });
+    expect(await screen.findByText(message)).toBeInTheDocument();
+    expect(screen.getByText("已触发构建，待确认上线")).toBeInTheDocument();
   });
   it("keeps external paper links separate from detail navigation", () => {
     const paper = { id: 74, title: "A Study of Agents", venue: "AAAI", venue_type: "conf", year: 2025, level: "A", directions: ["agent"], authors_preview: ["Author One"], authors_count: 1, citation_count: 2, official_url: "https://doi.org/10.5555/test", oa_url: "https://arxiv.org/abs/2501.12345", venue_confirmed: 0 };

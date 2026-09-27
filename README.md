@@ -60,11 +60,11 @@ docker compose -f docker-compose.yml -f docker-compose.pages.yml up -d --build -
 ### 快照与实时交互的边界
 
 - 网站只访问同站点 `snapshot/manifest.json` 和已校验的内容哈希文件，不向访客的 localhost 发请求，不携带发布令牌；HashRouter 保证详情链接在 Pages 子目录刷新不 404。
-- 首页只下载已校验的 manifest 和轻量 catalog（含 9 种级别/出版类型组合的统计与最新发表卡片），不等待完整摘要库。首次进入论文列表、详情或全文检索时再在 Worker 中下载并校验完整快照；首次检索仍有整库下载成本，之后复用内存索引。旧快照没有首页摘要时自动走兼容全量路径。
+- 首页只下载已校验的 manifest 和轻量 catalog（含 9 种级别/出版类型组合的统计与最新发表卡片），不等待完整摘要库。Pages 构建会从同一份已公开论文分片为旧快照生成缺失的首页摘要，不读取私有数据库、不更改论文或数据时间；构建必须通过“两次快照请求、零论文分片、总量不超过 512 KiB”的检查。首次进入论文列表、详情或全文检索时仍需在 Worker 中下载并校验完整快照；首次检索有整库下载成本，之后复用内存索引。
 - 首页摘要与完整论文数据是两个明确的验证层：导出和发布时会用全部论文重算并验证首页摘要；浏览器先验证摘要文件的哈希、公开字段与计数，完整数据使用前再校验全部分片，并交叉检查统计。已有完整版本换版仍须新版本全量验证成功才切换；失败保留旧版，不混合版本。每 60 秒、窗口聚焦及“检查更新”时检查 manifest。
 - 普通论文列表和首页最新论文默认按上游发布日期从新到旧排序；只有年份或日期无效时按归属年，同年排在具体日期之后，最终以论文 ID 稳定排序。不用入库时间代替发布日期，不伪造月份和日期。英文搜索默认按相关性，显式选择的排序在修改/清空关键词后保留。上一页、下一页及每页条数变化会立即回到页面顶部。
 - 原文链接是直接指向 DOI、出版方、DBLP 或 arXiv 的 HTTP(S) 链接，与后端是否运行无关。本站不能保证外站永久在线、无需付费或免登录。
-- 同一 revision 不重复提交 Git 数据。接受 dispatch 不等于部署完成：本地每 5 分钟读取线上公开 manifest 确认版本；30 分钟仍未上线则重新派发，同一快照不再创建新提交。网络不可达时保留回执并下次复查。
+- 同一 revision 不重复提交 Git 数据。后台运行时默认每 5 分钟核对数据库与快照的全部公开字段、论文 ID、作者、方向关系和来源；发现变化会重新导出，采集中等待本轮结束。发布前再核对，不仅比较总数。只有数据库核对通过且线上 manifest 与该快照一致才显示已上线；上传不等于部署完成，30 分钟仍未上线则重新派发。后端关闭、令牌不可用或网络失败时，公开站保留上次版本并显示数据时间，不承诺与停机后的数据库实时一致。
 - 发布只更新专用 `site-data` 分支，不 force push；已存在的同名分支没有本项目所有权标记时会拒绝覆盖。Pages 保留当前及上一版经公开字段校验的资产，避免更新途中旧页面请求的文件失效。
 - 公开内容仅含论文元数据、摘要、作者、链接、方向和已结束任务摘要；不含备注、数据库、PDF、错误日志正文、SMTP 凭据或令牌。发布前自行确认上游元数据的再分发条件。
 
@@ -76,6 +76,8 @@ docker compose -f docker-compose.yml -f docker-compose.pages.yml up -d --build -
 # Git Bash / Linux / macOS
 PYTHONPATH=backend python -m scripts.export_snapshot --output frontend/static/snapshot
 PYTHONPATH=backend python -m scripts.export_snapshot --output frontend/static/snapshot --validate-only
+# 另核对当前数据库，不上传；发现数据不一致则失败退出
+PYTHONPATH=backend python -m scripts.export_snapshot --output frontend/static/snapshot --validate-only --check-database
 ```
 
 PowerShell 对应先执行 `$env:PYTHONPATH='backend'`，再运行 `python -m scripts.export_snapshot ...`。Docker 中的数据库与本地数据库相互独立，导出容器数据用：
@@ -136,7 +138,7 @@ npm run dev
 | `SNAPSHOT_STATE_FILE` | `backend/data/snapshot-state.json` | 私有发布回执，不得放进公开静态目录 |
 | `PAGES_PUBLISH_ENABLED` | `false` | 发布覆盖配置自动设为 `true` |
 | `PAGES_REPOSITORY` | 模板 `scyolo/LitHub-Pavilion` | 必须改为有权限的目标仓库 |
-| `PAGES_RETRY_SECONDS` | `300` | 上传重试及线上版本检查周期 |
+| `PAGES_RETRY_SECONDS` | `300` | 数据库/快照一致性检查、变更补导出、上传重试及线上版本检查周期 |
 | `PAGES_DEPLOY_RETRY_SECONDS` | `1800` | dispatch 后未确认上线的重派发等待 |
 | `PAGES_SITE_URL` | 自动推导 | 自定义域名的规范 HTTPS 站点地址 |
 | `INITIALIZE_ON_STARTUP` | `true` | 自动初始化空库；不覆盖已有种子记录 |

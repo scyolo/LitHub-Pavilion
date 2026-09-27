@@ -263,6 +263,8 @@ async def test_deployment_is_confirmed_by_online_revision_and_failed_build_is_re
     assert config.snapshot_state_file.parent != config.snapshot_dir.parent
     restarted = module.SiteSync(session_factory, CrawlPipeline(session_factory), config=config)
     await restarted.refresh()
+    assert restarted.status()["publication_status"] == "dispatched"
+    await restarted.retry_publication()
     assert restarted.status()["publication_status"] == "deployed"
     assert publisher.await_count == 2
 
@@ -286,3 +288,121 @@ async def test_deployment_check_failure_does_not_claim_success_or_repeat_upload(
     assert sync.status()["publication_status"] == "dispatched"
     assert "network details" not in str(sync.status())
     publisher.assert_awaited_once()
+
+
+@pytest.mark.asyncio
+async def test_retry_reexports_changed_database_instead_of_confirming_stale_site(session_factory, sample_paper, db, tmp_path, monkeypatch):
+    import app.services.site_sync as module
+    from app.services.snapshot import validate_snapshot
+
+    token = tmp_path / "token"
+    token.write_text("test-token", encoding="utf-8")
+    config = Settings(_env_file=None, snapshot_dir=tmp_path / "snapshot", pages_publish_enabled=True,
+                      pages_repository="owner/repo", pages_token_file=token)
+    revisions = []
+
+    async def publish(directory, **kwargs):
+        manifest = validate_snapshot(directory)
+        revisions.append(manifest["revision"])
+        return {"state": "dispatched", "commit": "a" * 40, "revision": manifest["revision"]}
+
+    online = AsyncMock(return_value=None)
+    monkeypatch.setattr(module, "publish_snapshot", publish)
+    monkeypatch.setattr(module, "deployed_revision", online)
+    sync = module.SiteSync(session_factory, CrawlPipeline(session_factory), config=config)
+    await sync.refresh()
+    first = revisions[-1]
+    online.return_value = first
+    await sync.retry_publication()
+    assert sync.status()["publication_status"] == "deployed"
+    sample_paper.title = "Database corrected after publication"
+    db.commit()
+    await sync.retry_publication()
+    assert len(revisions) == 2 and revisions[-1] != first
+    assert sync.status()["publication_status"] == "dispatched"
+    assert sync.status()["database_consistent"] is True
+    assert sync.status()["database_checked_at"]
+    online.return_value = revisions[-1]
+    await sync.retry_publication()
+    assert sync.status()["publication_status"] == "deployed"
+
+
+@pytest.mark.asyncio
+async def test_database_change_during_export_prevents_publication(session_factory, sample_paper, tmp_path, monkeypatch):
+    import app.services.site_sync as module
+    from app.models import Paper
+
+    original = module.export_snapshot
+
+    def export_then_modify(*args, **kwargs):
+        manifest = original(*args, **kwargs)
+        with session_factory() as session:
+            session.get(Paper, sample_paper.id).title = "Changed during export"
+            session.commit()
+        return manifest
+
+    publisher = AsyncMock()
+    monkeypatch.setattr(module, "export_snapshot", export_then_modify)
+    monkeypatch.setattr(module, "publish_snapshot", publisher)
+    config = Settings(_env_file=None, snapshot_dir=tmp_path / "snapshot", pages_publish_enabled=True,
+                      pages_repository="owner/repo")
+    sync = module.SiteSync(session_factory, CrawlPipeline(session_factory), config=config)
+    await sync.refresh()
+    publisher.assert_not_awaited()
+    assert sync.status()["database_consistent"] is False
+    assert sync.status()["snapshot_status"] == "stale"
+    assert sync.status()["publication_status"] != "deployed"
+
+
+@pytest.mark.asyncio
+async def test_retry_refreshes_snapshot_for_local_fallback_without_publication(session_factory, sample_paper, db, tmp_path):
+    from app.services.site_sync import SiteSync
+    from app.services.snapshot import validate_snapshot
+
+    config = Settings(_env_file=None, snapshot_dir=tmp_path / "snapshot", pages_publish_enabled=False)
+    sync = SiteSync(session_factory, CrawlPipeline(session_factory), config=config)
+    await sync.refresh()
+    first = validate_snapshot(config.snapshot_dir)
+    sample_paper.abstract = "New abstract for local fallback"
+    db.commit()
+    await sync.retry_publication()
+    assert validate_snapshot(config.snapshot_dir)["revision"] != first["revision"]
+    assert sync.status()["database_consistent"] is True
+    assert sync.status()["publication_status"] == "disabled"
+
+
+@pytest.mark.asyncio
+async def test_active_collection_does_not_claim_database_is_fully_synced(session_factory, sample_paper, tmp_path):
+    from app.services.site_sync import SiteSync
+
+    config = Settings(_env_file=None, snapshot_dir=tmp_path / "snapshot", pages_publish_enabled=True)
+    pipeline = CrawlPipeline(session_factory)
+    sync = SiteSync(session_factory, pipeline, config=config)
+    sync._state["publication_status"] = "deployed"
+    pipeline.status.running = True
+    await sync.retry_publication()
+    assert sync.status()["publication_status"] != "deployed"
+
+
+@pytest.mark.asyncio
+async def test_database_change_while_checking_online_revision_cannot_confirm_stale_site(session_factory, sample_paper, tmp_path, monkeypatch):
+    import app.services.site_sync as module
+    from app.models import Paper
+    from app.services.snapshot import export_snapshot
+
+    config = Settings(_env_file=None, snapshot_dir=tmp_path / "snapshot", pages_publish_enabled=True,
+                      pages_repository="owner/repo")
+    manifest = export_snapshot(session_factory, config.snapshot_dir)
+    sync = module.SiteSync(session_factory, CrawlPipeline(session_factory), config=config)
+    sync._dispatched_revision = manifest["revision"]
+
+    async def online(*args, **kwargs):
+        with session_factory() as session:
+            session.get(Paper, sample_paper.id).title = "Edited while confirming deployment"
+            session.commit()
+        return manifest["revision"]
+
+    monkeypatch.setattr(module, "deployed_revision", online)
+    await sync.retry_publication()
+    assert sync.status()["database_consistent"] is False
+    assert sync.status()["publication_status"] != "deployed"

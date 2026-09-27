@@ -7,7 +7,9 @@ from contextlib import suppress
 from datetime import datetime, timezone
 
 from app.config import settings
-from app.services.snapshot import _atomic_write, _json_bytes, export_snapshot, validate_snapshot
+from app.services.snapshot import (
+    _atomic_write, _json_bytes, export_snapshot, snapshot_matches_database, validate_snapshot,
+)
 
 log = logging.getLogger("lithub.site_sync")
 
@@ -41,6 +43,7 @@ class SiteSync:
             "publication_status": "pending" if self.config.pages_publish_enabled else "disabled",
             "revision": None, "generated_at": None, "paper_count": None, "commit": None,
             "last_attempt_at": None, "message": None,
+            "database_consistent": None, "database_checked_at": None,
         }
         self._state_path = self.config.snapshot_state_file
         self._restore_dispatch()
@@ -57,7 +60,7 @@ class SiteSync:
                     and saved.get("publication_status") in ("dispatched", "deployed")):
                 self._dispatched_revision = saved.get("revision")
                 self._dispatched_at = float(saved.get("dispatched_at", 0))
-                self._state["publication_status"] = saved["publication_status"]
+                self._state["publication_status"] = "pending"
                 self._state["commit"] = saved.get("commit")
         except (OSError, ValueError, AttributeError):
             pass
@@ -69,7 +72,7 @@ class SiteSync:
         if self._startup_task is not None:
             return
         self._startup_task = asyncio.create_task(self._startup(), name="site-startup")
-        if self.config.pages_publish_enabled:
+        if self.config.snapshot_enabled:
             self._retry_task = asyncio.create_task(self._retry_loop(), name="site-publication-retry")
 
     async def _startup(self):
@@ -95,30 +98,53 @@ class SiteSync:
             await asyncio.gather(task, return_exceptions=True)
             raise
 
+    async def _refresh_locked(self):
+        self._state.update(snapshot_status="exporting", database_consistent=None)
+        if self.config.pages_publish_enabled:
+            self._state["publication_status"] = "pending"
+        try:
+            manifest = await self._worker(export_snapshot, self.session_factory, self.config.snapshot_dir)
+        except ValueError as exc:
+            self._state["snapshot_status"] = "waiting_for_data" if "empty snapshot" in str(exc) else "failed"
+            self._state["message"] = "尚无可发布论文，采集后再导出。" if "empty snapshot" in str(exc) else "快照校验未通过；上次成功的网站数据未被替换。"
+            log.warning("Snapshot export did not produce a new valid version")
+            return False
+        except Exception:
+            self._state["snapshot_status"] = "failed"
+            self._state["message"] = "快照导出失败；上次成功的网站数据未被替换。"
+            log.error("Snapshot export failed; existing manifest retained")
+            return False
+        self._manifest = manifest
+        self._state.update(snapshot_status="ready", revision=manifest["revision"], generated_at=manifest["generated_at"],
+                           paper_count=manifest["paper_count"], message=None)
+        return await self._check_database()
+
+    async def _check_database(self):
+        self._state["database_consistent"] = None
+        try:
+            consistent = await self._worker(snapshot_matches_database, self.session_factory,
+                                            self.config.snapshot_dir, self._manifest)
+        except Exception:
+            self._state.update(snapshot_status="failed", message="无法核对数据库与快照；不会确认旧数据为已同步。")
+            if self.config.pages_publish_enabled:
+                self._state["publication_status"] = "pending"
+            return False
+        self._state.update(database_consistent=consistent, database_checked_at=datetime.now(timezone.utc).isoformat())
+        if not consistent:
+            self._state.update(snapshot_status="stale", message="数据库已有变更，等待导出并发布同一版本的数据。")
+            if self.config.pages_publish_enabled:
+                self._state["publication_status"] = "pending"
+        return consistent
+
     async def refresh(self):
         if not self.config.snapshot_enabled or self._closing:
             return
         async with self._lock:
-            self._state["snapshot_status"] = "exporting"
-            try:
-                manifest = await self._worker(export_snapshot, self.session_factory, self.config.snapshot_dir)
-            except ValueError as exc:
-                self._state["snapshot_status"] = "waiting_for_data" if "empty snapshot" in str(exc) else "failed"
-                self._state["message"] = "尚无可发布论文，采集后再导出。" if "empty snapshot" in str(exc) else "快照校验未通过；上次成功的网站数据未被替换。"
-                log.warning("Snapshot export did not produce a new valid version")
-                return
-            except Exception:
-                self._state["snapshot_status"] = "failed"
-                self._state["message"] = "快照导出失败；上次成功的网站数据未被替换。"
-                log.error("Snapshot export failed; existing manifest retained")
-                return
-            self._manifest = manifest
-            self._state.update(snapshot_status="ready", revision=manifest["revision"], generated_at=manifest["generated_at"],
-                               paper_count=manifest["paper_count"], message=None)
-            await self._publish()
+            if await self._refresh_locked():
+                await self._publish()
 
     async def _publish(self):
-        if not self.config.pages_publish_enabled or not self._manifest or self._closing:
+        if not self.config.pages_publish_enabled or not self._manifest or self._closing or self._state["database_consistent"] is not True:
             return
         if self._manifest["revision"] == self._dispatched_revision:
             if self._state["publication_status"] != "deployed":
@@ -150,6 +176,7 @@ class SiteSync:
         self._dispatched_revision = result["revision"]
         self._dispatched_at = time.time()
         self._state.update(publication_status="dispatched", commit=result["commit"], message="已触发 GitHub Pages 构建；尚不代表部署完成。")
+        await self._check_database()
         await self._save_receipt()
 
     async def _save_receipt(self):
@@ -164,14 +191,26 @@ class SiteSync:
             log.warning("Publication receipt could not be saved")
 
     async def retry_publication(self):
-        if self._closing or not self.config.pages_publish_enabled:
+        if self._closing or not self.config.snapshot_enabled:
             return
         async with self._lock:
-            if not self._manifest:
-                try:
-                    self._manifest = await self._worker(validate_snapshot, self.config.snapshot_dir)
-                except ValueError:
-                    return
+            if self.pipeline.status.running:
+                self._state.update(database_consistent=None, message="采集仍在运行；网站保持上次已发布版本，完成后再核对同步。")
+                if self.config.pages_publish_enabled:
+                    self._state["publication_status"] = "pending"
+                return
+            try:
+                self._manifest = await self._worker(validate_snapshot, self.config.snapshot_dir)
+                self._state.update(revision=self._manifest["revision"], generated_at=self._manifest["generated_at"],
+                                   paper_count=self._manifest["paper_count"])
+                consistent = await self._check_database()
+            except ValueError:
+                consistent = False
+            if not consistent and not await self._refresh_locked():
+                return
+            self._state["snapshot_status"] = "ready"
+            if not self.config.pages_publish_enabled:
+                return
             if self._manifest["revision"] == self._dispatched_revision:
                 try:
                     online = await deployed_revision(self.config.pages_repository, site_url=self.config.pages_site_url)
@@ -179,7 +218,9 @@ class SiteSync:
                     self._state["message"] = "暂时无法检查线上版本；已保留本地快照与发布回执。"
                     return
                 if online == self._dispatched_revision:
-                    self._state.update(publication_status="deployed", message="已确认 GitHub Pages 正在提供当前快照。")
+                    if not await self._check_database():
+                        return
+                    self._state.update(publication_status="deployed", message="已确认 GitHub Pages 正在提供与核对时数据库一致的快照。")
                     await self._save_receipt()
                     return
                 self._state.update(publication_status="dispatched", message="已触发构建，尚未在网站上确认当前版本；超时将重新触发。")

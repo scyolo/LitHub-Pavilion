@@ -9,11 +9,16 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "backend"))
 
-from app.services.snapshot import MAX_FILE_BYTES, MAX_SNAPSHOT_BYTES, _read_json, _validate_contents, validate_snapshot
+from app.services.snapshot import (
+    MAX_FILE_BYTES, MAX_SNAPSHOT_BYTES, _atomic_write, _json_bytes, _load_entry,
+    _read_json, _validate_contents, ensure_snapshot_overview, validate_snapshot,
+)
 
 
 def prepare_snapshot(source: Path, target: Path) -> dict:
     source, target = Path(source), Path(target)
+    if source.resolve() == target.resolve():
+        raise ValueError("Pages staging must not modify its source snapshot")
     manifest = validate_snapshot(source)
     if not manifest["paper_count"]:
         raise ValueError("Refusing to deploy an empty public paper library")
@@ -22,6 +27,7 @@ def prepare_snapshot(source: Path, target: Path) -> dict:
     if target.exists() and (target / "manifest.json").exists():
         validate_snapshot(target)
     entries = {entry["path"]: entry["sha256"] for entry in [manifest["catalog"], *manifest["chunks"]]}
+    previous = None
     previous_path = source / "previous-manifest.json"
     if previous_path.exists() or previous_path.is_symlink():
         previous, _ = _read_json(previous_path, max_bytes=1024 * 1024)
@@ -52,13 +58,28 @@ def prepare_snapshot(source: Path, target: Path) -> dict:
             raise ValueError("Existing content-addressed asset is corrupt")
         if not destination.exists():
             shutil.copyfile(path, destination)
+    if previous is not None:
+        upgraded_previous = ensure_snapshot_overview(target, previous)
+        if upgraded_previous["catalog"] != previous["catalog"]:
+            total += (target / upgraded_previous["catalog"]["path"]).stat().st_size
+    upgraded = ensure_snapshot_overview(target, manifest)
+    if upgraded["catalog"] != manifest["catalog"]:
+        total += (target / upgraded["catalog"]["path"]).stat().st_size
+    if total > MAX_SNAPSHOT_BYTES:
+        raise ValueError("Pages snapshot exceeds the deployment size budget")
+    catalog, catalog_bytes = _load_entry(target, upgraded["catalog"], "catalog")
+    if "overview" not in catalog or catalog_bytes + len(_json_bytes(upgraded)) > 512 * 1024:
+        raise ValueError("Pages homepage must have a verified summary below 512 KiB")
+    source_current, _ = _read_json(source / "manifest.json", max_bytes=1024 * 1024)
+    if source_current != manifest:
+        raise ValueError("Source snapshot changed during Pages staging")
+    _validate_contents(target, upgraded)
+    retained = manifest if upgraded != manifest else previous
+    if retained is not None:
+        _atomic_write(target / "previous-manifest.json", _json_bytes(retained))
     destination = target / "manifest.json"
-    if destination.is_symlink():
-        raise ValueError("Unsafe snapshot manifest destination")
-    from app.services.snapshot import _atomic_write
-
-    _atomic_write(destination, (source / "manifest.json").read_bytes())
-    return validate_snapshot(target)
+    _atomic_write(destination, _json_bytes(upgraded))
+    return upgraded
 
 
 def main():

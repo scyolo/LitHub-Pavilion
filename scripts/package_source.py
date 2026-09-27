@@ -19,7 +19,7 @@ SECRET_PATTERNS = [
 
 def source_files():
     paths = [ROOT / name for name in ROOT_FILES if (ROOT / name).is_file()]
-    for directory in ("backend/app", "backend/scripts", "backend/tests", "frontend/src", "seeds", "scripts", ".github"):
+    for directory in ("backend/app", "backend/scripts", "backend/tests", "frontend/src", "frontend/scripts", "seeds", "scripts", ".github"):
         for path in (ROOT / directory).rglob("*"):
             relative = path.relative_to(ROOT)
             parts = relative.parts[3:] if relative.as_posix().startswith("frontend/src/data/") else relative.parts

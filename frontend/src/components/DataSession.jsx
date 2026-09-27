@@ -43,7 +43,7 @@ export default function DataSession({ children }) {
   const busy = state.status === "loading" || state.status === "updating";
   const message = state.error
     ? `${state.revision ? state.verification === "catalog" ? "首页摘要仍可浏览，完整检索数据尚未就绪。" : "继续使用上次完整快照。" : ""}${state.error}`
-    : state.generated_at ? `${api.isAuto ? "后端未连接，正在浏览本地快照" : "公开快照"} · ${formatDate(state.generated_at, true)} · ${busy && state.total > 1 ? `正在校验检索数据 ${state.loaded} / ${state.total}` : state.verification === "catalog" ? "首页摘要已校验，论文与全文检索按需加载" : "浏览、检索和原文链接无需本地后端"}`
+    : state.generated_at ? `${api.isAuto ? "后端未连接，正在浏览本地快照" : "已发布数据（非实时数据库）"} · ${formatDate(state.generated_at, true)} · ${busy && state.total > 1 ? `正在校验检索数据 ${state.loaded} / ${state.total}` : state.verification === "catalog" ? "首页摘要已校验，论文与全文检索按需加载" : "浏览、检索和原文链接无需本地后端"}`
       : `正在载入论文快照${state.total ? ` · ${state.loaded} / ${state.total} 个文件` : ""}，本地后端无需启动`;
   return <QueryClientProvider client={current}>
     {snapshot && <div className={`snapshot-banner ${state.error ? "snapshot-warning" : ""}`} role="status">
