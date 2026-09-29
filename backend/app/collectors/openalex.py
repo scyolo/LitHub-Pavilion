@@ -136,12 +136,34 @@ async def fetch_works_by_source(
     return works
 
 
-def work_to_raw_paper(work: dict, official_url_fallback: str) -> tuple[str, RawPaper | None]:
+def _published_location(work: dict, source_id: str) -> dict | None:
+    """A repository copy is not evidence of formal publication at a venue."""
+    from urllib.parse import urlsplit
+
+    for location in work.get("locations") or []:
+        if not isinstance(location, dict):
+            continue
+        source = location.get("source") or {}
+        matches = openalex_id_tail(source.get("id") or "") == source_id if source_id.startswith("S") else source_id in (source.get("issn") or [])
+        if not matches or not (location.get("is_published") is True or location.get("version") == "publishedVersion"):
+            continue
+        url = location.get("landing_page_url") or ""
+        host = (urlsplit(url).hostname or "").lower()
+        if not host or any(host == domain or host.endswith("." + domain) for domain in ("arxiv.org", "zenodo.org", "osf.io", "biorxiv.org", "medrxiv.org")):
+            continue
+        return location
+    return None
+
+
+def work_to_raw_paper(work: dict, official_url_fallback: str, *, source_id: str | None = None) -> tuple[str, RawPaper | None]:
     """OpenAlex work → (openalex_id_tail, RawPaper)。无标题的丢弃。"""
     oid = openalex_id_tail(work.get("id", ""))
     title = clean_title(work.get("title") or work.get("display_name") or "")
     if not oid or not title:
         return oid or "", None
+    location = _published_location(work, source_id) if source_id else None
+    if source_id and location is None:
+        return oid, None
     authors = [
         clean_author_name((a.get("author") or {}).get("display_name", ""))
         for a in work.get("authorships", [])
@@ -152,6 +174,16 @@ def work_to_raw_paper(work: dict, official_url_fallback: str) -> tuple[str, RawP
         from app.cleaning import normalize_doi
 
         doi = normalize_doi(doi)
+    if source_id:
+        from app.api.serializers import doi_url
+        from urllib.parse import unquote
+        from app.services.paper_store import is_repository_doi
+        landing = location.get("landing_page_url") or ""
+        publisher_doi = doi_url(landing) if landing.startswith(("https://doi.org/", "http://doi.org/", "https://dx.doi.org/")) else None
+        if publisher_doi:
+            doi = unquote(publisher_doi.removeprefix("https://doi.org/"))
+        if is_repository_doi(doi):
+            return oid, None
     return oid, RawPaper(
         source="openalex",
         venue_key=oid,

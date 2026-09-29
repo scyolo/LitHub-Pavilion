@@ -13,7 +13,7 @@ export default function PaperCard({ paper, compactMode = false }) {
       <div className="paper-card-body">
         <div className="paper-meta">
           <Link to={paperHref(null, { venue: paper.venue })} className="venue-label">{paper.venue}</Link>
-          <span className={`level-badge level-${paper.level?.toLowerCase()}`}>CCF {paper.level}</span>
+          <span className={`level-badge level-${paper.level?.toLowerCase()}`} title={paper.venue_confirmed ? '配置来源的 CCF 级别' : '仅表示候选来源级别，尚未确认该论文属于此 CCF 来源'}>{paper.venue_confirmed ? 'CCF' : '候选'} {paper.level}</span>
           <span>{paper.venue_type === "journal" ? "期刊" : "会议"}</span><span className="meta-dot">·</span><span className="numeric">{paper.year}</span>
           {links.oa && <span className="oa-badge"><span />开放获取</span>}
           {!paper.venue_confirmed && <span className="unverified" title="现有元数据未完成发表归属核验，不代表正式录用">归属待核验</span>}

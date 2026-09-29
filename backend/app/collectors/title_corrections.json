@@ -1,0 +1,87 @@
+[
+  {
+    "publisher_key": "https://www.ecva.net/papers/eccv_2024/papers_ECCV/html/5573_ECCV_2024_paper.php",
+    "doi": "10.1007/978-3-031-72933-1_4",
+    "year": 2024,
+    "catalogue_title": "AnyHome: Open-Vocabulary Large-Scale Indoor Scene Generation with First-Person View Exploration",
+    "catalogue_authors": [
+      "Fu, Rao",
+      "Wen, Zehao",
+      "Liu, Zichen",
+      "Sridhar, Srinath"
+    ],
+    "title": "AnyHome: Open-Vocabulary Generation of Structured and Textured 3D Homes",
+    "source": "https://api.crossref.org/works/10.1007/978-3-031-72933-1_4",
+    "verified_at": "2026-09-29"
+  },
+  {
+    "publisher_key": "https://www.ecva.net/papers/eccv_2024/papers_ECCV/html/12148_ECCV_2024_paper.php",
+    "doi": "10.1007/978-3-031-73223-2_13",
+    "year": 2024,
+    "catalogue_title": "NePhi: Neural Deformation Fields for Approximately Diffeomorphic Medical Image Registration",
+    "catalogue_authors": [
+      "Tian, Lin",
+      "Greer, Thomas H",
+      "Estepar, Raul San Jose",
+      "Sengupta, Roni",
+      "Niethammer, Marc"
+    ],
+    "title": "NePhi: Neural Deformation Fields for Approximately Diffeomorphic Medical Image Registration",
+    "source": "https://api.crossref.org/works/10.1007/978-3-031-73223-2_13",
+    "verified_at": "2026-09-29"
+  },
+  {
+    "publisher_key": "https://www.ecva.net/papers/eccv_2024/papers_ECCV/html/7890_ECCV_2024_paper.php",
+    "doi": "10.1007/978-3-031-73033-7_2",
+    "year": 2024,
+    "catalogue_title": "CoTracker: It is Better to Track Together",
+    "catalogue_authors": [
+      "Karaev, Nikita",
+      "Rocco, Ignacio",
+      "Graham, Ben",
+      "Neverova, Natalia",
+      "Vedaldi, Andrea",
+      "Rupprecht, Christian"
+    ],
+    "title": "CoTracker: It Is Better to Track Together",
+    "source": "https://api.crossref.org/works/10.1007/978-3-031-73033-7_2",
+    "verified_at": "2026-09-29"
+  },
+  {
+    "publisher_key": "https://www.ecva.net/papers/eccv_2024/papers_ECCV/html/11433_ECCV_2024_paper.php",
+    "doi": "10.1007/978-3-031-73013-9_19",
+    "year": 2024,
+    "catalogue_title": "Energy-Clibrated VAE with Test Time Free Lunch",
+    "catalogue_authors": [
+      "Luo, Yihong",
+      "Qiu, Siya",
+      "Tao, Xingjian",
+      "Cai, Yujun",
+      "Tang, Jing"
+    ],
+    "title": "Energy-Calibrated VAE with Test Time Free Lunch",
+    "source": "https://api.crossref.org/works/10.1007/978-3-031-73013-9_19",
+    "verified_at": "2026-09-29"
+  },
+  {
+    "publisher_key": "https://www.ecva.net/papers/eccv_2024/papers_ECCV/html/168_ECCV_2024_paper.php",
+    "doi": "10.1007/978-3-031-72627-9_2",
+    "year": 2024,
+    "catalogue_title": "\"EMDM: Efficient Motion Diffusion Model for Fast, High-Quality Human Motion Generation\"",
+    "catalogue_authors": [
+      "Zhou, Wenyang",
+      "Dou, Zhiyang",
+      "Cao, Zeyu",
+      "Liao, Zhouyingcheng",
+      "Wang, Jingbo",
+      "Wang, Wenjia",
+      "Liu, Yuan",
+      "Komura, Taku",
+      "Wang, Wenping",
+      "Liu, Lingjie"
+    ],
+    "title": "EMDM: Efficient Motion Diffusion Model for Fast and High-Quality Motion Generation",
+    "source": "https://api.crossref.org/works/10.1007/978-3-031-72627-9_2",
+    "verified_at": "2026-09-29"
+  }
+]

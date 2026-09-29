@@ -62,3 +62,37 @@ def test_disabled_legacy_rule_does_not_become_enabled_through_replacement(db, sa
     db.refresh(old)
     assert old.enabled == 0
     assert len(db.query(DirectionRule).filter(DirectionRule.direction_id == direction.id, DirectionRule.keyword.like("%multi[- ]?modal%")).all()) == 1
+
+
+def test_startup_seed_does_not_duplicate_legacy_rule_before_refresh(db, sample_paper):
+    from app.bootstrap import seed_missing
+    from app.services.topic_index import LEGACY_MULTIMODAL, REFINED_MULTIMODAL, reindex_topics
+    direction = Direction(code='multimodal', name='Multimodal', min_score=2, enabled=1)
+    db.add(direction); db.flush()
+    db.add(DirectionRule(direction_id=direction.id, keyword=LEGACY_MULTIMODAL, weight=1, field='both', enabled=1))
+    db.commit()
+    seed_missing(db, SEEDS)
+    assert not db.query(DirectionRule).filter_by(direction_id=direction.id, keyword=REFINED_MULTIMODAL).count()
+    result = reindex_topics(db, SEEDS)
+    assert result['rules_refined'] == 1
+    assert not db.query(DirectionRule).filter_by(direction_id=direction.id, keyword=LEGACY_MULTIMODAL).count()
+
+
+def test_refresh_handles_previous_startup_duplicate_without_reviving_disabled_rule(db):
+    from app.services.topic_index import LEGACY_MULTIMODAL, REFINED_MULTIMODAL, refresh_topic_rules
+    direction = Direction(code='multimodal', name='Multimodal', min_score=2, enabled=1)
+    db.add(direction); db.flush()
+    old = DirectionRule(direction_id=direction.id, keyword=LEGACY_MULTIMODAL, weight=1, field='both', enabled=0)
+    newer = DirectionRule(direction_id=direction.id, keyword=REFINED_MULTIMODAL, weight=1, field='both', enabled=1)
+    db.add_all([old, newer]); db.commit()
+    refresh_topic_rules(db, SEEDS)
+    assert old.enabled == 0 and newer.enabled == 0
+
+
+def test_incremental_tagging_preserves_disabled_direction_links(db, sample_paper, sample_direction):
+    from app.services.tagging import apply_tagging
+    sample_direction.enabled = 0
+    db.add(PaperDirection(paper_id=sample_paper.id, direction_id=sample_direction.id, score=3, source='rule'))
+    db.commit()
+    apply_tagging(db, sample_paper.id, 'Unrelated paper', None, [], {})
+    assert db.get(PaperDirection, (sample_paper.id, sample_direction.id)).score == 3

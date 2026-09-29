@@ -5,7 +5,7 @@ LitHub Pavilion 只维护一套 React 网站。公开阅读端使用静态快照
 ## 运行链路
 
 ```text
-DBLP / OpenAlex / Semantic Scholar
+官方出版目录 / DBLP TOC / Crossref / OpenAlex / Semantic Scholar
                   │ HTTPS 元数据
                   ▼
 本地 FastAPI 生命周期、单实例任务与定时调度
@@ -31,6 +31,10 @@ DBLP / OpenAlex / Semantic Scholar
 |---|---|
 | `backend/app/api/` | 本地读写接口、共享筛选与公开序列化、输入和浏览器来源校验 |
 | `backend/app/collectors/` | 元数据适配、请求限速、经过公网 DNS 校验和地址绑定的 HTTPS 传输 |
+| `backend/app/collectors/publisher_toc.py` / `ojs.py` / `csdl.py` / `crossref.py` | 官方目录逐项枚举、主会范围校验、DOI/ISSN/父书出版证据；不获取论文文件 |
+| `backend/app/services/publisher_import.py` / `publisher_metadata.py` | 日常与手工共用的保守身份匹配、正式年份修复、出版证据与冲突记录 |
+| `backend/app/migrations.py` | 备份后迁移 publisher_key，保留主键、关系、人工标签并重建校验 FTS |
+| `backend/scripts/audit_publications.py` | 只读重放目录缓存、核对逐篇覆盖、版本/年份疑点及基线变化 |
 | `backend/app/services/pipeline.py` | 单实例串行采集、完整性记账、历史回填断点及任务退出 |
 | `backend/app/services/topic_index.py` | 九方向规则维护和重算，保留人工标签与本地自定义设置 |
 | `backend/app/services/snapshot*.py` | 快照导出、公开 schema 验证、首页摘要、数据分支上传与部署确认 |
@@ -51,6 +55,20 @@ DBLP / OpenAlex / Semantic Scholar
 - 发布仅写专用 `site-data` 分支，不强推。接受构建请求不等于已经上线，须读取正式网站 manifest 确认 revision。
 - 官方、DOI、DBLP 和开放版本链接直接指向原站；本站不下载、代理或重新分发论文文件，也不保证外站免费或永久可用。
 
+## 出版身份、年份与完整性
+
+- `publisher_key` 是真实官方文章 URL 的唯一身份，不伪造 DOI、DBLP 或第三方 ID。无 DOI 的正式论文也可收录；`crawl_logs.year` 保留逐年覆盖证据。旧数据库通过备份和事务迁移增加这些字段。
+- 强 DOI/DBLP/OpenAlex/S2/arXiv 身份冲突不按标题强合并。普通标题回退还要求完整作者集合一致；经证实的版本归并保留旧 ID、来源、开放链接及人工标签。一份预印本可对应会议文章和期刊扩展，旧 `arxiv_id` 唯一约束下通过 `oa_url` 保留第二篇正式文章的共享链接。
+- 正式目录的会议年或期刊卷年优先，不用 arXiv 首次提交年份或记录创建时间；TPAMI 逐期核对 CSDL 年份和分页。Crossref 期刊按普通出版日期与印刷日期双查询并集补漏，后续补全不得回退已核实的官方题名和卷年。ECML-PKDD 由章节 DOI 关联父书，再核对明确的会议年；没有同年完整日期就不编造日期。
+- 官方 TOC 完整解析、逐项入库且没有身份冲突，才具备该来源当时目录的完成证据；官方目录优先于二级索引，跨版本断点使用 `complete-v6`。DBLP、Crossref、OpenAlex、S2 的分页耗尽不等于出版目录全量，仍按 partial 处理。2026 等开放年份必须保留后续新增的可能性。
+- ICML 的 PMLR 卷尚未出现在索引时，可回退至官网已结束会议的公开录用目录。验证来源 track、Accept 决定、OpenReview 文章 ID、完整分页和会议日期；去掉口头/海报重复与期刊展示，不把未来录用列表当已结束会议目录。
+- ECCV 2026 在常规页面缺失时回退到官方 catalogue；Crossref markup 只按白名单解码合法科学 token，官方题名优先，不用展示差异覆盖论文身份。ECAI 2026 标记为 IJCAI 联合届次，不复制独立库存；ICRA 2026 标记 `official_program_only`，程序条目不当作正式 proceedings 全量。
+- 已证实的 ECCV 目录标题勘误要求官方 URL、DOI、年份、完整作者和旧标题全部匹配。CCF 归属还检查非主会分轨；版本归并不得把未确认记录自动升级为主会论文。
+- 在线与静态检索均先保障词项 AND 和规范化精确标题召回，再做标题优先排序。普通关键词限制 300 字符、24 词；已收录完整标题支持 2000 字符并可绕过关键词分词损失。仅更新后端不能修复公开站：必须重新导出、验证和构建静态快照。
+- 快照导出可通过 `--check-database` 校验公开投影；全标题可检索检查与真实库样本检索由维护脚本执行；后端只读检查使用 SQLite `mode=ro` 与 `PRAGMA query_only=ON`，不启动 API 生命周期、不采集、不联网。
+
+覆盖范围和未取得完整官方目录的来源见 README 的“数据采集与覆盖边界”。审计不会因为记录增多、上游 HTTP 200 或数据库结构完整就声称全量；未标签不等于未收录，碰巧同名不等于重复论文。
+
 ## 唯一支持的维护方式
 
 定时调度保持元数据每周一 04:00、链接维护每周二 06:30、引用维护每月 1 日 06:00，时区为 `Asia/Shanghai`。启动采集与定时开关分别控制，测试必须关闭真实采集和发布副作用。
@@ -70,4 +88,4 @@ DBLP / OpenAlex / Semantic Scholar
 - 现有数据库中的 `pdf_whitelist` 表若已存在，不读取、不更新、不删除；新库不创建该表。
 - 原始数据库、备注、人工标签、采集断点、归档文件和备份。删除论文元数据或维护链接都不删除归档文件。
 
-数据库、密钥、发布回执、PDF 和生成快照不能进入源码提交。历史设计可从 Git 历史查阅；[静态快照验收记录](静态快照与自动更新验收.md) 保留为当前发布链路的历史证据，不代表之后每次提交的验证结果。
+数据库、密钥、发布回执、PDF 和生成快照不能进入源码提交。历史设计可从 Git 历史查阅。按需生成的验收/测试报告不随源码保留；保留自动化测试源代码和生产维护脚本。

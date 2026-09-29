@@ -43,6 +43,7 @@ class Paper(Base):
     dblp_mdate: Mapped[str | None] = mapped_column(Text)
     source: Mapped[str] = mapped_column(Text, default="dblp")
     openalex_id: Mapped[str | None] = mapped_column(Text, unique=True)
+    publisher_key: Mapped[str | None] = mapped_column(Text, unique=True)  # canonical official article URL
     title: Mapped[str] = mapped_column(Text)
     title_norm: Mapped[str] = mapped_column(Text)
     abstract: Mapped[str | None] = mapped_column(Text)
@@ -73,7 +74,7 @@ class Paper(Base):
             "source IN ('dblp','openalex','manual') AND ("
             "(source='dblp' AND dblp_key IS NOT NULL) OR "
             "(source='openalex' AND openalex_id IS NOT NULL) OR "
-            "(source='manual' AND (doi IS NOT NULL OR arxiv_id IS NOT NULL)))",
+            "(source='manual' AND (doi IS NOT NULL OR arxiv_id IS NOT NULL OR publisher_key IS NOT NULL)))",
             name="ck_papers_source",
         ),
         CheckConstraint("pdf_status IN ('pending','downloaded','failed','closed')", name="ck_papers_pdf_status"),
@@ -152,6 +153,7 @@ class CrawlLog(Base):
     run_id: Mapped[str] = mapped_column(Text)
     task_type: Mapped[str] = mapped_column(Text)
     venue_id: Mapped[int | None] = mapped_column(ForeignKey("venues.id"))
+    year: Mapped[int | None] = mapped_column(Integer)  # NULL for aggregate and legacy logs
     status: Mapped[str] = mapped_column(Text)
     papers_new: Mapped[int] = mapped_column(Integer, default=0)
     papers_updated: Mapped[int] = mapped_column(Integer, default=0)
@@ -204,6 +206,29 @@ FTS_DDL = [
     CREATE TRIGGER IF NOT EXISTS papers_fts_ad AFTER DELETE ON papers BEGIN
       INSERT INTO papers_fts(papers_fts, rowid, title, abstract)
       VALUES ('delete', old.id, old.title, coalesce(old.abstract, ''));
+    END
+    """,
+    """
+    CREATE VIRTUAL TABLE IF NOT EXISTS paper_titles_fts USING fts5(
+        title_norm, content='papers', content_rowid='id', tokenize='porter unicode61'
+    )
+    """,
+    """
+    CREATE TRIGGER IF NOT EXISTS paper_titles_fts_ai AFTER INSERT ON papers BEGIN
+      INSERT INTO paper_titles_fts(rowid, title_norm) VALUES (new.id, new.title_norm);
+    END
+    """,
+    """
+    CREATE TRIGGER IF NOT EXISTS paper_titles_fts_au AFTER UPDATE OF title_norm ON papers BEGIN
+      INSERT INTO paper_titles_fts(paper_titles_fts, rowid, title_norm)
+      VALUES ('delete', old.id, old.title_norm);
+      INSERT INTO paper_titles_fts(rowid, title_norm) VALUES (new.id, new.title_norm);
+    END
+    """,
+    """
+    CREATE TRIGGER IF NOT EXISTS paper_titles_fts_ad AFTER DELETE ON papers BEGIN
+      INSERT INTO paper_titles_fts(paper_titles_fts, rowid, title_norm)
+      VALUES ('delete', old.id, old.title_norm);
     END
     """,
 ]

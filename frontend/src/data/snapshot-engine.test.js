@@ -73,3 +73,58 @@ describe("static reader query contract", () => {
     expect(() => createSnapshotEngine(data)).toThrow();
   });
 });
+
+it("ranks exact titles first without dropping nonadjacent AND matches", async () => {
+  const { createSnapshotEngine } = await import("./snapshot-engine.js");
+  const data = fixture();
+  data.papers[0].title = "Alpha with Distributed Omega";
+  data.papers[0].abstract = "Short summary";
+  data.papers[1].title = "Alpha Omega";
+  data.papers[1].abstract = "Short summary";
+  data.papers[2].title = "Unrelated title";
+  data.papers[2].abstract = "alpha omega ".repeat(100);
+  const api = createSnapshotEngine(data);
+  expect(api.search({ q: "alpha omega" }).items.map((p) => p.id)).toEqual([
+    data.papers[1].id, data.papers[0].id, data.papers[2].id,
+  ]);
+});
+
+it("normalizes diacritics in a complete title query", async () => {
+  const { createSnapshotEngine } = await import("./snapshot-engine.js");
+  const data = fixture();
+  data.papers[0].title = "A Naïve Approach to Inference";
+  const api = createSnapshotEngine(data);
+  expect(api.search({ q: data.papers[0].title }).items.map((p) => p.id)).toEqual([data.papers[0].id]);
+});
+
+
+it("recovers exact Unicode titles even when word tokenization differs", async () => {
+  const { createSnapshotEngine } = await import("./snapshot-engine.js");
+  const data = fixture();
+  data.papers[0].title = "λDiff: A New Model for Inference";
+  const api = createSnapshotEngine(data);
+  expect(api.search({ q: data.papers[0].title }).items[0].id).toBe(data.papers[0].id);
+  for (const q of ['λDiff', 'λDiff inference', 'diff inference']) {
+    expect(api.search({ q }).items.some((paper) => paper.id === data.papers[0].id)).toBe(true);
+  }
+});
+
+it('accepts existing long complete titles without unbounding arbitrary queries', async () => {
+  const { createSnapshotEngine } = await import('./snapshot-engine.js');
+  const data = fixture();
+  data.papers[0].title = Array.from({ length: 40 }, (_, i) => `ScientificTerm${i}`).join(' ');
+  const api = createSnapshotEngine(data);
+  expect(api.search({ q: data.papers[0].title }).items[0].id).toBe(data.papers[0].id);
+  expect(() => api.search({ q: 'unrecognized '.repeat(30) })).toThrow();
+});
+
+
+it('keeps known complete titles valid when filters exclude the paper', async () => {
+  const { createSnapshotEngine } = await import('./snapshot-engine.js');
+  for (const title of [Array.from({ length: 40 }, (_, i) => `ScientificTerm${i}`).join(' '), 'Visual Grounding 中文 Benchmark']) {
+    const data = fixture();
+    data.papers[0].title = title;
+    const api = createSnapshotEngine(data);
+    expect(api.search({ q: title, year: data.papers[0].year + 1 })).toMatchObject({ total: 0, items: [] });
+  }
+});

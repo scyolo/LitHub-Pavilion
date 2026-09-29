@@ -16,6 +16,11 @@ from app.collectors.dblp import fetch_toc, probe_dblp, toc_key_for
 from app.collectors.http_client import make_client
 from app.collectors.openalex import OpenAlexBudgetExhausted, fetch_works_by_source, resolve_source_id, work_to_raw_paper
 from app.collectors.s2 import fetch_bulk_raw_papers
+from app.collectors.publisher_toc import fetch_official_inventory
+from app.collectors.editions import joint_edition, publication_schedule
+from app.collectors.crossref import fetch_configured_inventory
+from app.services.publisher_metadata import apply_items
+from app.services.publisher_import import apply_records
 from app.config import settings
 from app.models import CrawlLog, CrawlState, Paper, Venue, utcnow_iso
 from app.ratelimit import AsyncTokenBucket
@@ -45,14 +50,19 @@ class CrawlPipeline:
         self._closing = False
         self._stopping = False
         self._openalex_paused_until = 0.0
+        self._s2_paused_until = 0.0
+        self._crossref_paused_until = 0.0
+        self._crossref_inventory_cache = {}
         self._limiters = {}
         self._collection_issue = None
+        self._ingest_conflicts = False
         self._active_session = None
 
     def _start(self, factory: Callable, *, run_id: str | None = None) -> bool:
         if self.status.running or self._closing:
             return False
         run_id = run_id or "c-" + uuid.uuid4().hex[:12]
+        self._crossref_inventory_cache.clear()
         self.status.running = True
         self.status.run_id = run_id
         self.status.current = None
@@ -87,11 +97,12 @@ class CrawlPipeline:
             self.status.current = None
             self.status.progress = None
             self._active_session = None
+            self._crossref_inventory_cache.clear()
 
     def _mark_interrupted(self):
         try:
             with self.session_factory() as session:
-                logs = session.query(CrawlLog).filter(CrawlLog.run_id == self.status.run_id, CrawlLog.status == "running").all()
+                logs = session.query(CrawlLog).filter(CrawlLog.run_id.in_((self.status.run_id, self.status.run_id + "-history", self.status.run_id + "-recent")), CrawlLog.status == "running").all()
                 for row in logs:
                     row.status = "failed"
                     row.error = "Interrupted before completion"
@@ -171,17 +182,50 @@ class CrawlPipeline:
 
     async def _collect_unit_async(self, session: Session, venue: Venue, year: int, use_dblp: bool):
         self._collection_issue = None
+        self._ingest_conflicts = False
+        schedule = publication_schedule(venue.abbr, year)
+        edition = joint_edition(venue.abbr, year)
+        if edition:
+            self._collection_issue = edition["note"]
+            return [], True  # Explicit alias, never a completed independent inventory.
+        if schedule["status"] != "scheduled":
+            self._collection_issue = schedule["reason"]
+            return [], True  # No independent proceedings inventory exists for this unit.
         papers = []
         failures = []
+        # A secondary index can be exhausted while omitting publisher papers.
+        # Prefer the publisher and never checkpoint a DBLP-only unit as complete.
+        try:
+            async with make_client() as client:
+                official = await fetch_official_inventory(client, self._limiter("publisher", 1), venue, year)
+            if official:
+                return official, False
+            failures.append("Official publisher:no complete inventory available")
+        except (httpx.HTTPError, ValueError) as exc:
+            failures.append("Official publisher:" + type(exc).__name__)
         if use_dblp and venue.type == "conf" and venue.dblp_toc_pattern:
             try:
                 async with make_client() as client:
-                    papers = await fetch_toc(client, self._limiter("dblp", settings.dblp_rps), settings.dblp_base_url, toc_key_for(venue.dblp_stream, venue.dblp_toc_pattern, year))
-                if papers:
-                    return papers, False
+                    indexed = await fetch_toc(client, self._limiter("dblp", settings.dblp_rps), settings.dblp_base_url, toc_key_for(venue.dblp_stream, venue.dblp_toc_pattern, year))
+                papers.extend(indexed)
+                failures.append("DBLP index exhausted; official publication inventory unverified" if indexed else "DBLP:empty")
             except (httpx.HTTPError, ValueError) as exc:
                 failures.append("DBLP:" + type(exc).__name__)
+        if time.monotonic() >= self._crossref_paused_until:
+            try:
+                async with make_client() as client:
+                    publisher = await fetch_configured_inventory(client, venue, year, cache=self._crossref_inventory_cache)
+                papers.extend(publisher)
+                if publisher:
+                    failures.append("Crossref DOI inventory enumerated; full official coverage unverified")
+            except (httpx.HTTPError, ValueError) as exc:
+                failures.append("Crossref:" + type(exc).__name__)
+                if isinstance(exc, httpx.HTTPStatusError) and exc.response.status_code == 429:
+                    self._crossref_paused_until = time.monotonic() + 900
+        else:
+            failures.append("Crossref:paused after rate limit")
         source = venue.openalex_source_id or venue.issn
+        openalex_complete = False
         if time.monotonic() >= self._openalex_paused_until:
             try:
                 async with make_client() as client:
@@ -193,10 +237,13 @@ class CrawlPipeline:
                             session.commit()
                     if source:
                         works = await fetch_works_by_source(client, limiter, settings.contact_email, source, [year])
+                        openalex_complete = True
                         for work in works:
-                            _, raw = work_to_raw_paper(work, "https://dblp.org/db/" + venue.dblp_stream + "/")
+                            _, raw = work_to_raw_paper(work, "https://dblp.org/db/" + venue.dblp_stream + "/", source_id=source)
                             if raw:
                                 papers.append(raw)
+                    else:
+                        failures.append("OpenAlex:no source mapping")
             except OpenAlexBudgetExhausted:
                 self._openalex_paused_until = time.monotonic() + 3600
                 failures.append("OpenAlex:budget or rate limited")
@@ -204,26 +251,72 @@ class CrawlPipeline:
                 failures.append("OpenAlex:" + type(exc).__name__)
         else:
             failures.append("OpenAlex:paused")
-        used_fallback = False
-        if venue.type == "conf" and venue.s2_venue and len(papers) < settings.openalex_low_yield:
-            used_fallback = True
+
+        # When DBLP is unavailable or empty, conferences must perform an
+        # unfiltered S2 venue/year inventory. Topic queries are only additional
+        # recall probes inside fetch_bulk_raw_papers; they are never the
+        # coverage checkpoint.
+        s2_complete = False
+        if venue.type == "conf" and venue.s2_venue and time.monotonic() >= self._s2_paused_until:
             try:
-                papers.extend(await fetch_bulk_raw_papers(venue, year, settings.s2_bulk_queries, settings.s2_api_key, settings.s2_rps))
+                s2_papers = await fetch_bulk_raw_papers(
+                    venue, year, [], settings.s2_api_key, settings.s2_rps
+                )
+                papers.extend(s2_papers)
+                s2_complete = True
             except Exception as exc:
                 failures.append("Semantic Scholar:" + type(exc).__name__)
-        # Empty, filtered fallback, and interrupted source collection are not full coverage checkpoints.
-        if not papers or failures or used_fallback:
-            self._collection_issue = "; ".join(failures) or ("Topic-filtered fallback; full coverage unverified" if used_fallback else "No records; coverage unverified")
-        return papers, not papers or bool(failures) or used_fallback
+                from app.collectors.s2 import S2RateLimited
+                if isinstance(exc, (S2RateLimited, httpx.TransportError)):
+                    self._s2_paused_until = time.monotonic() + 900
+        elif venue.type == "conf" and venue.s2_venue:
+            failures.append("Semantic Scholar:paused after rate limit or transport failure")
+        # Enumerating a secondary index is not proof of an entire official
+        # proceedings. S2 can index the preprint year and omit accepted papers.
+        # Keep fallback units retryable until official TOC evidence is available.
+        if openalex_complete:
+            failures.append("OpenAlex index exhausted; official publication inventory unverified")
+        if s2_complete:
+            failures.append("S2 inventory exhausted; official proceedings/year coverage unverified")
+        self._collection_issue = "; ".join(failures) or "No records; coverage unverified"
+        return papers, True
 
     def _ingest_batch_sync(self, session, raw_batch, venue, unit_year):
         papers, created, updated, cache = [], 0, 0, {}
+        if raw_batch and all(raw.extra.get("provenance") == "publisher_toc" for raw in raw_batch):
+            valid = [raw for raw in raw_batch if raw.year == unit_year and not is_noise_title(normalize_title(raw.title))]
+            result = apply_records(session, valid, venue)
+            if result["conflicts"]:
+                self._ingest_conflicts = True
+                self._collection_issue = "Publisher identities require review; no complete checkpoint written"
+            keys = [raw.extra["publisher_key"] for raw in valid]
+            papers = session.query(Paper).filter(Paper.publisher_key.in_(keys)).all()
+            return papers, result["counts"].get("new", 0), result["counts"].get("updated", 0)
+        publisher_items = [raw.extra["crossref_item"] for raw in raw_batch if raw.extra.get("crossref_item")]
+        if publisher_items:
+            result = apply_items(session, publisher_items, [unit_year])
+            created += result["counts"].get("new", 0)
+            updated += result["counts"].get("updated", 0)
+            if result["conflicts"]:
+                self._ingest_conflicts = True
+                self._collection_issue = "Publisher DOI identities require review; unit remains partial"
+            dois = [raw.doi for raw in raw_batch if raw.extra.get("crossref_item")]
+            papers.extend(session.query(Paper).filter(Paper.doi.in_(dois), Paper.venue_id == venue.id).all())
         for raw in raw_batch:
-            if not 2000 <= raw.year <= 2100 or (raw.source == "dblp" and raw.year != unit_year):
+            if raw.extra.get("crossref_item"):
+                continue
+            if not 2000 <= raw.year <= 2100 or (raw.year != unit_year):
                 continue
             if is_noise_title(normalize_title(raw.title)):
                 continue
-            paper, new = upsert_paper(session, raw, venue, author_cache=cache)
+            try:
+                with session.begin_nested():
+                    paper, new = upsert_paper(session, raw, venue, author_cache=cache)
+            except ValueError as exc:
+                self._ingest_conflicts = True
+                self._collection_issue = 'Some publication identities require review; remaining records were still ingested'
+                log.warning('Skipped conflicting metadata in %s/%s: %s', venue.abbr, unit_year, exc)
+                continue
             created += int(new)
             updated += int(not new)
             papers.append(paper)
@@ -261,12 +354,12 @@ class CrawlPipeline:
             for venue in venues:
                 for year in years:
                     key = f"{task_type}:{venue.dblp_stream}:{year}"
-                    checkpoint = session.query(CrawlState).filter(CrawlState.scope_key == key, CrawlState.cursor == "complete-v2").first()
+                    checkpoint = session.query(CrawlState).filter(CrawlState.scope_key == key, CrawlState.cursor == "complete-v6").first()
                     if task_type == "backfill" and checkpoint:
                         completed += 1
                         self.status.progress = f"{completed}/{total}"
                         continue
-                    unit = CrawlLog(run_id=run_id, task_type=task_type, venue_id=venue.id, status="running", started_at=utcnow_iso())
+                    unit = CrawlLog(run_id=run_id, task_type=task_type, venue_id=venue.id, year=year, status="running", started_at=utcnow_iso())
                     session.add(unit)
                     session.commit()
                     self.status.current = f"{venue.abbr}/{year}"
@@ -287,14 +380,15 @@ class CrawlPipeline:
                                     if enrichment and enrichment.get("failed"):
                                         incomplete = True
                             await self._db_call(self._tag_owned, ids)
+                        incomplete = incomplete or getattr(self, "_ingest_conflicts", False)
                         unit.status = "partial" if incomplete or not raws else "success"
                         unit.error = self._collection_issue if incomplete else None
                         if unit.status == "success":
                             state = session.query(CrawlState).filter(CrawlState.scope_key == key).one_or_none()
                             if state is None:
-                                session.add(CrawlState(scope_key=key, cursor="complete-v2"))
+                                session.add(CrawlState(scope_key=key, cursor="complete-v6"))
                             else:
-                                state.cursor = "complete-v2"
+                                state.cursor = "complete-v6"
                             successes += 1
                         else:
                             partials += 1

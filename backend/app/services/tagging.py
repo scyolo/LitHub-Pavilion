@@ -90,7 +90,7 @@ def apply_tagging(
         if direction_id in thresholds and score >= thresholds[direction_id]
     }
     for direction_id, row in existing.items():
-        if row.source == "rule" and direction_id not in selected:
+        if row.source == "rule" and direction_id in thresholds and direction_id not in selected:
             session.delete(row)
     for direction_id, score in selected.items():
         if direction_id in manual_ids:

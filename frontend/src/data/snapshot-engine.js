@@ -22,12 +22,22 @@ function parseParams(params = {}, search = false) {
   return { ...values, directions, venue, page, size, sort };
 }
 
-function queryTokens(q) {
-  if (typeof q !== "string" || q.length > 300) throw readerError("q 最多 300 字符、24 个英文词条");
-  const tokens = q.match(/[A-Za-z0-9]+/g) || [];
-  if (!tokens.length || /[\u3400-\u4dbf\u4e00-\u9fff\uf900-\ufaff\u{20000}-\u{323af}]/u.test(q)) throw readerError("请输入可检索的英文词条；暂不支持中文检索", 400, "EMPTY_QUERY");
-  if (tokens.length > 24) throw readerError("q 最多 300 字符、24 个英文词条");
+function queryTokens(q, exactTitle = false) {
+  if (typeof q !== "string" || q.length > 2000) throw readerError("完整标题最多 2000 字符");
+  const tokens = normalizedTitle(q).match(/[A-Za-z0-9]+/g) || [];
+  if (!tokens.length || /[\u3400-\u4dbf\u4e00-\u9fff\uf900-\ufaff\u{20000}-\u{323af}]/u.test(q)) {
+    if (exactTitle && tokens.length) return [];
+    throw readerError("请输入可检索的英文词条；暂不支持中文检索", 400, "EMPTY_QUERY");
+  }
+  if (q.length > 300 || tokens.length > 24) {
+    if (exactTitle) return [];
+    throw readerError("关键词最多 300 字符、24 个英文词条；更长输入必须是已收录的完整标题");
+  }
   return [...new Set(tokens.map((token) => stemmer(token.toLowerCase())))];
+}
+
+function normalizedTitle(value) {
+  return value.normalize("NFKD").replace(/\p{M}/gu, "").toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
 }
 
 export function createSnapshotEngine({ manifest, catalog, papers }) {
@@ -42,26 +52,36 @@ export function createSnapshotEngine({ manifest, catalog, papers }) {
   const timestamps = new Map(papers.map((paper) => [paper.id, Date.parse(paper.created_at) || 0]));
   const publicationDates = new Map(papers.map((paper) => [paper.id, publicationSortKey(paper)]));
   const dashboards = new Map();
+  const exactTitles = new Map();
+  for (const paper of papers) {
+    const title = normalizedTitle(paper.title);
+    if (!exactTitles.has(title)) exactTitles.set(title, []);
+    exactTitles.get(title).push(paper.id);
+  }
   let index;
   function searchIndex() {
     if (index) return index;
-    const postings = new Map(), lengths = new Map();
+    const postings = new Map(), lengths = new Map(), titleTokens = new Map();
     let totalLength = 0;
     for (const paper of papers) {
       const terms = `${paper.title} ${paper.abstract || ""}`.normalize("NFD").replace(/\p{M}/gu, "").toLowerCase().match(/[\p{L}\p{N}]+/gu) || [];
       lengths.set(paper.id, terms.length);
       totalLength += terms.length;
+      const titleTerms = (normalizedTitle(paper.title).match(/[a-z0-9]+/g) || []).map((term) => stemmer(term));
+      titleTokens.set(paper.id, titleTerms);
       const frequency = new Map();
       for (const term of terms) {
         const token = /^[a-z0-9]+$/.test(term) ? stemmer(term) : term;
         frequency.set(token, (frequency.get(token) || 0) + 1);
       }
+      // Title TF has the same 8:1 weight as the live FTS5 endpoint.
+      for (const token of titleTerms) frequency.set(token, (frequency.get(token) || 0) + 7);
       for (const [token, count] of frequency) {
         if (!postings.has(token)) postings.set(token, new Map());
         postings.get(token).set(paper.id, count);
       }
     }
-    index = { postings, lengths, averageLength: totalLength / Math.max(1, papers.length) || 1 };
+    index = { postings, lengths, titleTokens, exactTitles, averageLength: totalLength / Math.max(1, papers.length) || 1 };
     return index;
   }
   function matches(paper, filters) {
@@ -74,10 +94,10 @@ export function createSnapshotEngine({ manifest, catalog, papers }) {
       && (!filters.directions.length || filters.directions.some((code) => paper.directions.includes(code)))
       && (!filters.access || (filters.access === "oa" ? Boolean(paper.oa_url) : !paper.oa_url));
   }
-  function compare(sort, scores) {
+  function compare(sort, scores, priorities = new Map()) {
     return (a, b) => {
       let difference;
-      if (sort === "relevance") difference = scores.get(a.id) - scores.get(b.id);
+      if (sort === "relevance") difference = priorities.get(a.id) - priorities.get(b.id) || scores.get(a.id) - scores.get(b.id);
       else if (sort === "publication_desc") difference = publicationDates.get(b.id).localeCompare(publicationDates.get(a.id));
       else if (sort === "year_desc") difference = b.year - a.year;
       else if (sort === "citation_desc") difference = (b.citation_count || 0) - (a.citation_count || 0);
@@ -88,13 +108,15 @@ export function createSnapshotEngine({ manifest, catalog, papers }) {
   function listing(params, isSearch) {
     const filters = parseParams(params, isSearch);
     let candidates = papers;
-    const scores = new Map();
+    const scores = new Map(), priorities = new Map();
     if (isSearch) {
-      const tokens = queryTokens(params.q);
-      const { postings, lengths, averageLength } = searchIndex();
+      const exactTitle = typeof params.q === 'string' ? normalizedTitle(params.q) : '';
+      const tokens = queryTokens(params.q, exactTitles.has(exactTitle));
+      const { postings, lengths, titleTokens, averageLength } = tokens.length ? searchIndex() : { postings: new Map() };
+      const phrase = (exactTitle.match(/[A-Za-z0-9]+/g) || []).map((token) => stemmer(token.toLowerCase()));
       const groups = tokens.map((token) => postings.get(token) || new Map()).sort((a, b) => a.size - b.size);
       candidates = [];
-      for (const id of groups[0].keys()) {
+      for (const id of groups[0]?.keys() || []) {
         if (!groups.every((group) => group.has(id))) continue;
         let score = 0;
         for (const group of groups) {
@@ -102,11 +124,23 @@ export function createSnapshotEngine({ manifest, catalog, papers }) {
           const idf = Math.max(1e-6, Math.log((papers.length - group.size + 0.5) / (group.size + 0.5)));
           score -= idf * frequency * 2.2 / (frequency + 1.2 * (0.25 + 0.75 * lengths.get(id) / averageLength));
         }
+        const title = titleTokens.get(id);
+        const phraseMatch = title.some((_, start) => phrase.every((token, i) => title[start + i] === token));
+        priorities.set(id, normalizedTitle(byId.get(id).title) === exactTitle ? 0 : phraseMatch ? 1 : tokens.every((token) => title.includes(token)) ? 2 : 3);
         scores.set(id, score);
         candidates.push(byId.get(id));
       }
+      // Unicode/math symbols can tokenize differently from normalized titles.
+      // Exact title identity must not be lost behind the word-index predicate.
+      for (const id of exactTitles.get(exactTitle) || []) {
+        if (!scores.has(id)) {
+          candidates.push(byId.get(id));
+          scores.set(id, 0);
+        }
+        priorities.set(id, 0);
+      }
     }
-    const rows = candidates.filter((paper) => matches(paper, filters)).sort(compare(filters.sort, scores));
+    const rows = candidates.filter((paper) => matches(paper, filters)).sort(compare(filters.sort, scores, priorities));
     return { total: rows.length, page: filters.page, size: filters.size, items: rows.slice((filters.page - 1) * filters.size, filters.page * filters.size).map((paper) => {
       const { abstract, authors, direction_details, arxiv_id, dblp_key, updated_at, ...card } = paper;
       return isSearch ? { ...card, score: Number(scores.get(paper.id).toFixed(4)) } : card;
@@ -152,6 +186,27 @@ export function createSnapshotEngine({ manifest, catalog, papers }) {
     latest: (params = {}) => listing({ ...params, page: 1, size: 5, sort: "publication_desc" }, false),
     papers: (params = {}) => listing(params, false),
     search: (params = {}) => listing(params, true),
+    verifyTitleCoverage: () => {
+      const failures = [];
+      let checked = 0;
+      for (const [, ids] of exactTitles) {
+        const title = byId.get(ids[0]).title;
+        try {
+          const found = new Set();
+          for (let page = 1; page <= Math.ceil(ids.length / 100); page++) {
+            const result = listing({ q: title, page, size: 100 }, true);
+            for (const row of result.items) found.add(row.id);
+          }
+          for (const id of ids) {
+            if (found.has(id)) checked++;
+            else failures.push({ id, title, reason: '完整标题结果缺少该论文' });
+          }
+        } catch (error) {
+          for (const id of ids) failures.push({ id, title, reason: error.message });
+        }
+      }
+      return { checked, unique_titles: exactTitles.size, failures };
+    },
     paper: (id) => {
       const paper = /^\d+$/.test(String(id)) ? byId.get(Number(id)) : null;
       if (!paper) throw readerError("论文不存在", 404, "PAPER_NOT_FOUND");

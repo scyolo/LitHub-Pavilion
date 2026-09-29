@@ -7,13 +7,14 @@ import logging
 import httpx
 from sqlalchemy.orm import Session
 
-from app.cleaning import normalize_arxiv_id, normalize_doi
+from app.cleaning import normalize_arxiv_id, normalize_doi, normalize_title
 from app.collectors.dblp import stream_prefix
 from app.collectors.s2 import S2Record, enrich_batch
 from app.config import settings
 from app.api.serializers import abstract_text, safe_http_url
 from app.models import Paper, utcnow_iso
 from app.ratelimit import AsyncTokenBucket
+from app.services.paper_store import is_repository_doi
 
 log = logging.getLogger("papertracker.enrichment")
 
@@ -21,7 +22,11 @@ _ENRICH_BATCH_SIZE = 500
 
 
 def s2_external_id(paper: Paper) -> str | None:
-    """S2 batch 的查询单元标识：DBLP key 优先，其次 DOI / arXiv ID。"""
+    """优先使用正式论文身份，避免共享预印本的期刊扩展污染会议元数据。"""
+    if paper.doi and not is_repository_doi(paper.doi):
+        return 'DOI:' + paper.doi
+    if paper.dblp_key:
+        return 'DBLP:' + paper.dblp_key
     if paper.s2_id:
         return "CorpusId:" + paper.s2_id
     if paper.arxiv_id:
@@ -45,10 +50,21 @@ def set_oa_url_if_empty(paper: Paper, url: str | None) -> bool:
     return False
 
 
-def apply_s2_record(session: Session, paper: Paper, rec: S2Record | None) -> None:
-    """把 S2 补全结果写入论文；唯一键字段写入前查重，冲突即放弃该字段。"""
+def apply_s2_record(session: Session, paper: Paper, rec: S2Record | None) -> bool:
+    """核验身份后补全；标题或正式标识冲突不更新任何字段。"""
     if rec is None:
-        return
+        return False
+    doi = normalize_doi(rec.doi)
+    aid = normalize_arxiv_id(rec.arxiv_id)
+    conflict = (
+        (paper.doi and doi and paper.doi != doi and not is_repository_doi(paper.doi) and not is_repository_doi(doi))
+        or (paper.arxiv_id and aid and paper.arxiv_id != aid)
+        or (paper.dblp_key and rec.dblp_key and paper.dblp_key != rec.dblp_key)
+        or (paper.s2_id and rec.corpus_id and paper.s2_id != rec.corpus_id)
+    )
+    if conflict or not rec.title or normalize_title(rec.title) != paper.title_norm:
+        log.warning('S2 identity conflict for paper %s; metadata left unchanged', paper.id)
+        return False
     if abstract_text(paper.abstract) is None and abstract_text(rec.abstract):
         paper.abstract = abstract_text(rec.abstract)
     paper.citation_count = max(0, rec.citation_count)
@@ -79,6 +95,7 @@ def apply_s2_record(session: Session, paper: Paper, rec: S2Record | None) -> Non
             if clash is None:
                 paper.dblp_key = rec.dblp_key
                 # S2 supplies an external identifier, not evidence of track/year acceptance.
+    return True
 
 
 async def enrich_papers(session: Session, papers: list[Paper], client: httpx.AsyncClient) -> dict:
@@ -103,10 +120,12 @@ async def enrich_papers(session: Session, papers: list[Paper], client: httpx.Asy
             log.warning("S2 enrichment failed (%d papers): %s", len(ids), type(exc).__name__)
             continue
         for (paper, _sid), rec in zip(chunk, records):
-            apply_s2_record(session, paper, rec)
-            if rec is not None:
+            applied = apply_s2_record(session, paper, rec)
+            if applied:
                 paper.enriched_at = utcnow_iso()
                 stats["enriched"] += 1
+            elif rec is not None:
+                stats['failed'] += 1
             else:
                 stats["missing"] += 1
         session.commit()

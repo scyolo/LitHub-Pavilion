@@ -142,7 +142,10 @@ def abstract_text(value: str | None) -> str | None:
 
 
 def paper_links(paper: Paper) -> dict[str, str | None]:
-    official = doi_url(paper.doi)
+    # A repository DOI is an open version, not the official publication page.
+    publisher = safe_http_url(getattr(paper, "publisher_key", None))
+    repository_doi = (paper.doi or "").lower().startswith(("10.48550/", "10.5281/", "10.6084/", "10.31219/", "10.21203/"))
+    official = (publisher if repository_doi else None) or doi_url(paper.doi) or publisher
     if not official:
         official = safe_http_url(paper.official_url)
         if official and urlsplit(official).hostname in ("doi.org", "dx.doi.org"):

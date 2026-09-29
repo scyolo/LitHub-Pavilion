@@ -116,12 +116,16 @@ async def bulk_search_venue_year(
     await limiter.acquire()
     headers = {"x-api-key": api_key} if api_key else {}
     params: dict = {
-        "query": query,
+        # Semantic Scholar treats an omitted/empty query as the complete
+        # venue+year inventory. Do not force a topic query here: topic
+        # queries are only supplementary recall probes.
         "venue": venue,
         "year": str(year),
         "fields": _BULK_FIELDS,
         "limit": 1000,
     }
+    if query.strip():
+        params["query"] = query.strip()
     if token:
         params["token"] = token
     resp = await client.get(_BULK_API, params=params, headers=headers)
@@ -131,65 +135,111 @@ async def bulk_search_venue_year(
     return resp.json()
 
 
+class S2BulkCoverageIncomplete(RuntimeError):
+    """The bulk endpoint still had a continuation token at the safety limit."""
+
+
 async def fetch_bulk_raw_papers(
     venue: "Venue",
     year: int,
-    queries: list[str],
+    queries: list[str] | None,
     api_key: str,
     s2_rps: float,
-    max_pages_per_query: int = 5,
+    max_pages_per_query: int = 100,
 ) -> list["RawPaper"]:
-    """Topic-biased fallback, not a complete proceedings inventory.
+    """Fetch the complete S2 venue/year inventory plus optional recall probes.
 
-    A matching DBLP identifier associates a source; it does not confirm a main-track
-    acceptance or determine publication year. Keep the upstream year and record provenance.
+    The empty-query request is mandatory and is the coverage-bearing request.
+    Configured topic queries are supplementary only; they cannot make a run look
+    complete if the full request fails. A matching DBLP identifier associates a
+    record with the configured proceedings stream; it is also the evidence used
+    to keep arXiv-only records out of the CCF venue collection.
     """
     from app.collectors.dblp import RawPaper, stream_prefix
     from app.cleaning import clean_author_name, is_noise_title, normalize_title
+    from app.publication import _valid_date
 
     limiter = AsyncTokenBucket(s2_rps)
     seen: set[str] = set()
     out: list[RawPaper] = []
-    for query in queries:
-        token: str | None = None
-        pages = 0
-        while pages < max_pages_per_query:  # 保险丝：每查询词最多 5 页 = 5000 条
-            async with _make_client() as client:
-                body = await bulk_search_venue_year(
-                    client, limiter, query, venue.s2_venue, year, api_key, token
-                )
-            for item in body.get("data", []):
-                rec = _parse(item)
-                if not (rec.dblp_key and rec.title) or item.get("year") != year:
-                    continue
-                if stream_prefix(rec.dblp_key) != venue.dblp_stream:
-                    continue  # journals/corr（arXiv-only），不归属本 venue
-                if rec.dblp_key in seen:
-                    continue
-                seen.add(rec.dblp_key)
-                if is_noise_title(normalize_title(rec.title or "")):
-                    continue
-                out.append(
-                    RawPaper(
-                        source="dblp",
-                        venue_key=rec.dblp_key,
-                        title=(rec.title or "").rstrip("."),
-                        year=year,
-                        authors=[clean_author_name(a) for a in rec.authors],
-                        doi=rec.doi,
-                        arxiv_id=rec.arxiv_id,
-                        publication_date=rec.publication_date,
-                        official_url="https://dblp.org/rec/" + rec.dblp_key + ".html",
-                        extra={
-                            "abstract": rec.abstract,
-                            "cited_by_count": rec.citation_count,
-                            "oa_pdf": rec.oa_pdf_url,
-                            "provenance": "s2_bulk",
-                        },
+    # Full venue/year inventory first. Keep configured probes after it for
+    # records that S2 indexes under a slightly different query shape.
+    all_queries = [""] + list(queries or [])
+    all_queries = list(dict.fromkeys(query.strip() for query in all_queries))
+    async with _make_client() as client:
+        for query in all_queries:
+            token: str | None = None
+            pages = 0
+            seen_tokens: set[str] = set()
+            while True:
+                try:
+                    body = await bulk_search_venue_year(
+                        client, limiter, query, venue.s2_venue, year, api_key, token
                     )
-                )
-            token = body.get("token")
-            pages += 1
-            if not token:
-                break
+                except Exception:
+                    # The empty query is the coverage-bearing request. A
+                    # supplementary topic probe may be skipped without making
+                    # a complete venue/year inventory partial.
+                    if query:
+                        break
+                    raise
+                if not isinstance(body, dict) or not isinstance(body.get("data"), list):
+                    raise S2BulkCoverageIncomplete("S2 returned a malformed inventory page")
+                if body.get("token") and not body["data"]:
+                    raise S2BulkCoverageIncomplete("S2 returned an empty page with a continuation token")
+                for item in body["data"]:
+                    rec = _parse(item)
+                    try:
+                        item_year = int(item.get("year"))
+                    except (TypeError, ValueError):
+                        continue
+                    if not (rec.dblp_key and rec.title) or item_year != year:
+                        continue
+                    if stream_prefix(rec.dblp_key) != venue.dblp_stream:
+                        continue  # journals/corr（arXiv-only），不归属本 venue
+                    if rec.dblp_key in seen:
+                        continue
+                    seen.add(rec.dblp_key)
+                    if is_noise_title(normalize_title(rec.title or "")):
+                        continue
+                    publication_date = rec.publication_date
+                    # S2's publicationDate may be the arXiv submission/update
+                    # date. It is safe only when it is a valid date in the
+                    # proceedings year; DBLP remains the authority for year.
+                    if not (
+                        isinstance(publication_date, str)
+                        and _valid_date(publication_date)
+                        and publication_date.startswith(f"{year:04d}-")
+                    ):
+                        publication_date = None
+                    out.append(
+                        RawPaper(
+                            source="dblp",
+                            venue_key=rec.dblp_key,
+                            title=(rec.title or "").rstrip("."),
+                            year=year,
+                            authors=[clean_author_name(a) for a in rec.authors],
+                            doi=rec.doi,
+                            arxiv_id=rec.arxiv_id,
+                            publication_date=publication_date,
+                            official_url="https://dblp.org/rec/" + rec.dblp_key + ".html",
+                            extra={
+                                "abstract": rec.abstract,
+                                "cited_by_count": rec.citation_count,
+                                "oa_pdf": rec.oa_pdf_url,
+                                "provenance": "s2_bulk",
+                                "s2_id": rec.corpus_id,
+                            },
+                        )
+                    )
+                next_token = body.get("token")
+                pages += 1
+                if not next_token:
+                    break
+                if next_token in seen_tokens or pages >= max_pages_per_query:
+                    raise S2BulkCoverageIncomplete(
+                        f"S2 pagination safety limit reached for {venue.s2_venue}/{year}"
+                    )
+                seen_tokens.add(next_token)
+                token = next_token
     return out

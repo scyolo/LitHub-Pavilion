@@ -10,6 +10,28 @@ from app.services.tagging import load_rules, load_thresholds, score_text
 
 LEGACY_MULTIMODAL = r"\bmulti[- ]?modal\b"
 REFINED_MULTIMODAL = r"\bmulti[- ]?modal\b(?!\s+(?:optim(?:iz|is)ation|functions?|problems?|landscapes?))"
+RULE_REFINEMENTS = {
+    ("multimodal", LEGACY_MULTIMODAL): REFINED_MULTIMODAL,
+    ("llm", r"\b(?:pre[- ]trained|parameter[- ]efficient)[- ](?:language )?models?\b"):
+        r"\b(?:pre[- ]trained|parameter[- ]efficient)[- ]language[- ]models?\b",
+    ("llm", r"\b(?:fine[- ]tuning|instruction[- ]following|reasoning models?)\b"):
+        r"\b(?:instruction[- ]following|reasoning models?|fine[- ]tuning (?:large )?language models?)\b",
+    ("cv", r"\b(?:object|anomaly|change) detection\b"):
+        r"\b(?:object detection|(?:visual|image|video)[- ](?:anomaly|change)[- ]detection)\b",
+    ("cv", r"\b(?:point clouds?|neural radiance fields?|3d|three[- ]dimensional)\b"):
+        r"\b(?:point clouds?|neural radiance fields?|(?:3d|three[- ]dimensional)[- ](?:vision|reconstruction|segmentation|detection|generation|shapes?|scenes?))\b",
+    ("nlp", r"\b(?:natural )?language\b"):
+        r"\b(?:natural language|language[- ](?:models?|understanding|generation|resources?|translation))\b",
+    ("retrieval", r"\b(?:search|ranking|recommendation)\b"):
+        r"\b(?:(?:web|semantic|neural|document|passage)[- ]search|search engines?|(?:document|passage|retrieval)[- ]ranking|recommender systems?|recommendation systems?)\b",
+    ("alignment", r"\balignment[- ](?:aware|based|free)\b"):
+        r"\b(?:human|value|preference|safety|llm|language[- ]model)[- ]alignment\b",
+}
+
+
+def superseded_keywords(code, keyword):
+    return [old for (topic, old), replacement in RULE_REFINEMENTS.items()
+            if topic == code and replacement == keyword]
 
 
 def _seeds(directory, filename):
@@ -32,17 +54,29 @@ def refresh_topic_rules(session, directory):
         re.compile(keyword)
         direction = topics[seed["direction_code"]]
         key = (direction.id, keyword)
+        legacy = next((rules[(direction.id, old)] for old in superseded_keywords(direction.code, keyword)
+                       if (direction.id, old) in rules), None)
+        if legacy is not None:
+            replacement = rules.get(key)
+            unmodified = legacy.enabled == 1 and legacy.field == 'both' and legacy.weight == 1
+            if replacement is not None:
+                if unmodified:
+                    session.delete(legacy)
+                    rules.pop((direction.id, legacy.keyword))
+                    refined += 1
+                elif replacement.enabled == 1 and replacement.field == 'both' and replacement.weight == 1:
+                    replacement.enabled = 0
+                    refined += 1
+            elif unmodified:
+                old_key = (direction.id, legacy.keyword)
+                legacy.keyword = keyword
+                rules.pop(old_key)
+                rules[key] = legacy
+                refined += 1
+            # A disabled/customized predecessor is a local choice, not a missing rule.
+            continue
         if key in rules:
             continue
-        if direction.code == "multimodal" and keyword == REFINED_MULTIMODAL:
-            legacy = rules.get((direction.id, LEGACY_MULTIMODAL))
-            if legacy is not None:
-                if legacy.enabled == 1 and legacy.field == "both" and legacy.weight == 1:
-                    legacy.keyword = keyword
-                    rules[key] = legacy
-                    refined += 1
-                # A disabled or customized rule is an explicit local choice.
-                continue
         row = DirectionRule(direction_id=direction.id, keyword=keyword, field=seed["field"], weight=float(seed["weight"]), enabled=int(seed["enabled"]))
         session.add(row)
         rules[key] = row

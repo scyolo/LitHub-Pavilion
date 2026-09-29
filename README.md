@@ -161,11 +161,24 @@ npm run dev
 ## 数据准确性边界
 
 1. CCF 范围由配置清单限制，不代表已对 2026 目录逐行、逐篇重新核验。正式级别、主会/分轨和录用信息以官方出版页为准。
-2. DBLP、Semantic Scholar、OpenAlex 可能被限流、质询、延迟收录。S2 主题搜索是**非完整兜底**，不应等同于整届会议目录。零记录/失败不会写完整回填断点。
-3. 新记录只有直接 DBLP TOC 来源才标为已关联；手工指定 venue 或 S2 的 key 前缀不等于已核验发表年份与主会录用。旧数据保留原标记，并继续显示核验提示。
+2. 优先采集官方目录，缺失时以 DBLP TOC、Crossref、OpenAlex/Semantic Scholar 继续补采。官方目录逐条核对论文身份、标题与年份；Crossref 即使枚举完成，也只证明已登记 DOI 的覆盖，不代表整届会议/整年期刊全量。二级索引、主题检索、零结果及失败不写完整回填断点，不绕过上游质询或权限限制。
+3. 直接 DBLP TOC、已校验官方目录、匹配 DOI 和正式容器的出版元数据可以确认关联；仅手工指定 venue、S2 key 前缀或 arXiv 提交不够。正式年份优先于预印本年份，ECML-PKDD 章节还核对父书会议副标题，不以延迟印刷年替代会议年。旧的未核实记录保留并显式列入审计。arXiv 已正式发表版本会保留开放链接；同一 arXiv 对应不同正式论文时不强行合并。
 4. 方向使用关键词规则，可多标签重叠；引用数来自上游而非实时评估。摘要缺失/纯标点占位不伪装为有效摘要。
-5. 在线英文检索基于 FTS5 `porter unicode61`，静态版在 Worker 内对标题和完整摘要建立词干索引，均按所有英文词项交集匹配。中文分词不在当前范围，接口明确报错。外链做安全校验，不保证每个出版站均可访问。
+5. 在线英文检索基于 FTS5 `porter unicode61`，静态版在 Worker 内对标题和完整摘要建立词干索引。词项 AND 召回不要求相邻；相关性依次优先规范化精确标题、标题短语、全部词在标题、摘要命中，标题权重高于摘要。精确标题另有独立召回，避免数学符号/变音符号被分词漏掉。关键词检索保持最多 300 字符、24 个英文词条的输入保护；已收录的完整标题支持最多 2000 字符（包括标题中的非英文字符），超长输入只走精确标题索引。普通中文关键词检索明确报错。外链做安全校验，不保证每个出版站均可访问。
 6. 外部元数据 HTTP 客户端只连接 DNS 解析并验证后的公网 IP，保留原主机 TLS SNI；禁止自动重定向和环境代理。Fake-IP/TUN 网络把域名映射到 `198.18.*` 等非公网地址时，设置 `OUTBOUND_DNS_MODE=https`，使用固定公网 HTTPS DNS 解析器取得真实 IPv4 地址；仍检查每条结果、固定连接目标并验证证书，不允许私网地址，不修改系统代理。默认 `system` 保持系统 DNS 行为。
+
+## 数据采集与覆盖边界
+
+默认范围是配置中启用的 28 个 A/B 来源及 2023 年起的年份，不是 CCF 全部领域目录。九个方向用于检索和多标签筛选，不是穷尽分类；没有命中方向规则的论文仍保留并可查询。**全部已收录论文可检索，不等于已证明所有上游论文均已收齐。**
+
+- 官方目录适配包括 AAAI/ICAPS/JAIR 的 OJS、IJCAI、KR、ICLR、ICML/UAI、NeurIPS、CVF、JMLR、ACL Anthology、ECCV、AAMAS，以及 TPAMI 的 IEEE CSDL 逐期目录。目录分页、文章身份、作者和正式年份逐项验证，解析异常不能写完整断点。
+- TPAMI 按正式期次而非 early-access/DOI 年份归档。Crossref 期刊补采同时枚举普通出版日期与印刷日期，以 DOI 去重并集，避免“先在线、后编卷”的论文漏收；TASLP 包括已配置的续刊 ISSN。
+- ICML 优先用 PMLR；缺少卷索引时核验官网已结束会议的目录，包含正式 Position Paper Track，排除工作坊及期刊展示。ECCV 可使用官方 catalogue。未来录用列表和 ICRA 程序页不能冒充正式 proceedings。
+- ACL/EMNLP 的 Findings、非主会分轨和 AAAI 的 IAAI/EAAI、演示、学生摘要、期刊展示不冒充 CCF 主会确认；原记录保留可查询，并展示归属未确认提示。ECAI 2026 按 IJCAI 联合届次处理，不复制独立 B 类记录。
+- 正式官方题名、卷年优先于 Crossref 的展示或早期日期。ECCV 已核实目录勘误保存在 `title_corrections.json`，同时匹配官方 URL、DOI、年份、完整作者和旧标题，禁止按模糊标题批量覆盖。共享 arXiv 的不同正式出版物保留独立身份和开放链接。
+- ECAI、ECML-PKDD、ICRA、AI、IJCV、TASLP、TNNLS、PR 的 DOI 元数据补采不等于独立官方目录已经完整匹配。尚未公开的当年目录、受限上游以及身份冲突保留为未完成状态，后续重试，不编造 DOI 或年份，不绕过访问验证。
+
+维护脚本 `collect_official_inventories.py`、`repair_publications.py` 与日常采集共用身份和出版规则；`audit_publications.py` 可只读核对采集缓存与数据库。按需生成的审计/测试输出属于本地产物，不进入源码仓库；删除它们不会删除论文、正式来源字段或数据库备份。
 
 ## 维护
 
@@ -194,6 +207,11 @@ python -m pytest -o addopts= --disable-warnings
 # frontend/
 npm test
 npm run build
+# 导出真实快照后再运行（不依赖示例数据，不触发网络发布）：
+node scripts/check-snapshot-home.js
+node scripts/check-snapshot-search.js
+# 真实数据库只读检索检查（PowerShell，从项目根目录执行；不启动 API、不采集、不联网）：
+# $env:PYTHONPATH='backend'; backend/.venv/Scripts/python.exe backend/scripts/check_database_search.py --samples artifacts/snapshot-search.json --output artifacts/database-search.json
 npm audit --omit=dev
 ```
 
@@ -226,4 +244,4 @@ scripts/smoke_release.py  固定本机测试端口的 Docker 冒烟
 .github/workflows/         自动测试与 GitHub Pages 发布
 ```
 
-架构说明统一见 [ARCHITECTURE.md](ARCHITECTURE.md)，旧设计和验收文档已移出当前源码，可从 Git 历史查阅。[静态快照与自动更新验收](静态快照与自动更新验收.md) 保留为当前发布链路的历史证据；运行方式、安全边界和最新验证命令以本 README 和代码为准。界面结构参考 [CCF 论文雷达](https://szy12021130.github.io/ccf-a-radar/#/)，未复制其数据集或品牌资产。
+架构说明统一见 [ARCHITECTURE.md](ARCHITECTURE.md)。旧设计可从 Git 历史查阅；运行方式、安全边界和最新验证命令以本 README 和代码为准。界面结构参考 [CCF 论文雷达](https://szy12021130.github.io/ccf-a-radar/#/)，未复制其数据集或品牌资产。

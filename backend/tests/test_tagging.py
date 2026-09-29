@@ -107,3 +107,47 @@ def test_cross_source_doi_merge(db, sample_venue):
     assert paper2.openalex_id == "W9999999999"
     assert paper2.citation_count == 7
     assert db.query(Paper).filter(Paper.title_norm == "merge me").count() == 1
+
+
+def test_cross_source_arxiv_and_title_merge(db, sample_venue):
+    from app.collectors.dblp import RawPaper
+    from app.models import Paper
+    from app.services.pipeline import upsert_paper
+
+    dblp_raw = RawPaper(
+        source="dblp", venue_key="conf/nips/arxivmerge2025",
+        title="A Formal Paper with an arXiv Version", year=2025,
+        arxiv_id="2501.23456", doi="10.5555/formal.001",
+    )
+    first, created = upsert_paper(db, dblp_raw, sample_venue)
+    assert created
+
+    # OpenAlex may carry a different DOI for the same work (for example an
+    # arXiv DOI). Exact arXiv/title+venue+year matching must still avoid a
+    # duplicate row and retain the secondary source identifier.
+    openalex_raw = RawPaper(
+        source="openalex", venue_key="W123456789",
+        title="A Formal Paper with an arXiv Version", year=2025,
+        arxiv_id="https://arxiv.org/abs/2501.23456", doi="10.48550/arXiv.2501.23456",
+    )
+    second, created2 = upsert_paper(db, openalex_raw, sample_venue)
+    db.commit()
+    assert not created2 and second.id == first.id
+    assert second.openalex_id == "W123456789"
+    assert db.query(Paper).count() == 1
+
+
+def test_ingestion_rejects_publication_date_from_another_year(db, sample_venue):
+    from app.collectors.dblp import RawPaper
+    from app.models import Paper
+    from app.services.pipeline import CrawlPipeline
+
+    pipeline = CrawlPipeline.__new__(CrawlPipeline)
+    rows, created, updated = pipeline._ingest_batch_sync(
+        db, [RawPaper(source="openalex", venue_key="W2025", title="Date mismatch",
+                      year=2025, publication_date="2026-09-22")], sample_venue, 2025
+    )
+    db.commit()
+    assert created == 1 and updated == 0
+    assert rows[0].publication_date is None
+    assert db.query(Paper).one().year == 2025

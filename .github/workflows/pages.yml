@@ -70,6 +70,9 @@ jobs:
       - name: Enforce lightweight, same-revision homepage
         run: npm run check:snapshot-home
         working-directory: frontend
+      - name: Verify full-title coverage and search recall
+        run: npm run check:snapshot-search
+        working-directory: frontend
       - uses: actions/configure-pages@v5
         id: pages
       - name: Build the backend-free reader

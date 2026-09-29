@@ -37,6 +37,13 @@ def test_seed_rules_cover_specific_research_phrases(code, title):
     ("Multimodal optimization of benchmark functions", "multimodal"),
     ("Sequence alignment for protein structures", "alignment"),
     ("Model selection in linear regression", "llm"),
+    ("Neural Architecture Search", "retrieval"),
+    ("Fine-Tuning Convolutional Networks", "llm"),
+    ("Alignment-free protein sequence comparison", "alignment"),
+    ("Pre-trained vision models for industrial inspection", "llm"),
+    ("Anomaly detection in network traffic", "cv"),
+    ("Three-dimensional bin packing", "cv"),
+    ("Regular language equivalence in finite automata", "nlp"),
 ])
 def test_generic_or_ambiguous_words_do_not_force_topics(title, code):
     path = Path(__file__).resolve().parents[2] / "seeds" / "direction_rules.csv"

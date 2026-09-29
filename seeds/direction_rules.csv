@@ -71,3 +71,25 @@ alignment,\bjailbreak(?:ing|s|ers)?\b,both,1.0,1
 alignment,\bsafety[- ](?:evaluation|alignment|benchmark(?:s|ing)?|assessment|guardrails?)\b,both,1.0,1
 alignment,\b(?:prompt[- ]injection|harmful[- ](?:content|requests?|prompts?)|toxic[- ](?:content|generation))\b,both,1.0,1
 alignment,\b(?:human[- ]feedback|constitutional[- ]ai|preference[- ]learning)\b,both,1.0,1
+llm,\bfoundation models?\b,both,1.0,1
+llm,\b(?:pre[- ]trained|parameter[- ]efficient)[- ]language[- ]models?\b,both,1.0,1
+llm,\b(?:instruction[- ]following|reasoning models?|fine[- ]tuning (?:large )?language models?)\b,both,1.0,1
+agent,\bplanning\b,both,1.0,1
+agent,\bautonomous\b,both,1.0,1
+agent,\b(?:embodied|robotic)\b,both,1.0,1
+cv,\bvisual\b,both,1.0,1
+cv,\bvision\b,both,1.0,1
+cv,\bimages?\b,both,1.0,1
+cv,\bvideos?\b,both,1.0,1
+cv,\b(?:remote sensing|medical imaging|hyperspectral)\b,both,1.0,1
+cv,\b(?:object detection|(?:visual|image|video)[- ](?:anomaly|change)[- ]detection)\b,both,1.0,1
+cv,\b(?:pose|depth|motion) estimation\b,both,1.0,1
+cv,\b(?:point clouds?|neural radiance fields?|(?:3d|three[- ]dimensional)[- ](?:vision|reconstruction|segmentation|detection|generation|shapes?|scenes?))\b,both,1.0,1
+cv,\b(?:image|video) generation\b,both,1.0,1
+nlp,\b(?:natural language|language[- ](?:models?|understanding|generation|resources?|translation))\b,both,1.0,1
+nlp,\b(?:text|translation|linguistic)\b,both,1.0,1
+nlp,\b(?:question answering|information extraction|sentiment)\b,both,1.0,1
+rl,\breward[- ](?:learning|model|shaping)\b,both,1.0,1
+rl,\b(?:policy gradient|q[- ]learning|markov decision)\b,both,1.0,1
+retrieval,\b(?:(?:web|semantic|neural|document|passage)[- ]search|search engines?|(?:document|passage|retrieval)[- ]ranking|recommender systems?|recommendation systems?)\b,both,1.0,1
+alignment,\b(?:human|value|preference|safety|llm|language[- ]model)[- ]alignment\b,both,1.0,1

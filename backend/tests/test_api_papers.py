@@ -98,6 +98,25 @@ def test_search_matches_title(client, sample_paper):
     assert "score" in body["items"][0]
 
 
+def test_search_title_match_outranks_abstract_only_match(client, db, sample_venue, sample_paper):
+    from app.models import Paper
+
+    abstract_only = Paper(
+        source="dblp", dblp_key="conf/nips/abstract-only-2024",
+        title="Efficient Inference", title_norm="efficient inference",
+        abstract="We study speculative decoding in a long abstract.",
+        venue_id=sample_venue.id, year=2024, ccf_level="A", ccf_area="人工智能",
+        official_url="https://example.org/abstract-only",
+    )
+    db.add(abstract_only)
+    db.commit()
+
+    response = client.get("/api/search", params={"q": "speculative decoding", "size": 20})
+    assert response.status_code == 200
+    ids = [item["id"] for item in response.json()["items"]]
+    assert ids.index(sample_paper.id) < ids.index(abstract_only.id)
+
+
 def test_directions_and_venues_and_stats(client, sample_venue, sample_direction, sample_paper):
     resp = client.get("/api/directions")
     assert resp.status_code == 200
@@ -568,3 +587,74 @@ def test_oversized_cache_keys_are_not_retained_or_rejected(link_caches):
     host_size = host_cache.cache_info().currsize
     assert safe_http_url("https://" + "a" * 4096 + ".example.org/paper") is None
     assert host_cache.cache_info().currsize == host_size
+
+def test_search_keeps_nonadjacent_and_recall_and_exact_title_first(client, db, sample_venue):
+    from app.models import Paper
+    from app.cleaning import normalize_title
+    rows = []
+    for index, (title, abstract) in enumerate([
+        ('Alpha with Distributed Omega', None),
+        ('Alpha Omega', 'A short summary'),
+        ('Unrelated title', 'alpha omega ' * 100),
+        ('Alpha alone', 'No other query token here'),
+    ]):
+        paper = Paper(source='dblp', dblp_key=f'conf/nips/Ranking{index}24', title=title, title_norm=normalize_title(title), abstract=abstract, venue_id=sample_venue.id, year=2024, ccf_level='A', official_url=f'https://example.org/{index}')
+        db.add(paper); rows.append(paper)
+    db.commit()
+    result = client.get('/api/search', params={'q': 'alpha omega'}).json()
+    assert result['total'] == 3
+    assert [p['id'] for p in result['items']] == [rows[1].id, rows[0].id, rows[2].id]
+
+
+def test_full_title_query_normalizes_diacritics(client, db, sample_paper):
+    from app.cleaning import normalize_title
+    sample_paper.title = 'A Naïve Approach to Inference'
+    sample_paper.title_norm = normalize_title(sample_paper.title)
+    db.commit()
+    response = client.get('/api/search', params={'q': sample_paper.title})
+    assert response.status_code == 200
+    assert [row['id'] for row in response.json()['items']] == [sample_paper.id]
+
+
+def test_exact_unicode_title_not_lost_by_fts_tokenization(client, db, sample_paper):
+    from app.cleaning import normalize_title
+    sample_paper.title = 'λDiff: A New Model for Inference'
+    sample_paper.title_norm = normalize_title(sample_paper.title)
+    db.commit()
+    result = client.get('/api/search', params={'q': sample_paper.title})
+    assert result.status_code == 200
+    assert result.json()['items'][0]['id'] == sample_paper.id
+
+
+@pytest.mark.parametrize('query', ['λDiff', 'λDiff inference', 'diff inference'])
+def test_unicode_partial_title_recall(client, db, sample_paper, query):
+    from app.cleaning import normalize_title
+    sample_paper.title = 'λDiff: A New Model for Inference'
+    sample_paper.title_norm = normalize_title(sample_paper.title)
+    db.commit()
+    response = client.get('/api/search', params={'q': query})
+    assert response.status_code == 200
+    assert sample_paper.id in [item['id'] for item in response.json()['items']]
+
+
+def test_long_complete_title_has_safe_exact_recall(client, db, sample_paper):
+    from app.cleaning import normalize_title
+    sample_paper.title = ' '.join(f'ScientificTerm{i}' for i in range(40))
+    sample_paper.title_norm = normalize_title(sample_paper.title)
+    db.commit()
+    response = client.get('/api/search', params={'q': sample_paper.title})
+    assert response.status_code == 200
+    assert response.json()['items'][0]['id'] == sample_paper.id
+    assert client.get('/api/search', params={'q': 'unrecognized ' * 30}).status_code == 400
+
+
+@pytest.mark.parametrize('title', [' '.join(f'ScientificTerm{i}' for i in range(40)), 'Visual Grounding 中文 Benchmark'])
+def test_known_complete_title_remains_valid_when_filters_exclude_it(client, db, sample_paper, title):
+    from app.cleaning import normalize_title
+    sample_paper.title = title
+    sample_paper.title_norm = normalize_title(title)
+    db.commit()
+    response = client.get('/api/search', params={'q': title, 'year': sample_paper.year + 1})
+    assert response.status_code == 200
+    assert response.json()['total'] == 0
+    assert response.json()['items'] == []
