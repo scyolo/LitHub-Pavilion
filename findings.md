@@ -44,3 +44,7 @@
 - Fresh browser recheck after rebuild: local homepage 197 ms; learning cold search 763 ms. Shared 4 Mbps + 80 ms latency + 4x main-thread CPU slowdown: homepage 1,486 ms, learning 5,537 ms, slowest tested search (fuzzy) 5,921 ms. All seven cold/warm budget cases passed without page errors or overflow. These are controlled local preview measurements, not public-host latency guarantees. Weak-network mobile screenshot visually inspected.
 
 - Final read-only DB check independently confirms 381,441 admitted papers out of 389,630 stored records, all title identities queryable, 33 exact and 16 scattered-AND checks. Snapshot hashes 6,614 and current association hashes 12 pass with no writes. Timeout regression confirms 12,277 ms, one attempt, 914 ms manual recovery.
+
+## Clean-runner verification fix
+
+The first remote run exposed environment drift hidden by the local backend virtualenv and a stale smoke-test constant. The backend CI job passed; container startup passed. Four intentional RED regressions reproduced the verification bugs before the two-file fix. Final local regression is 900 backend / 177 frontend, with fixture tests retained and seed identities checked rather than weakened counts. Do not claim remote/container success until the final Verify run completes.

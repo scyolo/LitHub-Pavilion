@@ -99,3 +99,14 @@
 复验证据以 `release-artifacts/final-audit-20261002/*-resumed.json` 保存。数据库复验从 backend 目录用模块入口运行：`python -m scripts.check_database_search --samples ../release-artifacts/final-audit-20261002/search-validation-resumed.json --output ../release-artifacts/final-audit-20261002/database-search-resumed.json`。直接运行脚本路径不自动包含 app 导入根，不应把入口方式错误当成数据库故障。
 
 源码提交与远程验证结果以 Git 提交/上游分支和 `submission-resumed.json` 为准；没有合并 main、发布 site-data 或触发 Pages 部署。本机 Docker 不可用的边界不变，远程 Verify 工作流另行提供干净安装的容器验证。
+
+## 干净 CI 环境复核与修复
+
+首次源码提交 `12685e2` 已推送，但远程 Verify 37025550487 未通过，不能用此前本机通过结果替代：
+
+1. 前端跨语言夹具测试调用真实 Python 导出器；独立 Node 作业未安装后端依赖，触发 FastAPI 导入失败。现为该作业显式配置 Python 3.12 并安装 backend/requirements.txt；未跳过十四项夹具测试。
+2. 空安装容器构建、启动正常，冒烟脚本却仍断言旧的九个方向。现从 directions.csv 读取启用的方向，核对数量和代码集合；仍拒绝缺失、额外、错误及重复方向，不是把断言简单放宽。
+
+先补回归并确认四项预期失败（RED 提交 `351c1b0`），再做最小修复并确认十六项聚焦检查通过（GREEN 提交 `57a0655`）。随后完整复跑：**900 项后端测试、177 项前端测试、Ruff 与生产构建全部通过**。文档同步说明前端集成测试的 Python 前提，防止干净环境再次遗漏。浏览器运行代码、快照和上述实测资产未改变。
+
+修复后的远程状态以本分支最新提交的 Verify 运行和 `release-artifacts/final-audit-20261002/submission-resumed.json` 为准；本机 Docker 检查仍未执行，不能将远程容器验证与本机验证混为一谈。

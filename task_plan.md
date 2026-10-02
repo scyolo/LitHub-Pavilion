@@ -8,7 +8,7 @@ Scope: 338 configured CCF A/B sources, 16 directions, 2023–2026. Metadata and 
 2. Exported and database-checked 381,441 public records (381,433 in scope, 8 older preserved), revision 3d798240bffdabc2ac5bc4d601610a03568e1327b7879db36e5417c600d33938. Installed assets all verified (6,614); current association hashes all verified (12).
 3. Direct sources 325; represented sources 336/338. Direct-or-associated zero-year units 117 → 114. This is NOT an official inventory completeness result.
 4. New v6 paged reader: compact ranking rows, title positions, 3-digit term buckets, 256-card shards, rank before hydrate. Same-corpus old/new engine parity, complete title identity checks and bounded first-page transfer tests pass.
-5. Backend 892 / frontend 177 tests, Ruff, production build, diff checks pass. Fresh browser fast/limited-mobile budgets pass. Hard 12-second Worker deadline tested under a blocked index; no automatic timeout retry; explicit reload recovers.
+5. Backend 900 / frontend 177 tests, Ruff, production build, diff checks pass. Fresh browser fast/limited-mobile budgets pass. Hard 12-second Worker deadline tested under a blocked index; no automatic timeout retry; explicit reload recovers.
 6. Homepage matrix previews 20 sources, with verified expand-all 338 access. Old snapshot preserved under release-artifacts/final-audit-20261002/previous-installed-snapshot. Local preview remains at 127.0.0.1:5181.
 
 ## Repository submission
@@ -42,5 +42,5 @@ Final recovery verification: backend 892 / frontend 177; full 381,441-title DB a
 Source commit 12685e2 was pushed and its remote SHA verified. GitHub Verify run 37025550487 exposed two real verification gaps: frontend cross-language fixture generation lacked Python runtime dependencies, and container smoke still asserted the obsolete nine directions. Backend CI passed; container build/start passed. Do not skip checks or treat the run as successful.
 
 1. [complete] RED validated: four intended failures (fixed-count acceptance, stale-nine false acceptance, missing CI dependency setup), twelve passing related checks; checkpoint preserved.
-2. [pending] Apply minimal workflow/smoke fixes and verify GREEN, then full regression.
-3. [pending] Push the repair and verify all three GitHub jobs; source-only branch, no deployment.
+2. [complete] GREEN checkpoint 57a0655: sixteen focused tests pass; full regression now 900 backend / 177 frontend, Ruff and production build all pass.
+3. Remote acceptance gate: push this repair and verify all three GitHub jobs. The branch upstream and submission-resumed.json receipt record the final remote state without inferring it from local tests. No merge, site-data publication, or Pages deployment.
