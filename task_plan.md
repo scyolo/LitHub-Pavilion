@@ -36,3 +36,11 @@ The linked chat stopped at the final pre-commit step after an upstream API error
 Recovery note: the CI workflow is .github/workflows/verify.yml, not ci.yml; enumerate existing workflow names rather than retrying the missing path.
 
 Final recovery verification: backend 892 / frontend 177; full 381,441-title DB and snapshot identity checks; 6,614 + 12 asset hashes; all seven cold/warm browser cases; 12,277 ms bounded timeout, one request, 914 ms manual recovery. No new source imports. The DB checker must be invoked with python -m scripts.check_database_search from backend (direct file execution omits the app import root).
+
+## Clean-runner CI repair (2026-10-02)
+
+Source commit 12685e2 was pushed and its remote SHA verified. GitHub Verify run 37025550487 exposed two real verification gaps: frontend cross-language fixture generation lacked Python runtime dependencies, and container smoke still asserted the obsolete nine directions. Backend CI passed; container build/start passed. Do not skip checks or treat the run as successful.
+
+1. [complete] RED validated: four intended failures (fixed-count acceptance, stale-nine false acceptance, missing CI dependency setup), twelve passing related checks; checkpoint preserved.
+2. [pending] Apply minimal workflow/smoke fixes and verify GREEN, then full regression.
+3. [pending] Push the repair and verify all three GitHub jobs; source-only branch, no deployment.

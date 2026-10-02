@@ -106,3 +106,14 @@ def test_scheduler_registers_only_current_jobs_without_download_settings(monkeyp
 def test_pages_rebuilds_when_validation_dependencies_change(path):
     workflow = (PROJECT_ROOT / ".github" / "workflows" / "pages.yml").read_text(encoding="utf-8")
     assert f"- '{path}'" in workflow
+
+
+def test_frontend_ci_installs_python_exporter_dependencies_before_fixture_tests():
+    workflow = (PROJECT_ROOT / ".github" / "workflows" / "verify.yml").read_text(encoding="utf-8")
+    frontend = workflow.split("  frontend:\n", 1)[1].split("\n  containers:", 1)[0]
+    setup = "actions/setup-python@v5"
+    dependencies = "python -m pip install -r ../backend/requirements.txt"
+    tests = "npm test"
+    assert setup in frontend, "Frontend wire-format tests execute the Python snapshot exporter"
+    assert dependencies in frontend, "The fixture exporter needs its actual runtime dependencies"
+    assert frontend.index(setup) < frontend.index(dependencies) < frontend.index(tests)
