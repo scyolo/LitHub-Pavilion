@@ -8,13 +8,39 @@ import html
 import re
 from datetime import date
 
+import httpx
+
 from app.cleaning import clean_author_name, clean_title, normalize_doi, normalize_title
 from app.collectors.dblp import RawPaper
 from app.ratelimit import AsyncTokenBucket
 
 API = "https://api.crossref.org"
-SELECT = "DOI,title,author,type,published,published-print,published-online,event,container-title,volume,ISSN"
+SELECT = "DOI,title,author,type,published,published-print,published-online,event,container-title,volume,issue,ISSN"
 PREFIXES = ("10.1609", "10.18653", "10.24963", "10.3233")
+RETRYABLE_STATUS = {429, 502, 503, 504}
+
+
+async def request_with_retry(client, url, *, params=None, attempts=5):
+    """Make a polite Crossref request with bounded retry-after handling."""
+    if attempts < 1:
+        raise ValueError("At least one Crossref request attempt is required")
+    for attempt in range(attempts):
+        try:
+            response = await client.get(url, params=params)
+        except httpx.TransportError:
+            if attempt == attempts - 1:
+                raise
+            await asyncio.sleep(min(60.0, 5.0 * (attempt + 1)))
+            continue
+        if response.status_code not in RETRYABLE_STATUS or attempt == attempts - 1:
+            return response
+        retry_after = response.headers.get("retry-after", "")
+        try:
+            delay = min(120.0, max(1.0, float(retry_after)))
+        except ValueError:
+            delay = min(60.0, 5.0 * (attempt + 1))
+        await asyncio.sleep(delay)
+    raise RuntimeError("Crossref retry loop ended unexpectedly")
 
 # Exact publisher-deposited main-proceedings titles, not a fuzzy title query.
 ECML_BASE = "Machine Learning and Knowledge Discovery in Databases"
@@ -55,12 +81,27 @@ def ecml_conference_year(item):
 
 
 
+# Exact registry variants verified 2026-10-01; evidence is recorded in
+# seeds/journal_identity_provenance.json. Do not generalize to fuzzy aliases.
+JOURNAL_NAME_VARIANTS = {
+    'JSA': ('1383-7621', 'Journal of Systems Architecture: Embedded Software Design', 'Journal of Systems Architecture'),
+    'Performance Evaluation: An International Journal': ('0166-5316', 'Performance Evaluation: An International Journal', 'Performance Evaluation'),
+    'SoSyM': ('1619-1366', 'Software and Systems Modeling', 'Software & Systems Modeling'),
+    'IPM': ('0306-4573', 'Information Processing and Management', 'Information Processing & Management'),
+    'CSCW Journal': ('0925-9724', 'Computer Supported Cooperative Work', 'Computer Supported Cooperative Work (CSCW)'),
+}
+
+
 def journal_identities(venue):
     """ISSN/name pairs, including the verified 2025 TASLP continuation.
 
     Do not alter user venue settings or match a different journal on acronym.
     """
     pairs = {(venue.issn, normalize_title(venue.name).removeprefix('the '))} if venue.issn else set()
+    variant = JOURNAL_NAME_VARIANTS.get(getattr(venue, 'abbr', None))
+    if (variant and venue.issn == variant[0]
+            and normalize_title(venue.name) == normalize_title(variant[1])):
+        pairs.add((variant[0], normalize_title(variant[2]).removeprefix('the ')))
     if (getattr(venue, 'abbr', None) == 'TASLP' and venue.issn in {'2329-9290', '2329-9304', '2998-4173'}
             and normalize_title(venue.name) in {
                 'ieee/acm transactions on audio speech and language processing',
@@ -69,6 +110,9 @@ def journal_identities(venue):
         pairs.update({('2329-9290', 'ieee acm transactions on audio speech and language processing'),
                       ('2329-9304', 'ieee acm transactions on audio speech and language processing'),
                       ('2998-4173', 'ieee transactions on audio speech and language processing')})
+    from app.collectors.journal_serials import serial_sources
+    pairs.update((record['issn'], normalize_title(record['title']).removeprefix('the '))
+                 for record in serial_sources(venue))
     return pairs
 
 def publication_date(item: dict) -> tuple[int, str | None]:
@@ -95,10 +139,10 @@ def metadata_text(value: str) -> str:
     # Strip only known publisher markup. Literal model tokens such as <SEG>,
     # <safe> and <SYNTACT> are scientific title content, not HTML to discard.
     value = html.unescape(value or "")
-    value = re.sub(r'<(?:jats:)?(?:inline-graphic|alt-text|long-desc)\b[^>]*>.*?</(?:jats:)?(?:inline-graphic|alt-text|long-desc)>', '', value, flags=re.I | re.S)
+    value = re.sub(r'<(?:jats:)?(?:inline-graphic|alt-text|long-desc)\b[^>]*>.*?</(?:jats:)?(?:inline-graphic|alt-text|long-desc)>', '', value, flags=re.IGNORECASE | re.DOTALL)
     tags = (r"(?:jats|mml):[a-z][\w.-]*|italic|bold|sub|sup|i|b|em|strong|scp|u|tt|underline|"
             r"inline-formula|tex-math|math|mi|mn|mo|mrow|msub|msup|msubsup|mfrac|msqrt|mtext")
-    value = re.sub(r"</?(?:" + tags + r")(?:\s[^<>]*?)?\s*/?>", "", value, flags=re.I)
+    value = re.sub(r"</?(?:" + tags + r")(?:\s[^<>]*?)?\s*/?>", "", value, flags=re.IGNORECASE)
     return re.sub(r"\s+", " ", value).strip()
 
 
@@ -110,6 +154,16 @@ def identify_venue(item: dict, venues: dict):
         for venue in venues.values():
             if venue.type == "journal" and any(issn in issns and container.removeprefix("the ") == name for issn, name in journal_identities(venue)):
                 return venue
+    from app.collectors.catalog_conferences import identify_catalog_conference
+    # These adapters enforce publisher namespaces, parent-book identities or
+    # track-specific DOI rules. Generic title matching must never override them.
+    specialized = {'AAAI', 'ICAPS', 'IJCAI', 'KR', 'ACL', 'EMNLP', 'COLING', 'ECAI', 'ECML-PKDD', 'ICRA'}
+    catalog_match = identify_catalog_conference(item, {
+        name: venue for name, venue in venues.items()
+        if name not in specialized and getattr(venue, 'abbr', None) not in specialized
+    })
+    if catalog_match:
+        return catalog_match
     abbr = "ECML-PKDD" if ecml_conference_year(item) else None
     if re.fullmatch(r'20\d{2} ieee international conference on robotics and automation icra', container) and re.match(r'10\.1109/icra\d+\.20\d{2}\.', doi):
         abbr = 'ICRA'
@@ -169,7 +223,7 @@ async def fetch_journal(client, issn, year_from, year_to, *, on_page=None, max_p
     # omitted from a requested final publication year. Deduplicate by real DOI.
     result, seen = [], set()
     for field in ("pub-date", "print-pub-date"):
-        def accept_page(label, page, count, total, records):
+        def accept_page(label, page, count, total, records, *, field=field):
             fresh = []
             for item in records:
                 doi = normalize_doi(item.get("DOI"))
@@ -199,7 +253,7 @@ async def fetch_container(client, title, year_from, year_to, *, on_page=None, ma
         extra_filter = 'container-title:' + title
     return await _fetch_inventory(client, f'{API}/works', title, year_from, year_to, on_page=on_page, max_pages=max_pages, extra_filter=extra_filter)
 
-async def _fetch_inventory(client, endpoint, label, year_from, year_to, *, on_page=None, max_pages=200, extra_filter="", date_field="pub-date"):
+async def _fetch_inventory(client, endpoint, label, year_from, year_to, *, on_page=None, max_pages=200, extra_filter="", date_field="pub-date", query=None):
     if date_field not in {"pub-date", "print-pub-date"}:
         raise ValueError("Unsupported publication date filter")
     cursor = "*"
@@ -209,18 +263,14 @@ async def _fetch_inventory(client, endpoint, label, year_from, year_to, *, on_pa
     advertised = None
     for page in range(max_pages):
         await limiter.acquire()
-        for attempt in range(3):
-            response = await client.get(endpoint, params={
-                "filter": f"from-{date_field}:{year_from}-01-01,until-{date_field}:{year_to}-12-31" + ("," + extra_filter if extra_filter else ""),
-                "rows": 1000, "cursor": cursor, "select": SELECT,
-            })
-            if response.status_code not in (429, 502, 503, 504) or attempt == 2:
-                break
-            await asyncio.sleep(10 * (attempt + 1))
+        response = await request_with_retry(client, endpoint, params={
+            "filter": f"from-{date_field}:{year_from}-01-01,until-{date_field}:{year_to}-12-31" + ("," + extra_filter if extra_filter else ""),
+            "rows": 1000, "cursor": cursor, "select": SELECT, **({"sort": "score", **query} if query else {}),
+        })
         response.raise_for_status()
         message = response.json().get("message")
         if not isinstance(message, dict) or not isinstance(message.get("items"), list):
-            raise ValueError("Invalid Crossref page")
+            raise ValueError("Invalid Crossref page")  # noqa: TRY004 - malformed remote data, not a caller type error
         if advertised is None:
             advertised = int(message["total-results"])
         items = message["items"]

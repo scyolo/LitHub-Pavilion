@@ -48,3 +48,19 @@ describe("filter URL state", () => {
   });
   it("defaults search sort to relevance", () => expect(parseFilters("q=agent").sort).toBe("relevance"));
 });
+
+
+describe("formal publication and repository links stay separate", () => {
+  it.each(["10.48550/arxiv.2501.12345", "https://doi.org/10.48550/arxiv.2501.12345", "doi:10.48550/arxiv.2501.12345"])("does not override verified official_url with repository DOI %s", (doi) => {
+    expect(paperLinks({ doi, official_url: "https://dblp.org/rec/conf/icml/Verified25", arxiv_id: "2501.12345" })).toEqual({
+      official: "https://dblp.org/rec/conf/icml/Verified25", oa: "https://arxiv.org/abs/2501.12345",
+    });
+  });
+  it("does not label a legacy repository-only destination as official", () => {
+    expect(paperLinks({ doi: "10.5281/zenodo.123456", official_url: "https://arxiv.org/abs/2501.12345", dblp_key: "conf/icml/Verified25" }).official).toBe("https://dblp.org/rec/conf/icml/Verified25");
+    expect(paperLinks({ doi: "10.48550/arxiv.2501.12345", official_url: "https://doi.org/10.48550/arxiv.2501.12345" }).official).toBeNull();
+  });
+  it("still prefers a real publisher DOI", () => {
+    expect(paperLinks({ doi: "10.1145/12345.67890", official_url: "https://dblp.org/rec/conf/icml/Verified25" }).official).toBe("https://doi.org/10.1145/12345.67890");
+  });
+});

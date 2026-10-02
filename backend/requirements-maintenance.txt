@@ -1,0 +1,3 @@
+# Optional metadata-maintenance tools; not required by the reader or API runtime.
+PyYAML==6.0.3
+tzdata==2026.4

@@ -22,7 +22,7 @@ from app.db import _make_engine, db_file_path
 from app.models import Paper, Venue, utcnow_iso
 from app.collectors.editions import publication_schedule
 from scripts.reconcile_papers import _backup
-from app.services.publisher_import import apply_records
+from app.services.publisher_import import apply_records, fill_missing_oa_links
 
 
 # The report records non-runnable years explicitly so a missing page is not
@@ -42,7 +42,13 @@ def _schedule_unit(venue, year, url, kind, units, deferred):
 
 def _official_units(years):
     units, deferred = [], []
+    from app.collectors.kdd import CATALOGUES
     for year in years:
+        if year in CATALOGUES:
+            _schedule_unit('SIGKDD', year, CATALOGUES[year], 'kdd', units, deferred)
+        else:
+            deferred.append({'venue': 'SIGKDD', 'year': year, 'inventory_complete': False,
+                             'status': 'official_unavailable', 'reason': 'No verified official KDD adapter for this edition yet'})
         _schedule_unit('TPAMI', year, index_url(year), 'csdl', units, deferred)
         for abbr, base in BASES.items():
             _schedule_unit(abbr, year, base + 'issue/archive', 'ojs', units, deferred)
@@ -65,6 +71,7 @@ async def run(args):
     path = args.database.resolve(); output = args.output.resolve(); output.mkdir(parents=True, exist_ok=True)
     stamp = datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%SZ')
     report = {'started_at': utcnow_iso(), 'backup': str(_backup(path)), 'scope': 'official publisher main proceedings; configured A/B venues', 'units': [], 'pdf_downloads': 0, 'full_collection_verified': False}
+    report['mode'] = 'oa_links_only' if getattr(args, 'oa_links_only', False) else 'inventory'
     target = output / f'official-inventory-{stamp}.json'
     engine = _make_engine('sqlite:///' + path.as_posix())
     years = range(args.year_from, args.year_to + 1)
@@ -91,20 +98,24 @@ async def run(args):
             return response.text
 
         units, deferred_units = _official_units(years)
-        if not args.venues or set(args.venues) & {'ICML', 'UAI'}:
+        selected_pmlr = [abbr for abbr in ('ICML', 'UAI', 'COLT') if not args.venues or abbr in args.venues]
+        if selected_pmlr:
             try:
                 index = await read('https://proceedings.mlr.press/')
                 volumes = pmlr_volumes(index, years)
-                units.extend((*v, 'pmlr') for v in volumes)
-                for abbr in ('ICML', 'UAI'):
+                for abbr in selected_pmlr:
                     for year in years:
-                        if not any(v[:2] == (abbr, year) for v in volumes):
-                            if abbr == 'ICML':
-                                units.append((abbr, year, f'https://icml.cc/static/virtual/data/icml-{year}-orals-posters.json', 'icml'))
-                            else:
-                                report['units'].append({'venue': abbr, 'year': year, 'inventory_complete': False, 'status': 'official_unavailable', 'reason': 'No main volume in publisher index at collection time'})
-            except Exception as exc:
-                report['units'].append({'venue': 'ICML/UAI', 'inventory_complete': False, 'error': str(exc)[:300]})
+                        matches = [v for v in volumes if v[:2] == (abbr, year)]
+                        if len(matches) == 1:
+                            units.append((*matches[0], 'pmlr'))
+                        elif not matches and abbr == 'ICML':
+                            units.append((abbr, year, f'https://icml.cc/static/virtual/data/icml-{year}-orals-posters.json', 'icml'))
+                        else:
+                            report['units'].append({'venue': abbr, 'year': year, 'inventory_complete': False, 'status': 'official_unavailable', 'reason': 'Main volume missing or ambiguous in publisher index at collection time'})
+            except (ValueError, httpx.HTTPError) as exc:
+                for abbr in selected_pmlr:
+                    for year in years:
+                        report['units'].append({'venue': abbr, 'year': year, 'inventory_complete': False, 'error': str(exc)[:300]})
         try:
             with Session(engine) as session:
                 venues = {v.abbr: v for v in session.query(Venue).filter(Venue.active == 1, Venue.ccf_level.in_(('A', 'B'))).all()}
@@ -118,7 +129,10 @@ async def run(args):
                     entry = {'venue': abbr, 'year': year, 'url': url, 'inventory_complete': False}
                     try:
                         body = await read(url)
-                        if kind == 'ojs': records = await fetch_ojs_inventory(read, abbr, year)
+                        if kind == 'kdd':
+                            from app.collectors.kdd import parse_kdd_research
+                            records = parse_kdd_research(body, year)
+                        elif kind == 'ojs': records = await fetch_ojs_inventory(read, abbr, year)
                         elif kind == 'csdl': records = await fetch_csdl_inventory(read, year)
                         elif kind == 'iclr': records = parse_iclr(body, year)
                         elif kind == 'icml': records = parse_icml(body, year)
@@ -143,13 +157,18 @@ async def run(args):
                         elif kind == 'pmlr': records = parse_pmlr(body, year, url, abbr)
                         else: records = parse_anthology(body, year, abbr, url.rsplit('/', 1)[1][:-4])
                         total_records = len(records)
+                        scopes = sorted({raw.extra.get('inventory_scope') for raw in records if raw.extra.get('inventory_scope')})
                         already_linked = 0
                         if args.missing_only:
                             existing = {key for key, in session.query(Paper.publisher_key).filter(Paper.publisher_key.is_not(None))}
                             pending = [raw for raw in records if raw.extra['publisher_key'] not in existing]
                             already_linked = len(records) - len(pending)
                             records = pending
-                        entry.update(records=total_records, already_linked=already_linked, inventory_complete=True, **apply_records(session, records, venues[abbr]))
+                        importer = fill_missing_oa_links if getattr(args, 'oa_links_only', False) else apply_records
+                        entry.update(records=total_records, already_linked=already_linked, inventory_complete=not scopes, **importer(session, records, venues[abbr]))
+                        if scopes:
+                            entry.update(status='partial', verified_scopes=scopes, scope_inventory_complete=True,
+                                         reason='Only the stated official track was enumerated; other main-proceedings tracks remain unverified')
                     except (ValueError, httpx.HTTPError) as exc:
                         session.rollback()
                         entry['error'] = type(exc).__name__ + ': ' + str(exc)[:300]
@@ -172,7 +191,9 @@ def main():
     parser.add_argument('--output', type=Path, default=Path('artifacts') / ('publication-audit-' + datetime.now(timezone.utc).strftime('%Y%m%d')))
     parser.add_argument('--year-from', type=int, default=settings.startup_year_from)
     parser.add_argument('--year-to', type=int, default=settings.startup_years[-1])
-    parser.add_argument('--missing-only', action='store_true', help='Skip already-linked official identities; preserve total inventory count in report')
+    mode = parser.add_mutually_exclusive_group()
+    mode.add_argument('--missing-only', action='store_true', help='Skip already-linked official identities; preserve total inventory count in report')
+    mode.add_argument('--oa-links-only', action='store_true', help='Only fill blank OA links on verified existing publications; never insert or replace metadata')
     parser.add_argument('--refresh', action='store_true')
     parser.add_argument('--venues', nargs='*')
     args = parser.parse_args()

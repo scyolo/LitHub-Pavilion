@@ -1,0 +1,46 @@
+{
+  "verified_on": "2026-10-02",
+  "sources": [
+    {
+      "venue": "TON",
+      "from_name": "IEEE/ACM Transactions on Networking",
+      "to_name": "IEEE Transactions on Networking",
+      "from_issns": [
+        "1063-6692",
+        "1558-2566"
+      ],
+      "to_issns": [
+        "2998-4157"
+      ],
+      "boundary_year": 2025,
+      "identity_sources": [
+        "https://api.crossref.org/journals/1063-6692",
+        "https://api.crossref.org/journals/2998-4157"
+      ]
+    },
+    {
+      "venue": "TCBB",
+      "from_name": "IEEE/ACM Transactions on Computational Biology and Bioinformatics",
+      "to_name": "IEEE Transactions on Computational Biology and Bioinformatics",
+      "from_issns": [
+        "1545-5963",
+        "1557-9964",
+        "2374-0043"
+      ],
+      "to_issns": [
+        "2998-4165"
+      ],
+      "boundary_year": 2025,
+      "identity_sources": [
+        "https://api.crossref.org/journals/1545-5963",
+        "https://api.crossref.org/journals/2998-4165"
+      ]
+    },
+    {
+      "venue": "INFORMS",
+      "source": "https://api.crossref.org/works/10.1287/ijoc.2021.0193.cd",
+      "evidence": "The .cd DOI is registered as journal-article but publisher primary URL points to the official code/data repository. Do not count these .cd records as separate research articles."
+    }
+  ],
+  "full_coverage_verified": false
+}

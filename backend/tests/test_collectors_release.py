@@ -103,14 +103,16 @@ async def test_official_inventory_precedes_available_dblp(monkeypatch):
     from unittest.mock import AsyncMock
     from app.services import pipeline as module
 
-    official = AsyncMock(return_value=["official-paper"])
+    from app.collectors.dblp import RawPaper
+    record = RawPaper(source='manual', venue_key='https://openaccess.thecvf.com/content/CVPR2025/html/verified.html', title='Verified paper', authors=['Lovelace, Ada'], year=2025)
+    official = AsyncMock(return_value=[record])
     dblp = AsyncMock(side_effect=AssertionError("DBLP must not short-circuit the publisher"))
     monkeypatch.setattr(module, "fetch_official_inventory", official)
     monkeypatch.setattr(module, "fetch_toc", dblp)
     pipeline = module.CrawlPipeline(None)
     venue = SimpleNamespace(abbr="CVPR", type="conf", dblp_toc_pattern="cvpr{year}")
     papers, incomplete = await pipeline._collect_unit_async(None, venue, 2025, True)
-    assert papers == ["official-paper"] and incomplete is False
+    assert papers == [record] and incomplete is False
     official.assert_awaited_once()
     dblp.assert_not_awaited()
 

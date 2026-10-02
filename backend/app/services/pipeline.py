@@ -199,7 +199,10 @@ class CrawlPipeline:
             async with make_client() as client:
                 official = await fetch_official_inventory(client, self._limiter("publisher", 1), venue, year)
             if official:
-                return official, False
+                scoped = sorted({raw.extra.get("inventory_scope") for raw in official if raw.extra.get("inventory_scope")})
+                if scoped:
+                    self._collection_issue = "Verified scoped catalogue only: " + ", ".join(scoped) + "; other main-proceedings tracks remain unverified"
+                return official, bool(scoped)
             failures.append("Official publisher:no complete inventory available")
         except (httpx.HTTPError, ValueError) as exc:
             failures.append("Official publisher:" + type(exc).__name__)
@@ -239,7 +242,7 @@ class CrawlPipeline:
                         works = await fetch_works_by_source(client, limiter, settings.contact_email, source, [year])
                         openalex_complete = True
                         for work in works:
-                            _, raw = work_to_raw_paper(work, "https://dblp.org/db/" + venue.dblp_stream + "/", source_id=source)
+                            _, raw = work_to_raw_paper(work, "https://dblp.org/db/" + venue.dblp_stream + "/" if venue.dblp_stream else "https://portal.issn.org/resource/ISSN/" + (venue.issn or ""), source_id=source)
                             if raw:
                                 papers.append(raw)
                     else:
@@ -353,7 +356,7 @@ class CrawlPipeline:
             total = len(venues) * len(years)
             for venue in venues:
                 for year in years:
-                    key = f"{task_type}:{venue.dblp_stream}:{year}"
+                    key = f"{task_type}:{venue.dblp_stream or 'venue-' + str(venue.id)}:{year}"
                     checkpoint = session.query(CrawlState).filter(CrawlState.scope_key == key, CrawlState.cursor == "complete-v6").first()
                     if task_type == "backfill" and checkpoint:
                         completed += 1

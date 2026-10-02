@@ -22,8 +22,15 @@ def seed_missing(session: Session, directory: Path) -> None:
     for row in _rows(directory, "venues.csv"):
         existing = session.query(Venue).filter(Venue.abbr == row["abbr"]).one_or_none()
         if existing is not None:
+            # Repair only these historical built-in defaults, not local overrides.
+            if existing.abbr == "CL" and existing.dblp_stream == "journals/cl":
+                existing.dblp_stream = row["dblp_stream"]
+            if existing.abbr == "ECML-PKDD" and existing.ccf_area == "人工智能":
+                existing.ccf_area = row["ccf_area"]
             # Runtime discovery may have populated these fields. Only fill an
             # empty mapping from the seed; never overwrite user configuration.
+            if not existing.issn and row.get("issn"):
+                existing.issn = row["issn"]
             if not existing.s2_venue and row.get("s2_venue"):
                 existing.s2_venue = row["s2_venue"]
             if not existing.openalex_source_id and row.get("openalex_source_id"):
@@ -32,15 +39,19 @@ def seed_missing(session: Session, directory: Path) -> None:
         if row["ccf_level"] not in ("A", "B") or row["type"] not in ("conf", "journal"):
             raise ValueError("Seed contains a venue outside the configured A/B scope")
         session.add(Venue(
-            abbr=row["abbr"], name=row["name"], dblp_stream=row["dblp_stream"],
+            abbr=row["abbr"], name=row["name"], dblp_stream=row["dblp_stream"] or None,
             dblp_toc_pattern=row.get("dblp_toc_pattern") or None,
             issn=row.get("issn") or None, openalex_source_id=row.get("openalex_source_id") or None,
             s2_venue=row.get("s2_venue") or None, type=row["type"], ccf_level=row["ccf_level"],
             ccf_area=row.get("ccf_area") or "人工智能", active=int(row.get("active", "1")),
         ))
+    from app.services.topic_index import refresh_topic_name
     for row in _rows(directory, "directions.csv"):
-        if not session.query(Direction.id).filter(Direction.code == row["code"]).first():
+        direction = session.query(Direction).filter(Direction.code == row["code"]).one_or_none()
+        if direction is None:
             session.add(Direction(code=row["code"], name=row["name"], min_score=float(row["min_score"]), enabled=int(row["enabled"])))
+        else:
+            refresh_topic_name(direction, row)
     session.flush()
     from app.services.topic_index import superseded_keywords
     directions = {direction.code: direction.id for direction in session.query(Direction).all()}
@@ -83,6 +94,12 @@ def initialize_database(engine, seeds_dir: Path | None = None) -> None:
         from app.migrations import migrate_publisher_identity
         _backup(engine)
         migrate_publisher_identity(engine)
+    if existing.has_table("venues"):
+        mapping = next(column for column in inspect(engine).get_columns("venues") if column["name"] == "dblp_stream")
+        if not mapping["nullable"]:
+            from app.migrations import migrate_optional_dblp_stream
+            _backup(engine)
+            migrate_optional_dblp_stream(engine)
     Base.metadata.create_all(engine)
     current = inspect(engine)
     for table in Base.metadata.sorted_tables:

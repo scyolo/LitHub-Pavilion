@@ -6,6 +6,15 @@ from app.models import Paper
 from scripts.collect_official_inventories import apply_records
 
 
+def test_colt_main_volume_is_supported():
+    from app.collectors.publisher_toc import parse_pmlr
+
+    index = '<li><a href="v247">Proceedings of COLT 2024</a></li><li><a href="v248">COLT Workshop 2024</a></li>'
+    assert pmlr_volumes(index, [2024]) == [('COLT', 2024, 'https://proceedings.mlr.press/v247/')]
+    body = '<h1>Conference on Learning Theory</h1><div class="paper"><p class="title">Learning theory</p><span class="authors">Ada</span><a href="paper24.html">abs</a></div>'
+    assert len(parse_pmlr(body, 2024, 'https://proceedings.mlr.press/v247/', 'COLT')) == 1
+
+
 def test_pmlr_volume_discovery_excludes_workshops():
     body = '<li><a href="v235">Volume 235</a> Proceedings of ICML 2024</li><li><a href="v251">Volume 251</a> Proceedings of GRaM at ICML 2024</li>'
     assert pmlr_volumes(body, [2024]) == [('ICML', 2024, 'https://proceedings.mlr.press/v235/')]

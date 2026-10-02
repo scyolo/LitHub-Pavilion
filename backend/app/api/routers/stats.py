@@ -155,6 +155,22 @@ def dashboard(filters: PaperFilters = Depends(paper_filters), db: Session = Depe
     }
 
 
+@router.get("/venue-topics")
+def venue_topics(filters: PaperFilters = Depends(paper_filters), db: Session = Depends(get_db)):
+    """Per-venue multi-label counts, distinct from the CCF disciplinary area."""
+    query = paper_query(db, filters)
+    rows = (query.with_entities(Venue.abbr, Direction.code, func.count(Paper.id))
+            .join(PaperDirection, PaperDirection.paper_id == Paper.id)
+            .join(Direction, Direction.id == PaperDirection.direction_id)
+            .group_by(Venue.abbr, Direction.code).all())
+    values = {abbr: [] for (abbr,) in db.query(Venue.abbr).filter(*venue_scope(filters)).all()}
+    for abbr, code, count in rows:
+        values[abbr].append({"code": code, "paper_count": count})
+    for topics in values.values():
+        topics.sort(key=lambda item: (-item["paper_count"], item["code"]))
+    return {"items": values}
+
+
 @router.get("/overview")
 def overview(db: Session = Depends(get_db)):
     """保留旧响应字段，同时使用与新接口相同的 A/B scope 和 OA 判定。"""

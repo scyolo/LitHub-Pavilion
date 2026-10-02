@@ -1,0 +1,4427 @@
+{
+  "edition": "CCF 2026 第七版",
+  "checked_at": "2026-10-01",
+  "source": "https://icisee.sjtu.edu.cn/upload/ueditor/file/20260914/11781106/%E7%AC%AC%E4%B8%83%E7%89%88%E4%B8%AD%E5%9B%BD%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%AD%A6%E4%BC%9A%E6%8E%A8%E8%8D%90%E5%9B%BD%E9%99%85%E5%AD%A6%E6%9C%AF%E4%BC%9A%E8%AE%AE%E5%92%8C%E6%9C%9F%E5%88%8A%E7%9B%AE%E5%BD%95%EF%BC%88%E6%AD%A3%E5%BC%8F%E7%89%88%EF%BC%89.pdf",
+  "source_sha256": "271b630b576bf8a4f802e767f5694caded93680e22b3a19bef7902591c45c1d3",
+  "listed_entries": 340,
+  "unique_venues": 338,
+  "note": "TOMM、DKE 跨领域重复列出，各保留一个来源及全部领域证据。FSE 等同名来源按身份区分。来源配置不代表已有论文或完整覆盖。",
+  "venues": {
+    "TOCS": {
+      "type": "journal",
+      "level": "A",
+      "areas": [
+        "计算机体系结构/并行与分布计算/存储系统"
+      ],
+      "pages": [
+        2
+      ],
+      "printed_abbr": "TOCS",
+      "printed_url": "http://dblp.uni-trier.de/db/journals/tocs/",
+      "dblp_stream": "journals/tocs",
+      "issn_verification": {
+        "issn": "0734-2071",
+        "source": "https://api.crossref.org/journals/0734-2071",
+        "checked_at": "2026-10-01",
+        "method": "exact journal title and ISSN from publisher-deposited registry"
+      }
+    },
+    "TOS": {
+      "type": "journal",
+      "level": "A",
+      "areas": [
+        "计算机体系结构/并行与分布计算/存储系统"
+      ],
+      "pages": [
+        2
+      ],
+      "printed_abbr": "TOS",
+      "printed_url": "http://dblp.uni-trier.de/db/journals/tos/",
+      "dblp_stream": "journals/tos"
+    },
+    "TCAD": {
+      "type": "journal",
+      "level": "A",
+      "areas": [
+        "计算机体系结构/并行与分布计算/存储系统"
+      ],
+      "pages": [
+        2
+      ],
+      "printed_abbr": "TCAD",
+      "printed_url": "http://dblp.uni-trier.de/db/journals/tcad/",
+      "dblp_stream": "journals/tcad"
+    },
+    "TC": {
+      "type": "journal",
+      "level": "A",
+      "areas": [
+        "计算机体系结构/并行与分布计算/存储系统"
+      ],
+      "pages": [
+        2
+      ],
+      "printed_abbr": "TC",
+      "printed_url": "http://dblp.uni-trier.de/db/journals/tc/index.html",
+      "dblp_stream": "journals/tc"
+    },
+    "TPDS": {
+      "type": "journal",
+      "level": "A",
+      "areas": [
+        "计算机体系结构/并行与分布计算/存储系统"
+      ],
+      "pages": [
+        2
+      ],
+      "printed_abbr": "TPDS",
+      "printed_url": "http://dblp.uni-trier.de/db/journals/tpds/",
+      "dblp_stream": "journals/tpds"
+    },
+    "TACO": {
+      "type": "journal",
+      "level": "A",
+      "areas": [
+        "计算机体系结构/并行与分布计算/存储系统"
+      ],
+      "pages": [
+        2
+      ],
+      "printed_abbr": "TACO",
+      "printed_url": "http://dblp.uni-trier.de/db/journals/taco/",
+      "dblp_stream": "journals/taco"
+    },
+    "TAAS": {
+      "type": "journal",
+      "level": "B",
+      "areas": [
+        "计算机体系结构/并行与分布计算/存储系统"
+      ],
+      "pages": [
+        3
+      ],
+      "printed_abbr": "TAAS",
+      "printed_url": "http://dblp.uni-trier.de/db/journals/taas/",
+      "dblp_stream": "journals/taas"
+    },
+    "TODAES": {
+      "type": "journal",
+      "level": "B",
+      "areas": [
+        "计算机体系结构/并行与分布计算/存储系统"
+      ],
+      "pages": [
+        3
+      ],
+      "printed_abbr": "TODAES",
+      "printed_url": "http://dblp.uni-trier.de/db/journals/todaes/",
+      "dblp_stream": "journals/todaes"
+    },
+    "TECS": {
+      "type": "journal",
+      "level": "B",
+      "areas": [
+        "计算机体系结构/并行与分布计算/存储系统"
+      ],
+      "pages": [
+        3
+      ],
+      "printed_abbr": "TECS",
+      "printed_url": "http://dblp.uni-trier.de/db/journals/tecs/",
+      "dblp_stream": "journals/tecs"
+    },
+    "TRETS": {
+      "type": "journal",
+      "level": "B",
+      "areas": [
+        "计算机体系结构/并行与分布计算/存储系统"
+      ],
+      "pages": [
+        3
+      ],
+      "printed_abbr": "TRETS",
+      "printed_url": "http://dblp.uni-trier.de/db/journals/trets/",
+      "dblp_stream": "journals/trets"
+    },
+    "TVLSI": {
+      "type": "journal",
+      "level": "B",
+      "areas": [
+        "计算机体系结构/并行与分布计算/存储系统"
+      ],
+      "pages": [
+        3
+      ],
+      "printed_abbr": "TVLSI",
+      "printed_url": "http://dblp.uni-trier.de/db/journals/tvlsi/",
+      "dblp_stream": "journals/tvlsi"
+    },
+    "JPDC": {
+      "type": "journal",
+      "level": "B",
+      "areas": [
+        "计算机体系结构/并行与分布计算/存储系统"
+      ],
+      "pages": [
+        3
+      ],
+      "printed_abbr": "JPDC",
+      "printed_url": "http://dblp.uni-trier.de/db/journals/jpdc/",
+      "dblp_stream": "journals/jpdc"
+    },
+    "JSA": {
+      "type": "journal",
+      "level": "B",
+      "areas": [
+        "计算机体系结构/并行与分布计算/存储系统"
+      ],
+      "pages": [
+        3
+      ],
+      "printed_abbr": "JSA",
+      "printed_url": "http://dblp.uni-trier.de/db/journals/jsa/",
+      "dblp_stream": "journals/jsa"
+    },
+    "Parallel Computing": {
+      "type": "journal",
+      "level": "B",
+      "areas": [
+        "计算机体系结构/并行与分布计算/存储系统"
+      ],
+      "pages": [
+        3
+      ],
+      "printed_abbr": "",
+      "printed_url": "https://dblp.org/db/journals/pc/index.html",
+      "dblp_stream": "journals/pc"
+    },
+    "Performance Evaluation: An International Journal": {
+      "type": "journal",
+      "level": "B",
+      "areas": [
+        "计算机体系结构/并行与分布计算/存储系统"
+      ],
+      "pages": [
+        3
+      ],
+      "printed_abbr": "",
+      "printed_url": "https://dblp.org/db/journals/pe/index.html",
+      "dblp_stream": "journals/pe"
+    },
+    "TCC Journal": {
+      "type": "journal",
+      "level": "B",
+      "areas": [
+        "计算机体系结构/并行与分布计算/存储系统"
+      ],
+      "pages": [
+        3
+      ],
+      "printed_abbr": "TCC",
+      "printed_url": "https://dblp.uni-trier.de/db/journals/tcc/",
+      "dblp_stream": "journals/tcc"
+    },
+    "PPoPP": {
+      "type": "conf",
+      "level": "A",
+      "areas": [
+        "计算机体系结构/并行与分布计算/存储系统"
+      ],
+      "pages": [
+        5
+      ],
+      "printed_abbr": "PPoPP",
+      "printed_url": "http://dblp.uni-trier.de/db/conf/ppopp/",
+      "dblp_stream": "conf/ppopp"
+    },
+    "FAST": {
+      "type": "conf",
+      "level": "A",
+      "areas": [
+        "计算机体系结构/并行与分布计算/存储系统"
+      ],
+      "pages": [
+        5
+      ],
+      "printed_abbr": "FAST",
+      "printed_url": "http://dblp.uni-trier.de/db/conf/fast/",
+      "dblp_stream": "conf/fast"
+    },
+    "DAC": {
+      "type": "conf",
+      "level": "A",
+      "areas": [
+        "计算机体系结构/并行与分布计算/存储系统"
+      ],
+      "pages": [
+        5
+      ],
+      "printed_abbr": "DAC",
+      "printed_url": "https://dblp.uni-trier.de/db/conf/dac/",
+      "dblp_stream": "conf/dac"
+    },
+    "HPCA": {
+      "type": "conf",
+      "level": "A",
+      "areas": [
+        "计算机体系结构/并行与分布计算/存储系统"
+      ],
+      "pages": [
+        5
+      ],
+      "printed_abbr": "HPCA",
+      "printed_url": "http://dblp.uni-trier.de/db/conf/hpca/",
+      "dblp_stream": "conf/hpca"
+    },
+    "MICRO": {
+      "type": "conf",
+      "level": "A",
+      "areas": [
+        "计算机体系结构/并行与分布计算/存储系统"
+      ],
+      "pages": [
+        5
+      ],
+      "printed_abbr": "MICRO",
+      "printed_url": "https://dblp.uni-trier.de/db/conf/micro/index.html",
+      "dblp_stream": "conf/micro"
+    },
+    "SC": {
+      "type": "conf",
+      "level": "A",
+      "areas": [
+        "计算机体系结构/并行与分布计算/存储系统"
+      ],
+      "pages": [
+        5
+      ],
+      "printed_abbr": "SC",
+      "printed_url": "http://dblp.uni-trier.de/db/conf/sc/",
+      "dblp_stream": "conf/sc"
+    },
+    "ASPLOS": {
+      "type": "conf",
+      "level": "A",
+      "areas": [
+        "计算机体系结构/并行与分布计算/存储系统"
+      ],
+      "pages": [
+        5
+      ],
+      "printed_abbr": "ASPLOS",
+      "printed_url": "http://dblp.uni-trier.de/db/conf/asplos/",
+      "dblp_stream": "conf/asplos"
+    },
+    "ISCA": {
+      "type": "conf",
+      "level": "A",
+      "areas": [
+        "计算机体系结构/并行与分布计算/存储系统"
+      ],
+      "pages": [
+        5
+      ],
+      "printed_abbr": "ISCA",
+      "printed_url": "http://dblp.uni-trier.de/db/conf/isca/",
+      "dblp_stream": "conf/isca"
+    },
+    "ACM SIGOPS ATC": {
+      "type": "conf",
+      "level": "A",
+      "areas": [
+        "计算机体系结构/并行与分布计算/存储系统"
+      ],
+      "pages": [
+        5
+      ],
+      "printed_abbr": "ACM SIGOPS ATC （原USENIX ATC）",
+      "printed_url": "http://dblp.uni-trier.de/db/conf/usenix/index.html",
+      "dblp_stream": "conf/usenix"
+    },
+    "EuroSys": {
+      "type": "conf",
+      "level": "A",
+      "areas": [
+        "计算机体系结构/并行与分布计算/存储系统"
+      ],
+      "pages": [
+        5
+      ],
+      "printed_abbr": "EuroSys",
+      "printed_url": "http://dblp.uni-trier.de/db/conf/eurosys/",
+      "dblp_stream": "conf/eurosys"
+    },
+    "HPDC": {
+      "type": "conf",
+      "level": "A",
+      "areas": [
+        "计算机体系结构/并行与分布计算/存储系统"
+      ],
+      "pages": [
+        5
+      ],
+      "printed_abbr": "HPDC",
+      "printed_url": "http://dblp.uni-trier.de/db/conf/hpdc/",
+      "dblp_stream": "conf/hpdc"
+    },
+    "SoCC": {
+      "type": "conf",
+      "level": "B",
+      "areas": [
+        "计算机体系结构/并行与分布计算/存储系统"
+      ],
+      "pages": [
+        6
+      ],
+      "printed_abbr": "SoCC",
+      "printed_url": "http://dblp.uni-trier.de/db/conf/cloud/",
+      "dblp_stream": "conf/cloud"
+    },
+    "SPAA": {
+      "type": "conf",
+      "level": "B",
+      "areas": [
+        "计算机体系结构/并行与分布计算/存储系统"
+      ],
+      "pages": [
+        6
+      ],
+      "printed_abbr": "SPAA",
+      "printed_url": "http://dblp.uni-trier.de/db/conf/spaa/",
+      "dblp_stream": "conf/spaa"
+    },
+    "PODC": {
+      "type": "conf",
+      "level": "B",
+      "areas": [
+        "计算机体系结构/并行与分布计算/存储系统"
+      ],
+      "pages": [
+        6
+      ],
+      "printed_abbr": "PODC",
+      "printed_url": "http://dblp.uni-trier.de/db/conf/podc/",
+      "dblp_stream": "conf/podc"
+    },
+    "FPGA": {
+      "type": "conf",
+      "level": "B",
+      "areas": [
+        "计算机体系结构/并行与分布计算/存储系统"
+      ],
+      "pages": [
+        6
+      ],
+      "printed_abbr": "FPGA",
+      "printed_url": "http://dblp.uni-trier.de/db/conf/fpga/",
+      "dblp_stream": "conf/fpga"
+    },
+    "CGO": {
+      "type": "conf",
+      "level": "B",
+      "areas": [
+        "计算机体系结构/并行与分布计算/存储系统"
+      ],
+      "pages": [
+        6
+      ],
+      "printed_abbr": "CGO",
+      "printed_url": "http://dblp.uni-trier.de/db/conf/cgo/",
+      "dblp_stream": "conf/cgo"
+    },
+    "DATE": {
+      "type": "conf",
+      "level": "B",
+      "areas": [
+        "计算机体系结构/并行与分布计算/存储系统"
+      ],
+      "pages": [
+        6
+      ],
+      "printed_abbr": "DATE",
+      "printed_url": "http://dblp.uni-trier.de/db/conf/date/",
+      "dblp_stream": "conf/date"
+    },
+    "HOT CHIPS": {
+      "type": "conf",
+      "level": "B",
+      "areas": [
+        "计算机体系结构/并行与分布计算/存储系统"
+      ],
+      "pages": [
+        6
+      ],
+      "printed_abbr": "HOT CHIPS",
+      "printed_url": "https://dblp.org/db/conf/hotchips/index.html",
+      "dblp_stream": "conf/hotchips"
+    },
+    "CLUSTER": {
+      "type": "conf",
+      "level": "B",
+      "areas": [
+        "计算机体系结构/并行与分布计算/存储系统"
+      ],
+      "pages": [
+        6
+      ],
+      "printed_abbr": "CLUSTER",
+      "printed_url": "https://dblp.uni-trier.de/db/conf/cluster/",
+      "dblp_stream": "conf/cluster"
+    },
+    "ICCD": {
+      "type": "conf",
+      "level": "B",
+      "areas": [
+        "计算机体系结构/并行与分布计算/存储系统"
+      ],
+      "pages": [
+        6
+      ],
+      "printed_abbr": "ICCD",
+      "printed_url": "http://dblp.uni-trier.de/db/conf/iccd/",
+      "dblp_stream": "conf/iccd"
+    },
+    "ICCAD": {
+      "type": "conf",
+      "level": "B",
+      "areas": [
+        "计算机体系结构/并行与分布计算/存储系统"
+      ],
+      "pages": [
+        6
+      ],
+      "printed_abbr": "ICCAD",
+      "printed_url": "http://dblp.uni-trier.de/db/conf/iccad/",
+      "dblp_stream": "conf/iccad"
+    },
+    "ICDCS": {
+      "type": "conf",
+      "level": "B",
+      "areas": [
+        "计算机体系结构/并行与分布计算/存储系统"
+      ],
+      "pages": [
+        6
+      ],
+      "printed_abbr": "ICDCS",
+      "printed_url": "http://dblp.uni-trier.de/db/conf/icdcs/",
+      "dblp_stream": "conf/icdcs"
+    },
+    "CODES+ISSS": {
+      "type": "conf",
+      "level": "B",
+      "areas": [
+        "计算机体系结构/并行与分布计算/存储系统"
+      ],
+      "pages": [
+        6
+      ],
+      "printed_abbr": "CODES+ ISSS",
+      "printed_url": "https://dblp.uni- trier.de/db/conf/codesisss/index.html",
+      "dblp_stream": "conf/codesisss"
+    },
+    "HiPEAC": {
+      "type": "conf",
+      "level": "B",
+      "areas": [
+        "计算机体系结构/并行与分布计算/存储系统"
+      ],
+      "pages": [
+        6
+      ],
+      "printed_abbr": "HiPEAC",
+      "printed_url": "http://dblp.uni-trier.de/db/conf/hipeac/",
+      "dblp_stream": "conf/hipeac"
+    },
+    "SIG- METRICS": {
+      "type": "conf",
+      "level": "B",
+      "areas": [
+        "计算机体系结构/并行与分布计算/存储系统"
+      ],
+      "pages": [
+        7
+      ],
+      "printed_abbr": "SIG- METRICS",
+      "printed_url": "http://dblp.uni-trier.de/db/conf/sigmetrics/",
+      "dblp_stream": "conf/sigmetrics"
+    },
+    "PACT": {
+      "type": "conf",
+      "level": "B",
+      "areas": [
+        "计算机体系结构/并行与分布计算/存储系统"
+      ],
+      "pages": [
+        7
+      ],
+      "printed_abbr": "PACT",
+      "printed_url": "http://dblp.uni-trier.de/db/conf/IEEEpact/",
+      "dblp_stream": "conf/IEEEpact"
+    },
+    "ICPP": {
+      "type": "conf",
+      "level": "B",
+      "areas": [
+        "计算机体系结构/并行与分布计算/存储系统"
+      ],
+      "pages": [
+        7
+      ],
+      "printed_abbr": "ICPP",
+      "printed_url": "http://dblp.uni-trier.de/db/conf/icpp/",
+      "dblp_stream": "conf/icpp"
+    },
+    "ICS": {
+      "type": "conf",
+      "level": "B",
+      "areas": [
+        "计算机体系结构/并行与分布计算/存储系统"
+      ],
+      "pages": [
+        7
+      ],
+      "printed_abbr": "ICS",
+      "printed_url": "http://dblp.uni-trier.de/db/conf/ics/",
+      "dblp_stream": "conf/ics"
+    },
+    "VEE": {
+      "type": "conf",
+      "level": "B",
+      "areas": [
+        "计算机体系结构/并行与分布计算/存储系统"
+      ],
+      "pages": [
+        7
+      ],
+      "printed_abbr": "VEE",
+      "printed_url": "http://dblp.uni-trier.de/db/conf/vee/",
+      "dblp_stream": "conf/vee"
+    },
+    "IPDPS": {
+      "type": "conf",
+      "level": "B",
+      "areas": [
+        "计算机体系结构/并行与分布计算/存储系统"
+      ],
+      "pages": [
+        7
+      ],
+      "printed_abbr": "IPDPS",
+      "printed_url": "http://dblp.uni-trier.de/db/conf/ipps/",
+      "dblp_stream": "conf/ipps"
+    },
+    "Performance": {
+      "type": "conf",
+      "level": "B",
+      "areas": [
+        "计算机体系结构/并行与分布计算/存储系统"
+      ],
+      "pages": [
+        7
+      ],
+      "printed_abbr": "Performance",
+      "printed_url": "http://dblp.uni-trier.de/db/conf/performance/",
+      "dblp_stream": "conf/performance"
+    },
+    "ITC": {
+      "type": "conf",
+      "level": "B",
+      "areas": [
+        "计算机体系结构/并行与分布计算/存储系统"
+      ],
+      "pages": [
+        7
+      ],
+      "printed_abbr": "ITC",
+      "printed_url": "http://dblp.uni-trier.de/db/conf/itc/",
+      "dblp_stream": "conf/itc"
+    },
+    "LISA": {
+      "type": "conf",
+      "level": "B",
+      "areas": [
+        "计算机体系结构/并行与分布计算/存储系统"
+      ],
+      "pages": [
+        7
+      ],
+      "printed_abbr": "LISA",
+      "printed_url": "http://dblp.uni-trier.de/db/conf/lisa/",
+      "dblp_stream": "conf/lisa"
+    },
+    "MSST": {
+      "type": "conf",
+      "level": "B",
+      "areas": [
+        "计算机体系结构/并行与分布计算/存储系统"
+      ],
+      "pages": [
+        7
+      ],
+      "printed_abbr": "MSST",
+      "printed_url": "http://dblp.uni-trier.de/db/conf/mss/",
+      "dblp_stream": "conf/mss"
+    },
+    "RTAS": {
+      "type": "conf",
+      "level": "B",
+      "areas": [
+        "计算机体系结构/并行与分布计算/存储系统"
+      ],
+      "pages": [
+        7
+      ],
+      "printed_abbr": "RTAS",
+      "printed_url": "http://dblp.uni-trier.de/db/conf/rtas/",
+      "dblp_stream": "conf/rtas"
+    },
+    "Euro-Par": {
+      "type": "conf",
+      "level": "B",
+      "areas": [
+        "计算机体系结构/并行与分布计算/存储系统"
+      ],
+      "pages": [
+        7
+      ],
+      "printed_abbr": "Euro-Par",
+      "printed_url": "http://dblp.uni-trier.de/db/conf/europar/",
+      "dblp_stream": "conf/europar"
+    },
+    "ISCAS": {
+      "type": "conf",
+      "level": "B",
+      "areas": [
+        "计算机体系结构/并行与分布计算/存储系统"
+      ],
+      "pages": [
+        7
+      ],
+      "printed_abbr": "ISCAS",
+      "printed_url": "http://dblp.uni-trier.de/db/conf/iscas/",
+      "dblp_stream": "conf/iscas"
+    },
+    "JSAC": {
+      "type": "journal",
+      "level": "A",
+      "areas": [
+        "计算机网络"
+      ],
+      "pages": [
+        10
+      ],
+      "printed_abbr": "JSAC",
+      "printed_url": "http://dblp.uni-trier.de/db/journals/jsac/",
+      "dblp_stream": "journals/jsac"
+    },
+    "TMC": {
+      "type": "journal",
+      "level": "A",
+      "areas": [
+        "计算机网络"
+      ],
+      "pages": [
+        10
+      ],
+      "printed_abbr": "TMC",
+      "printed_url": "http://dblp.uni-trier.de/db/journals/tmc/",
+      "dblp_stream": "journals/tmc"
+    },
+    "TON": {
+      "type": "journal",
+      "level": "A",
+      "areas": [
+        "计算机网络"
+      ],
+      "pages": [
+        10
+      ],
+      "printed_abbr": "TON",
+      "printed_url": "http://dblp.uni-trier.de/db/journals/ton/",
+      "dblp_stream": "journals/ton"
+    },
+    "TOIT": {
+      "type": "journal",
+      "level": "B",
+      "areas": [
+        "计算机网络"
+      ],
+      "pages": [
+        11
+      ],
+      "printed_abbr": "TOIT",
+      "printed_url": "http://dblp.uni-trier.de/db/journals/toit/",
+      "dblp_stream": "journals/toit"
+    },
+    "TOMM": {
+      "type": "journal",
+      "level": "B",
+      "areas": [
+        "计算机网络",
+        "计算机图形学与多媒体"
+      ],
+      "pages": [
+        11,
+        45
+      ],
+      "printed_abbr": "TOMM",
+      "printed_url": "http://dblp.uni-trier.de/db/journals/tomccap/",
+      "dblp_stream": "journals/tomccap"
+    },
+    "TOSN": {
+      "type": "journal",
+      "level": "B",
+      "areas": [
+        "计算机网络"
+      ],
+      "pages": [
+        11
+      ],
+      "printed_abbr": "TOSN",
+      "printed_url": "http://dblp.uni-trier.de/db/journals/tosn/",
+      "dblp_stream": "journals/tosn"
+    },
+    "CN": {
+      "type": "journal",
+      "level": "B",
+      "areas": [
+        "计算机网络"
+      ],
+      "pages": [
+        11
+      ],
+      "printed_abbr": "CN",
+      "printed_url": "http://dblp.uni-trier.de/db/journals/cn/",
+      "dblp_stream": "journals/cn"
+    },
+    "TCOM": {
+      "type": "journal",
+      "level": "B",
+      "areas": [
+        "计算机网络"
+      ],
+      "pages": [
+        11
+      ],
+      "printed_abbr": "TCOM",
+      "printed_url": "http://dblp.uni-trier.de/db/journals/tcom/",
+      "dblp_stream": "journals/tcom"
+    },
+    "TWC": {
+      "type": "journal",
+      "level": "B",
+      "areas": [
+        "计算机网络"
+      ],
+      "pages": [
+        11
+      ],
+      "printed_abbr": "TWC",
+      "printed_url": "http://dblp.uni-trier.de/db/journals/twc/",
+      "dblp_stream": "journals/twc"
+    },
+    "SIGCOMM": {
+      "type": "conf",
+      "level": "A",
+      "areas": [
+        "计算机网络"
+      ],
+      "pages": [
+        13
+      ],
+      "printed_abbr": "SIGCOMM",
+      "printed_url": "http://dblp.uni-trier.de/db/conf/sigcomm/index.html",
+      "dblp_stream": "conf/sigcomm"
+    },
+    "MobiCom": {
+      "type": "conf",
+      "level": "A",
+      "areas": [
+        "计算机网络"
+      ],
+      "pages": [
+        13
+      ],
+      "printed_abbr": "MobiCom",
+      "printed_url": "http://dblp.uni-trier.de/db/conf/mobicom/",
+      "dblp_stream": "conf/mobicom"
+    },
+    "INFOCOM": {
+      "type": "conf",
+      "level": "A",
+      "areas": [
+        "计算机网络"
+      ],
+      "pages": [
+        13
+      ],
+      "printed_abbr": "INFOCOM",
+      "printed_url": "http://dblp.uni-trier.de/db/conf/infocom/",
+      "dblp_stream": "conf/infocom"
+    },
+    "NSDI": {
+      "type": "conf",
+      "level": "A",
+      "areas": [
+        "计算机网络"
+      ],
+      "pages": [
+        13
+      ],
+      "printed_abbr": "NSDI",
+      "printed_url": "http://dblp.uni-trier.de/db/conf/nsdi/",
+      "dblp_stream": "conf/nsdi"
+    },
+    "SenSys": {
+      "type": "conf",
+      "level": "B",
+      "areas": [
+        "计算机网络"
+      ],
+      "pages": [
+        14
+      ],
+      "printed_abbr": "SenSys",
+      "printed_url": "http://dblp.uni-trier.de/db/conf/sensys/",
+      "dblp_stream": "conf/sensys"
+    },
+    "CoNEXT": {
+      "type": "conf",
+      "level": "B",
+      "areas": [
+        "计算机网络"
+      ],
+      "pages": [
+        14
+      ],
+      "printed_abbr": "CoNEXT",
+      "printed_url": "http://dblp.uni-trier.de/db/conf/conext/",
+      "dblp_stream": "conf/conext"
+    },
+    "SECON": {
+      "type": "conf",
+      "level": "B",
+      "areas": [
+        "计算机网络"
+      ],
+      "pages": [
+        14
+      ],
+      "printed_abbr": "SECON",
+      "printed_url": "http://dblp.uni-trier.de/db/conf/secon/",
+      "dblp_stream": "conf/secon"
+    },
+    "IPSN": {
+      "type": "conf",
+      "level": "B",
+      "areas": [
+        "计算机网络"
+      ],
+      "pages": [
+        14
+      ],
+      "printed_abbr": "IPSN",
+      "printed_url": "http://dblp.uni-trier.de/db/conf/ipsn/",
+      "dblp_stream": "conf/ipsn"
+    },
+    "MobiSys": {
+      "type": "conf",
+      "level": "B",
+      "areas": [
+        "计算机网络"
+      ],
+      "pages": [
+        14
+      ],
+      "printed_abbr": "MobiSys",
+      "printed_url": "http://dblp.uni-trier.de/db/conf/mobisys/",
+      "dblp_stream": "conf/mobisys"
+    },
+    "ICNP": {
+      "type": "conf",
+      "level": "B",
+      "areas": [
+        "计算机网络"
+      ],
+      "pages": [
+        14
+      ],
+      "printed_abbr": "ICNP",
+      "printed_url": "http://dblp.uni-trier.de/db/conf/icnp/",
+      "dblp_stream": "conf/icnp"
+    },
+    "MobiHoc": {
+      "type": "conf",
+      "level": "B",
+      "areas": [
+        "计算机网络"
+      ],
+      "pages": [
+        14
+      ],
+      "printed_abbr": "MobiHoc",
+      "printed_url": "http://dblp.uni-trier.de/db/conf/mobihoc/",
+      "dblp_stream": "conf/mobihoc"
+    },
+    "NOSSDAV": {
+      "type": "conf",
+      "level": "B",
+      "areas": [
+        "计算机网络"
+      ],
+      "pages": [
+        14
+      ],
+      "printed_abbr": "NOSSDAV",
+      "printed_url": "http://dblp.uni-trier.de/db/conf/nossdav/",
+      "dblp_stream": "conf/nossdav"
+    },
+    "IWQoS": {
+      "type": "conf",
+      "level": "B",
+      "areas": [
+        "计算机网络"
+      ],
+      "pages": [
+        14
+      ],
+      "printed_abbr": "IWQoS",
+      "printed_url": "http://dblp.uni-trier.de/db/conf/iwqos/",
+      "dblp_stream": "conf/iwqos"
+    },
+    "IMC": {
+      "type": "conf",
+      "level": "B",
+      "areas": [
+        "计算机网络"
+      ],
+      "pages": [
+        14
+      ],
+      "printed_abbr": "IMC",
+      "printed_url": "http://dblp.uni-trier.de/db/conf/imc/",
+      "dblp_stream": "conf/imc"
+    },
+    "TDSC": {
+      "type": "journal",
+      "level": "A",
+      "areas": [
+        "网络与信息安全"
+      ],
+      "pages": [
+        17
+      ],
+      "printed_abbr": "TDSC",
+      "printed_url": "http://dblp.uni-trier.de/db/journals/tdsc/",
+      "dblp_stream": "journals/tdsc"
+    },
+    "TIFS": {
+      "type": "journal",
+      "level": "A",
+      "areas": [
+        "网络与信息安全"
+      ],
+      "pages": [
+        17
+      ],
+      "printed_abbr": "TIFS",
+      "printed_url": "http://dblp.uni-trier.de/db/journals/tifs/",
+      "dblp_stream": "journals/tifs"
+    },
+    "Journal of Cryptology": {
+      "type": "journal",
+      "level": "A",
+      "areas": [
+        "网络与信息安全"
+      ],
+      "pages": [
+        17
+      ],
+      "printed_abbr": "",
+      "printed_url": "http://dblp.uni-trier.de/db/journals/joc/",
+      "dblp_stream": "journals/joc"
+    },
+    "TOPS": {
+      "type": "journal",
+      "level": "B",
+      "areas": [
+        "网络与信息安全"
+      ],
+      "pages": [
+        18
+      ],
+      "printed_abbr": "TOPS",
+      "printed_url": "https://dblp.org/db/journals/tissec/index.html",
+      "dblp_stream": "journals/tissec"
+    },
+    "Computers & Security": {
+      "type": "journal",
+      "level": "B",
+      "areas": [
+        "网络与信息安全"
+      ],
+      "pages": [
+        18
+      ],
+      "printed_abbr": "",
+      "printed_url": "http://dblp.uni-trier.de/db/journals/compsec/",
+      "dblp_stream": "journals/compsec"
+    },
+    "Designs, Codes and Cryptography": {
+      "type": "journal",
+      "level": "B",
+      "areas": [
+        "网络与信息安全"
+      ],
+      "pages": [
+        18
+      ],
+      "printed_abbr": "",
+      "printed_url": "http://dblp.uni-trier.de/db/journals/dcc/",
+      "dblp_stream": "journals/dcc"
+    },
+    "JCS": {
+      "type": "journal",
+      "level": "B",
+      "areas": [
+        "网络与信息安全"
+      ],
+      "pages": [
+        18
+      ],
+      "printed_abbr": "JCS",
+      "printed_url": "http://dblp.uni-trier.de/db/journals/jcs/",
+      "dblp_stream": "journals/jcs"
+    },
+    "Cybersecurity": {
+      "type": "journal",
+      "level": "B",
+      "areas": [
+        "网络与信息安全"
+      ],
+      "pages": [
+        18
+      ],
+      "printed_abbr": "Cybersecurity",
+      "printed_url": "https://dblp.uni- trier.de/db/journals/cybersec/index.html",
+      "dblp_stream": "journals/cybersec"
+    },
+    "CCS": {
+      "type": "conf",
+      "level": "A",
+      "areas": [
+        "网络与信息安全"
+      ],
+      "pages": [
+        20
+      ],
+      "printed_abbr": "CCS",
+      "printed_url": "http://dblp.uni-trier.de/db/conf/ccs/",
+      "dblp_stream": "conf/ccs"
+    },
+    "EUROCRYPT": {
+      "type": "conf",
+      "level": "A",
+      "areas": [
+        "网络与信息安全"
+      ],
+      "pages": [
+        20
+      ],
+      "printed_abbr": "EUROCRYPT",
+      "printed_url": "http://dblp.uni-trier.de/db/conf/eurocrypt/",
+      "dblp_stream": "conf/eurocrypt"
+    },
+    "S&P": {
+      "type": "conf",
+      "level": "A",
+      "areas": [
+        "网络与信息安全"
+      ],
+      "pages": [
+        20
+      ],
+      "printed_abbr": "S&P",
+      "printed_url": "http://dblp.uni-trier.de/db/conf/sp/",
+      "dblp_stream": "conf/sp"
+    },
+    "CRYPTO": {
+      "type": "conf",
+      "level": "A",
+      "areas": [
+        "网络与信息安全"
+      ],
+      "pages": [
+        20
+      ],
+      "printed_abbr": "CRYPTO",
+      "printed_url": "http://dblp.uni-trier.de/db/conf/crypto/",
+      "dblp_stream": "conf/crypto"
+    },
+    "USENIX Security": {
+      "type": "conf",
+      "level": "A",
+      "areas": [
+        "网络与信息安全"
+      ],
+      "pages": [
+        20
+      ],
+      "printed_abbr": "USENIX Security",
+      "printed_url": "http://dblp.uni-trier.de/db/conf/uss/",
+      "dblp_stream": "conf/uss"
+    },
+    "NDSS": {
+      "type": "conf",
+      "level": "A",
+      "areas": [
+        "网络与信息安全"
+      ],
+      "pages": [
+        20
+      ],
+      "printed_abbr": "NDSS",
+      "printed_url": "http://dblp.uni-trier.de/db/conf/ndss/",
+      "dblp_stream": "conf/ndss"
+    },
+    "ACSAC": {
+      "type": "conf",
+      "level": "B",
+      "areas": [
+        "网络与信息安全"
+      ],
+      "pages": [
+        21
+      ],
+      "printed_abbr": "ACSAC",
+      "printed_url": "https://dblp.uni-trier.de/db/conf/acsac/index.html",
+      "dblp_stream": "conf/acsac"
+    },
+    "ASIACRYPT": {
+      "type": "conf",
+      "level": "B",
+      "areas": [
+        "网络与信息安全"
+      ],
+      "pages": [
+        21
+      ],
+      "printed_abbr": "ASIACRYPT",
+      "printed_url": "https://dblp.uni-trier.de/db/conf/asiacrypt/index.html",
+      "dblp_stream": "conf/asiacrypt"
+    },
+    "ESORICS": {
+      "type": "conf",
+      "level": "B",
+      "areas": [
+        "网络与信息安全"
+      ],
+      "pages": [
+        21
+      ],
+      "printed_abbr": "ESORICS",
+      "printed_url": "https://dblp.uni-trier.de/db/conf/esorics/index.html",
+      "dblp_stream": "conf/esorics"
+    },
+    "FSE (Crypto)": {
+      "type": "conf",
+      "level": "B",
+      "areas": [
+        "网络与信息安全"
+      ],
+      "pages": [
+        21
+      ],
+      "printed_abbr": "FSE",
+      "printed_url": "https://dblp.uni-trier.de/db/conf/fse/index.html",
+      "dblp_stream": "conf/fse"
+    },
+    "CSFW": {
+      "type": "conf",
+      "level": "B",
+      "areas": [
+        "网络与信息安全"
+      ],
+      "pages": [
+        21
+      ],
+      "printed_abbr": "CSFW",
+      "printed_url": "https://dblp.uni-trier.de/db/conf/csfw/index.html",
+      "dblp_stream": "conf/csfw"
+    },
+    "SRDS": {
+      "type": "conf",
+      "level": "B",
+      "areas": [
+        "网络与信息安全"
+      ],
+      "pages": [
+        21
+      ],
+      "printed_abbr": "SRDS",
+      "printed_url": "https://dblp.uni-trier.de/db/conf/srds/index.html",
+      "dblp_stream": "conf/srds"
+    },
+    "CHES": {
+      "type": "conf",
+      "level": "B",
+      "areas": [
+        "网络与信息安全"
+      ],
+      "pages": [
+        21
+      ],
+      "printed_abbr": "CHES",
+      "printed_url": "https://dblp.uni-trier.de/db/conf/ches/index.html",
+      "dblp_stream": "conf/ches"
+    },
+    "DSN": {
+      "type": "conf",
+      "level": "B",
+      "areas": [
+        "网络与信息安全"
+      ],
+      "pages": [
+        21
+      ],
+      "printed_abbr": "DSN",
+      "printed_url": "https://dblp.uni-trier.de/db/conf/dsn/index.html",
+      "dblp_stream": "conf/dsn"
+    },
+    "RAID": {
+      "type": "conf",
+      "level": "B",
+      "areas": [
+        "网络与信息安全"
+      ],
+      "pages": [
+        21
+      ],
+      "printed_abbr": "RAID",
+      "printed_url": "https://dblp.uni-trier.de/db/conf/raid/index.html",
+      "dblp_stream": "conf/raid"
+    },
+    "PKC": {
+      "type": "conf",
+      "level": "B",
+      "areas": [
+        "网络与信息安全"
+      ],
+      "pages": [
+        21
+      ],
+      "printed_abbr": "PKC",
+      "printed_url": "https://dblp.uni-trier.de/db/conf/pkc/index.html",
+      "dblp_stream": "conf/pkc"
+    },
+    "TCC": {
+      "type": "conf",
+      "level": "B",
+      "areas": [
+        "网络与信息安全"
+      ],
+      "pages": [
+        21
+      ],
+      "printed_abbr": "TCC",
+      "printed_url": "https://dblp.uni-trier.de/db/conf/tcc/index.html",
+      "dblp_stream": "conf/tcc"
+    },
+    "TOPLAS": {
+      "type": "journal",
+      "level": "A",
+      "areas": [
+        "软件工程/系统软件/程序设计语言"
+      ],
+      "pages": [
+        24
+      ],
+      "printed_abbr": "TOPLAS",
+      "printed_url": "http://dblp.uni-trier.de/db/journals/toplas/",
+      "dblp_stream": "journals/toplas"
+    },
+    "TOSEM": {
+      "type": "journal",
+      "level": "A",
+      "areas": [
+        "软件工程/系统软件/程序设计语言"
+      ],
+      "pages": [
+        24
+      ],
+      "printed_abbr": "TOSEM",
+      "printed_url": "http://dblp.uni-trier.de/db/journals/tosem/",
+      "dblp_stream": "journals/tosem"
+    },
+    "TSE": {
+      "type": "journal",
+      "level": "A",
+      "areas": [
+        "软件工程/系统软件/程序设计语言"
+      ],
+      "pages": [
+        24
+      ],
+      "printed_abbr": "TSE",
+      "printed_url": "http://dblp.uni-trier.de/db/journals/tse/",
+      "dblp_stream": "journals/tse"
+    },
+    "TSC": {
+      "type": "journal",
+      "level": "A",
+      "areas": [
+        "软件工程/系统软件/程序设计语言"
+      ],
+      "pages": [
+        24
+      ],
+      "printed_abbr": "TSC",
+      "printed_url": "http://dblp.uni-trier.de/db/journals/tsc/",
+      "dblp_stream": "journals/tsc"
+    },
+    "ASE Journal": {
+      "type": "journal",
+      "level": "B",
+      "areas": [
+        "软件工程/系统软件/程序设计语言"
+      ],
+      "pages": [
+        25
+      ],
+      "printed_abbr": "ASE",
+      "printed_url": "http://dblp.uni-trier.de/db/journals/ase/",
+      "dblp_stream": "journals/ase"
+    },
+    "ESE": {
+      "type": "journal",
+      "level": "B",
+      "areas": [
+        "软件工程/系统软件/程序设计语言"
+      ],
+      "pages": [
+        25
+      ],
+      "printed_abbr": "ESE",
+      "printed_url": "http://dblp.uni-trier.de/db/journals/ese/",
+      "dblp_stream": "journals/ese"
+    },
+    "IETS": {
+      "type": "journal",
+      "level": "B",
+      "areas": [
+        "软件工程/系统软件/程序设计语言"
+      ],
+      "pages": [
+        25
+      ],
+      "printed_abbr": "IETS",
+      "printed_url": "https://dblp.uni-trier.de/db/journals/iet-sen/",
+      "dblp_stream": "journals/iet-sen"
+    },
+    "IST": {
+      "type": "journal",
+      "level": "B",
+      "areas": [
+        "软件工程/系统软件/程序设计语言"
+      ],
+      "pages": [
+        25
+      ],
+      "printed_abbr": "IST",
+      "printed_url": "http://dblp.uni-trier.de/db/journals/infsof/index.html",
+      "dblp_stream": "journals/infsof"
+    },
+    "JFP": {
+      "type": "journal",
+      "level": "B",
+      "areas": [
+        "软件工程/系统软件/程序设计语言"
+      ],
+      "pages": [
+        25
+      ],
+      "printed_abbr": "JFP",
+      "printed_url": "http://dblp.uni-trier.de/db/journals/jfp/",
+      "dblp_stream": "journals/jfp"
+    },
+    "Journal of Software: Evolution and Process": {
+      "type": "journal",
+      "level": "B",
+      "areas": [
+        "软件工程/系统软件/程序设计语言"
+      ],
+      "pages": [
+        25
+      ],
+      "printed_abbr": "",
+      "printed_url": "http://dblp.uni-trier.de/db/journals/smr/",
+      "dblp_stream": "journals/smr"
+    },
+    "JSS": {
+      "type": "journal",
+      "level": "B",
+      "areas": [
+        "软件工程/系统软件/程序设计语言"
+      ],
+      "pages": [
+        25
+      ],
+      "printed_abbr": "JSS",
+      "printed_url": "http://dblp.uni-trier.de/db/journals/jss/",
+      "dblp_stream": "journals/jss"
+    },
+    "RE Journal": {
+      "type": "journal",
+      "level": "B",
+      "areas": [
+        "软件工程/系统软件/程序设计语言"
+      ],
+      "pages": [
+        25
+      ],
+      "printed_abbr": "RE",
+      "printed_url": "http://dblp.uni-trier.de/db/journals/re/",
+      "dblp_stream": "journals/re"
+    },
+    "SCP": {
+      "type": "journal",
+      "level": "B",
+      "areas": [
+        "软件工程/系统软件/程序设计语言"
+      ],
+      "pages": [
+        25
+      ],
+      "printed_abbr": "SCP",
+      "printed_url": "http://dblp.uni-trier.de/db/journals/scp/",
+      "dblp_stream": "journals/scp"
+    },
+    "SoSyM": {
+      "type": "journal",
+      "level": "B",
+      "areas": [
+        "软件工程/系统软件/程序设计语言"
+      ],
+      "pages": [
+        25
+      ],
+      "printed_abbr": "SoSyM",
+      "printed_url": "http://dblp.uni-trier.de/db/journals/sosym/",
+      "dblp_stream": "journals/sosym"
+    },
+    "STVR": {
+      "type": "journal",
+      "level": "B",
+      "areas": [
+        "软件工程/系统软件/程序设计语言"
+      ],
+      "pages": [
+        25
+      ],
+      "printed_abbr": "STVR",
+      "printed_url": "http://dblp.uni-trier.de/db/journals/stvr/index.html",
+      "dblp_stream": "journals/stvr"
+    },
+    "SPE": {
+      "type": "journal",
+      "level": "B",
+      "areas": [
+        "软件工程/系统软件/程序设计语言"
+      ],
+      "pages": [
+        25
+      ],
+      "printed_abbr": "SPE",
+      "printed_url": "http://dblp.uni-trier.de/db/journals/spe/",
+      "dblp_stream": "journals/spe"
+    },
+    "PLDI": {
+      "type": "conf",
+      "level": "A",
+      "areas": [
+        "软件工程/系统软件/程序设计语言"
+      ],
+      "pages": [
+        27
+      ],
+      "printed_abbr": "PLDI",
+      "printed_url": "http://dblp.uni-trier.de/db/conf/pldi/",
+      "dblp_stream": "conf/pldi"
+    },
+    "POPL": {
+      "type": "conf",
+      "level": "A",
+      "areas": [
+        "软件工程/系统软件/程序设计语言"
+      ],
+      "pages": [
+        27
+      ],
+      "printed_abbr": "POPL",
+      "printed_url": "http://dblp.uni-trier.de/db/conf/popl/",
+      "dblp_stream": "conf/popl"
+    },
+    "FSE": {
+      "type": "conf",
+      "level": "A",
+      "areas": [
+        "软件工程/系统软件/程序设计语言"
+      ],
+      "pages": [
+        27
+      ],
+      "printed_abbr": "FSE",
+      "printed_url": "http://dblp.uni-trier.de/db/conf/sigsoft/",
+      "dblp_stream": "conf/sigsoft"
+    },
+    "SOSP": {
+      "type": "conf",
+      "level": "A",
+      "areas": [
+        "软件工程/系统软件/程序设计语言"
+      ],
+      "pages": [
+        27
+      ],
+      "printed_abbr": "SOSP",
+      "printed_url": "http://dblp.uni-trier.de/db/conf/sosp/",
+      "dblp_stream": "conf/sosp"
+    },
+    "OOPSLA": {
+      "type": "conf",
+      "level": "A",
+      "areas": [
+        "软件工程/系统软件/程序设计语言"
+      ],
+      "pages": [
+        27
+      ],
+      "printed_abbr": "OOPSLA",
+      "printed_url": "http://dblp.uni-trier.de/db/conf/oopsla/",
+      "dblp_stream": "conf/oopsla"
+    },
+    "ASE": {
+      "type": "conf",
+      "level": "A",
+      "areas": [
+        "软件工程/系统软件/程序设计语言"
+      ],
+      "pages": [
+        27
+      ],
+      "printed_abbr": "ASE",
+      "printed_url": "http://dblp.uni-trier.de/db/conf/kbse/",
+      "dblp_stream": "conf/kbse"
+    },
+    "ICSE": {
+      "type": "conf",
+      "level": "A",
+      "areas": [
+        "软件工程/系统软件/程序设计语言"
+      ],
+      "pages": [
+        27
+      ],
+      "printed_abbr": "ICSE",
+      "printed_url": "http://dblp.uni-trier.de/db/conf/icse/",
+      "dblp_stream": "conf/icse"
+    },
+    "ISSTA": {
+      "type": "conf",
+      "level": "A",
+      "areas": [
+        "软件工程/系统软件/程序设计语言"
+      ],
+      "pages": [
+        27
+      ],
+      "printed_abbr": "ISSTA",
+      "printed_url": "http://dblp.uni-trier.de/db/conf/issta/",
+      "dblp_stream": "conf/issta"
+    },
+    "OSDI": {
+      "type": "conf",
+      "level": "A",
+      "areas": [
+        "软件工程/系统软件/程序设计语言"
+      ],
+      "pages": [
+        27
+      ],
+      "printed_abbr": "OSDI",
+      "printed_url": "http://dblp.uni-trier.de/db/conf/osdi/",
+      "dblp_stream": "conf/osdi"
+    },
+    "FM": {
+      "type": "conf",
+      "level": "A",
+      "areas": [
+        "软件工程/系统软件/程序设计语言"
+      ],
+      "pages": [
+        27
+      ],
+      "printed_abbr": "FM",
+      "printed_url": "http://dblp.uni-trier.de/db/conf/fm/",
+      "dblp_stream": "conf/fm"
+    },
+    "ECOOP": {
+      "type": "conf",
+      "level": "B",
+      "areas": [
+        "软件工程/系统软件/程序设计语言"
+      ],
+      "pages": [
+        28
+      ],
+      "printed_abbr": "ECOOP",
+      "printed_url": "http://dblp.uni-trier.de/db/conf/ecoop/",
+      "dblp_stream": "conf/ecoop"
+    },
+    "ETAPS": {
+      "type": "conf",
+      "level": "B",
+      "areas": [
+        "软件工程/系统软件/程序设计语言"
+      ],
+      "pages": [
+        28
+      ],
+      "printed_abbr": "ETAPS",
+      "printed_url": "http://dblp.uni-trier.de/db/conf/etaps/",
+      "dblp_stream": "conf/etaps"
+    },
+    "ICPC": {
+      "type": "conf",
+      "level": "B",
+      "areas": [
+        "软件工程/系统软件/程序设计语言"
+      ],
+      "pages": [
+        28
+      ],
+      "printed_abbr": "ICPC",
+      "printed_url": "http://dblp.uni-trier.de/db/conf/iwpc/",
+      "dblp_stream": "conf/iwpc"
+    },
+    "RE": {
+      "type": "conf",
+      "level": "B",
+      "areas": [
+        "软件工程/系统软件/程序设计语言"
+      ],
+      "pages": [
+        28
+      ],
+      "printed_abbr": "RE",
+      "printed_url": "http://dblp.uni-trier.de/db/conf/re/",
+      "dblp_stream": "conf/re"
+    },
+    "CAiSE": {
+      "type": "conf",
+      "level": "B",
+      "areas": [
+        "软件工程/系统软件/程序设计语言"
+      ],
+      "pages": [
+        28
+      ],
+      "printed_abbr": "CAiSE",
+      "printed_url": "http://dblp.uni-trier.de/db/conf/caise/",
+      "dblp_stream": "conf/caise"
+    },
+    "ICFP": {
+      "type": "conf",
+      "level": "B",
+      "areas": [
+        "软件工程/系统软件/程序设计语言"
+      ],
+      "pages": [
+        28
+      ],
+      "printed_abbr": "ICFP",
+      "printed_url": "http://dblp.uni-trier.de/db/conf/icfp/",
+      "dblp_stream": "conf/icfp"
+    },
+    "LCTES": {
+      "type": "conf",
+      "level": "B",
+      "areas": [
+        "软件工程/系统软件/程序设计语言"
+      ],
+      "pages": [
+        28
+      ],
+      "printed_abbr": "LCTES",
+      "printed_url": "http://dblp.uni-trier.de/db/conf/lctrts/",
+      "dblp_stream": "conf/lctrts"
+    },
+    "MoDELS": {
+      "type": "conf",
+      "level": "B",
+      "areas": [
+        "软件工程/系统软件/程序设计语言"
+      ],
+      "pages": [
+        28
+      ],
+      "printed_abbr": "MoDELS",
+      "printed_url": "http://dblp.uni-trier.de/db/conf/models/",
+      "dblp_stream": "conf/models"
+    },
+    "CP": {
+      "type": "conf",
+      "level": "B",
+      "areas": [
+        "软件工程/系统软件/程序设计语言"
+      ],
+      "pages": [
+        28
+      ],
+      "printed_abbr": "CP",
+      "printed_url": "http://dblp.uni-trier.de/db/conf/cp/",
+      "dblp_stream": "conf/cp"
+    },
+    "ICSOC": {
+      "type": "conf",
+      "level": "B",
+      "areas": [
+        "软件工程/系统软件/程序设计语言"
+      ],
+      "pages": [
+        28
+      ],
+      "printed_abbr": "ICSOC",
+      "printed_url": "http://dblp.uni-trier.de/db/conf/icsoc/",
+      "dblp_stream": "conf/icsoc"
+    },
+    "SANER": {
+      "type": "conf",
+      "level": "B",
+      "areas": [
+        "软件工程/系统软件/程序设计语言"
+      ],
+      "pages": [
+        29
+      ],
+      "printed_abbr": "SANER",
+      "printed_url": "http://dblp.uni-trier.de/db/conf/wcre/",
+      "dblp_stream": "conf/wcre"
+    },
+    "ICSME": {
+      "type": "conf",
+      "level": "B",
+      "areas": [
+        "软件工程/系统软件/程序设计语言"
+      ],
+      "pages": [
+        29
+      ],
+      "printed_abbr": "ICSME",
+      "printed_url": "http://dblp.uni-trier.de/db/conf/icsm/",
+      "dblp_stream": "conf/icsm"
+    },
+    "VMCAI": {
+      "type": "conf",
+      "level": "B",
+      "areas": [
+        "软件工程/系统软件/程序设计语言"
+      ],
+      "pages": [
+        29
+      ],
+      "printed_abbr": "VMCAI",
+      "printed_url": "http://dblp.uni-trier.de/db/conf/vmcai/",
+      "dblp_stream": "conf/vmcai"
+    },
+    "ICWS": {
+      "type": "conf",
+      "level": "B",
+      "areas": [
+        "软件工程/系统软件/程序设计语言"
+      ],
+      "pages": [
+        29
+      ],
+      "printed_abbr": "ICWS",
+      "printed_url": "http://dblp.uni-trier.de/db/conf/icws/",
+      "dblp_stream": "conf/icws"
+    },
+    "Middleware": {
+      "type": "conf",
+      "level": "B",
+      "areas": [
+        "软件工程/系统软件/程序设计语言"
+      ],
+      "pages": [
+        29
+      ],
+      "printed_abbr": "Middleware",
+      "printed_url": "http://dblp.uni-trier.de/db/conf/middleware/",
+      "dblp_stream": "conf/middleware"
+    },
+    "SAS": {
+      "type": "conf",
+      "level": "B",
+      "areas": [
+        "软件工程/系统软件/程序设计语言"
+      ],
+      "pages": [
+        29
+      ],
+      "printed_abbr": "SAS",
+      "printed_url": "http://dblp.uni-trier.de/db/conf/sas/",
+      "dblp_stream": "conf/sas"
+    },
+    "ESEM": {
+      "type": "conf",
+      "level": "B",
+      "areas": [
+        "软件工程/系统软件/程序设计语言"
+      ],
+      "pages": [
+        29
+      ],
+      "printed_abbr": "ESEM",
+      "printed_url": "http://dblp.uni-trier.de/db/conf/esem/",
+      "dblp_stream": "conf/esem"
+    },
+    "ISSRE": {
+      "type": "conf",
+      "level": "B",
+      "areas": [
+        "软件工程/系统软件/程序设计语言"
+      ],
+      "pages": [
+        29
+      ],
+      "printed_abbr": "ISSRE",
+      "printed_url": "http://dblp.uni-trier.de/db/conf/issre/",
+      "dblp_stream": "conf/issre"
+    },
+    "HotOS": {
+      "type": "conf",
+      "level": "B",
+      "areas": [
+        "软件工程/系统软件/程序设计语言"
+      ],
+      "pages": [
+        29
+      ],
+      "printed_abbr": "HotOS",
+      "printed_url": "http://dblp.uni-trier.de/db/conf/hotos/",
+      "dblp_stream": "conf/hotos"
+    },
+    "CC": {
+      "type": "conf",
+      "level": "B",
+      "areas": [
+        "软件工程/系统软件/程序设计语言"
+      ],
+      "pages": [
+        29
+      ],
+      "printed_abbr": "CC",
+      "printed_url": "https://dblp.uni-trier.de/db/conf/cc/index.html",
+      "dblp_stream": "conf/cc"
+    },
+    "TODS": {
+      "type": "journal",
+      "level": "A",
+      "areas": [
+        "数据库/数据挖掘/内容检索"
+      ],
+      "pages": [
+        32
+      ],
+      "printed_abbr": "TODS",
+      "printed_url": "http://dblp.uni-trier.de/db/journals/tods/",
+      "dblp_stream": "journals/tods"
+    },
+    "TOIS": {
+      "type": "journal",
+      "level": "A",
+      "areas": [
+        "数据库/数据挖掘/内容检索"
+      ],
+      "pages": [
+        32
+      ],
+      "printed_abbr": "TOIS",
+      "printed_url": "http://dblp.uni-trier.de/db/journals/tois/",
+      "dblp_stream": "journals/tois"
+    },
+    "TKDE": {
+      "type": "journal",
+      "level": "A",
+      "areas": [
+        "数据库/数据挖掘/内容检索"
+      ],
+      "pages": [
+        32
+      ],
+      "printed_abbr": "TKDE",
+      "printed_url": "http://dblp.uni-trier.de/db/journals/tkde/",
+      "dblp_stream": "journals/tkde"
+    },
+    "VLDBJ": {
+      "type": "journal",
+      "level": "A",
+      "areas": [
+        "数据库/数据挖掘/内容检索"
+      ],
+      "pages": [
+        32
+      ],
+      "printed_abbr": "VLDBJ",
+      "printed_url": "http://dblp.uni-trier.de/db/journals/vldb/",
+      "dblp_stream": "journals/vldb"
+    },
+    "TKDD": {
+      "type": "journal",
+      "level": "B",
+      "areas": [
+        "数据库/数据挖掘/内容检索"
+      ],
+      "pages": [
+        33
+      ],
+      "printed_abbr": "TKDD",
+      "printed_url": "http://dblp.uni-trier.de/db/journals/tkdd/",
+      "dblp_stream": "journals/tkdd"
+    },
+    "TWEB": {
+      "type": "journal",
+      "level": "B",
+      "areas": [
+        "数据库/数据挖掘/内容检索"
+      ],
+      "pages": [
+        33
+      ],
+      "printed_abbr": "TWEB",
+      "printed_url": "http://dblp.uni-trier.de/db/journals/tweb/",
+      "dblp_stream": "journals/tweb"
+    },
+    "AEI": {
+      "type": "journal",
+      "level": "B",
+      "areas": [
+        "数据库/数据挖掘/内容检索"
+      ],
+      "pages": [
+        33
+      ],
+      "printed_abbr": "AEI",
+      "printed_url": "http://dblp.uni-trier.de/db/journals/aei/",
+      "dblp_stream": "journals/aei"
+    },
+    "DKE": {
+      "type": "journal",
+      "level": "B",
+      "areas": [
+        "数据库/数据挖掘/内容检索",
+        "人工智能"
+      ],
+      "pages": [
+        33,
+        52
+      ],
+      "printed_abbr": "DKE",
+      "printed_url": "http://dblp.uni-trier.de/db/journals/dke/",
+      "dblp_stream": "journals/dke"
+    },
+    "DMKD": {
+      "type": "journal",
+      "level": "B",
+      "areas": [
+        "数据库/数据挖掘/内容检索"
+      ],
+      "pages": [
+        33
+      ],
+      "printed_abbr": "DMKD",
+      "printed_url": "http://dblp.uni-trier.de/db/journals/datamine/",
+      "dblp_stream": "journals/datamine"
+    },
+    "EJIS": {
+      "type": "journal",
+      "level": "B",
+      "areas": [
+        "数据库/数据挖掘/内容检索"
+      ],
+      "pages": [
+        33
+      ],
+      "printed_abbr": "EJIS",
+      "printed_url": "http://dblp.uni-trier.de/db/journals/ejis/",
+      "dblp_stream": "journals/ejis"
+    },
+    "GeoInformatica": {
+      "type": "journal",
+      "level": "B",
+      "areas": [
+        "数据库/数据挖掘/内容检索"
+      ],
+      "pages": [
+        33
+      ],
+      "printed_abbr": "",
+      "printed_url": "http://dblp.uni-trier.de/db/journals/geoinformatica/",
+      "dblp_stream": "journals/geoinformatica"
+    },
+    "IPM": {
+      "type": "journal",
+      "level": "B",
+      "areas": [
+        "数据库/数据挖掘/内容检索"
+      ],
+      "pages": [
+        33
+      ],
+      "printed_abbr": "IPM",
+      "printed_url": "http://dblp.uni-trier.de/db/journals/ipm/",
+      "dblp_stream": "journals/ipm"
+    },
+    "Information Sciences": {
+      "type": "journal",
+      "level": "B",
+      "areas": [
+        "数据库/数据挖掘/内容检索"
+      ],
+      "pages": [
+        33
+      ],
+      "printed_abbr": "",
+      "printed_url": "http://dblp.uni-trier.de/db/journals/isci/",
+      "dblp_stream": "journals/isci"
+    },
+    "IS": {
+      "type": "journal",
+      "level": "B",
+      "areas": [
+        "数据库/数据挖掘/内容检索"
+      ],
+      "pages": [
+        33
+      ],
+      "printed_abbr": "IS",
+      "printed_url": "http://dblp.uni-trier.de/db/journals/is/",
+      "dblp_stream": "journals/is"
+    },
+    "JASIST": {
+      "type": "journal",
+      "level": "B",
+      "areas": [
+        "数据库/数据挖掘/内容检索"
+      ],
+      "pages": [
+        33
+      ],
+      "printed_abbr": "JASIST",
+      "printed_url": "http://dblp.uni-trier.de/db/journals/jasis/",
+      "dblp_stream": "journals/jasis"
+    },
+    "JWS": {
+      "type": "journal",
+      "level": "B",
+      "areas": [
+        "数据库/数据挖掘/内容检索"
+      ],
+      "pages": [
+        33
+      ],
+      "printed_abbr": "JWS",
+      "printed_url": "http://dblp.uni-trier.de/db/journals/ws/",
+      "dblp_stream": "journals/ws"
+    },
+    "KAIS": {
+      "type": "journal",
+      "level": "B",
+      "areas": [
+        "数据库/数据挖掘/内容检索"
+      ],
+      "pages": [
+        33
+      ],
+      "printed_abbr": "KAIS",
+      "printed_url": "http://dblp.uni-trier.de/db/journals/kais/",
+      "dblp_stream": "journals/kais"
+    },
+    "DSE": {
+      "type": "journal",
+      "level": "B",
+      "areas": [
+        "数据库/数据挖掘/内容检索"
+      ],
+      "pages": [
+        33
+      ],
+      "printed_abbr": "DSE",
+      "printed_url": "https://dblp.org/db/journals/dase/index.html",
+      "dblp_stream": "journals/dase"
+    },
+    "SIGMOD": {
+      "type": "conf",
+      "level": "A",
+      "areas": [
+        "数据库/数据挖掘/内容检索"
+      ],
+      "pages": [
+        35
+      ],
+      "printed_abbr": "SIGMOD",
+      "printed_url": "http://dblp.uni-trier.de/db/conf/sigmod/",
+      "dblp_stream": "conf/sigmod"
+    },
+    "SIGKDD": {
+      "type": "conf",
+      "level": "A",
+      "areas": [
+        "数据库/数据挖掘/内容检索"
+      ],
+      "pages": [
+        35
+      ],
+      "printed_abbr": "SIGKDD",
+      "printed_url": "http://dblp.uni-trier.de/db/conf/kdd/",
+      "dblp_stream": "conf/kdd"
+    },
+    "ICDE": {
+      "type": "conf",
+      "level": "A",
+      "areas": [
+        "数据库/数据挖掘/内容检索"
+      ],
+      "pages": [
+        35
+      ],
+      "printed_abbr": "ICDE",
+      "printed_url": "http://dblp.uni-trier.de/db/conf/icde/",
+      "dblp_stream": "conf/icde"
+    },
+    "SIGIR": {
+      "type": "conf",
+      "level": "A",
+      "areas": [
+        "数据库/数据挖掘/内容检索"
+      ],
+      "pages": [
+        35
+      ],
+      "printed_abbr": "SIGIR",
+      "printed_url": "http://dblp.uni-trier.de/db/conf/sigir/",
+      "dblp_stream": "conf/sigir"
+    },
+    "VLDB": {
+      "type": "conf",
+      "level": "A",
+      "areas": [
+        "数据库/数据挖掘/内容检索"
+      ],
+      "pages": [
+        35
+      ],
+      "printed_abbr": "VLDB",
+      "printed_url": "http://dblp.uni-trier.de/db/conf/vldb/",
+      "dblp_stream": "conf/vldb"
+    },
+    "CIKM": {
+      "type": "conf",
+      "level": "B",
+      "areas": [
+        "数据库/数据挖掘/内容检索"
+      ],
+      "pages": [
+        36
+      ],
+      "printed_abbr": "CIKM",
+      "printed_url": "http://dblp.uni-trier.de/db/conf/cikm/",
+      "dblp_stream": "conf/cikm"
+    },
+    "WSDM": {
+      "type": "conf",
+      "level": "B",
+      "areas": [
+        "数据库/数据挖掘/内容检索"
+      ],
+      "pages": [
+        36
+      ],
+      "printed_abbr": "WSDM",
+      "printed_url": "http://dblp.uni-trier.de/db/conf/wsdm/",
+      "dblp_stream": "conf/wsdm"
+    },
+    "PODS": {
+      "type": "conf",
+      "level": "B",
+      "areas": [
+        "数据库/数据挖掘/内容检索"
+      ],
+      "pages": [
+        36
+      ],
+      "printed_abbr": "PODS",
+      "printed_url": "http://dblp.uni-trier.de/db/conf/pods/",
+      "dblp_stream": "conf/pods"
+    },
+    "DASFAA": {
+      "type": "conf",
+      "level": "B",
+      "areas": [
+        "数据库/数据挖掘/内容检索"
+      ],
+      "pages": [
+        36
+      ],
+      "printed_abbr": "DASFAA",
+      "printed_url": "http://dblp.uni-trier.de/db/conf/dasfaa/",
+      "dblp_stream": "conf/dasfaa"
+    },
+    "ECML-PKDD": {
+      "type": "conf",
+      "level": "B",
+      "areas": [
+        "数据库/数据挖掘/内容检索"
+      ],
+      "pages": [
+        36
+      ],
+      "printed_abbr": "ECML-PKDD",
+      "printed_url": "http://dblp.uni-trier.de/db/conf/ecml/ http://dblp.uni-trier.de/db/conf/pkdd/",
+      "dblp_stream": "conf/ecml"
+    },
+    "ISWC": {
+      "type": "conf",
+      "level": "B",
+      "areas": [
+        "数据库/数据挖掘/内容检索"
+      ],
+      "pages": [
+        36
+      ],
+      "printed_abbr": "ISWC",
+      "printed_url": "http://dblp.uni-trier.de/db/conf/semweb/",
+      "dblp_stream": "conf/semweb"
+    },
+    "ICDM": {
+      "type": "conf",
+      "level": "B",
+      "areas": [
+        "数据库/数据挖掘/内容检索"
+      ],
+      "pages": [
+        36
+      ],
+      "printed_abbr": "ICDM",
+      "printed_url": "http://dblp.uni-trier.de/db/conf/icdm/",
+      "dblp_stream": "conf/icdm"
+    },
+    "ICDT": {
+      "type": "conf",
+      "level": "B",
+      "areas": [
+        "数据库/数据挖掘/内容检索"
+      ],
+      "pages": [
+        36
+      ],
+      "printed_abbr": "ICDT",
+      "printed_url": "http://dblp.uni-trier.de/db/conf/icdt/",
+      "dblp_stream": "conf/icdt"
+    },
+    "EDBT": {
+      "type": "conf",
+      "level": "B",
+      "areas": [
+        "数据库/数据挖掘/内容检索"
+      ],
+      "pages": [
+        36
+      ],
+      "printed_abbr": "EDBT",
+      "printed_url": "http://dblp.uni-trier.de/db/conf/edbt/",
+      "dblp_stream": "conf/edbt"
+    },
+    "CIDR": {
+      "type": "conf",
+      "level": "B",
+      "areas": [
+        "数据库/数据挖掘/内容检索"
+      ],
+      "pages": [
+        36
+      ],
+      "printed_abbr": "CIDR",
+      "printed_url": "http://dblp.uni-trier.de/db/conf/cidr/",
+      "dblp_stream": "conf/cidr"
+    },
+    "SDM": {
+      "type": "conf",
+      "level": "B",
+      "areas": [
+        "数据库/数据挖掘/内容检索"
+      ],
+      "pages": [
+        36
+      ],
+      "printed_abbr": "SDM",
+      "printed_url": "http://dblp.uni-trier.de/db/conf/sdm/",
+      "dblp_stream": "conf/sdm"
+    },
+    "RecSys": {
+      "type": "conf",
+      "level": "B",
+      "areas": [
+        "数据库/数据挖掘/内容检索"
+      ],
+      "pages": [
+        36
+      ],
+      "printed_abbr": "RecSys",
+      "printed_url": "https://dblp.org/db/conf/recsys/index. html",
+      "dblp_stream": "conf/recsys"
+    },
+    "WISE": {
+      "type": "conf",
+      "level": "B",
+      "areas": [
+        "数据库/数据挖掘/内容检索"
+      ],
+      "pages": [
+        36
+      ],
+      "printed_abbr": "WISE",
+      "printed_url": "http://dblp.uni-trier.de/db/conf/wise/",
+      "dblp_stream": "conf/wise"
+    },
+    "TIT": {
+      "type": "journal",
+      "level": "A",
+      "areas": [
+        "计算机科学理论"
+      ],
+      "pages": [
+        38
+      ],
+      "printed_abbr": "TIT",
+      "printed_url": "http://dblp.uni-trier.de/db/journals/tit/",
+      "dblp_stream": "journals/tit"
+    },
+    "IANDC": {
+      "type": "journal",
+      "level": "A",
+      "areas": [
+        "计算机科学理论"
+      ],
+      "pages": [
+        38
+      ],
+      "printed_abbr": "IANDC",
+      "printed_url": "http://dblp.uni-trier.de/db/journals/iandc/",
+      "dblp_stream": "journals/iandc"
+    },
+    "SICOMP": {
+      "type": "journal",
+      "level": "A",
+      "areas": [
+        "计算机科学理论"
+      ],
+      "pages": [
+        38
+      ],
+      "printed_abbr": "SICOMP",
+      "printed_url": "http://dblp.uni-trier.de/db/journals/siamcomp/",
+      "dblp_stream": "journals/siamcomp"
+    },
+    "TALG": {
+      "type": "journal",
+      "level": "B",
+      "areas": [
+        "计算机科学理论"
+      ],
+      "pages": [
+        39
+      ],
+      "printed_abbr": "TALG",
+      "printed_url": "http://dblp.uni-trier.de/db/journals/talg/",
+      "dblp_stream": "journals/talg"
+    },
+    "TOCL": {
+      "type": "journal",
+      "level": "B",
+      "areas": [
+        "计算机科学理论"
+      ],
+      "pages": [
+        39
+      ],
+      "printed_abbr": "TOCL",
+      "printed_url": "http://dblp.uni-trier.de/db/journals/tocl/",
+      "dblp_stream": "journals/tocl"
+    },
+    "TOMS": {
+      "type": "journal",
+      "level": "B",
+      "areas": [
+        "计算机科学理论"
+      ],
+      "pages": [
+        39
+      ],
+      "printed_abbr": "TOMS",
+      "printed_url": "http://dblp.uni-trier.de/db/journals/toms/",
+      "dblp_stream": "journals/toms"
+    },
+    "Algorithmica": {
+      "type": "journal",
+      "level": "B",
+      "areas": [
+        "计算机科学理论"
+      ],
+      "pages": [
+        39
+      ],
+      "printed_abbr": "Algorithmica",
+      "printed_url": "http://dblp.uni-trier.de/db/journals/algorithmica/",
+      "dblp_stream": "journals/algorithmica"
+    },
+    "CC Journal": {
+      "type": "journal",
+      "level": "B",
+      "areas": [
+        "计算机科学理论"
+      ],
+      "pages": [
+        39
+      ],
+      "printed_abbr": "CC",
+      "printed_url": "http://dblp.uni-trier.de/db/journals/cc/",
+      "dblp_stream": "journals/cc"
+    },
+    "FAC": {
+      "type": "journal",
+      "level": "B",
+      "areas": [
+        "计算机科学理论"
+      ],
+      "pages": [
+        39
+      ],
+      "printed_abbr": "FAC",
+      "printed_url": "http://dblp.uni-trier.de/db/journals/fac/",
+      "dblp_stream": "journals/fac"
+    },
+    "FMSD": {
+      "type": "journal",
+      "level": "B",
+      "areas": [
+        "计算机科学理论"
+      ],
+      "pages": [
+        39
+      ],
+      "printed_abbr": "FMSD",
+      "printed_url": "http://dblp.uni-trier.de/db/journals/fmsd/",
+      "dblp_stream": "journals/fmsd"
+    },
+    "INFORMS": {
+      "type": "journal",
+      "level": "B",
+      "areas": [
+        "计算机科学理论"
+      ],
+      "pages": [
+        39
+      ],
+      "printed_abbr": "INFORMS",
+      "printed_url": "http://dblp.uni-trier.de/db/journals/informs/",
+      "dblp_stream": "journals/informs"
+    },
+    "JCSS": {
+      "type": "journal",
+      "level": "B",
+      "areas": [
+        "计算机科学理论"
+      ],
+      "pages": [
+        39
+      ],
+      "printed_abbr": "JCSS",
+      "printed_url": "http://dblp.uni-trier.de/db/journals/jcss/",
+      "dblp_stream": "journals/jcss"
+    },
+    "JGO": {
+      "type": "journal",
+      "level": "B",
+      "areas": [
+        "计算机科学理论"
+      ],
+      "pages": [
+        39
+      ],
+      "printed_abbr": "JGO",
+      "printed_url": "http://dblp.uni-trier.de/db/journals/jgo/",
+      "dblp_stream": "journals/jgo"
+    },
+    "JSC": {
+      "type": "journal",
+      "level": "B",
+      "areas": [
+        "计算机科学理论"
+      ],
+      "pages": [
+        39
+      ],
+      "printed_abbr": "JSC",
+      "printed_url": "http://dblp.uni-trier.de/db/journals/jsc/",
+      "dblp_stream": "journals/jsc"
+    },
+    "MSCS": {
+      "type": "journal",
+      "level": "B",
+      "areas": [
+        "计算机科学理论"
+      ],
+      "pages": [
+        39
+      ],
+      "printed_abbr": "MSCS",
+      "printed_url": "http://dblp.uni-trier.de/db/journals/mscs/",
+      "dblp_stream": "journals/mscs"
+    },
+    "TCS": {
+      "type": "journal",
+      "level": "B",
+      "areas": [
+        "计算机科学理论"
+      ],
+      "pages": [
+        39
+      ],
+      "printed_abbr": "TCS",
+      "printed_url": "http://dblp.uni-trier.de/db/journals/tcs/",
+      "dblp_stream": "journals/tcs"
+    },
+    "STOC": {
+      "type": "conf",
+      "level": "A",
+      "areas": [
+        "计算机科学理论"
+      ],
+      "pages": [
+        41
+      ],
+      "printed_abbr": "STOC",
+      "printed_url": "http://dblp.uni-trier.de/db/conf/stoc/",
+      "dblp_stream": "conf/stoc"
+    },
+    "SODA": {
+      "type": "conf",
+      "level": "A",
+      "areas": [
+        "计算机科学理论"
+      ],
+      "pages": [
+        41
+      ],
+      "printed_abbr": "SODA",
+      "printed_url": "http://dblp.uni-trier.de/db/conf/soda/",
+      "dblp_stream": "conf/soda"
+    },
+    "CAV": {
+      "type": "conf",
+      "level": "A",
+      "areas": [
+        "计算机科学理论"
+      ],
+      "pages": [
+        41
+      ],
+      "printed_abbr": "CAV",
+      "printed_url": "http://dblp.uni-trier.de/db/conf/cav/",
+      "dblp_stream": "conf/cav"
+    },
+    "FOCS": {
+      "type": "conf",
+      "level": "A",
+      "areas": [
+        "计算机科学理论"
+      ],
+      "pages": [
+        41
+      ],
+      "printed_abbr": "FOCS",
+      "printed_url": "http://dblp.uni-trier.de/db/conf/focs/",
+      "dblp_stream": "conf/focs"
+    },
+    "LICS": {
+      "type": "conf",
+      "level": "A",
+      "areas": [
+        "计算机科学理论"
+      ],
+      "pages": [
+        41
+      ],
+      "printed_abbr": "LICS",
+      "printed_url": "http://dblp.uni-trier.de/db/conf/lics/",
+      "dblp_stream": "conf/lics"
+    },
+    "SoCG": {
+      "type": "conf",
+      "level": "B",
+      "areas": [
+        "计算机科学理论"
+      ],
+      "pages": [
+        42
+      ],
+      "printed_abbr": "SoCG",
+      "printed_url": "https://dblp.uni-trier.de/db/conf/compgeom/index.html",
+      "dblp_stream": "conf/compgeom"
+    },
+    "ESA": {
+      "type": "conf",
+      "level": "B",
+      "areas": [
+        "计算机科学理论"
+      ],
+      "pages": [
+        42
+      ],
+      "printed_abbr": "ESA",
+      "printed_url": "http://dblp.uni-trier.de/db/conf/esa/",
+      "dblp_stream": "conf/esa"
+    },
+    "CCC": {
+      "type": "conf",
+      "level": "B",
+      "areas": [
+        "计算机科学理论"
+      ],
+      "pages": [
+        42
+      ],
+      "printed_abbr": "CCC",
+      "printed_url": "http://dblp.uni-trier.de/db/conf/coco/",
+      "dblp_stream": "conf/coco"
+    },
+    "ICALP": {
+      "type": "conf",
+      "level": "B",
+      "areas": [
+        "计算机科学理论"
+      ],
+      "pages": [
+        42
+      ],
+      "printed_abbr": "ICALP",
+      "printed_url": "http://dblp.uni-trier.de/db/conf/icalp/",
+      "dblp_stream": "conf/icalp"
+    },
+    "CADE": {
+      "type": "conf",
+      "level": "B",
+      "areas": [
+        "计算机科学理论"
+      ],
+      "pages": [
+        42
+      ],
+      "printed_abbr": "CADE",
+      "printed_url": "http://dblp.uni-trier.de/db/conf/cade/",
+      "dblp_stream": "conf/cade"
+    },
+    "CONCUR": {
+      "type": "conf",
+      "level": "B",
+      "areas": [
+        "计算机科学理论"
+      ],
+      "pages": [
+        42
+      ],
+      "printed_abbr": "CONCUR",
+      "printed_url": "http://dblp.uni-trier.de/db/conf/concur/",
+      "dblp_stream": "conf/concur"
+    },
+    "HSCC": {
+      "type": "conf",
+      "level": "B",
+      "areas": [
+        "计算机科学理论"
+      ],
+      "pages": [
+        42
+      ],
+      "printed_abbr": "HSCC",
+      "printed_url": "http://dblp.uni-trier.de/db/conf/hybrid/",
+      "dblp_stream": "conf/hybrid"
+    },
+    "SAT": {
+      "type": "conf",
+      "level": "B",
+      "areas": [
+        "计算机科学理论"
+      ],
+      "pages": [
+        42
+      ],
+      "printed_abbr": "SAT",
+      "printed_url": "http://dblp.uni-trier.de/db/conf/sat/",
+      "dblp_stream": "conf/sat"
+    },
+    "COCOON": {
+      "type": "conf",
+      "level": "B",
+      "areas": [
+        "计算机科学理论"
+      ],
+      "pages": [
+        42
+      ],
+      "printed_abbr": "COCOON",
+      "printed_url": "https://dblp.org/db/conf/cocoon/index.html",
+      "dblp_stream": "conf/cocoon"
+    },
+    "FMCAD": {
+      "type": "conf",
+      "level": "B",
+      "areas": [
+        "计算机科学理论"
+      ],
+      "pages": [
+        42
+      ],
+      "printed_abbr": "FMCAD",
+      "printed_url": "http://dblp.uni-trier.de/db/conf/fmcad/",
+      "dblp_stream": "conf/fmcad"
+    },
+    "TOG": {
+      "type": "journal",
+      "level": "A",
+      "areas": [
+        "计算机图形学与多媒体"
+      ],
+      "pages": [
+        44
+      ],
+      "printed_abbr": "TOG",
+      "printed_url": "http://dblp.uni-trier.de/db/journals/tog/",
+      "dblp_stream": "journals/tog"
+    },
+    "TIP": {
+      "type": "journal",
+      "level": "A",
+      "areas": [
+        "计算机图形学与多媒体"
+      ],
+      "pages": [
+        44
+      ],
+      "printed_abbr": "TIP",
+      "printed_url": "http://dblp.uni-trier.de/db/journals/tip/",
+      "dblp_stream": "journals/tip"
+    },
+    "TVCG": {
+      "type": "journal",
+      "level": "A",
+      "areas": [
+        "计算机图形学与多媒体"
+      ],
+      "pages": [
+        44
+      ],
+      "printed_abbr": "TVCG",
+      "printed_url": "http://dblp.uni-trier.de/db/journals/tvcg/",
+      "dblp_stream": "journals/tvcg",
+      "issn_verification": {
+        "issn": "1077-2626",
+        "source": "https://api.crossref.org/journals/1077-2626",
+        "checked_at": "2026-10-01",
+        "method": "exact journal title and ISSN from publisher-deposited registry"
+      }
+    },
+    "TMM": {
+      "type": "journal",
+      "level": "A",
+      "areas": [
+        "计算机图形学与多媒体"
+      ],
+      "pages": [
+        44
+      ],
+      "printed_abbr": "TMM",
+      "printed_url": "http://dblp.uni-trier.de/db/journals/tmm/",
+      "dblp_stream": "journals/tmm"
+    },
+    "CAGD": {
+      "type": "journal",
+      "level": "B",
+      "areas": [
+        "计算机图形学与多媒体"
+      ],
+      "pages": [
+        45
+      ],
+      "printed_abbr": "CAGD",
+      "printed_url": "http://dblp.uni- trier.de/db/journals/cagd/",
+      "dblp_stream": "journals/cagd"
+    },
+    "CGF": {
+      "type": "journal",
+      "level": "B",
+      "areas": [
+        "计算机图形学与多媒体"
+      ],
+      "pages": [
+        45
+      ],
+      "printed_abbr": "CGF",
+      "printed_url": "http://dblp.uni- trier.de/db/journals/cgf/",
+      "dblp_stream": "journals/cgf"
+    },
+    "CAD": {
+      "type": "journal",
+      "level": "B",
+      "areas": [
+        "计算机图形学与多媒体"
+      ],
+      "pages": [
+        45
+      ],
+      "printed_abbr": "CAD",
+      "printed_url": "http://dblp.uni- trier.de/db/journals/cad/",
+      "dblp_stream": "journals/cad"
+    },
+    "TCSVT": {
+      "type": "journal",
+      "level": "B",
+      "areas": [
+        "计算机图形学与多媒体"
+      ],
+      "pages": [
+        45
+      ],
+      "printed_abbr": "TCSVT",
+      "printed_url": "http://dblp.uni- trier.de/db/journals/tcsv/",
+      "dblp_stream": "journals/tcsv"
+    },
+    "JASA": {
+      "type": "journal",
+      "level": "B",
+      "areas": [
+        "计算机图形学与多媒体"
+      ],
+      "pages": [
+        45
+      ],
+      "printed_abbr": "JASA",
+      "printed_url": "http://scitation.aip.org/content/asa/jo urnal/jasa",
+      "dblp_stream": ""
+    },
+    "SIIMS": {
+      "type": "journal",
+      "level": "B",
+      "areas": [
+        "计算机图形学与多媒体"
+      ],
+      "pages": [
+        45
+      ],
+      "printed_abbr": "SIIMS",
+      "printed_url": "http://dblp.uni- trier.de/db/journals/siamis/",
+      "dblp_stream": "journals/siamis"
+    },
+    "SPECOM": {
+      "type": "journal",
+      "level": "B",
+      "areas": [
+        "计算机图形学与多媒体"
+      ],
+      "pages": [
+        45
+      ],
+      "printed_abbr": "SPECOM",
+      "printed_url": "http://dblp.uni- trier.de/db/journals/speech/",
+      "dblp_stream": "journals/speech"
+    },
+    "CVMJ": {
+      "type": "journal",
+      "level": "B",
+      "areas": [
+        "计算机图形学与多媒体"
+      ],
+      "pages": [
+        45
+      ],
+      "printed_abbr": "CVMJ",
+      "printed_url": "https://dblp.org/db/journals/cvm/inde x.html",
+      "dblp_stream": "journals/cvm"
+    },
+    "ACM MM": {
+      "type": "conf",
+      "level": "A",
+      "areas": [
+        "计算机图形学与多媒体"
+      ],
+      "pages": [
+        47
+      ],
+      "printed_abbr": "ACM MM",
+      "printed_url": "http://dblp.uni-trier.de/db/conf/mm/",
+      "dblp_stream": "conf/mm"
+    },
+    "SIGGRAPH": {
+      "type": "conf",
+      "level": "A",
+      "areas": [
+        "计算机图形学与多媒体"
+      ],
+      "pages": [
+        47
+      ],
+      "printed_abbr": "SIGGRAPH",
+      "printed_url": "http://dblp.uni- trier.de/db/conf/siggraph/index.html",
+      "dblp_stream": "conf/siggraph"
+    },
+    "VR": {
+      "type": "conf",
+      "level": "A",
+      "areas": [
+        "计算机图形学与多媒体"
+      ],
+      "pages": [
+        47
+      ],
+      "printed_abbr": "VR",
+      "printed_url": "http://dblp.uni-trier.de/db/conf/vr/",
+      "dblp_stream": "conf/vr"
+    },
+    "IEEE VIS": {
+      "type": "conf",
+      "level": "A",
+      "areas": [
+        "计算机图形学与多媒体"
+      ],
+      "pages": [
+        47
+      ],
+      "printed_abbr": "IEEE VIS",
+      "printed_url": "http://dblp.uni- trier.de/db/conf/visualization/index.html",
+      "dblp_stream": "conf/visualization"
+    },
+    "ICMR": {
+      "type": "conf",
+      "level": "B",
+      "areas": [
+        "计算机图形学与多媒体"
+      ],
+      "pages": [
+        48
+      ],
+      "printed_abbr": "ICMR",
+      "printed_url": "http://dblp.uni-trier.de/db/conf/mir/",
+      "dblp_stream": "conf/mir"
+    },
+    "I3D": {
+      "type": "conf",
+      "level": "B",
+      "areas": [
+        "计算机图形学与多媒体"
+      ],
+      "pages": [
+        48
+      ],
+      "printed_abbr": "I3D",
+      "printed_url": "http://dblp.uni-trier.de/db/conf/si3d/",
+      "dblp_stream": "conf/si3d"
+    },
+    "SCA": {
+      "type": "conf",
+      "level": "B",
+      "areas": [
+        "计算机图形学与多媒体"
+      ],
+      "pages": [
+        48
+      ],
+      "printed_abbr": "SCA",
+      "printed_url": "http://dblp.uni-trier.de/db/conf/sca/index.html",
+      "dblp_stream": "conf/sca"
+    },
+    "DCC": {
+      "type": "conf",
+      "level": "B",
+      "areas": [
+        "计算机图形学与多媒体"
+      ],
+      "pages": [
+        48
+      ],
+      "printed_abbr": "DCC",
+      "printed_url": "http://dblp.uni-trier.de/db/conf/dcc/",
+      "dblp_stream": "conf/dcc"
+    },
+    "Eurographics": {
+      "type": "conf",
+      "level": "B",
+      "areas": [
+        "计算机图形学与多媒体"
+      ],
+      "pages": [
+        48
+      ],
+      "printed_abbr": "Eurographics",
+      "printed_url": "http://dblp.uni-trier.de/db/conf/eurographics/",
+      "dblp_stream": "conf/eurographics"
+    },
+    "EuroVis": {
+      "type": "conf",
+      "level": "B",
+      "areas": [
+        "计算机图形学与多媒体"
+      ],
+      "pages": [
+        48
+      ],
+      "printed_abbr": "EuroVis",
+      "printed_url": "http://dblp.uni-trier.de/db/conf/vissym/",
+      "dblp_stream": "conf/vissym"
+    },
+    "SGP": {
+      "type": "conf",
+      "level": "B",
+      "areas": [
+        "计算机图形学与多媒体"
+      ],
+      "pages": [
+        48
+      ],
+      "printed_abbr": "SGP",
+      "printed_url": "http://dblp.uni-trier.de/db/conf/sgp/",
+      "dblp_stream": "conf/sgp"
+    },
+    "EGSR": {
+      "type": "conf",
+      "level": "B",
+      "areas": [
+        "计算机图形学与多媒体"
+      ],
+      "pages": [
+        48
+      ],
+      "printed_abbr": "EGSR",
+      "printed_url": "http://dblp.uni-trier.de/db/conf/rt/",
+      "dblp_stream": "conf/rt"
+    },
+    "ICASSP": {
+      "type": "conf",
+      "level": "B",
+      "areas": [
+        "计算机图形学与多媒体"
+      ],
+      "pages": [
+        48
+      ],
+      "printed_abbr": "ICASSP",
+      "printed_url": "http://dblp.uni-trier.de/db/conf/icassp/",
+      "dblp_stream": "conf/icassp"
+    },
+    "ICME": {
+      "type": "conf",
+      "level": "B",
+      "areas": [
+        "计算机图形学与多媒体"
+      ],
+      "pages": [
+        48
+      ],
+      "printed_abbr": "ICME",
+      "printed_url": "http://dblp.uni-trier.de/db/conf/icmcs/",
+      "dblp_stream": "conf/icmcs"
+    },
+    "ISMAR": {
+      "type": "conf",
+      "level": "B",
+      "areas": [
+        "计算机图形学与多媒体"
+      ],
+      "pages": [
+        48
+      ],
+      "printed_abbr": "ISMAR",
+      "printed_url": "http://dblp.uni-trier.de/db/conf/ismar/",
+      "dblp_stream": "conf/ismar"
+    },
+    "PG": {
+      "type": "conf",
+      "level": "B",
+      "areas": [
+        "计算机图形学与多媒体"
+      ],
+      "pages": [
+        48
+      ],
+      "printed_abbr": "PG",
+      "printed_url": "http://dblp.uni-trier.de/db/conf/pg/index.html",
+      "dblp_stream": "conf/pg"
+    },
+    "SPM": {
+      "type": "conf",
+      "level": "B",
+      "areas": [
+        "计算机图形学与多媒体"
+      ],
+      "pages": [
+        48
+      ],
+      "printed_abbr": "SPM",
+      "printed_url": "http://dblp.uni-trier.de/db/conf/sma/",
+      "dblp_stream": "conf/sma"
+    },
+    "INTER- SPEECH": {
+      "type": "conf",
+      "level": "B",
+      "areas": [
+        "计算机图形学与多媒体"
+      ],
+      "pages": [
+        48
+      ],
+      "printed_abbr": "INTER- SPEECH",
+      "printed_url": "http://dblp.uni-trier.de/db/conf/interspeech/index.html",
+      "dblp_stream": "conf/interspeech"
+    },
+    "AI": {
+      "type": "journal",
+      "level": "A",
+      "areas": [
+        "人工智能"
+      ],
+      "pages": [
+        51
+      ],
+      "printed_abbr": "AI",
+      "printed_url": "http://dblp.uni-trier.de/db/journals/ai/",
+      "dblp_stream": "journals/ai"
+    },
+    "TPAMI": {
+      "type": "journal",
+      "level": "A",
+      "areas": [
+        "人工智能"
+      ],
+      "pages": [
+        51
+      ],
+      "printed_abbr": "TPAMI",
+      "printed_url": "http://dblp.uni-trier.de/db/journals/pami/",
+      "dblp_stream": "journals/pami"
+    },
+    "IJCV": {
+      "type": "journal",
+      "level": "A",
+      "areas": [
+        "人工智能"
+      ],
+      "pages": [
+        51
+      ],
+      "printed_abbr": "IJCV",
+      "printed_url": "http://dblp.uni-trier.de/db/journals/ijcv/",
+      "dblp_stream": "journals/ijcv"
+    },
+    "JMLR": {
+      "type": "journal",
+      "level": "A",
+      "areas": [
+        "人工智能"
+      ],
+      "pages": [
+        51
+      ],
+      "printed_abbr": "JMLR",
+      "printed_url": "http://dblp.uni-trier.de/db/journals/jmlr/",
+      "dblp_stream": "journals/jmlr"
+    },
+    "TAP": {
+      "type": "journal",
+      "level": "B",
+      "areas": [
+        "人工智能"
+      ],
+      "pages": [
+        52
+      ],
+      "printed_abbr": "TAP",
+      "printed_url": "http://dblp.uni-trier.de/db/journals/tap/",
+      "dblp_stream": "journals/tap"
+    },
+    "JAAMAS": {
+      "type": "journal",
+      "level": "B",
+      "areas": [
+        "人工智能"
+      ],
+      "pages": [
+        52
+      ],
+      "printed_abbr": "AAMAS",
+      "printed_url": "http://dblp.uni-trier.de/db/journals/aamas/",
+      "dblp_stream": "journals/aamas"
+    },
+    "CL": {
+      "type": "journal",
+      "level": "B",
+      "areas": [
+        "人工智能"
+      ],
+      "pages": [
+        52
+      ],
+      "printed_abbr": "",
+      "printed_url": "http://dblp.uni-trier.de/db/journals/coling/",
+      "dblp_stream": "journals/coling"
+    },
+    "CVIU": {
+      "type": "journal",
+      "level": "B",
+      "areas": [
+        "人工智能"
+      ],
+      "pages": [
+        52
+      ],
+      "printed_abbr": "CVIU",
+      "printed_url": "http://dblp.uni-trier.de/db/journals/cviu/",
+      "dblp_stream": "journals/cviu"
+    },
+    "Evolutionary Computation": {
+      "type": "journal",
+      "level": "B",
+      "areas": [
+        "人工智能"
+      ],
+      "pages": [
+        52
+      ],
+      "printed_abbr": "",
+      "printed_url": "http://dblp.uni-trier.de/db/journals/ec/",
+      "dblp_stream": "journals/ec"
+    },
+    "TAC": {
+      "type": "journal",
+      "level": "B",
+      "areas": [
+        "人工智能"
+      ],
+      "pages": [
+        52
+      ],
+      "printed_abbr": "TAC",
+      "printed_url": "http://dblp.uni-trier.de/db/journals/taffco/",
+      "dblp_stream": "journals/taffco"
+    },
+    "TASLP": {
+      "type": "journal",
+      "level": "B",
+      "areas": [
+        "人工智能"
+      ],
+      "pages": [
+        52
+      ],
+      "printed_abbr": "TASLP",
+      "printed_url": "http://dblp.uni-trier.de/db/journals/taslp/",
+      "dblp_stream": "journals/taslp"
+    },
+    "IEEE Transactions on Cybernetics": {
+      "type": "journal",
+      "level": "B",
+      "areas": [
+        "人工智能"
+      ],
+      "pages": [
+        52
+      ],
+      "printed_abbr": "",
+      "printed_url": "http://dblp.uni-trier.de/db/journals/tcyb/",
+      "dblp_stream": "journals/tcyb"
+    },
+    "TEC": {
+      "type": "journal",
+      "level": "B",
+      "areas": [
+        "人工智能"
+      ],
+      "pages": [
+        52
+      ],
+      "printed_abbr": "TEC",
+      "printed_url": "http://dblp.uni-trier.de/db/journals/tec/",
+      "dblp_stream": "journals/tec"
+    },
+    "TFS": {
+      "type": "journal",
+      "level": "B",
+      "areas": [
+        "人工智能"
+      ],
+      "pages": [
+        52
+      ],
+      "printed_abbr": "TFS",
+      "printed_url": "http://dblp.uni-trier.de/db/journals/tfs/",
+      "dblp_stream": "journals/tfs"
+    },
+    "TNNLS": {
+      "type": "journal",
+      "level": "B",
+      "areas": [
+        "人工智能"
+      ],
+      "pages": [
+        52
+      ],
+      "printed_abbr": "TNNLS",
+      "printed_url": "http://dblp.uni-trier.de/db/journals/tnn/",
+      "dblp_stream": "journals/tnn"
+    },
+    "IJAR": {
+      "type": "journal",
+      "level": "B",
+      "areas": [
+        "人工智能"
+      ],
+      "pages": [
+        52
+      ],
+      "printed_abbr": "IJAR",
+      "printed_url": "http://dblp.uni-trier.de/db/journals/ijar/",
+      "dblp_stream": "journals/ijar"
+    },
+    "JAIR": {
+      "type": "journal",
+      "level": "B",
+      "areas": [
+        "人工智能"
+      ],
+      "pages": [
+        53
+      ],
+      "printed_abbr": "JAIR",
+      "printed_url": "http://dblp.uni-trier.de/db/journals/jair/index.html",
+      "dblp_stream": "journals/jair"
+    },
+    "Journal of Automated Reasoning": {
+      "type": "journal",
+      "level": "B",
+      "areas": [
+        "人工智能"
+      ],
+      "pages": [
+        53
+      ],
+      "printed_abbr": "",
+      "printed_url": "http://dblp.uni-trier.de/db/journals/jar/",
+      "dblp_stream": "journals/jar"
+    },
+    "JSLHR": {
+      "type": "journal",
+      "level": "B",
+      "areas": [
+        "人工智能"
+      ],
+      "pages": [
+        53
+      ],
+      "printed_abbr": "JSLHR",
+      "printed_url": "http://jslhr.pubs.asha.org/",
+      "dblp_stream": ""
+    },
+    "Machine Learning": {
+      "type": "journal",
+      "level": "B",
+      "areas": [
+        "人工智能"
+      ],
+      "pages": [
+        53
+      ],
+      "printed_abbr": "",
+      "printed_url": "http://dblp.uni-trier.de/db/journals/ml/",
+      "dblp_stream": "journals/ml"
+    },
+    "Neural Computation": {
+      "type": "journal",
+      "level": "B",
+      "areas": [
+        "人工智能"
+      ],
+      "pages": [
+        53
+      ],
+      "printed_abbr": "",
+      "printed_url": "http://dblp.uni-trier.de/db/journals/neco/",
+      "dblp_stream": "journals/neco"
+    },
+    "Neural Networks": {
+      "type": "journal",
+      "level": "B",
+      "areas": [
+        "人工智能"
+      ],
+      "pages": [
+        53
+      ],
+      "printed_abbr": "",
+      "printed_url": "http://dblp.uni-trier.de/db/journals/nn/",
+      "dblp_stream": "journals/nn"
+    },
+    "PR": {
+      "type": "journal",
+      "level": "B",
+      "areas": [
+        "人工智能"
+      ],
+      "pages": [
+        53
+      ],
+      "printed_abbr": "PR",
+      "printed_url": "http://dblp.uni-trier.de/db/conf/par/",
+      "dblp_stream": "journals/pr"
+    },
+    "TACL": {
+      "type": "journal",
+      "level": "B",
+      "areas": [
+        "人工智能"
+      ],
+      "pages": [
+        53
+      ],
+      "printed_abbr": "TACL",
+      "printed_url": "https://dblp.org/db/journals/tacl/index.html",
+      "dblp_stream": "journals/tacl"
+    },
+    "AAAI": {
+      "type": "conf",
+      "level": "A",
+      "areas": [
+        "人工智能"
+      ],
+      "pages": [
+        57
+      ],
+      "printed_abbr": "AAAI",
+      "printed_url": "http://dblp.uni-trier.de/db/conf/aaai/",
+      "dblp_stream": "conf/aaai"
+    },
+    "NeurIPS": {
+      "type": "conf",
+      "level": "A",
+      "areas": [
+        "人工智能"
+      ],
+      "pages": [
+        57
+      ],
+      "printed_abbr": "NeurIPS",
+      "printed_url": "http://dblp.uni-trier.de/db/conf/nips/",
+      "dblp_stream": "conf/nips"
+    },
+    "ACL": {
+      "type": "conf",
+      "level": "A",
+      "areas": [
+        "人工智能"
+      ],
+      "pages": [
+        57
+      ],
+      "printed_abbr": "ACL",
+      "printed_url": "http://dblp.uni-trier.de/db/conf/acl/",
+      "dblp_stream": "conf/acl"
+    },
+    "CVPR": {
+      "type": "conf",
+      "level": "A",
+      "areas": [
+        "人工智能"
+      ],
+      "pages": [
+        57
+      ],
+      "printed_abbr": "CVPR",
+      "printed_url": "http://dblp.uni-trier.de/db/conf/cvpr/",
+      "dblp_stream": "conf/cvpr"
+    },
+    "ICCV": {
+      "type": "conf",
+      "level": "A",
+      "areas": [
+        "人工智能"
+      ],
+      "pages": [
+        57
+      ],
+      "printed_abbr": "ICCV",
+      "printed_url": "http://dblp.uni-trier.de/db/conf/iccv/",
+      "dblp_stream": "conf/iccv"
+    },
+    "ICML": {
+      "type": "conf",
+      "level": "A",
+      "areas": [
+        "人工智能"
+      ],
+      "pages": [
+        57
+      ],
+      "printed_abbr": "ICML",
+      "printed_url": "http://dblp.uni-trier.de/db/conf/icml/",
+      "dblp_stream": "conf/icml"
+    },
+    "ICLR": {
+      "type": "conf",
+      "level": "A",
+      "areas": [
+        "人工智能"
+      ],
+      "pages": [
+        57
+      ],
+      "printed_abbr": "ICLR",
+      "printed_url": "https://dblp.uni-trier.de/db/conf/iclr/index.html",
+      "dblp_stream": "conf/iclr"
+    },
+    "COLT": {
+      "type": "conf",
+      "level": "B",
+      "areas": [
+        "人工智能"
+      ],
+      "pages": [
+        58
+      ],
+      "printed_abbr": "COLT",
+      "printed_url": "http://dblp.uni-trier.de/db/conf/colt/",
+      "dblp_stream": "conf/colt"
+    },
+    "EMNLP": {
+      "type": "conf",
+      "level": "B",
+      "areas": [
+        "人工智能"
+      ],
+      "pages": [
+        58
+      ],
+      "printed_abbr": "EMNLP",
+      "printed_url": "http://dblp.uni-trier.de/db/conf/emnlp/",
+      "dblp_stream": "conf/emnlp"
+    },
+    "ECAI": {
+      "type": "conf",
+      "level": "B",
+      "areas": [
+        "人工智能"
+      ],
+      "pages": [
+        58
+      ],
+      "printed_abbr": "ECAI",
+      "printed_url": "http://dblp.uni-trier.de/db/conf/ecai/",
+      "dblp_stream": "conf/ecai"
+    },
+    "ECCV": {
+      "type": "conf",
+      "level": "B",
+      "areas": [
+        "人工智能"
+      ],
+      "pages": [
+        58
+      ],
+      "printed_abbr": "ECCV",
+      "printed_url": "http://dblp.uni-trier.de/db/conf/eccv/",
+      "dblp_stream": "conf/eccv"
+    },
+    "ICRA": {
+      "type": "conf",
+      "level": "B",
+      "areas": [
+        "人工智能"
+      ],
+      "pages": [
+        58
+      ],
+      "printed_abbr": "ICRA",
+      "printed_url": "http://dblp.uni-trier.de/db/conf/icra/",
+      "dblp_stream": "conf/icra"
+    },
+    "ICAPS": {
+      "type": "conf",
+      "level": "B",
+      "areas": [
+        "人工智能"
+      ],
+      "pages": [
+        58
+      ],
+      "printed_abbr": "ICAPS",
+      "printed_url": "https://dblp.uni- trier.de/db/conf/icaps/index.html",
+      "dblp_stream": "conf/icaps"
+    },
+    "ICCBR": {
+      "type": "conf",
+      "level": "B",
+      "areas": [
+        "人工智能"
+      ],
+      "pages": [
+        58
+      ],
+      "printed_abbr": "ICCBR",
+      "printed_url": "http://dblp.uni-trier.de/db/conf/iccbr/",
+      "dblp_stream": "conf/iccbr"
+    },
+    "COLING": {
+      "type": "conf",
+      "level": "B",
+      "areas": [
+        "人工智能"
+      ],
+      "pages": [
+        58
+      ],
+      "printed_abbr": "COLING",
+      "printed_url": "http://dblp.uni-trier.de/db/conf/coling/",
+      "dblp_stream": "conf/coling"
+    },
+    "KR": {
+      "type": "conf",
+      "level": "B",
+      "areas": [
+        "人工智能"
+      ],
+      "pages": [
+        58
+      ],
+      "printed_abbr": "KR",
+      "printed_url": "http://dblp.uni-trier.de/db/conf/kr/",
+      "dblp_stream": "conf/kr"
+    },
+    "UAI": {
+      "type": "conf",
+      "level": "B",
+      "areas": [
+        "人工智能"
+      ],
+      "pages": [
+        58
+      ],
+      "printed_abbr": "UAI",
+      "printed_url": "http://dblp.uni-trier.de/db/conf/uai/",
+      "dblp_stream": "conf/uai"
+    },
+    "AAMAS": {
+      "type": "conf",
+      "level": "B",
+      "areas": [
+        "人工智能"
+      ],
+      "pages": [
+        58
+      ],
+      "printed_abbr": "AAMAS",
+      "printed_url": "https://dblp.uni- trier.de/db/conf/ifaamas/index.html",
+      "dblp_stream": "conf/amas"
+    },
+    "PPSN": {
+      "type": "conf",
+      "level": "B",
+      "areas": [
+        "人工智能"
+      ],
+      "pages": [
+        58
+      ],
+      "printed_abbr": "PPSN",
+      "printed_url": "http://dblp.uni-trier.de/db/conf/ppsn/",
+      "dblp_stream": "conf/ppsn"
+    },
+    "NAACL": {
+      "type": "conf",
+      "level": "B",
+      "areas": [
+        "人工智能"
+      ],
+      "pages": [
+        58
+      ],
+      "printed_abbr": "NAACL",
+      "printed_url": "http://dblp.uni-trier.de/db/conf/naacl/",
+      "dblp_stream": "conf/naacl"
+    },
+    "IJCAI": {
+      "type": "conf",
+      "level": "B",
+      "areas": [
+        "人工智能"
+      ],
+      "pages": [
+        58
+      ],
+      "printed_abbr": "IJCAI",
+      "printed_url": "http://dblp.uni-trier.de/db/conf/ijcai/",
+      "dblp_stream": "conf/ijcai"
+    },
+    "TOCHI": {
+      "type": "journal",
+      "level": "A",
+      "areas": [
+        "人机交互与普适计算"
+      ],
+      "pages": [
+        61
+      ],
+      "printed_abbr": "TOCHI",
+      "printed_url": "http://dblp.uni-trier.de/db/journals/tochi/",
+      "dblp_stream": "journals/tochi",
+      "issn_verification": {
+        "issn": "1073-0516",
+        "source": "https://api.crossref.org/journals/1073-0516",
+        "checked_at": "2026-10-01",
+        "method": "exact journal title and ISSN from publisher-deposited registry"
+      }
+    },
+    "IJHCS": {
+      "type": "journal",
+      "level": "A",
+      "areas": [
+        "人机交互与普适计算"
+      ],
+      "pages": [
+        61
+      ],
+      "printed_abbr": "IJHCS",
+      "printed_url": "http://dblp.uni-trier.de/db/journals/ijmms/",
+      "dblp_stream": "journals/ijmms"
+    },
+    "CSCW Journal": {
+      "type": "journal",
+      "level": "B",
+      "areas": [
+        "人机交互与普适计算"
+      ],
+      "pages": [
+        62
+      ],
+      "printed_abbr": "CSCW",
+      "printed_url": "http://dblp.uni-trier.de/db/journals/cscw/",
+      "dblp_stream": "journals/cscw"
+    },
+    "HCI": {
+      "type": "journal",
+      "level": "B",
+      "areas": [
+        "人机交互与普适计算"
+      ],
+      "pages": [
+        62
+      ],
+      "printed_abbr": "HCI",
+      "printed_url": "http://dblp.uni-trier.de/db/journals/hhci/",
+      "dblp_stream": "journals/hhci"
+    },
+    "IEEE Transactions on Human-Machine Systems": {
+      "type": "journal",
+      "level": "B",
+      "areas": [
+        "人机交互与普适计算"
+      ],
+      "pages": [
+        62
+      ],
+      "printed_abbr": "",
+      "printed_url": "http://dblp.uni-trier.de/db/journals/thms/",
+      "dblp_stream": "journals/thms"
+    },
+    "IWC": {
+      "type": "journal",
+      "level": "B",
+      "areas": [
+        "人机交互与普适计算"
+      ],
+      "pages": [
+        62
+      ],
+      "printed_abbr": "IWC",
+      "printed_url": "http://dblp.uni-trier.de/db/journals/iwc/",
+      "dblp_stream": "journals/iwc"
+    },
+    "IJHCI": {
+      "type": "journal",
+      "level": "B",
+      "areas": [
+        "人机交互与普适计算"
+      ],
+      "pages": [
+        62
+      ],
+      "printed_abbr": "IJHCI",
+      "printed_url": "http://dblp.uni-trier.de/db/journals/ijhci/",
+      "dblp_stream": "journals/ijhci"
+    },
+    "UMUAI": {
+      "type": "journal",
+      "level": "B",
+      "areas": [
+        "人机交互与普适计算"
+      ],
+      "pages": [
+        62
+      ],
+      "printed_abbr": "UMUAI",
+      "printed_url": "http://dblp.uni-trier.de/db/journals/umuai/",
+      "dblp_stream": "journals/umuai"
+    },
+    "TSMC": {
+      "type": "journal",
+      "level": "B",
+      "areas": [
+        "人机交互与普适计算"
+      ],
+      "pages": [
+        62
+      ],
+      "printed_abbr": "TSMC",
+      "printed_url": "https://dblp.org/db/journals/tsmc/tsmc12.html",
+      "dblp_stream": "journals/tsmc"
+    },
+    "CCF TPCI": {
+      "type": "journal",
+      "level": "B",
+      "areas": [
+        "人机交互与普适计算"
+      ],
+      "pages": [
+        62
+      ],
+      "printed_abbr": "CCF TPCI",
+      "printed_url": "https://dblp.uni-trier.de/db/journals/ccftpci/index.html",
+      "dblp_stream": "journals/ccftpci"
+    },
+    "CSCW": {
+      "type": "conf",
+      "level": "A",
+      "areas": [
+        "人机交互与普适计算"
+      ],
+      "pages": [
+        64
+      ],
+      "printed_abbr": "CSCW",
+      "printed_url": "http://dblp.uni-trier.de/db/conf/cscw",
+      "dblp_stream": "conf/cscw"
+    },
+    "CHI": {
+      "type": "conf",
+      "level": "A",
+      "areas": [
+        "人机交互与普适计算"
+      ],
+      "pages": [
+        64
+      ],
+      "printed_abbr": "CHI",
+      "printed_url": "http://dblp.uni-trier.de/db/conf/chi",
+      "dblp_stream": "conf/chi"
+    },
+    "UbiComp": {
+      "type": "conf",
+      "level": "A",
+      "areas": [
+        "人机交互与普适计算"
+      ],
+      "pages": [
+        64
+      ],
+      "printed_abbr": "UbiComp",
+      "printed_url": "https://dblp.uni-trier.de/db/conf/huc/",
+      "dblp_stream": "conf/huc"
+    },
+    "UIST": {
+      "type": "conf",
+      "level": "A",
+      "areas": [
+        "人机交互与普适计算"
+      ],
+      "pages": [
+        64
+      ],
+      "printed_abbr": "UIST",
+      "printed_url": "http://dblp.uni-trier.de/db/conf/uist/",
+      "dblp_stream": "conf/uist"
+    },
+    "GROUP": {
+      "type": "conf",
+      "level": "B",
+      "areas": [
+        "人机交互与普适计算"
+      ],
+      "pages": [
+        65
+      ],
+      "printed_abbr": "GROUP",
+      "printed_url": "http://dblp.uni-trier.de/db/conf/group/",
+      "dblp_stream": "conf/group"
+    },
+    "IUI": {
+      "type": "conf",
+      "level": "B",
+      "areas": [
+        "人机交互与普适计算"
+      ],
+      "pages": [
+        65
+      ],
+      "printed_abbr": "IUI",
+      "printed_url": "http://dblp.uni-trier.de/db/conf/iui/",
+      "dblp_stream": "conf/iui"
+    },
+    "ISS": {
+      "type": "conf",
+      "level": "B",
+      "areas": [
+        "人机交互与普适计算"
+      ],
+      "pages": [
+        65
+      ],
+      "printed_abbr": "ISS",
+      "printed_url": "http://dblp.uni-trier.de/db/conf/tabletop/",
+      "dblp_stream": "conf/tabletop"
+    },
+    "ECSCW": {
+      "type": "conf",
+      "level": "B",
+      "areas": [
+        "人机交互与普适计算"
+      ],
+      "pages": [
+        65
+      ],
+      "printed_abbr": "ECSCW",
+      "printed_url": "http://dblp.uni-trier.de/db/conf/ecscw/",
+      "dblp_stream": "conf/ecscw"
+    },
+    "PERCOM": {
+      "type": "conf",
+      "level": "B",
+      "areas": [
+        "人机交互与普适计算"
+      ],
+      "pages": [
+        65
+      ],
+      "printed_abbr": "PERCOM",
+      "printed_url": "http://dblp.uni-trier.de/db/conf/percom/",
+      "dblp_stream": "conf/percom"
+    },
+    "MobileHCI": {
+      "type": "conf",
+      "level": "B",
+      "areas": [
+        "人机交互与普适计算"
+      ],
+      "pages": [
+        65
+      ],
+      "printed_abbr": "MobileHCI",
+      "printed_url": "http://dblp.uni-trier.de/db/conf/mhci/",
+      "dblp_stream": "conf/mhci"
+    },
+    "ICWSM": {
+      "type": "conf",
+      "level": "B",
+      "areas": [
+        "人机交互与普适计算"
+      ],
+      "pages": [
+        65
+      ],
+      "printed_abbr": "ICWSM",
+      "printed_url": "https://dblp.org/db/conf/icwsm/index.html",
+      "dblp_stream": "conf/icwsm"
+    },
+    "JACM": {
+      "type": "journal",
+      "level": "A",
+      "areas": [
+        "交叉/综合/新兴"
+      ],
+      "pages": [
+        67
+      ],
+      "printed_abbr": "JACM",
+      "printed_url": "http://dblp.uni-trier.de/db/journals/jacm/",
+      "dblp_stream": "journals/jacm"
+    },
+    "Proc. IEEE": {
+      "type": "journal",
+      "level": "A",
+      "areas": [
+        "交叉/综合/新兴"
+      ],
+      "pages": [
+        67
+      ],
+      "printed_abbr": "Proc. IEEE",
+      "printed_url": "http://dblp.uni-trier.de/db/journals/pieee/",
+      "dblp_stream": "journals/pieee"
+    },
+    "SCIS": {
+      "type": "journal",
+      "level": "A",
+      "areas": [
+        "交叉/综合/新兴"
+      ],
+      "pages": [
+        67
+      ],
+      "printed_abbr": "SCIS",
+      "printed_url": "http://dblp.uni-trier.de/db/journals/chinaf/",
+      "dblp_stream": "journals/chinaf"
+    },
+    "Bioinformatics": {
+      "type": "journal",
+      "level": "A",
+      "areas": [
+        "交叉/综合/新兴"
+      ],
+      "pages": [
+        67
+      ],
+      "printed_abbr": "Bioinformatics",
+      "printed_url": "http://dblp.uni-trier.de/db/journals/bioinformatics/",
+      "dblp_stream": "journals/bioinformatics"
+    },
+    "Briefings in Bioinformatics": {
+      "type": "journal",
+      "level": "B",
+      "areas": [
+        "交叉/综合/新兴"
+      ],
+      "pages": [
+        68
+      ],
+      "printed_abbr": "",
+      "printed_url": "http://dblp.uni-trier.de/db/journals/bib/",
+      "dblp_stream": "journals/bib"
+    },
+    "Cognition": {
+      "type": "journal",
+      "level": "B",
+      "areas": [
+        "交叉/综合/新兴"
+      ],
+      "pages": [
+        68
+      ],
+      "printed_abbr": "Cognition",
+      "printed_url": "http://www.journals.elsevier.com/cognition/",
+      "dblp_stream": ""
+    },
+    "TASAE": {
+      "type": "journal",
+      "level": "B",
+      "areas": [
+        "交叉/综合/新兴"
+      ],
+      "pages": [
+        68
+      ],
+      "printed_abbr": "TASAE",
+      "printed_url": "http://dblp.uni-trier.de/db/journals/tase/",
+      "dblp_stream": "journals/tase"
+    },
+    "TGARS": {
+      "type": "journal",
+      "level": "B",
+      "areas": [
+        "交叉/综合/新兴"
+      ],
+      "pages": [
+        68
+      ],
+      "printed_abbr": "TGARS",
+      "printed_url": "http://dblp.uni-trier.de/db/journals/tgrs/",
+      "dblp_stream": "journals/tgrs"
+    },
+    "TITS": {
+      "type": "journal",
+      "level": "B",
+      "areas": [
+        "交叉/综合/新兴"
+      ],
+      "pages": [
+        68
+      ],
+      "printed_abbr": "TITS",
+      "printed_url": "http://dblp.uni-trier.de/db/journals/tits/",
+      "dblp_stream": "journals/tits"
+    },
+    "TMI": {
+      "type": "journal",
+      "level": "B",
+      "areas": [
+        "交叉/综合/新兴"
+      ],
+      "pages": [
+        68
+      ],
+      "printed_abbr": "TMI",
+      "printed_url": "http://dblp.uni-trier.de/db/journals/tmi/",
+      "dblp_stream": "journals/tmi"
+    },
+    "TR": {
+      "type": "journal",
+      "level": "B",
+      "areas": [
+        "交叉/综合/新兴"
+      ],
+      "pages": [
+        68
+      ],
+      "printed_abbr": "TR",
+      "printed_url": "http://dblp.uni-trier.de/db/journals/trob/",
+      "dblp_stream": "journals/trob"
+    },
+    "TCBB": {
+      "type": "journal",
+      "level": "B",
+      "areas": [
+        "交叉/综合/新兴"
+      ],
+      "pages": [
+        68
+      ],
+      "printed_abbr": "TCBB",
+      "printed_url": "http://dblp.uni-trier.de/db/journals/tcbb/",
+      "dblp_stream": "journals/tcbb"
+    },
+    "JCST": {
+      "type": "journal",
+      "level": "B",
+      "areas": [
+        "交叉/综合/新兴"
+      ],
+      "pages": [
+        68
+      ],
+      "printed_abbr": "JCST",
+      "printed_url": "http://dblp.uni-trier.de/db/journals/jcst/",
+      "dblp_stream": "journals/jcst"
+    },
+    "JAMIA": {
+      "type": "journal",
+      "level": "B",
+      "areas": [
+        "交叉/综合/新兴"
+      ],
+      "pages": [
+        68
+      ],
+      "printed_abbr": "JAMIA",
+      "printed_url": "http://dblp.uni-trier.de/db/journals/jamia/",
+      "dblp_stream": "journals/jamia"
+    },
+    "PLOS Computational Biology": {
+      "type": "journal",
+      "level": "B",
+      "areas": [
+        "交叉/综合/新兴"
+      ],
+      "pages": [
+        68
+      ],
+      "printed_abbr": "",
+      "printed_url": "http://dblp.uni-trier.de/db/journals/ploscb/",
+      "dblp_stream": "journals/ploscb"
+    },
+    "The Computer Journal": {
+      "type": "journal",
+      "level": "B",
+      "areas": [
+        "交叉/综合/新兴"
+      ],
+      "pages": [
+        68
+      ],
+      "printed_abbr": "",
+      "printed_url": "http://dblp.uni-trier.de/db/journals/cj/",
+      "dblp_stream": "journals/cj"
+    },
+    "WWW Journal": {
+      "type": "journal",
+      "level": "B",
+      "areas": [
+        "交叉/综合/新兴"
+      ],
+      "pages": [
+        68
+      ],
+      "printed_abbr": "WWW",
+      "printed_url": "https://dblp.org/db/journals/www/index.html",
+      "dblp_stream": "journals/www"
+    },
+    "FCS": {
+      "type": "journal",
+      "level": "B",
+      "areas": [
+        "交叉/综合/新兴"
+      ],
+      "pages": [
+        68
+      ],
+      "printed_abbr": "FCS",
+      "printed_url": "http://dblp.uni-trier.de/db/journals/fcsc/",
+      "dblp_stream": "journals/fcsc"
+    },
+    "BCRA": {
+      "type": "journal",
+      "level": "B",
+      "areas": [
+        "交叉/综合/新兴"
+      ],
+      "pages": [
+        68
+      ],
+      "printed_abbr": "BCRA",
+      "printed_url": "https://dblp.uni-trier.de/search?q=BCRA",
+      "dblp_stream": "journals/bcra"
+    },
+    "WWW": {
+      "type": "conf",
+      "level": "A",
+      "areas": [
+        "交叉/综合/新兴"
+      ],
+      "pages": [
+        70
+      ],
+      "printed_abbr": "WWW",
+      "printed_url": "http://dblp.uni-trier.de/db/conf/www/",
+      "dblp_stream": "conf/www"
+    },
+    "RTSS": {
+      "type": "conf",
+      "level": "A",
+      "areas": [
+        "交叉/综合/新兴"
+      ],
+      "pages": [
+        70
+      ],
+      "printed_abbr": "RTSS",
+      "printed_url": "http://dblp.uni-trier.de/db/conf/rtss/",
+      "dblp_stream": "conf/rtss"
+    },
+    "CogSci": {
+      "type": "conf",
+      "level": "B",
+      "areas": [
+        "交叉/综合/新兴"
+      ],
+      "pages": [
+        71
+      ],
+      "printed_abbr": "CogSci",
+      "printed_url": "https://dblp.uni-trier.de/db/conf/cogsci/",
+      "dblp_stream": "conf/cogsci"
+    },
+    "BIBM": {
+      "type": "conf",
+      "level": "B",
+      "areas": [
+        "交叉/综合/新兴"
+      ],
+      "pages": [
+        71
+      ],
+      "printed_abbr": "BIBM",
+      "printed_url": "http://dblp.uni-trier.de/db/conf/bibm/",
+      "dblp_stream": "conf/bibm"
+    },
+    "EMSOFT": {
+      "type": "conf",
+      "level": "B",
+      "areas": [
+        "交叉/综合/新兴"
+      ],
+      "pages": [
+        71
+      ],
+      "printed_abbr": "EMSOFT",
+      "printed_url": "http://dblp.uni-trier.de/db/conf/emsoft/",
+      "dblp_stream": "conf/emsoft"
+    },
+    "ISMB": {
+      "type": "conf",
+      "level": "B",
+      "areas": [
+        "交叉/综合/新兴"
+      ],
+      "pages": [
+        71
+      ],
+      "printed_abbr": "ISMB",
+      "printed_url": "https://dblp.org/db/conf/ismb/index.html",
+      "dblp_stream": "conf/ismb"
+    },
+    "RECOMB": {
+      "type": "conf",
+      "level": "B",
+      "areas": [
+        "交叉/综合/新兴"
+      ],
+      "pages": [
+        71
+      ],
+      "printed_abbr": "RECOMB",
+      "printed_url": "http://dblp.uni-trier.de/db/conf/recomb/",
+      "dblp_stream": "conf/recomb"
+    },
+    "MICCAI": {
+      "type": "conf",
+      "level": "B",
+      "areas": [
+        "交叉/综合/新兴"
+      ],
+      "pages": [
+        71
+      ],
+      "printed_abbr": "MICCAI",
+      "printed_url": "https://dblp.org/db/conf/miccai/index.html",
+      "dblp_stream": "conf/miccai"
+    },
+    "WINE": {
+      "type": "conf",
+      "level": "B",
+      "areas": [
+        "交叉/综合/新兴"
+      ],
+      "pages": [
+        71
+      ],
+      "printed_abbr": "WINE",
+      "printed_url": "https://dblp.org/db/conf/wine/index.html",
+      "dblp_stream": "conf/wine"
+    }
+  }
+}

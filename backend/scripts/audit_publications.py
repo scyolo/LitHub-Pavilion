@@ -40,6 +40,11 @@ def official_records(entry, directory):
         return (directory / ("toc-" + hashlib.sha256(url.encode()).hexdigest()[:16] + ".txt")).read_text("utf-8")
     abbr, year, url = entry["venue"], entry["year"], entry["url"]
     body = read(url)
+    if abbr == "SIGKDD":
+        from app.collectors.kdd import CATALOGUES, parse_kdd_research
+        if CATALOGUES.get(year) != url:
+            raise ValueError("Unverified KDD catalogue URL")
+        return parse_kdd_research(body, year)
     if abbr in ("AAAI", "ICAPS", "JAIR"):
         from app.collectors.ojs import fetch_ojs_inventory
         async def cached_read(address):
@@ -62,7 +67,7 @@ def official_records(entry, directory):
         return [p for volume in volumes for p in toc.parse_neurips(read(volume), year)] if volumes else toc.parse_neurips(body, year)
     if abbr in ("CVPR", "ICCV"): return toc.parse_cvf(body, year, abbr)
     if abbr == "JMLR": return toc.parse_jmlr(body, year)
-    if abbr in ("ICML", "UAI"): return toc.parse_pmlr(body, year, url, abbr)
+    if abbr in ("ICML", "UAI", "COLT"): return toc.parse_pmlr(body, year, url, abbr)
     if abbr in ("ACL", "EMNLP", "COLING", "TACL", "CL"):
         return toc.parse_anthology(body, year, abbr, url.rsplit("/", 1)[1][:-4])
     raise ValueError("Unknown official inventory adapter")

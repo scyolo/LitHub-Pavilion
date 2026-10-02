@@ -1,9 +1,16 @@
 export const TOPICS = {
+  ml: { name: "机器学习", short: "Machine Learning", icon: "layers", color: "#86c8ad" },
+  dl: { name: "深度学习", short: "Deep Learning", icon: "nodes", color: "#93aaff" },
+  ai: { name: "人工智能", short: "Artificial Intelligence", icon: "sparkles", color: "#e3b779" },
   llm: { name: "大语言模型", short: "LLM", icon: "sparkles", color: "#79b7ff" },
   specdec: { name: "投机解码", short: "Speculative Decoding", icon: "bolt", color: "#9c96ff" },
   agent: { name: "智能体", short: "AI Agents", icon: "nodes", color: "#61d9b7" },
   cv: { name: "计算机视觉", short: "Computer Vision", icon: "scan", color: "#efb97a" },
-  multimodal: { name: "多模态学习", short: "Multimodal", icon: "layers", color: "#7cd1e0" },
+  multimodal: { name: "多模态与视觉语言", short: "Multimodal & Vision-Language", icon: "layers", color: "#7cd1e0" },
+  hci: { name: "人机交互与可视化", short: "HCI & Visualization", icon: "scan", color: "#79ccb7" },
+  generative: { name: "生成式 AI 与扩散模型", short: "Generative AI & Diffusion", icon: "sparkles", color: "#c5a3e8" },
+  systems: { name: "系统软件与分布式", short: "Systems & Distributed Computing", icon: "building", color: "#91b8d7" },
+  graph: { name: "图学习与知识图谱", short: "Graph Learning & Knowledge Graphs", icon: "nodes", color: "#e1b580" },
   rl: { name: "强化学习", short: "Reinforcement Learning", icon: "route", color: "#b1c57f" },
   nlp: { name: "自然语言处理", short: "NLP", icon: "text", color: "#c7a2e8" },
   retrieval: { name: "信息检索与 RAG", short: "Retrieval & RAG", icon: "search", color: "#ed9fae" },
@@ -97,6 +104,18 @@ function arxivLink(value) {
   return /^(?:\d{2}(?:0[1-9]|1[0-2])\.\d{4,5}|[a-z][a-z.-]*\/\d{7})(?:v[1-9]\d*)?$/i.test(id) ? `https://arxiv.org/abs/${id}` : null;
 }
 
+function formalPublicationLink(value) {
+  let safe = safeExternalUrl(value);
+  if (!safe) return null;
+  const host = new URL(safe).hostname;
+  if (["doi.org", "dx.doi.org"].includes(host)) {
+    safe = doiLink(safe);
+    if (!safe || ["10.48550/", "10.5281/", "10.6084/", "10.31219/", "10.21203/"].some(prefix => safe.startsWith("https://doi.org/" + prefix))) return null;
+  }
+  if (["arxiv.org", "www.arxiv.org", "export.arxiv.org", "zenodo.org", "www.zenodo.org", "osf.io", "openalex.org", "api.openalex.org", "semanticscholar.org", "www.semanticscholar.org"].includes(host)) return null;
+  return safe;
+}
+
 export function paperLinks(paper) {
   const official = safeExternalUrl(paper.official_url);
   const key = typeof paper.dblp_key === "string" ? paper.dblp_key.trim() : "";
@@ -104,7 +123,7 @@ export function paperLinks(paper) {
     && key.split("/").length >= 3 && key.split("/").every((part) => part && part !== "." && part !== "..")
     ? `https://dblp.org/rec/${key}` : null;
   return {
-    official: doiLink(paper.doi) || (official && ["doi.org", "dx.doi.org"].includes(new URL(official).hostname) ? doiLink(official) : official) || dblp,
+    official: formalPublicationLink(doiLink(paper.doi)) || formalPublicationLink(official) || dblp,
     oa: safeExternalUrl(paper.oa_url) || arxivLink(paper.arxiv_id),
   };
 }
@@ -134,6 +153,7 @@ export function parseFilters(search) {
   const sort = params.get("sort");
   return {
     q: params.get("q") || "",
+    match: ["exact", "fuzzy", "keywords"].includes(params.get("match")) ? params.get("match") : "auto",
     level: ["A", "B"].includes(params.get("level")) ? params.get("level") : "",
     type: ["conf", "journal"].includes(params.get("type")) ? params.get("type") : "",
     direction: params.get("direction") || "",

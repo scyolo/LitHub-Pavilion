@@ -36,6 +36,13 @@ def prepare_snapshot(source: Path, target: Path) -> dict:
         except (KeyError, TypeError, AttributeError) as exc:
             raise ValueError("Invalid previous public snapshot") from exc
         entries.update({entry["path"]: entry["sha256"] for entry in [previous["catalog"], *previous["chunks"]]})
+    from app.services.snapshot_reader import reader_entries, read_compressed_asset
+    compressed = {}
+    for retained_manifest in [manifest, *([previous] if previous else [])]:
+        catalog, _ = _load_entry(source, retained_manifest["catalog"], "catalog")
+        for entry in reader_entries(catalog, source):
+            compressed[entry["path"]] = entry
+            entries[entry["path"]] = entry["sha256"]
     files = []
     total = 0
     for name, digest in sorted(entries.items()):
@@ -43,7 +50,9 @@ def prepare_snapshot(source: Path, target: Path) -> dict:
         if path.is_symlink() or not path.is_file() or path.stat().st_size > MAX_FILE_BYTES:
             raise ValueError("Unsafe snapshot asset")
         content = path.read_bytes()
-        if hashlib.sha256(content).hexdigest() != digest:
+        if name in compressed:
+            read_compressed_asset(source, compressed[name])
+        elif hashlib.sha256(content).hexdigest() != digest:
             raise ValueError("Snapshot asset hash mismatch")
         total += len(content)
         if total > MAX_SNAPSHOT_BYTES:
@@ -63,8 +72,16 @@ def prepare_snapshot(source: Path, target: Path) -> dict:
         if upgraded_previous["catalog"] != previous["catalog"]:
             total += (target / upgraded_previous["catalog"]["path"]).stat().st_size
     upgraded = ensure_snapshot_overview(target, manifest)
+    from app.services.snapshot_reader import ensure_snapshot_reader
+    upgraded = ensure_snapshot_reader(target, upgraded)
     if upgraded["catalog"] != manifest["catalog"]:
         total += (target / upgraded["catalog"]["path"]).stat().st_size
+    retained_names = set(entries)
+    for retained_manifest in [upgraded, *([upgraded_previous] if previous else [])]:
+        retained_names.add(retained_manifest["catalog"]["path"])
+        retained_catalog, _ = _load_entry(target, retained_manifest["catalog"], "catalog")
+        retained_names.update(entry["path"] for entry in reader_entries(retained_catalog, target))
+    total = sum((target / name).stat().st_size for name in retained_names)
     if total > MAX_SNAPSHOT_BYTES:
         raise ValueError("Pages snapshot exceeds the deployment size budget")
     catalog, catalog_bytes = _load_entry(target, upgraded["catalog"], "catalog")

@@ -38,7 +38,7 @@ def test_retired_pdf_environment_cannot_enable_downloads(monkeypatch):
     assert not hasattr(CrawlPipeline, "submit_pdf_backlog")
 
 
-def test_bootstrap_needs_only_current_seed_files_and_preserves_legacy_tables(engine, tmp_path):
+def test_bootstrap_needs_only_current_seed_files_and_preserves_legacy_tables(engine, tmp_path, seed_venue_abbrs):
     directory = tmp_path / "seeds"
     directory.mkdir()
     for name in ("venues.csv", "directions.csv", "direction_rules.csv"):
@@ -48,10 +48,10 @@ def test_bootstrap_needs_only_current_seed_files_and_preserves_legacy_tables(eng
         connection.exec_driver_sql("INSERT INTO pdf_whitelist VALUES ('archive.example.org', 'keep local history')")
     initialize_database(engine, directory)
     with Session(engine) as session:
-        assert session.query(Venue).count() == 28
-        assert session.query(Direction).count() == 9
+        assert {abbr for abbr, in session.query(Venue.abbr)} == seed_venue_abbrs
+        assert session.query(Direction).count() == 16
         seed_missing(session, directory)
-        assert session.query(Venue).count() == 28
+        assert {abbr for abbr, in session.query(Venue.abbr)} == seed_venue_abbrs
     with engine.connect() as connection:
         assert connection.exec_driver_sql("SELECT host, note FROM pdf_whitelist").all() == [
             ("archive.example.org", "keep local history")

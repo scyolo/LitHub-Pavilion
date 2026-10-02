@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { api } from "../api.js";
+import { shouldRetryRead } from "../data/retry-policy.js";
 import { useFilters } from "../hooks/useFilters.js";
 import { useDashboard } from "../hooks/useResearchData.js";
 import { filteredParams, number, scopeParams, topic } from "../lib/presentation.js";
@@ -25,7 +26,7 @@ export default function PaperList() {
     placeholderData: keepPreviousData,
     refetchInterval: api.isSnapshot ? false : 30000,
     refetchIntervalInBackground: false,
-    retry: (count, error) => error.status >= 400 && error.status < 500 ? false : count < 1,
+    retry: shouldRetryRead,
   });
   const data = result.data;
   const pages = Math.max(1, Math.ceil((data?.total || 0) / (data?.size || filters.size)));
@@ -42,7 +43,7 @@ export default function PaperList() {
   return <div className="explore-page page-enter">
     <div className="page-heading"><div><div className="eyebrow"><span className="tiny-line" />PAPER EXPLORER</div><h1>让下一篇好论文，<span>被你发现。</span></h1><p>按方向深入，按来源追踪。所有论文都保留通往原文的链接。</p></div><span className="page-heading-tag"><Icon name="book" size={15} />CCF A / B 论文库</span></div>
     <ScopeTabs filters={filters} onChange={update} />
-    <div className="explorer-searchbar"><SearchInput value={filters.q} onCommit={(q) => update({ q })} label="搜索论文" placeholder="搜索英文标题、摘要关键词，例如 speculative decoding…" /><button className="button secondary filter-toggle" onClick={() => setFiltersOpen(!filtersOpen)} aria-expanded={filtersOpen}><Icon name="sliders" size={17} />筛选{active.length > 0 ? ` · ${active.length}` : ""}</button></div>
+    <div className="explorer-searchbar"><SearchInput value={filters.q} onCommit={(q) => update({ q })} label="搜索论文" placeholder="粘贴完整标题，或搜索英文关键词…" /><label className="search-match"><span className="sr-only">检索方式</span><select aria-label="检索方式" value={filters.match} onChange={(event) => update({ match: event.target.value })}><option value="auto">智能匹配</option><option value="exact">完整标题</option><option value="fuzzy">模糊匹配</option><option value="keywords">关键词 AND</option></select></label><button className="button secondary filter-toggle" onClick={() => setFiltersOpen(!filtersOpen)} aria-expanded={filtersOpen}><Icon name="sliders" size={17} />筛选{active.length > 0 ? ` · ${active.length}` : ""}</button></div>
     {contextQuery.error && <ErrorState message="筛选选项暂时无法加载，已显示的论文仍可浏览。" onRetry={() => contextQuery.refetch()} />}
     <div className="explorer-layout">
       <aside className={`filters-panel panel ${filtersOpen ? "expanded" : ""}`} aria-label="论文筛选器">
@@ -57,6 +58,8 @@ export default function PaperList() {
         <div className="filter-note"><Icon name="link" size={15} /><p>直接跳转原始来源<br />本站不下载 PDF</p></div>
       </aside>
       <section className="explorer-results" aria-label="论文结果" aria-busy={result.isFetching}>
+        {isSearch && data?.match_mode === "fuzzy" && <p className="search-explanation" role="status">正在显示近似词项匹配：容忍一次拼写编辑／相邻字母颠倒，并补全最后一个词。需要逐字核对时请选择“完整标题”。{data.query_expansions?.length > 0 && <span> 展开词：{data.query_expansions.map(row => `${row.token} → ${row.alternatives.join(" / ")}`).join("；")}</span>}</p>}
+        {isSearch && !result.isFetching && !result.error && data?.total === 0 && active.length > 0 && <button className="button secondary" onClick={() => update({ direction: "", venue: "", year: "", access: "", level: "", type: "" })}>保留关键词，在全部已核验论文中查找</button>}
         {active.length > 0 && <div className="active-filters">{active.map((item) => <button key={item.label} onClick={item.remove} aria-label={`移除筛选：${item.label}`}>{item.label}<Icon name="close" size={12} /></button>)}</div>}
         <div className="results-toolbar"><div><strong>{result.error ? "查询未完成" : result.isPending ? "正在查找论文…" : `${number(data?.total)} 篇论文`}</strong><span>{isSearch ? `匹配 “${filters.q}”` : "探索已收录研究"}</span>{result.isFetching && !result.isPending && <Icon name="refresh" className="spin" size={13} />}</div><div className="results-options"><label className="sr-only" htmlFor="sort-papers">论文排序</label><select id="sort-papers" value={requestParams.sort} onChange={(e) => update({ sort: e.target.value })}>{isSearch && <option value="relevance">相关性优先</option>}<option value="publication_desc">发表时间从新到旧</option><option value="created_desc">最近收录</option><option value="year_desc">年份从新到旧</option><option value="citation_desc">引用数优先</option></select><div className="view-switch" role="group" aria-label="列表显示密度"><button aria-label="舒适视图" aria-pressed={!compactMode} className={!compactMode ? "active" : ""} onClick={() => setCompactMode(false)}><Icon name="grid" size={16} /></button><button aria-label="紧凑视图" aria-pressed={compactMode} className={compactMode ? "active" : ""} onClick={() => setCompactMode(true)}><Icon name="list" size={17} /></button></div></div></div>
         {result.error ? <ErrorState message={result.error.message} onRetry={() => result.refetch()} /> : result.isPending ? <LoadingState rows={4} /> : data?.items.length ? <div className={`paper-stack ${result.isPlaceholderData ? "refreshing" : ""}`}>{data.items.map((p) => <PaperCard key={p.id} paper={p} compactMode={compactMode} />)}</div> : <EmptyState action={<button className="button secondary" onClick={clear}>清除所有筛选</button>} />}

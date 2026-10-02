@@ -124,7 +124,7 @@ def upsert_paper(session: Session, raw: RawPaper, venue: Venue, author_cache: di
             publisher_key=publisher_key,
             title=raw.title.strip(), title_norm=title_norm, doi=doi, arxiv_id=arxiv_id,
             venue_id=venue.id, year=raw.year, ccf_level=venue.ccf_level, ccf_area=venue.ccf_area,
-            official_url=("https://doi.org/" + doi) if doi else safe_http_url(raw.official_url) or "https://dblp.org/db/" + venue.dblp_stream + "/",
+            official_url=("https://doi.org/" + doi) if doi else safe_http_url(raw.official_url) or ("https://dblp.org/db/" + venue.dblp_stream + "/" if venue.dblp_stream else None),
             abstract=abstract_text(raw.extra.get("abstract")),
             oa_url=safe_http_url(raw.extra.get("oa_pdf")) or arxiv_url(arxiv_id),
             publication_date=_safe_publication_date(raw.publication_date, raw.year), dblp_mdate=raw.mdate,

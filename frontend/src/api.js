@@ -48,6 +48,7 @@ const liveApi = {
   paper: (id, signal) => request("/api/papers/" + encodeURIComponent(id), { signal }),
   search: (params, signal) => request("/api/search", { params, signal }),
   dashboard: (params, signal) => request("/api/stats/dashboard", { params, signal }),
+  venueTopics: (params, signal) => request("/api/stats/venue-topics", { params, signal }),
   directions: (signal) => request("/api/directions", { signal }),
   venues: (params, signal) => request("/api/venues", { params, signal }),
   stats: (signal) => request("/api/stats/overview", { signal }),
@@ -56,7 +57,7 @@ const liveApi = {
 };
 
 const staticApi = {
-  ...Object.fromEntries(["latest", "papers", "paper", "search", "dashboard", "venues", "crawlLogs"].map((method) => [method, (params, signal) => snapshotCall(method, params, signal)])),
+  ...Object.fromEntries(["latest", "papers", "paper", "search", "dashboard", "venues", "venueTopics", "crawlLogs"].map((method) => [method, (params, signal) => snapshotCall(method, params, signal)])),
   ...Object.fromEntries(["directions", "stats", "crawlStatus"].map((method) => [method, (signal) => snapshotCall(method, undefined, signal)])),
 };
 

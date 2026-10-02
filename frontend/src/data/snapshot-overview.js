@@ -16,7 +16,7 @@ function check(condition) { if (!condition) throw invalid(); }
 function unique(values) { return new Set(values).size === values.length; }
 
 export function createOverview({ manifest, catalog }) {
-  keys(catalog, ["venues", "directions", "logs", "last_crawl", ...(Object.hasOwn(catalog, "overview") ? ["overview"] : [])]);
+  keys(catalog, ["venues", "directions", "logs", "last_crawl", ...(Object.hasOwn(catalog, "overview") ? ["overview"] : []), ...(Object.hasOwn(catalog, "reader") ? ["reader"] : [])]);
   check(Array.isArray(catalog.venues) && Array.isArray(catalog.directions) && Array.isArray(catalog.logs));
   const venues = new Map(), directions = new Map();
   for (const venue of catalog.venues) {
@@ -33,11 +33,21 @@ export function createOverview({ manifest, catalog }) {
   for (const log of catalog.logs) keys(log, logKeys);
   if (catalog.last_crawl !== null) keys(catalog.last_crawl, [...logKeys.filter((key) => key !== "task_type"), "failed_units"]);
   if (!Object.hasOwn(catalog, "overview")) return null;
-  keys(catalog.overview, ["version", "scopes"]);
-  check(catalog.overview.version === 1 && Array.isArray(catalog.overview.scopes) && catalog.overview.scopes.length === 9);
+  keys(catalog.overview, ["version", "scopes", ...(catalog.overview.version === 2 ? ["venue_topics"] : [])]);
+  check([1, 2].includes(catalog.overview.version) && Array.isArray(catalog.overview.scopes) && catalog.overview.scopes.length === 9);
   const scopes = new Map();
-  for (const scope of catalog.overview.scopes) {
-    keys(scope, ["level", "type", "dashboard", "latest"]);
+  for (const stored of catalog.overview.scopes) {
+    keys(stored, ["level", "type", "dashboard", "latest"]);
+    keys(stored.dashboard, dashboardKeys);
+    check(Array.isArray(stored.dashboard.venues));
+    // v2 stores venue metadata once; scope rows contain only counts and years.
+    const scope = catalog.overview.version === 2 ? { ...stored, dashboard: {
+      ...stored.dashboard, venues: stored.dashboard.venues.map(value => {
+        keys(value, ["abbr", "paper_count", "years"]);
+        check(venues.has(value.abbr));
+        return { ...venues.get(value.abbr), ...value };
+      }),
+    } } : stored;
     check([null, "A", "B"].includes(scope.level) && [null, "conf", "journal"].includes(scope.type));
     const key = `${scope.level || ""}:${scope.type || ""}`;
     check(!scopes.has(key)); scopes.set(key, scope);
@@ -94,6 +104,18 @@ export function createOverview({ manifest, catalog }) {
     }
   }
   check(scopes.get(":")?.dashboard.total === manifest.paper_count);
+  const venueTopics = catalog.overview.venue_topics || {};
+  if (catalog.overview.version === 2) {
+    keys(venueTopics, [...venues.keys()]);
+    const totals = new Map(scopes.get(":").dashboard.venues.map(v => [v.abbr, v.paper_count]));
+    for (const [abbr, values] of Object.entries(venueTopics)) {
+      check(Array.isArray(values) && unique(values.map(v => v.code)));
+      for (const value of values) {
+        keys(value, ["code", "paper_count"]);
+        check(directions.has(value.code) && count(value.paper_count) && value.paper_count > 0 && value.paper_count <= totals.get(abbr));
+      }
+    }
+  }
   function select(params = {}) {
     const values = Object.entries(params).filter(([, value]) => value !== "" && value != null);
     if (values.some(([key]) => !["level", "type"].includes(key))) return null;
@@ -101,10 +123,11 @@ export function createOverview({ manifest, catalog }) {
   }
   function dashboard(scope) { return { ...scope.dashboard, generated_at: manifest.generated_at, last_crawl: catalog.last_crawl }; }
   return {
-    supports: (method, params) => ["directions", "stats", "crawlLogs", "crawlStatus"].includes(method) || ["dashboard", "latest", "venues"].includes(method) && Boolean(select(params)),
+    supports: (method, params) => ["directions", "stats", "crawlLogs", "crawlStatus"].includes(method) || ["dashboard", "latest", "venues", "venueTopics"].includes(method) && Boolean(select(params)),
     dashboard: (params) => dashboard(select(params)),
     latest: (params) => { const scope = select(params); return { total: scope.dashboard.total, page: 1, size: 5, items: scope.latest }; },
     directions: () => ({ items: scopes.get(":").dashboard.directions.filter((d) => d.enabled) }),
+    venueTopics: (params) => ({ items: Object.fromEntries(select(params).dashboard.venues.map(v => [v.abbr, venueTopics[v.abbr] || []])) }),
     venues: (params) => ({ items: select(params).dashboard.venues }),
     stats: () => { const result = dashboard(scopes.get(":")); return { ...result, by_direction: Object.fromEntries(result.directions.map((d) => [d.code, d.paper_count])), by_year: Object.fromEntries(result.annual.map((y) => [y.year, y.total])), pdf_archived: 0, last_crawl_at: catalog.last_crawl?.started_at }; },
     crawlStatus: () => ({ running: false, read_only: true, schedule: null, mode: "snapshot", generated_at: manifest.generated_at, revision: manifest.revision }),

@@ -45,3 +45,11 @@ frontend/public/pdfjs/
 frontend/public/pdf.worker.min.mjs
 artifacts/
 release-artifacts/
+.playwright-cli/
+
+# Local browser QA artifacts; do not publish screenshots with source code.
+output/playwright/
+
+# Public, revision-bound conference association assets (not test coverage).
+!frontend/static/data-sources/coverage/
+!frontend/static/data-sources/coverage/**

@@ -59,7 +59,7 @@ def create_paper(body: PaperCreateRequest, db: Session = Depends(get_db)):
     doi = unquote(doi_link.removeprefix("https://doi.org/")) if doi_link else None
     arxiv_link = arxiv_url(body.arxiv_id)
     arxiv_id = arxiv_link.removeprefix("https://arxiv.org/abs/") if arxiv_link else None
-    if body.dblp_key and not body.dblp_key.startswith(venue.dblp_stream + "/"):
+    if body.dblp_key and (not venue.dblp_stream or not body.dblp_key.startswith(venue.dblp_stream + "/")):
         raise _bad_request("dblp_key 与所选 venue 不匹配")
     for column, value in ((Paper.dblp_key, body.dblp_key), (Paper.doi, doi), (Paper.arxiv_id, arxiv_id)):
         if value and db.query(Paper.id).filter(column == value).first():
@@ -81,7 +81,7 @@ def create_paper(body: PaperCreateRequest, db: Session = Depends(get_db)):
         db.rollback()
         raise HTTPException(409, detail={"code": "DUPLICATE", "message": "该论文标识已存在"}) from exc
     db.refresh(paper)
-    return JSONResponse(status_code=201, content={"id": paper.id}, headers={"Location": f"/api/papers/{paper.id}"})
+    return JSONResponse(status_code=201, content={"id": paper.id, "verification_status": "pending"}, headers={"Location": f"/api/papers/{paper.id}"})
 
 
 def _norm_title(title: str) -> str:

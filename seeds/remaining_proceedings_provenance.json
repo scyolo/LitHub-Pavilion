@@ -1,0 +1,39 @@
+{
+  "verified_on": "2026-10-02",
+  "scope": "Metadata/original publication links only. These inventories do not certify all-source completeness.",
+  "sources": [
+    {
+      "venue": "WWW",
+      "year": 2025,
+      "source": "https://www.sigweb.org/toc/www25a.html",
+      "sha256": "11ae7556eb527b1cfbaed2f6fe06a1efc524b4a32580f8c4e50d6e6fd7024b26",
+      "official_toc_count": 100,
+      "selected_research_count": 87,
+      "matched": 87,
+      "verified_subtitles_restored": 0,
+      "complete": false,
+      "notes": "Intersected SIGWEB DOI/title/author records with 408 explicitly numbered official Research posters. The retrieved OpenTOC lists only 100 papers, so the remainder is still unverified."
+    },
+    {
+      "venue": "Middleware",
+      "year": 2023,
+      "source": "https://middleware-conf.github.io/2023/open-toc/",
+      "sha256": "9452cc31db24c405de47d1926f3fd6f7f60339c6a48bbb4337cac8f82b9338b6",
+      "official_toc_count": 24,
+      "selected_research_count": 24,
+      "matched": 24,
+      "verified_subtitles_restored": 18,
+      "complete": false,
+      "notes": "Publisher parent container contains a literal on ZZZ suffix. Exact OpenTOC DOI/title/author matching recovers 24 papers; 18 split titles were restored only when title + subtitle exactly agrees at the same DOI."
+    },
+    {
+      "venue": "SIGGRAPH",
+      "year": 2025,
+      "source": "https://api.crossref.org/works/10.1145/3721238",
+      "matched": 174,
+      "excluded_other_parents": 195,
+      "complete": false,
+      "notes": "Exact SIGGRAPH 2025 conference-paper parent only; shared container has 195 other-parent papers, all excluded."
+    }
+  ]
+}

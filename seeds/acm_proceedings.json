@@ -1,0 +1,136 @@
+{
+  "verified_at": "2026-09-30",
+  "scope": "Publisher parent/container identities only; NOT track or CCF article qualification",
+  "units": [
+    {
+      "venue": "ACM MM",
+      "year": 2023,
+      "title": "Proceedings of the 31st ACM International Conference on Multimedia",
+      "parent_doi": "10.1145/3581783",
+      "source": "https://api.crossref.org/works/10.1145/3581783"
+    },
+    {
+      "venue": "ACM MM",
+      "year": 2024,
+      "title": "Proceedings of the 32nd ACM International Conference on Multimedia",
+      "parent_doi": "10.1145/3664647",
+      "source": "https://api.crossref.org/works/10.1145/3664647"
+    },
+    {
+      "venue": "ACM MM",
+      "year": 2025,
+      "title": "Proceedings of the 33rd ACM International Conference on Multimedia",
+      "parent_doi": "10.1145/3746027",
+      "source": "https://api.crossref.org/works/10.1145/3746027"
+    },
+    {
+      "venue": "CIKM",
+      "year": 2023,
+      "title": "Proceedings of the 32nd ACM International Conference on Information and Knowledge Management",
+      "parent_doi": "10.1145/3583780",
+      "source": "https://api.crossref.org/works/10.1145/3583780"
+    },
+    {
+      "venue": "CIKM",
+      "year": 2024,
+      "title": "Proceedings of the 33rd ACM International Conference on Information and Knowledge Management",
+      "parent_doi": "10.1145/3627673",
+      "source": "https://api.crossref.org/works/10.1145/3627673"
+    },
+    {
+      "venue": "CIKM",
+      "year": 2025,
+      "title": "Proceedings of the 34th ACM International Conference on Information and Knowledge Management",
+      "parent_doi": "10.1145/3746252",
+      "source": "https://api.crossref.org/works/10.1145/3746252"
+    },
+    {
+      "venue": "SIGIR",
+      "year": 2023,
+      "title": "Proceedings of the 46th International ACM SIGIR Conference on Research and Development in Information Retrieval",
+      "parent_doi": "10.1145/3539618",
+      "source": "https://api.crossref.org/works/10.1145/3539618"
+    },
+    {
+      "venue": "SIGIR",
+      "year": 2024,
+      "title": "Proceedings of the 47th International ACM SIGIR Conference on Research and Development in Information Retrieval",
+      "parent_doi": "10.1145/3626772",
+      "source": "https://api.crossref.org/works/10.1145/3626772"
+    },
+    {
+      "venue": "SIGIR",
+      "year": 2025,
+      "title": "Proceedings of the 48th International ACM SIGIR Conference on Research and Development in Information Retrieval",
+      "parent_doi": "10.1145/3726302",
+      "source": "https://api.crossref.org/works/10.1145/3726302"
+    },
+    {
+      "venue": "SIGIR",
+      "year": 2026,
+      "title": "Proceedings of the 49th International ACM SIGIR Conference on Research and Development in Information Retrieval",
+      "parent_doi": "10.1145/3805712",
+      "source": "https://api.crossref.org/works/10.1145/3805712"
+    },
+    {
+      "venue": "WSDM",
+      "year": 2024,
+      "title": "Proceedings of the 17th ACM International Conference on Web Search and Data Mining",
+      "parent_doi": "10.1145/3616855",
+      "source": "https://api.crossref.org/works/10.1145/3616855"
+    },
+    {
+      "venue": "WWW",
+      "year": 2023,
+      "title": "Proceedings of the ACM Web Conference 2023",
+      "parent_doi": "10.1145/3543507",
+      "source": "https://api.crossref.org/works/10.1145/3543507"
+    },
+    {
+      "venue": "WWW",
+      "year": 2024,
+      "title": "Proceedings of the ACM Web Conference 2024",
+      "parent_doi": "10.1145/3589334",
+      "source": "https://api.crossref.org/works/10.1145/3589334"
+    },
+    {
+      "venue": "WWW",
+      "year": 2026,
+      "title": "Proceedings of the ACM Web Conference 2026",
+      "parent_doi": "10.1145/3774904",
+      "source": "https://api.crossref.org/works/10.1145/3774904"
+    },
+    {
+      "venue": "WSDM",
+      "year": 2025,
+      "title": "Proceedings of the Eighteenth ACM International Conference on Web Search and Data Mining",
+      "parent_doi": "10.1145/3701551",
+      "source": "https://api.crossref.org/works/10.1145/3701551"
+    },
+    {
+      "venue": "WSDM",
+      "year": 2023,
+      "title": "Proceedings of the Sixteenth ACM International Conference on Web Search and Data Mining",
+      "parent_doi": "10.1145/3539597",
+      "source": "https://api.crossref.org/works/10.1145/3539597"
+    },
+    {
+      "venue": "WWW",
+      "year": 2025,
+      "title": "Proceedings of the ACM on Web Conference 2025",
+      "parent_doi": "10.1145/3696410",
+      "source": "https://api.crossref.org/works/10.1145/3696410"
+    },
+    {
+      "venue": "WSDM",
+      "year": 2026,
+      "title": "Proceedings of the Nineteenth ACM International Conference on Web Search and Data Mining",
+      "parent_doi": "10.1145/3773966",
+      "other_parent_dois": [
+        "10.1145/3779211"
+      ],
+      "source": "https://api.crossref.org/works/10.1145/3773966",
+      "note": "Exact container mixes two verified parents; keep selected and alternate article partitions separate. Research-track admission requires separate official list."
+    }
+  ]
+}

@@ -30,7 +30,7 @@ export default function PaperCard({ paper, compactMode = false }) {
             <span className="citation-count" title="外部数据源记录的引用数，可能存在收录延迟"><Icon name="chart" size={14} />{compact(paper.citation_count)}<span>引用</span></span>
             {!compactMode && paper.abstract_preview && <button className="text-button abstract-toggle" aria-expanded={expanded} onClick={() => setExpanded(!expanded)}>{expanded ? "收起摘要" : "摘要"}<Icon name="chevronDown" size={12} /></button>}
             {links.official && <a href={links.official} target="_blank" rel="noopener noreferrer" className="paper-external">官方链接<Icon name="external" size={13} /></a>}
-            {!links.official && links.oa && <a href={links.oa} target="_blank" rel="noopener noreferrer" className="paper-external">开放版本<Icon name="external" size={13} /></a>}
+            {links.oa && links.oa !== links.official && <a href={links.oa} target="_blank" rel="noopener noreferrer" className="paper-external">开放版本<Icon name="external" size={13} /></a>}
           </div>
         </div>
       </div>

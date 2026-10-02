@@ -49,7 +49,7 @@ def test_detail_contains_all_fields(client, sample_paper):
     assert body["venue"]["abbr"] == "NeurIPS"
 
 
-def test_create_paper_returns_201_with_location(client, sample_venue):
+def test_create_paper_returns_201_with_location(client, sample_venue, db):
     resp = client.post(
         "/api/papers",
         json={
@@ -61,13 +61,15 @@ def test_create_paper_returns_201_with_location(client, sample_venue):
     )
     assert resp.status_code == 201
     assert resp.headers["location"] == f"/api/papers/{resp.json()['id']}"
-    created = client.get(resp.headers["location"]).json()
-    assert created["pdf_status"] == "closed"
-    assert created["pdf_source"] is None
-    assert created["mode"] == "links"
-    assert created["official_url"] == "https://doi.org/10.5555/manual.001"
-    assert created["venue_confirmed"] == 0
-    assert "pdf_url" not in created
+    # Manual venue selection is not evidence of formal publication. Keep the
+    # submitted row for private verification, not in the public reader.
+    from app.models import Paper
+    assert client.get(resp.headers["location"]).status_code == 404
+    created = db.get(Paper, resp.json()['id'])
+    assert created.pdf_status == "closed" and created.pdf_source is None
+    assert created.official_url == "https://doi.org/10.5555/manual.001"
+    assert created.venue_confirmed == 0
+    assert resp.json()['verification_status'] == 'pending'
     # 重复 dblp_key/doi → 409
     resp2 = client.post(
         "/api/papers",
@@ -107,6 +109,7 @@ def test_search_title_match_outranks_abstract_only_match(client, db, sample_venu
         abstract="We study speculative decoding in a long abstract.",
         venue_id=sample_venue.id, year=2024, ccf_level="A", ccf_area="人工智能",
         official_url="https://example.org/abstract-only",
+        venue_confirmed=1,
     )
     db.add(abstract_only)
     db.commit()
@@ -169,7 +172,7 @@ def test_list_search_dashboard_share_filtered_scope(client, api_catalog, filters
     assert listing.json()["total"] == search.json()["total"] == data["total"] == len(expected)
     assert data["with_oa_link"] == len(expected & {11, 23, 59, 83})
     assert data["with_abstract"] == len(expected & {11, 59, 71})
-    assert data["confirmed_count"] == len(expected & {11, 35, 71})
+    assert data["confirmed_count"] == len(expected)
     assert data["recent_count"] == len(expected & {11, 35, 71, 83})
     assert data["by_level"] == {"A": len(expected & {11, 35, 59, 83}), "B": len(expected & {23, 47, 71})}
     assert data["by_type"] == {"conf": len(expected & {11, 23, 59, 71, 83}), "journal": len(expected & {35, 47})}
@@ -598,7 +601,7 @@ def test_search_keeps_nonadjacent_and_recall_and_exact_title_first(client, db, s
         ('Unrelated title', 'alpha omega ' * 100),
         ('Alpha alone', 'No other query token here'),
     ]):
-        paper = Paper(source='dblp', dblp_key=f'conf/nips/Ranking{index}24', title=title, title_norm=normalize_title(title), abstract=abstract, venue_id=sample_venue.id, year=2024, ccf_level='A', official_url=f'https://example.org/{index}')
+        paper = Paper(source='dblp', dblp_key=f'conf/nips/Ranking{index}24', title=title, title_norm=normalize_title(title), abstract=abstract, venue_id=sample_venue.id, year=2024, ccf_level='A', venue_confirmed=1, official_url=f'https://example.org/{index}')
         db.add(paper); rows.append(paper)
     db.commit()
     result = client.get('/api/search', params={'q': 'alpha omega'}).json()

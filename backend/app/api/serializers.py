@@ -141,15 +141,30 @@ def abstract_text(value: str | None) -> str | None:
     return text if any(character.isalnum() for character in text) else None
 
 
+def _formal_publication_url(value: str | None) -> str | None:
+    """Do not label a repository/aggregator identity as a publisher page."""
+    url = safe_http_url(value)
+    if not url:
+        return None
+    host = urlsplit(url).hostname
+    if host in {"doi.org", "dx.doi.org"}:
+        url = doi_url(url)
+        if not url or url.removeprefix("https://doi.org/").startswith(
+            ("10.48550/", "10.5281/", "10.6084/", "10.31219/", "10.21203/")
+        ):
+            return None
+    if host in {"arxiv.org", "www.arxiv.org", "export.arxiv.org", "zenodo.org", "www.zenodo.org",
+                "osf.io", "openalex.org", "api.openalex.org", "semanticscholar.org", "www.semanticscholar.org"}:
+        return None
+    return url
+
+
 def paper_links(paper: Paper) -> dict[str, str | None]:
-    # A repository DOI is an open version, not the official publication page.
-    publisher = safe_http_url(getattr(paper, "publisher_key", None))
-    repository_doi = (paper.doi or "").lower().startswith(("10.48550/", "10.5281/", "10.6084/", "10.31219/", "10.21203/"))
-    official = (publisher if repository_doi else None) or doi_url(paper.doi) or publisher
-    if not official:
-        official = safe_http_url(paper.official_url)
-        if official and urlsplit(official).hostname in ("doi.org", "dx.doi.org"):
-            official = doi_url(official)
+    # Formal DOI -> publisher -> stored formal link -> DBLP. A repository
+    # DOI must not short-circuit that chain; its open version stays separate.
+    official = (_formal_publication_url(doi_url(paper.doi))
+                or _formal_publication_url(getattr(paper, "publisher_key", None))
+                or _formal_publication_url(paper.official_url))
     if not official and paper.dblp_key:
         key = paper.dblp_key.strip()
         if (

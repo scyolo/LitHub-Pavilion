@@ -1,0 +1,30 @@
+{
+  "verified_on": "2026-10-01",
+  "year_basis": "Journal publication or volume year; presentation year is not inferred.",
+  "sources": [
+    {
+      "venue": "SIGMOD",
+      "issn": "2836-6573",
+      "url": "https://2024.sigmod.org/calls_papers_sigmod_research.shtml",
+      "evidence": "All accepted research and industrial track papers in SIGMOD from 2023 onwards appear in PACMMOD; other conference publications are separate."
+    },
+    {
+      "venue": "SIG- METRICS",
+      "issn": "2476-1249",
+      "url": "https://www.sigmetrics.org/sigmetrics2025/call_for_papers.html",
+      "evidence": "Accepted papers are scheduled for publication in POMACS and presentation at ACM SIGMETRICS."
+    },
+    {
+      "venue": "UbiComp",
+      "issn": "2474-9567",
+      "url": "https://www.ubicomp.org/ubicomp-iswc-2024/",
+      "evidence": "IMWUT papers are invited to main technical tracks; ISWC Briefs/Notes, workshops, tutorials, posters and demos are separate."
+    },
+    {
+      "venue": "VLDB",
+      "issn": "2150-8097",
+      "url": "https://www.vldb.org/pvldb/",
+      "evidence": "Accepted PVLDB papers are offered a presentation slot at the next available VLDB conference."
+    }
+  ]
+}

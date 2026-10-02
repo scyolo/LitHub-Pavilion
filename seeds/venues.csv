@@ -6,7 +6,7 @@ ICLR,International Conference on Learning Representations,conf/iclr,iclr{year},c
 ACL,Annual Meeting of the Association for Computational Linguistics,conf/acl,acl{year},conf,,,ACL,A,人工智能,1
 CVPR,IEEE/CVF Conference on Computer Vision and Pattern Recognition,conf/cvpr,cvpr{year},conf,,,CVPR,A,人工智能,1
 ICCV,International Conference on Computer Vision,conf/iccv,iccv{year},conf,,S4306419272,ICCV,A,人工智能,1
-IJCAI,International Joint Conference on Artificial Intelligence,conf/ijcai,ijcai{year},conf,,S4306419999,IJCAI,A,人工智能,1
+IJCAI,International Joint Conference on Artificial Intelligence,conf/ijcai,ijcai{year},conf,,S4306419999,IJCAI,B,人工智能,1
 EMNLP,Empirical Methods in Natural Language Processing,conf/emnlp,emnlp{year},conf,,S4306418267,EMNLP,B,人工智能,1
 COLING,International Conference on Computational Linguistics,conf/coling,coling{year},conf,,S4306419219,COLING,B,人工智能,1
 ECCV,European Conference on Computer Vision,conf/eccv,eccv{year},conf,,S4306418318,ECCV,B,人工智能,1
@@ -15,7 +15,7 @@ AAMAS,International Conference on Autonomous Agents and Multi-Agent Systems,conf
 UAI,Conference on Uncertainty in Artificial Intelligence,conf/uai,uai{year},conf,,,UAI,B,人工智能,1
 ICAPS,International Conference on Automated Planning and Scheduling,conf/icaps,icaps{year},conf,,S4306419157,ICAPS,B,人工智能,1
 KR,International Conference on Principles of Knowledge Representation and Reasoning,conf/kr,kr{year},conf,,,KR,B,人工智能,1
-ECML-PKDD,European Conference on Machine Learning and Principles and Practice of Knowledge Discovery in Databases,conf/ecml,ecml{year},conf,,,ECML-PKDD,B,人工智能,1
+ECML-PKDD,European Conference on Machine Learning and Principles and Practice of Knowledge Discovery in Databases,conf/ecml,ecml{year},conf,,,ECML-PKDD,B,数据库/数据挖掘/内容检索,1
 ICRA,International Conference on Robotics and Automation,conf/icra,icra{year},conf,,S4306419799,ICRA,B,人工智能,1
 AI,Artificial Intelligence,journals/ai,,journal,0004-3702,S196139623,,A,人工智能,1
 TPAMI,IEEE Transactions on Pattern Analysis and Machine Intelligence,journals/pami,,journal,0162-8828,S199944782,,A,人工智能,1
@@ -23,7 +23,317 @@ IJCV,International Journal of Computer Vision,journals/ijcv,,journal,0920-5691,,
 JMLR,Journal of Machine Learning Research,journals/jmlr,,journal,1533-7928,,,A,人工智能,1
 JAIR,Journal of Artificial Intelligence Research,journals/jair,,journal,1076-9757,,,B,人工智能,1
 TACL,Transactions of the Association for Computational Linguistics,journals/tacl,,journal,2307-387X,,,B,人工智能,1
-CL,Computational Linguistics,journals/cl,,journal,0891-2017,,,B,人工智能,1
+CL,Computational Linguistics,journals/coling,,journal,0891-2017,,,B,人工智能,1
 TASLP,IEEE/ACM Transactions on Audio Speech and Language Processing,journals/taslp,,journal,2329-9290,,,B,人工智能,1
 TNNLS,IEEE Transactions on Neural Networks and Learning Systems,journals/tnn,,journal,2162-237X,,,B,人工智能,1
 PR,Pattern Recognition,journals/pr,,journal,0031-3203,,,B,人工智能,1
+SIGIR,International ACM SIGIR Conference on Research and Development in Information Retrieval,conf/sigir,sigir{year},conf,,,SIGIR,A,数据库/数据挖掘/内容检索,1
+SIGKDD,ACM SIGKDD Conference on Knowledge Discovery and Data Mining,conf/kdd,kdd{year},conf,,,KDD,A,数据库/数据挖掘/内容检索,1
+WWW,The Web Conference,conf/www,www{year},conf,,,WWW,A,交叉/综合/新兴,1
+ACM MM,ACM International Conference on Multimedia,conf/mm,mm{year},conf,,,ACM Multimedia,A,计算机图形学与多媒体,1
+WSDM,ACM International Conference on Web Search and Data Mining,conf/wsdm,wsdm{year},conf,,,WSDM,B,数据库/数据挖掘/内容检索,1
+CIKM,ACM International Conference on Information and Knowledge Management,conf/cikm,cikm{year},conf,,,CIKM,B,数据库/数据挖掘/内容检索,1
+COLT,Conference on Learning Theory,conf/colt,colt{year},conf,,,COLT,B,人工智能,1
+TOIS,ACM Transactions on Information Systems,journals/tois,,journal,1046-8188,,,A,数据库/数据挖掘/内容检索,1
+TKDE,IEEE Transactions on Knowledge and Data Engineering,journals/tkde,,journal,1041-4347,,,A,数据库/数据挖掘/内容检索,1
+TMM,IEEE Transactions on Multimedia,journals/tmm,,journal,1520-9210,,,A,计算机图形学与多媒体,1
+TKDD,ACM Transactions on Knowledge Discovery from Data,journals/tkdd,,journal,1556-4681,,,B,数据库/数据挖掘/内容检索,1
+TOMM,ACM Transactions on Multimedia Computing Communications and Applications,journals/tomccap,,journal,1551-6857,,,B,计算机图形学与多媒体,1
+TOCS,ACM Transactions on Computer Systems,journals/tocs,,journal,0734-2071,,,A,计算机体系结构/并行与分布计算/存储系统,1
+TOS,ACM Transactions on Storage,journals/tos,,journal,1553-3077,,,A,计算机体系结构/并行与分布计算/存储系统,1
+TCAD,IEEE Transactions on Computer-Aided Design of Integrated Circuits and Systems,journals/tcad,,journal,0278-0070,,,A,计算机体系结构/并行与分布计算/存储系统,1
+TC,IEEE Transactions on Computers,journals/tc,,journal,0018-9340,,,A,计算机体系结构/并行与分布计算/存储系统,1
+TPDS,IEEE Transactions on Parallel and Distributed Systems,journals/tpds,,journal,1045-9219,,,A,计算机体系结构/并行与分布计算/存储系统,1
+TACO,ACM Transactions on Architecture and Code Optimization,journals/taco,,journal,1544-3566,,,A,计算机体系结构/并行与分布计算/存储系统,1
+TAAS,ACM Transactions on Autonomous and Adaptive Systems,journals/taas,,journal,1556-4665,,,B,计算机体系结构/并行与分布计算/存储系统,1
+TODAES,ACM Transactions on Design Automation of Electronic Systems,journals/todaes,,journal,1084-4309,,,B,计算机体系结构/并行与分布计算/存储系统,1
+TECS,ACM Transactions on Embedded Computing Systems,journals/tecs,,journal,1539-9087,,,B,计算机体系结构/并行与分布计算/存储系统,1
+TRETS,ACM Transactions on Reconfigurable Technology and Systems,journals/trets,,journal,1936-7406,,,B,计算机体系结构/并行与分布计算/存储系统,1
+TVLSI,IEEE Transactions on Very Large Scale Integration (VLSI) Systems,journals/tvlsi,,journal,1063-8210,,,B,计算机体系结构/并行与分布计算/存储系统,1
+JPDC,Journal of Parallel and Distributed Computing,journals/jpdc,,journal,0743-7315,,,B,计算机体系结构/并行与分布计算/存储系统,1
+JSA,Journal of Systems Architecture: Embedded Software Design,journals/jsa,,journal,1383-7621,,,B,计算机体系结构/并行与分布计算/存储系统,1
+Parallel Computing,Parallel Computing,journals/pc,,journal,0167-8191,,,B,计算机体系结构/并行与分布计算/存储系统,1
+Performance Evaluation: An International Journal,Performance Evaluation: An International Journal,journals/pe,,journal,0166-5316,,,B,计算机体系结构/并行与分布计算/存储系统,1
+TCC Journal,IEEE Transactions on Cloud Computing,journals/tcc,,journal,2168-7161,,,B,计算机体系结构/并行与分布计算/存储系统,1
+PPoPP,ACM SIGPLAN Symposium on Principles & Practice of Parallel Programming,conf/ppopp,,conf,,,PPoPP,A,计算机体系结构/并行与分布计算/存储系统,1
+FAST,USENIX Conference on File and Storage Technologies,conf/fast,,conf,,,FAST,A,计算机体系结构/并行与分布计算/存储系统,1
+DAC,Design Automation Conference,conf/dac,,conf,,,DAC,A,计算机体系结构/并行与分布计算/存储系统,1
+HPCA,IEEE International Symposium on High Performance Computer Architecture,conf/hpca,,conf,,,HPCA,A,计算机体系结构/并行与分布计算/存储系统,1
+MICRO,IEEE/ACM International Symposium on Microarchitecture,conf/micro,,conf,,,MICRO,A,计算机体系结构/并行与分布计算/存储系统,1
+SC,"International Conference for High Performance Computing, Networking, Storage, and Analysis",conf/sc,,conf,,,SC,A,计算机体系结构/并行与分布计算/存储系统,1
+ASPLOS,International Conference on Architectural Support for Programming Languages and Operating Systems,conf/asplos,,conf,,,ASPLOS,A,计算机体系结构/并行与分布计算/存储系统,1
+ISCA,International Symposium on Computer Architecture,conf/isca,,conf,,,ISCA,A,计算机体系结构/并行与分布计算/存储系统,1
+ACM SIGOPS ATC,ACM SIGOPS Annual Technical Conference,conf/usenix,,conf,,,ACM SIGOPS ATC,A,计算机体系结构/并行与分布计算/存储系统,1
+EuroSys,European Conference on Computer Systems,conf/eurosys,,conf,,,EuroSys,A,计算机体系结构/并行与分布计算/存储系统,1
+HPDC,The International ACM Symposium on High-Performance Parallel and Distributed Computing,conf/hpdc,,conf,,,HPDC,A,计算机体系结构/并行与分布计算/存储系统,1
+SoCC,ACM Symposium on Cloud Computing,conf/cloud,,conf,,,SoCC,B,计算机体系结构/并行与分布计算/存储系统,1
+SPAA,ACM Symposium on Parallelism in Algorithms and Architectures,conf/spaa,,conf,,,SPAA,B,计算机体系结构/并行与分布计算/存储系统,1
+PODC,ACM Symposium on Principles of Distributed Computing,conf/podc,,conf,,,PODC,B,计算机体系结构/并行与分布计算/存储系统,1
+FPGA,ACM/SIGDA International Symposium on Field-Programmable Gate Arrays,conf/fpga,,conf,,,FPGA,B,计算机体系结构/并行与分布计算/存储系统,1
+CGO,The International Symposium on Code Generation and Optimization,conf/cgo,,conf,,,CGO,B,计算机体系结构/并行与分布计算/存储系统,1
+DATE,"Design, Automation & Test in Europe",conf/date,,conf,,,DATE,B,计算机体系结构/并行与分布计算/存储系统,1
+HOT CHIPS,Hot Chips: A Symposium on High Performance Chips,conf/hotchips,,conf,,,HOT CHIPS,B,计算机体系结构/并行与分布计算/存储系统,1
+CLUSTER,IEEE International Conference on Cluster Computing,conf/cluster,,conf,,,CLUSTER,B,计算机体系结构/并行与分布计算/存储系统,1
+ICCD,International Conference on Computer Design,conf/iccd,,conf,,,ICCD,B,计算机体系结构/并行与分布计算/存储系统,1
+ICCAD,International Conference on Computer-Aided Design,conf/iccad,,conf,,,ICCAD,B,计算机体系结构/并行与分布计算/存储系统,1
+ICDCS,IEEE International Conference on Distributed Computing Systems,conf/icdcs,,conf,,,ICDCS,B,计算机体系结构/并行与分布计算/存储系统,1
+CODES+ISSS,International Conference on Hardware/Software Co-design and System Synthesis,conf/codesisss,,conf,,,CODES+ISSS,B,计算机体系结构/并行与分布计算/存储系统,1
+HiPEAC,International Conference on High Performance and Embedded Architectures and Compilers,conf/hipeac,,conf,,,HiPEAC,B,计算机体系结构/并行与分布计算/存储系统,1
+SIG- METRICS,International Conference on Measurement and Modeling of Computer Systems,conf/sigmetrics,,conf,,,SIG- METRICS,B,计算机体系结构/并行与分布计算/存储系统,1
+PACT,International Conference on Parallel Architectures and Compilation Techniques,conf/IEEEpact,,conf,,,PACT,B,计算机体系结构/并行与分布计算/存储系统,1
+ICPP,International Conference on Parallel Processing,conf/icpp,,conf,,,ICPP,B,计算机体系结构/并行与分布计算/存储系统,1
+ICS,International Conference on Supercomputing,conf/ics,,conf,,,ICS,B,计算机体系结构/并行与分布计算/存储系统,1
+VEE,International Conference on Virtual Execution Environments,conf/vee,,conf,,,VEE,B,计算机体系结构/并行与分布计算/存储系统,1
+IPDPS,IEEE International Parallel & Distributed Processing Symposium,conf/ipps,,conf,,,IPDPS,B,计算机体系结构/并行与分布计算/存储系统,1
+Performance,"International Symposium on Computer Performance, Modeling, Measurements and Evaluation",conf/performance,,conf,,,Performance,B,计算机体系结构/并行与分布计算/存储系统,1
+ITC,International Test Conference,conf/itc,,conf,,,ITC,B,计算机体系结构/并行与分布计算/存储系统,1
+LISA,Large Installation System Administration Conference,conf/lisa,,conf,,,LISA,B,计算机体系结构/并行与分布计算/存储系统,1
+MSST,Mass Storage Systems and Technologies,conf/mss,,conf,,,MSST,B,计算机体系结构/并行与分布计算/存储系统,1
+RTAS,IEEE Real-Time and Embedded Technology and Applications Symposium,conf/rtas,,conf,,,RTAS,B,计算机体系结构/并行与分布计算/存储系统,1
+Euro-Par,European Conference on Parallel and Distributed Computing Springer,conf/europar,,conf,,,Euro-Par,B,计算机体系结构/并行与分布计算/存储系统,1
+ISCAS,IEEE International Symposium on Circuits and Systems,conf/iscas,,conf,,,ISCAS,B,计算机体系结构/并行与分布计算/存储系统,1
+JSAC,IEEE Journal on Selected Areas in Communications,journals/jsac,,journal,0733-8716,,,A,计算机网络,1
+TMC,IEEE Transactions on Mobile Computing,journals/tmc,,journal,1536-1233,,,A,计算机网络,1
+TON,IEEE Transactions on Networking,journals/ton,,journal,2998-4157,,,A,计算机网络,1
+TOIT,ACM Transactions on Internet Technology,journals/toit,,journal,1533-5399,,,B,计算机网络,1
+TOSN,ACM Transactions on Sensor Networks,journals/tosn,,journal,1550-4859,,,B,计算机网络,1
+CN,Computer Networks,journals/cn,,journal,1389-1286,,,B,计算机网络,1
+TCOM,IEEE Transactions on Communications,journals/tcom,,journal,0090-6778,,,B,计算机网络,1
+TWC,IEEE Transactions on Wireless Communications,journals/twc,,journal,1536-1276,,,B,计算机网络,1
+SIGCOMM,"ACM International Conference on Applications, Technologies, Architectures, and Protocols for Computer Communication",conf/sigcomm,,conf,,,SIGCOMM,A,计算机网络,1
+MobiCom,ACM International Conference on Mobile Computing and Networking,conf/mobicom,,conf,,,MobiCom,A,计算机网络,1
+INFOCOM,IEEE International Conference on Computer Communications,conf/infocom,,conf,,,INFOCOM,A,计算机网络,1
+NSDI,Symposium on Network System Design and Implementation,conf/nsdi,,conf,,,NSDI,A,计算机网络,1
+SenSys,ACM Conference on Embedded Networked Sensor Systems,conf/sensys,,conf,,,SenSys,B,计算机网络,1
+CoNEXT,ACM International Conference on Emerging Networking Experiments and Technologies,conf/conext,,conf,,,CoNEXT,B,计算机网络,1
+SECON,"IEEE International Conference on Sensing, Communication, and Networking",conf/secon,,conf,,,SECON,B,计算机网络,1
+IPSN,International Conference on Information Processing in Sensor Networks,conf/ipsn,,conf,,,IPSN,B,计算机网络,1
+MobiSys,"ACM International Conference on Mobile Systems, Applications, and Services",conf/mobisys,,conf,,,MobiSys,B,计算机网络,1
+ICNP,IEEE International Conference on Network Protocols,conf/icnp,,conf,,,ICNP,B,计算机网络,1
+MobiHoc,"International Symposium on Theory, Algorithmic Foundations, and Protocol Design for Mobile Networks and Mobile Computing",conf/mobihoc,,conf,,,MobiHoc,B,计算机网络,1
+NOSSDAV,International Workshop on Network and Operating System Support for Digital Audio and Video,conf/nossdav,,conf,,,NOSSDAV,B,计算机网络,1
+IWQoS,IEEE/ACM International Workshop on Quality of Service,conf/iwqos,,conf,,,IWQoS,B,计算机网络,1
+IMC,ACM Internet Measurement Conference,conf/imc,,conf,,,IMC,B,计算机网络,1
+TDSC,IEEE Transactions on Dependable and Secure Computing,journals/tdsc,,journal,1545-5971,,,A,网络与信息安全,1
+TIFS,IEEE Transactions on Information Forensics and Security,journals/tifs,,journal,1556-6013,,,A,网络与信息安全,1
+Journal of Cryptology,Journal of Cryptology,journals/joc,,journal,0933-2790,,,A,网络与信息安全,1
+TOPS,ACM Transactions on Privacy and Security,journals/tissec,,journal,2471-2566,,,B,网络与信息安全,1
+Computers & Security,Computers & Security,journals/compsec,,journal,0167-4048,,,B,网络与信息安全,1
+"Designs, Codes and Cryptography","Designs, Codes and Cryptography",journals/dcc,,journal,0925-1022,,,B,网络与信息安全,1
+JCS,Journal of Computer Security,journals/jcs,,journal,0926-227X,,,B,网络与信息安全,1
+Cybersecurity,Cybersecurity,journals/cybersec,,journal,2523-3246,,,B,网络与信息安全,1
+CCS,ACM Conference on Computer and Communications Security,conf/ccs,,conf,,,CCS,A,网络与信息安全,1
+EUROCRYPT,International Conference on the Theory and Applications of Cryptographic Techniques,conf/eurocrypt,,conf,,,EUROCRYPT,A,网络与信息安全,1
+S&P,IEEE Symposium on Security and Privacy,conf/sp,,conf,,,S&P,A,网络与信息安全,1
+CRYPTO,International Cryptology Conference,conf/crypto,,conf,,,CRYPTO,A,网络与信息安全,1
+USENIX Security,USENIX Security Symposium,conf/uss,,conf,,,USENIX Security,A,网络与信息安全,1
+NDSS,Network and Distributed System Security Symposium,conf/ndss,,conf,,,NDSS,A,网络与信息安全,1
+ACSAC,Annual Computer Security Applications Conference,conf/acsac,,conf,,,ACSAC,B,网络与信息安全,1
+ASIACRYPT,Annual International Conference on the Theory and Application of Cryptology and Information Security,conf/asiacrypt,,conf,,,ASIACRYPT,B,网络与信息安全,1
+ESORICS,European Symposium on Research in Computer Security,conf/esorics,,conf,,,ESORICS,B,网络与信息安全,1
+FSE (Crypto),Fast Software Encryption,conf/fse,,conf,,,FSE (Crypto),B,网络与信息安全,1
+CSFW,IEEE Computer Security Foundations Workshop,conf/csfw,,conf,,,CSFW,B,网络与信息安全,1
+SRDS,IEEE International Symposium on Reliable Distributed Systems,conf/srds,,conf,,,SRDS,B,网络与信息安全,1
+CHES,International Conference on Cryptographic Hardware and Embedded Systems,conf/ches,,conf,,,CHES,B,网络与信息安全,1
+DSN,International Conference on Dependable Systems and Networks,conf/dsn,,conf,,,DSN,B,网络与信息安全,1
+RAID,International Symposium on Recent Advances in Intrusion Detection,conf/raid,,conf,,,RAID,B,网络与信息安全,1
+PKC,International Workshop on Practice and Theory in Public Key Cryptography,conf/pkc,,conf,,,PKC,B,网络与信息安全,1
+TCC,Theory of Cryptography Conference,conf/tcc,,conf,,,TCC,B,网络与信息安全,1
+TOPLAS,ACM Transactions on Programming Languages and Systems,journals/toplas,,journal,0164-0925,,,A,软件工程/系统软件/程序设计语言,1
+TOSEM,ACM Transactions on Software Engineering and Methodology,journals/tosem,,journal,1049-331X,,,A,软件工程/系统软件/程序设计语言,1
+TSE,IEEE Transactions on Software Engineering,journals/tse,,journal,0098-5589,,,A,软件工程/系统软件/程序设计语言,1
+TSC,IEEE Transactions on Services Computing,journals/tsc,,journal,1939-1374,,,A,软件工程/系统软件/程序设计语言,1
+ASE Journal,Automated Software Engineering,journals/ase,,journal,0928-8910,,,B,软件工程/系统软件/程序设计语言,1
+ESE,Empirical Software Engineering,journals/ese,,journal,1382-3256,,,B,软件工程/系统软件/程序设计语言,1
+IETS,IET Software,journals/iet-sen,,journal,1751-8806,,,B,软件工程/系统软件/程序设计语言,1
+IST,Information and Software Technology,journals/infsof,,journal,0950-5849,,,B,软件工程/系统软件/程序设计语言,1
+JFP,Journal of Functional Programming,journals/jfp,,journal,0956-7968,,,B,软件工程/系统软件/程序设计语言,1
+Journal of Software: Evolution and Process,Journal of Software: Evolution and Process,journals/smr,,journal,2047-7473,,,B,软件工程/系统软件/程序设计语言,1
+JSS,Journal of Systems and Software,journals/jss,,journal,0164-1212,,,B,软件工程/系统软件/程序设计语言,1
+RE Journal,Requirements Engineering,journals/re,,journal,0947-3602,,,B,软件工程/系统软件/程序设计语言,1
+SCP,Science of Computer Programming,journals/scp,,journal,0167-6423,,,B,软件工程/系统软件/程序设计语言,1
+SoSyM,Software and Systems Modeling,journals/sosym,,journal,1619-1366,,,B,软件工程/系统软件/程序设计语言,1
+STVR,"Software Testing, Verification and Reliability",journals/stvr,,journal,0960-0833,,,B,软件工程/系统软件/程序设计语言,1
+SPE,Software: Practice and Experience,journals/spe,,journal,0038-0644,,,B,软件工程/系统软件/程序设计语言,1
+PLDI,ACM SIGPLAN Conference on Programming Language Design and Implementation,conf/pldi,,conf,,,PLDI,A,软件工程/系统软件/程序设计语言,1
+POPL,ACM SIGPLAN-SIGACT Symposium on Principles of Programming Languages,conf/popl,,conf,,,POPL,A,软件工程/系统软件/程序设计语言,1
+FSE,ACM International Conference on the Foundations of Software Engineering,conf/sigsoft,,conf,,,FSE,A,软件工程/系统软件/程序设计语言,1
+SOSP,ACM Symposium on Operating Systems Principles,conf/sosp,,conf,,,SOSP,A,软件工程/系统软件/程序设计语言,1
+OOPSLA,"Conference on Object-Oriented Programming Systems, Languages, and Applications",conf/oopsla,,conf,,,OOPSLA,A,软件工程/系统软件/程序设计语言,1
+ASE,International Conference on Automated Software Engineering,conf/kbse,,conf,,,ASE,A,软件工程/系统软件/程序设计语言,1
+ICSE,International Conference on Software Engineering,conf/icse,,conf,,,ICSE,A,软件工程/系统软件/程序设计语言,1
+ISSTA,International Symposium on Software Testing and Analysis,conf/issta,,conf,,,ISSTA,A,软件工程/系统软件/程序设计语言,1
+OSDI,USENIX Symposium on Operating Systems Design and Implementation,conf/osdi,,conf,,,OSDI,A,软件工程/系统软件/程序设计语言,1
+FM,International Symposium on Formal Methods,conf/fm,,conf,,,FM,A,软件工程/系统软件/程序设计语言,1
+ECOOP,European Conference on Object-Oriented Programming,conf/ecoop,,conf,,,ECOOP,B,软件工程/系统软件/程序设计语言,1
+ETAPS,European Joint Conferences on Theory and Practice of Software,conf/etaps,,conf,,,ETAPS,B,软件工程/系统软件/程序设计语言,1
+ICPC,IEEE International Conference on Program Comprehension,conf/iwpc,,conf,,,ICPC,B,软件工程/系统软件/程序设计语言,1
+RE,IEEE International Requirements Engineering Conference,conf/re,,conf,,,RE,B,软件工程/系统软件/程序设计语言,1
+CAiSE,International Conference on Advanced Information Systems Engineering,conf/caise,,conf,,,CAiSE,B,软件工程/系统软件/程序设计语言,1
+ICFP,ACM SIGPLAN International Conference on Function Programming,conf/icfp,,conf,,,ICFP,B,软件工程/系统软件/程序设计语言,1
+LCTES,"ACM SIGPLAN/SIGBED International Conference on Languages, Compilers and Tools for Embedded Systems",conf/lctrts,,conf,,,LCTES,B,软件工程/系统软件/程序设计语言,1
+MoDELS,ACM/IEEE International Conference on Model Driven EngineeringLanguages and Systems,conf/models,,conf,,,MoDELS,B,软件工程/系统软件/程序设计语言,1
+CP,International Conference on Principles and Practice of Constraint Programming,conf/cp,,conf,,,CP,B,软件工程/系统软件/程序设计语言,1
+ICSOC,International Conference on Service Oriented Computing,conf/icsoc,,conf,,,ICSOC,B,软件工程/系统软件/程序设计语言,1
+SANER,"IEEE International Conference on Software Analysis, Evolution, and Reengineering",conf/wcre,,conf,,,SANER,B,软件工程/系统软件/程序设计语言,1
+ICSME,International Conference on Software Maintenance and Evolution,conf/icsm,,conf,,,ICSME,B,软件工程/系统软件/程序设计语言,1
+VMCAI,"International Conference on Verification, Model Checking and Abstract Interpretation",conf/vmcai,,conf,,,VMCAI,B,软件工程/系统软件/程序设计语言,1
+ICWS,IEEE International Conference on Web Services,conf/icws,,conf,,,ICWS,B,软件工程/系统软件/程序设计语言,1
+Middleware,International Middleware Conference,conf/middleware,,conf,,,Middleware,B,软件工程/系统软件/程序设计语言,1
+SAS,International Static Analysis Symposium,conf/sas,,conf,,,SAS,B,软件工程/系统软件/程序设计语言,1
+ESEM,International Symposium on Empirical Software Engineering and Measurement,conf/esem,,conf,,,ESEM,B,软件工程/系统软件/程序设计语言,1
+ISSRE,IEEE International Symposium on Software Reliability Engineering,conf/issre,,conf,,,ISSRE,B,软件工程/系统软件/程序设计语言,1
+HotOS,USENIX Workshop on Hot Topics in Operating Systems,conf/hotos,,conf,,,HotOS,B,软件工程/系统软件/程序设计语言,1
+CC,International Conference on Compiler Construction,conf/cc,,conf,,,CC,B,软件工程/系统软件/程序设计语言,1
+TODS,ACM Transactions on Database Systems,journals/tods,,journal,0362-5915,,,A,数据库/数据挖掘/内容检索,1
+VLDBJ,The VLDB Journal,journals/vldb,,journal,0949-877X,,,A,数据库/数据挖掘/内容检索,1
+TWEB,ACM Transactions on the Web,journals/tweb,,journal,1559-1131,,,B,数据库/数据挖掘/内容检索,1
+AEI,Advanced Engineering Informatics,journals/aei,,journal,1474-0346,,,B,数据库/数据挖掘/内容检索,1
+DKE,Data & Knowledge Engineering,journals/dke,,journal,0169-023X,,,B,数据库/数据挖掘/内容检索,1
+DMKD,Data Mining and Knowledge Discovery,journals/datamine,,journal,1384-5810,,,B,数据库/数据挖掘/内容检索,1
+EJIS,European Journal of Information Systems,journals/ejis,,journal,0960-085X,,,B,数据库/数据挖掘/内容检索,1
+GeoInformatica,GeoInformatica,journals/geoinformatica,,journal,1384-6175,,,B,数据库/数据挖掘/内容检索,1
+IPM,Information Processing and Management,journals/ipm,,journal,0306-4573,,,B,数据库/数据挖掘/内容检索,1
+Information Sciences,Information Sciences,journals/isci,,journal,0020-0255,,,B,数据库/数据挖掘/内容检索,1
+IS,Information Systems,journals/is,,journal,0306-4379,,,B,数据库/数据挖掘/内容检索,1
+JASIST,Journal of the Association for Information Science and Technology,journals/jasis,,journal,2330-1635,,,B,数据库/数据挖掘/内容检索,1
+JWS,Journal of Web Semantics,journals/ws,,journal,1570-8268,,,B,数据库/数据挖掘/内容检索,1
+KAIS,Knowledge and Information Systems,journals/kais,,journal,0219-1377,,,B,数据库/数据挖掘/内容检索,1
+DSE,Data Science and Engineering,journals/dase,,journal,2364-1185,,,B,数据库/数据挖掘/内容检索,1
+SIGMOD,ACM SIGMOD Conference,conf/sigmod,,conf,,,SIGMOD,A,数据库/数据挖掘/内容检索,1
+ICDE,IEEE International Conference on Data Engineering,conf/icde,,conf,,,ICDE,A,数据库/数据挖掘/内容检索,1
+VLDB,International Conference on Very Large Data Bases,conf/vldb,,conf,,,VLDB,A,数据库/数据挖掘/内容检索,1
+PODS,ACM SIGMOD-SIGACT-SIGAI Symposium on Principles of Database Systems,conf/pods,,conf,,,PODS,B,数据库/数据挖掘/内容检索,1
+DASFAA,International Conference on Database Systems for Advanced Applications,conf/dasfaa,,conf,,,DASFAA,B,数据库/数据挖掘/内容检索,1
+ISWC,IEEE International Semantic Web Conference,conf/semweb,,conf,,,ISWC,B,数据库/数据挖掘/内容检索,1
+ICDM,IEEE International Conference on Data Mining,conf/icdm,,conf,,,ICDM,B,数据库/数据挖掘/内容检索,1
+ICDT,International Conference on Database Theory,conf/icdt,,conf,,,ICDT,B,数据库/数据挖掘/内容检索,1
+EDBT,International Conference on Extending Database Technology,conf/edbt,,conf,,,EDBT,B,数据库/数据挖掘/内容检索,1
+CIDR,Conference on Innovative Data Systems Research,conf/cidr,,conf,,,CIDR,B,数据库/数据挖掘/内容检索,1
+SDM,SIAM International Conference on Data Mining,conf/sdm,,conf,,,SDM,B,数据库/数据挖掘/内容检索,1
+RecSys,ACM Conference on Recommender Systems,conf/recsys,,conf,,,RecSys,B,数据库/数据挖掘/内容检索,1
+WISE,Web Information Systems Engineering Conference,conf/wise,,conf,,,WISE,B,数据库/数据挖掘/内容检索,1
+TIT,IEEE Transactions on Information Theory,journals/tit,,journal,0018-9448,,,A,计算机科学理论,1
+IANDC,Information and Computation,journals/iandc,,journal,0890-5401,,,A,计算机科学理论,1
+SICOMP,SIAM Journal on Computing,journals/siamcomp,,journal,0097-5397,,,A,计算机科学理论,1
+TALG,ACM Transactions on Algorithms,journals/talg,,journal,1549-6325,,,B,计算机科学理论,1
+TOCL,ACM Transactions on Computational Logic,journals/tocl,,journal,1529-3785,,,B,计算机科学理论,1
+TOMS,ACM Transactions on Mathematical Software,journals/toms,,journal,0098-3500,,,B,计算机科学理论,1
+Algorithmica,Algorithmica,journals/algorithmica,,journal,0178-4617,,,B,计算机科学理论,1
+CC Journal,Computational Complexity,journals/cc,,journal,1016-3328,,,B,计算机科学理论,1
+FAC,Formal Aspects of Computing,journals/fac,,journal,0934-5043,,,B,计算机科学理论,1
+FMSD,Formal Methods in System Design,journals/fmsd,,journal,0925-9856,,,B,计算机科学理论,1
+INFORMS,INFORMS Journal on Computing,journals/informs,,journal,0899-1499,,,B,计算机科学理论,1
+JCSS,Journal of Computer and System Sciences,journals/jcss,,journal,0022-0000,,,B,计算机科学理论,1
+JGO,Journal of Global Optimization,journals/jgo,,journal,0925-5001,,,B,计算机科学理论,1
+JSC,Journal of Symbolic Computation,journals/jsc,,journal,0747-7171,,,B,计算机科学理论,1
+MSCS,Mathematical Structures in Computer Science,journals/mscs,,journal,0960-1295,,,B,计算机科学理论,1
+TCS,Theoretical Computer Science,journals/tcs,,journal,0304-3975,,,B,计算机科学理论,1
+STOC,ACM Symposium on the Theory of Computing,conf/stoc,,conf,,,STOC,A,计算机科学理论,1
+SODA,ACM-SIAM Symposium on Discrete Algorithms,conf/soda,,conf,,,SODA,A,计算机科学理论,1
+CAV,International Conference on Computer Aided Verification,conf/cav,,conf,,,CAV,A,计算机科学理论,1
+FOCS,IEEE Annual Symposium on Foundations of Computer Science,conf/focs,,conf,,,FOCS,A,计算机科学理论,1
+LICS,ACM/IEEE Symposium on Logic in Computer Science,conf/lics,,conf,,,LICS,A,计算机科学理论,1
+SoCG,International Symposium on Computational Geometry,conf/compgeom,,conf,,,SoCG,B,计算机科学理论,1
+ESA,European Symposium on Algorithms,conf/esa,,conf,,,ESA,B,计算机科学理论,1
+CCC,Conference on Computational Complexity,conf/coco,,conf,,,CCC,B,计算机科学理论,1
+ICALP,"International Colloquium on Automata, Languages and Programming",conf/icalp,,conf,,,ICALP,B,计算机科学理论,1
+CADE,Conference on Automated Deduction,conf/cade,,conf,,,CADE,B,计算机科学理论,1
+CONCUR,International Conference on Concurrency Theory,conf/concur,,conf,,,CONCUR,B,计算机科学理论,1
+HSCC,International Conference on Hybrid Systems: Computation and Control,conf/hybrid,,conf,,,HSCC,B,计算机科学理论,1
+SAT,International Conference on Theory and Applications of Satisfiability Testing,conf/sat,,conf,,,SAT,B,计算机科学理论,1
+COCOON,International Computing and Combinatorics Conference,conf/cocoon,,conf,,,COCOON,B,计算机科学理论,1
+FMCAD,Formal Methods in Computer-Aided Design,conf/fmcad,,conf,,,FMCAD,B,计算机科学理论,1
+TOG,ACM Transactions on Graphics,journals/tog,,journal,0730-0301,,,A,计算机图形学与多媒体,1
+TIP,IEEE Transactions on Image Processing,journals/tip,,journal,1057-7149,,,A,计算机图形学与多媒体,1
+TVCG,IEEE Transactions on Visualization and Computer Graphics,journals/tvcg,,journal,1077-2626,,,A,计算机图形学与多媒体,1
+CAGD,Computer Aided Geometric Design,journals/cagd,,journal,0167-8396,,,B,计算机图形学与多媒体,1
+CGF,Computer Graphics Forum,journals/cgf,,journal,0167-7055,,,B,计算机图形学与多媒体,1
+CAD,Computer-Aided Design,journals/cad,,journal,0010-4485,,,B,计算机图形学与多媒体,1
+TCSVT,IEEE Transactions on Circuits and Systems for Video Technology,journals/tcsv,,journal,1051-8215,,,B,计算机图形学与多媒体,1
+JASA,The Journal of the Acoustical Society of America,,,journal,0001-4966,,,B,计算机图形学与多媒体,1
+SIIMS,SIAM Journal on Imaging Sciences,journals/siamis,,journal,1936-4954,,,B,计算机图形学与多媒体,1
+SPECOM,Speech Communication,journals/speech,,journal,0167-6393,,,B,计算机图形学与多媒体,1
+CVMJ,Computational Visual Media,journals/cvm,,journal,2096-0433,,,B,计算机图形学与多媒体,1
+SIGGRAPH,ACM Special Interest Group on Computer Graphics,conf/siggraph,,conf,,,SIGGRAPH,A,计算机图形学与多媒体,1
+VR,IEEE Conference on Virtual Reality and 3D User Interfaces,conf/vr,,conf,,,VR,A,计算机图形学与多媒体,1
+IEEE VIS,IEEE Visualization Conference,conf/visualization,,conf,,,IEEE VIS,A,计算机图形学与多媒体,1
+ICMR,ACM SIGMM International Conference on Multimedia Retrieval,conf/mir,,conf,,,ICMR,B,计算机图形学与多媒体,1
+I3D,ACM SIGGRAPH Symposium on Interactive 3D Graphics and Games,conf/si3d,,conf,,,I3D,B,计算机图形学与多媒体,1
+SCA,ACM SIGGRAPH/Eurographics Symposium on Computer Animation,conf/sca,,conf,,,SCA,B,计算机图形学与多媒体,1
+DCC,Data Compression Conference,conf/dcc,,conf,,,DCC,B,计算机图形学与多媒体,1
+Eurographics,Annual Conference of the European Association for Computer Graphics,conf/eurographics,,conf,,,Eurographics,B,计算机图形学与多媒体,1
+EuroVis,Eurographics Conference on Visualization,conf/vissym,,conf,,,EuroVis,B,计算机图形学与多媒体,1
+SGP,Eurographics Symposium on Geometry Processing,conf/sgp,,conf,,,SGP,B,计算机图形学与多媒体,1
+EGSR,Eurographics Symposium on Rendering,conf/rt,,conf,,,EGSR,B,计算机图形学与多媒体,1
+ICASSP,"IEEE International Conference on Acoustics, Speech and Signal Processing",conf/icassp,,conf,,,ICASSP,B,计算机图形学与多媒体,1
+ICME,IEEE International Conference on Multimedia & Expo,conf/icmcs,,conf,,,ICME,B,计算机图形学与多媒体,1
+ISMAR,International Symposium on Mixed and Augmented Reality,conf/ismar,,conf,,,ISMAR,B,计算机图形学与多媒体,1
+PG,Pacific Conference onComputer Graphics and Applications,conf/pg,,conf,,,PG,B,计算机图形学与多媒体,1
+SPM,Symposium on Solid and Physical Modeling,conf/sma,,conf,,,SPM,B,计算机图形学与多媒体,1
+INTER- SPEECH,Conference of the International Speech Communication Association,conf/interspeech,,conf,,,INTER- SPEECH,B,计算机图形学与多媒体,1
+TAP,ACM Transactions on Applied Perception,journals/tap,,journal,1544-3558,,,B,人工智能,1
+JAAMAS,Autonomous Agents and Multi-Agent Systems,journals/aamas,,journal,1387-2532,,,B,人工智能,1
+CVIU,Computer Vision and Image Understanding,journals/cviu,,journal,1077-3142,,,B,人工智能,1
+Evolutionary Computation,Evolutionary Computation,journals/ec,,journal,1063-6560,,,B,人工智能,1
+TAC,IEEE Transactions on Affective Computing,journals/taffco,,journal,1949-3045,,,B,人工智能,1
+IEEE Transactions on Cybernetics,IEEE Transactions on Cybernetics,journals/tcyb,,journal,2168-2267,,,B,人工智能,1
+TEC,IEEE Transactions on Evolutionary Computation,journals/tec,,journal,1089-778X,,,B,人工智能,1
+TFS,IEEE Transactions on Fuzzy Systems,journals/tfs,,journal,1063-6706,,,B,人工智能,1
+IJAR,International Journal of Approximate Reasoning,journals/ijar,,journal,0888-613X,,,B,人工智能,1
+Journal of Automated Reasoning,Journal of Automated Reasoning,journals/jar,,journal,0168-7433,,,B,人工智能,1
+JSLHR,"Journal of Speech, Language, and Hearing Research",,,journal,1092-4388,,,B,人工智能,1
+Machine Learning,Machine Learning,journals/ml,,journal,0885-6125,,,B,人工智能,1
+Neural Computation,Neural Computation,journals/neco,,journal,0899-7667,,,B,人工智能,1
+Neural Networks,Neural Networks,journals/nn,,journal,0893-6080,,,B,人工智能,1
+ICCBR,International Conference on Case-Based Reasoning,conf/iccbr,,conf,,,ICCBR,B,人工智能,1
+PPSN,Parallel Problem Solving from Nature,conf/ppsn,,conf,,,PPSN,B,人工智能,1
+NAACL,North American Chapter of the Association for Computational Linguistics,conf/naacl,,conf,,,NAACL,B,人工智能,1
+TOCHI,ACM Transactions on Computer-Human Interaction,journals/tochi,,journal,1073-0516,,,A,人机交互与普适计算,1
+IJHCS,International Journal of Human-Computer Studies,journals/ijmms,,journal,1071-5819,,,A,人机交互与普适计算,1
+CSCW Journal,Computer Supported Cooperative Work,journals/cscw,,journal,0925-9724,,,B,人机交互与普适计算,1
+HCI,Human-Computer Interaction,journals/hhci,,journal,0737-0024,,,B,人机交互与普适计算,1
+IEEE Transactions on Human-Machine Systems,IEEE Transactions on Human-Machine Systems,journals/thms,,journal,2168-2291,,,B,人机交互与普适计算,1
+IWC,Interacting with Computers,journals/iwc,,journal,0953-5438,,,B,人机交互与普适计算,1
+IJHCI,International Journal of Human-Computer Interaction,journals/ijhci,,journal,1044-7318,,,B,人机交互与普适计算,1
+UMUAI,User Modeling and User-Adapted Interaction,journals/umuai,,journal,0924-1868,,,B,人机交互与普适计算,1
+TSMC,"IEEE Transactions on Systems, Man,and Cybernetics: Systems",journals/tsmc,,journal,2168-2216,,,B,人机交互与普适计算,1
+CCF TPCI,CCF Transactions on Pervasive Computing and Interaction,journals/ccftpci,,journal,2524-521X,,,B,人机交互与普适计算,1
+CSCW,ACM Conference On Computer-Supported Cooperative Work And Social Computing,conf/cscw,,conf,,,CSCW,A,人机交互与普适计算,1
+CHI,ACM Conference on Human Factors in Computing Systems,conf/chi,,conf,,,CHI,A,人机交互与普适计算,1
+UbiComp,ACM international joint conference on Pervasive and Ubiquitous Computing,conf/huc,,conf,,,UbiComp,A,人机交互与普适计算,1
+UIST,ACM Symposium on User Interface Software and Technology,conf/uist,,conf,,,UIST,A,人机交互与普适计算,1
+GROUP,ACM International Conference on Supporting Group Work,conf/group,,conf,,,GROUP,B,人机交互与普适计算,1
+IUI,ACM International Conference on Intelligent User Interfaces,conf/iui,,conf,,,IUI,B,人机交互与普适计算,1
+ISS,ACM International Conference on Interactive Surfaces and Spaces,conf/tabletop,,conf,,,ISS,B,人机交互与普适计算,1
+ECSCW,European Conference on Computer Supported Cooperative Work,conf/ecscw,,conf,,,ECSCW,B,人机交互与普适计算,1
+PERCOM,IEEE International Conference on Pervasive Computing and Communications,conf/percom,,conf,,,PERCOM,B,人机交互与普适计算,1
+MobileHCI,ACM International Conference on Mobile Human- Computer Interaction,conf/mhci,,conf,,,MobileHCI,B,人机交互与普适计算,1
+ICWSM,The International AAAI Conference on Web and Social Media,conf/icwsm,,conf,,,ICWSM,B,人机交互与普适计算,1
+JACM,Journal of the ACM,journals/jacm,,journal,0004-5411,,,A,交叉/综合/新兴,1
+Proc. IEEE,Proceedings of the IEEE,journals/pieee,,journal,0018-9219,,,A,交叉/综合/新兴,1
+SCIS,Science China Information Sciences,journals/chinaf,,journal,1674-733X,,,A,交叉/综合/新兴,1
+Bioinformatics,Bioinformatics,journals/bioinformatics,,journal,1367-4803,,,A,交叉/综合/新兴,1
+Briefings in Bioinformatics,Briefings in Bioinformatics,journals/bib,,journal,1467-5463,,,B,交叉/综合/新兴,1
+Cognition,Cognition,,,journal,0010-0277,,,B,交叉/综合/新兴,1
+TASAE,IEEE Transactions on Automation Science and Engineering,journals/tase,,journal,1545-5955,,,B,交叉/综合/新兴,1
+TGARS,IEEE Transactions on Geoscience and Remote Sensing,journals/tgrs,,journal,0196-2892,,,B,交叉/综合/新兴,1
+TITS,IEEE Transactions on Intelligent Transportation Systems,journals/tits,,journal,1524-9050,,,B,交叉/综合/新兴,1
+TMI,IEEE Transactions on Medical Imaging,journals/tmi,,journal,0278-0062,,,B,交叉/综合/新兴,1
+TR,IEEE Transactions on Robotics,journals/trob,,journal,1552-3098,,,B,交叉/综合/新兴,1
+TCBB,IEEE/ACM Transactions on Computational Biology and Bioinformatics,journals/tcbb,,journal,1545-5963,,,B,交叉/综合/新兴,1
+JCST,Journal of Computer Science and Technology,journals/jcst,,journal,1000-9000,,,B,交叉/综合/新兴,1
+JAMIA,Journal of the American Medical Informatics Association,journals/jamia,,journal,1067-5027,,,B,交叉/综合/新兴,1
+PLOS Computational Biology,PLOS Computational Biology,journals/ploscb,,journal,1553-7358,,,B,交叉/综合/新兴,1
+The Computer Journal,The Computer Journal,journals/cj,,journal,0010-4620,,,B,交叉/综合/新兴,1
+WWW Journal,World Wide Web,journals/www,,journal,1386-145X,,,B,交叉/综合/新兴,1
+FCS,Frontiers of Computer Science,journals/fcsc,,journal,2095-2228,,,B,交叉/综合/新兴,1
+BCRA,Blockchain: Research and Applications,journals/bcra,,journal,2096-7209,,,B,交叉/综合/新兴,1
+RTSS,IEEE Real-Time Systems Symposium,conf/rtss,,conf,,,RTSS,A,交叉/综合/新兴,1
+CogSci,Annual Meeting of the Cognitive Science Society,conf/cogsci,,conf,,,CogSci,B,交叉/综合/新兴,1
+BIBM,IEEE International Conference on Bioinformatics and Biomedicine,conf/bibm,,conf,,,BIBM,B,交叉/综合/新兴,1
+EMSOFT,International Conference on Embedded Software,conf/emsoft,,conf,,,EMSOFT,B,交叉/综合/新兴,1
+ISMB,International conference on Intelligent Systems for Molecular Biology,conf/ismb,,conf,,,ISMB,B,交叉/综合/新兴,1
+RECOMB,Annual International Conference on Research in Computational Molecular Biology,conf/recomb,,conf,,,RECOMB,B,交叉/综合/新兴,1
+MICCAI,International Conference on Medical Image Computing and Computer-Assisted Intervention,conf/miccai,,conf,,,MICCAI,B,交叉/综合/新兴,1
+WINE,Conference on Web and Internet Economics,conf/wine,,conf,,,WINE,B,交叉/综合/新兴,1

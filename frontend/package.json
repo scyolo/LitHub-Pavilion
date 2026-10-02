@@ -9,7 +9,9 @@
     "preview": "vite preview",
     "test": "vitest run",
     "check:snapshot-home": "node scripts/check-snapshot-home.js",
-    "check:snapshot-search": "node scripts/check-snapshot-search.js"
+    "check:snapshot-search": "node scripts/check-snapshot-search.js",
+    "sync:deadlines": "python ../backend/scripts/sync_deadlines.py",
+    "check:snapshot-performance": "node scripts/check-snapshot-performance.js"
   },
   "dependencies": {
     "@tanstack/react-query": "^5.51.0",

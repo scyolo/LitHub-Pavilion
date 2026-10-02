@@ -1,0 +1,21 @@
+{
+  "verified_on": "2026-10-02",
+  "source": "https://sites.google.com/view/spm-2023/program",
+  "publication_policy": "https://sites.google.com/view/spm-2023/call-for-papers",
+  "discovery_chain": [
+    "https://www.eg.org/wp/event/gmp-2023/",
+    "https://gmpconf.github.io/GMP2023/index.html",
+    "https://igs2023.imati.cnr.it/",
+    "https://sites.google.com/view/spm-2023/home"
+  ],
+  "year": 2023,
+  "listed_long_papers": 23,
+  "matched_canonical_CAD_records": 11,
+  "full_coverage_verified": false,
+  "limitations": [
+    "Invited, Bezier award and business sessions excluded.",
+    "Only exact normalized titles and full ordered author identity checks were used.",
+    "Other conferences share acronym SPM; they were rejected.",
+    "Unmatched entries require manual DOI/title/author resolution; not treated as absent or complete."
+  ]
+}

@@ -4,7 +4,7 @@ from dataclasses import replace
 from difflib import SequenceMatcher
 from sqlalchemy import or_
 from app.api.serializers import safe_http_url
-from app.cleaning import normalize_title
+from app.cleaning import normalize_title, author_name_norm
 from app.models import Paper
 from app.services.paper_store import ccf_track_eligible, is_repository_doi, same_authors, title_identity_compatible, upsert_paper
 
@@ -15,10 +15,53 @@ def compatible_title(paper, raw):
             or (min(len(old), len(new)) >= 60 and (old.startswith(new + ' ') or new.startswith(old + ' '))))
 
 
+def fill_missing_oa_links(session, records, venue):
+    """Repair only blank OA fields on independently verified existing identities.
+
+    Never insert publications, replace nonempty links, or modify paper metadata
+    and manual labels. Publisher parsers must supply the link, not guess it.
+    """
+    stats = Counter()
+    changes, conflicts = [], []
+    for raw in records:
+        key = safe_http_url(raw.extra.get("publisher_key"))
+        link = safe_http_url(raw.extra.get("oa_pdf"))
+        if not key or not link:
+            stats["no_verified_oa"] += 1
+            continue
+        paper = session.query(Paper).filter(Paper.publisher_key == key).one_or_none()
+        if paper is None:
+            stats["missing_publication"] += 1
+            continue
+        if (paper.venue_id != venue.id or paper.year != raw.year
+                or not compatible_title(paper, raw)
+                or not same_authors(session, paper, raw, publisher_verified=True)):
+            stats["identity_conflicts"] += 1
+            conflicts.append({"url": key, "reason": "Existing publication metadata does not verify the OA link"})
+            continue
+        if paper.oa_url and paper.oa_url.strip():
+            stats["already_linked"] += 1
+            continue
+        paper.oa_url = link
+        stats["updated"] += 1
+        changes.append({"id": paper.id, "oa_url": link})
+    session.commit()
+    return {"counts": dict(stats), "changes": changes, "conflicts": conflicts, "associations": []}
+
+
 def apply_records(session, records, venue):
     stats = Counter(); changes = []; conflicts = []; associations = []
     for original in records:
         raw = replace(original, extra=dict(original.extra))
+        author_keys = [author_name_norm(name) for name in raw.authors]
+        if len(author_keys) != len(set(author_keys)):
+            # The current Author/PaperAuthor schema is name-keyed. Until it
+            # supports distinct author slots, never confirm a lossy import.
+            stats['identity_conflicts'] += 1
+            conflicts.append({'url': raw.official_url, 'doi': raw.doi,
+                              'reason': 'author_multiplicity_not_representable',
+                              'authors': list(raw.authors)})
+            continue
         key = safe_http_url(raw.extra.get('publisher_key'))
         if not key:
             stats['identity_conflicts'] += 1

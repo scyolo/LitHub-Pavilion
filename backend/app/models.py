@@ -19,7 +19,7 @@ class Venue(Base):
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     abbr: Mapped[str] = mapped_column(Text, unique=True)
     name: Mapped[str] = mapped_column(Text)
-    dblp_stream: Mapped[str] = mapped_column(Text, unique=True)
+    dblp_stream: Mapped[str | None] = mapped_column(Text, unique=True)
     dblp_toc_pattern: Mapped[str | None] = mapped_column(Text)
     issn: Mapped[str | None] = mapped_column(Text, unique=True)
     openalex_source_id: Mapped[str | None] = mapped_column(Text, unique=True)
@@ -214,6 +214,9 @@ FTS_DDL = [
     )
     """,
     """
+    CREATE VIRTUAL TABLE IF NOT EXISTS paper_titles_vocab USING fts5vocab(paper_titles_fts, 'row')
+    """,
+    """
     CREATE TRIGGER IF NOT EXISTS paper_titles_fts_ai AFTER INSERT ON papers BEGIN
       INSERT INTO paper_titles_fts(rowid, title_norm) VALUES (new.id, new.title_norm);
     END
@@ -232,3 +235,15 @@ FTS_DDL = [
     END
     """,
 ]
+
+
+class PaperConference(Base):
+    """Evidence-backed conference presentation/publication association, not a duplicate paper."""
+    __tablename__ = 'paper_conferences'
+    paper_id: Mapped[int] = mapped_column(ForeignKey('papers.id'), primary_key=True)
+    venue_id: Mapped[int] = mapped_column(ForeignKey('venues.id'), primary_key=True)
+    event_year: Mapped[int] = mapped_column(Integer, primary_key=True)
+    evidence_url: Mapped[str] = mapped_column(Text)
+    evidence_sha256: Mapped[str] = mapped_column(Text)
+    verified_at: Mapped[str] = mapped_column(Text, default=utcnow_iso)
+    __table_args__ = (CheckConstraint('event_year BETWEEN 2000 AND 2100', name='ck_paper_conference_year'),)

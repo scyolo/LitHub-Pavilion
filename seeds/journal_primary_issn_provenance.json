@@ -1,0 +1,66 @@
+{
+  "verified_on": "2026-10-01",
+  "units": [
+    {
+      "venue": "TC",
+      "old": [
+        "0016-9340",
+        "IEEE Transactions on Computers"
+      ],
+      "new": "0018-9340",
+      "title": "IEEE Transactions on Computers",
+      "ISSN": [
+        "0018-9340",
+        "1557-9956",
+        "0016-9340",
+        "2326-3814"
+      ],
+      "source": "https://api.crossref.org/journals/0018-9340"
+    },
+    {
+      "venue": "TDSC",
+      "old": [
+        "0361-1434",
+        "IEEE Transactions on Dependable and Secure Computing"
+      ],
+      "new": "1545-5971",
+      "title": "IEEE Transactions on Dependable and Secure Computing",
+      "ISSN": [
+        "1545-5971",
+        "1941-0018",
+        "0361-1434",
+        "2160-9209"
+      ],
+      "source": "https://api.crossref.org/journals/1545-5971"
+    },
+    {
+      "venue": "TR",
+      "old": [
+        "1546-1904",
+        "IEEE Transactions on Robotics"
+      ],
+      "new": "1552-3098",
+      "title": "IEEE Transactions on Robotics",
+      "ISSN": [
+        "1552-3098",
+        "1941-0468",
+        "1546-1904"
+      ],
+      "source": "https://api.crossref.org/journals/1552-3098"
+    },
+    {
+      "venue": "PLOS Computational Biology",
+      "old": [
+        "1553-734X",
+        "PLOS Computational Biology"
+      ],
+      "new": "1553-7358",
+      "title": "PLoS Computational Biology",
+      "ISSN": [
+        "1553-734X",
+        "1553-7358"
+      ],
+      "source": "https://api.crossref.org/journals/1553-7358"
+    }
+  ]
+}

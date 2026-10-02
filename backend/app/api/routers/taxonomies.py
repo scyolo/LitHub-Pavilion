@@ -63,7 +63,7 @@ def list_venues(level: str | None = None, direction: str | None = None, db: Sess
 def create_venue(body: VenueUpsertRequest, db: Session = Depends(get_db)):
     if db.query(Venue).filter(Venue.abbr == body.abbr).one_or_none():
         raise HTTPException(status_code=409, detail={"code": "DUPLICATE", "message": "abbr 已存在"})
-    if db.query(Venue).filter(Venue.dblp_stream == body.dblp_stream).one_or_none():
+    if body.dblp_stream and db.query(Venue).filter(Venue.dblp_stream == body.dblp_stream).one_or_none():
         raise HTTPException(status_code=409, detail={"code": "DUPLICATE", "message": "dblp_stream 已存在"})
     venue = Venue(**body.model_dump())
     db.add(venue)

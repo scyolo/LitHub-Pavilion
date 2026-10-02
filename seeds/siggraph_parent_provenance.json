@@ -1,0 +1,22 @@
+{
+  "verified_on": "2026-10-02",
+  "parents": [
+    {
+      "doi": "10.1145/3588432",
+      "year": 2023,
+      "source": "https://s2023.siggraph.org/program/technical-papers/"
+    },
+    {
+      "doi": "10.1145/3641519",
+      "year": 2024,
+      "source": "https://s2024.siggraph.org/program/technical-papers/"
+    },
+    {
+      "doi": "10.1145/3721238",
+      "year": 2025,
+      "source": "https://api.crossref.org/works/10.1145/3721238",
+      "official_program": "https://s2025.siggraph.org/program/technical-papers/",
+      "note": "Exact publisher-deposited main conference parent and formal article year, not the entire SIGGRAPH/TOG program. Shared container contains other parents; those are excluded."
+    }
+  ]
+}

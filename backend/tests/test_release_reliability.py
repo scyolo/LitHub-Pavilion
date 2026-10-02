@@ -101,16 +101,18 @@ async def test_dblp_parses_result_envelope_and_single_author():
     assert rows[0].title == "A real paper"
 
 
-def test_arxiv_only_create_is_link_only_and_unconfirmed(client, sample_venue):
+def test_arxiv_only_create_is_link_only_and_unconfirmed(client, sample_venue, db):
     response = client.post("/api/papers", json={
         "title": "Arxiv-only metadata", "venue_abbr": sample_venue.abbr,
         "year": 2025, "arxiv_id": "2501.10040",
     })
     assert response.status_code == 201
-    paper = client.get(response.headers["Location"]).json()
-    assert paper["arxiv_id"] == "2501.10040"
-    assert paper["venue_confirmed"] == 0
-    assert paper["pdf_status"] == "closed"
+    from app.models import Paper
+    assert client.get(response.headers["Location"]).status_code == 404
+    paper = db.get(Paper, response.json()['id'])
+    assert paper.arxiv_id == "2501.10040"
+    assert paper.venue_confirmed == 0
+    assert paper.pdf_status == "closed"
 
 
 @pytest.mark.parametrize("years", [[0], [9999], [], [2025, 2025], [2025] * 40])

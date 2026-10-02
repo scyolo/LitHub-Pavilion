@@ -11,6 +11,8 @@ from app.api.filtering import PAPER_SORTS, PaperFilters, bad_request, paper_filt
 from app.api.serializers import authors_for, directions_for, paper_card
 from app.models import Paper
 from app.cleaning import normalize_title
+from app.services.fuzzy_terms import expand_tokens
+from app.services.search_tokens import stemmer
 
 router = APIRouter(prefix="/api/search", tags=["search"])
 
@@ -60,6 +62,7 @@ def search(
     page: int = 1,
     size: int = 20,
     db: Session = Depends(get_db),
+    match: Literal['auto', 'keywords', 'exact', 'fuzzy'] = 'auto',
 ):
     if page < 1 or not 1 <= size <= 100:
         raise bad_request("page>=1 且 1<=size<=100")
@@ -69,11 +72,24 @@ def search(
     # title. Keep the public A/B scope, matching the static reader's title map.
     exists = bool(extended and len(q) <= MAX_TITLE_QUERY and paper_query(db, PaperFilters())
                   .filter(Paper.title_norm == exact_title).first())
-    match_expr = _build_match_expr(q, exact_title=exists)
+    match_expr = _build_match_expr(q, exact_title=exists or match == 'exact')
+    if match == 'exact':
+        match_expr = None
     query = paper_query(db, filters).filter(search_predicate(q, match_expr))
     if match_expr is not None:
         query = query.params(match_q=match_expr)
     total = query.count()
+    match_mode = 'exact' if match == 'exact' else 'keywords'
+    expansions = []
+    if match_expr is not None and (match == 'fuzzy' or (match == 'auto' and total == 0)):
+        vocabulary = db.connection().exec_driver_sql('SELECT term, doc FROM paper_titles_vocab ORDER BY term').all()
+        tokens = list(dict.fromkeys(stemmer(token) for token in _TOKEN_RE.findall(exact_title)))
+        groups = expand_tokens(tokens, vocabulary, raw_tokens=_TOKEN_RE.findall(exact_title))
+        expansions = [{'token': token, 'alternatives': terms[1:]} for token, terms in zip(tokens, groups, strict=True) if len(terms) > 1]
+        match_expr = ' AND '.join('(' + ' OR '.join('"' + term + '"' for term in terms) + ')' for terms in groups)
+        query = paper_query(db, filters).filter(search_predicate(q, match_expr)).params(match_q=match_expr)
+        total = query.count()
+        match_mode = 'fuzzy'
     if match_expr is None:
         score = literal(0.0).label('score')
         order = (Paper.id.desc(),) if sort == 'relevance' else PAPER_SORTS[sort]
@@ -108,4 +124,5 @@ def search(
         card = paper_card(p, dirs, authors)
         card["score"] = round(scores[p.id] or 0.0, 4)  # 保留旧响应 bm25 字段。
         items.append(card)
-    return {"total": total, "page": page, "size": size, "items": items}
+    return {"total": total, "page": page, "size": size, "items": items,
+            "match_mode": match_mode, "query_expansions": expansions}

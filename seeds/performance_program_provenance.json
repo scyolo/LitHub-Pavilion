@@ -1,0 +1,29 @@
+{
+  "verified_on": "2026-10-01",
+  "scope": "Official long-paper program lists matched to canonical Performance Evaluation journal records; no new duplicate papers.",
+  "editions": [
+    {
+      "year": 2023,
+      "url": "https://performance2023.sciencesconf.org/resource/page/id/6",
+      "matched": 11,
+      "listed": 18,
+      "full_coverage_verified": false
+    },
+    {
+      "year": 2025,
+      "url": "https://performance2025.sciencesconf.org/resource/page/id/3",
+      "publication_policy": "https://performance2025.sciencesconf.org/resource/page/id/13",
+      "matched": 13,
+      "listed_long": 19,
+      "short_papers_excluded": 10,
+      "author_rule": "Exact normalized title plus complete ordered author list; initials require two or more distinct surnames and compatible given-name initials.",
+      "full_coverage_verified": false
+    },
+    {
+      "year": 2026,
+      "url": "https://performance2026.github.io/programme/",
+      "event_dates": "2026-11-03/2026-11-05",
+      "status": "Accepted presentations only; formal publication not inferred as of 2026-10-01."
+    }
+  ]
+}

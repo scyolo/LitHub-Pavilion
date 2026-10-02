@@ -1,0 +1,98 @@
+{
+  "CAV": [
+    "Computer Aided Verification",
+    "computer aided verification"
+  ],
+  "CRYPTO": [
+    "Advances in Cryptology CRYPTO",
+    "advances in cryptology crypto 20\\d{2}"
+  ],
+  "EUROCRYPT": [
+    "Advances in Cryptology EUROCRYPT",
+    "advances in cryptology eurocrypt 20\\d{2}"
+  ],
+  "ASIACRYPT": [
+    "Advances in Cryptology ASIACRYPT",
+    "advances in cryptology asiacrypt 20\\d{2}"
+  ],
+  "CADE": [
+    "Automated Deduction CADE",
+    "automated deduction cade \\d+"
+  ],
+  "CAiSE": [
+    "Advanced Information Systems Engineering",
+    "advanced information systems engineering"
+  ],
+  "COCOON": [
+    "Computing and Combinatorics",
+    "computing and combinatorics"
+  ],
+  "DASFAA": [
+    "Database Systems for Advanced Applications",
+    "database systems for advanced applications"
+  ],
+  "ESORICS": [
+    "Computer Security ESORICS",
+    "computer security esorics 20\\d{2}"
+  ],
+  "Euro-Par": [
+    "Euro-Par Parallel Processing",
+    "euro par 20\\d{2} parallel processing"
+  ],
+  "FM": [
+    "Formal Methods",
+    "(?:fm 20\\d{2} )?formal methods"
+  ],
+  "ICCBR": [
+    "Case-Based Reasoning Research and Development",
+    "case based reasoning research and development"
+  ],
+  "ICSOC": [
+    "Service-Oriented Computing",
+    "service oriented computing"
+  ],
+  "ISWC": [
+    "The Semantic Web ISWC",
+    "the semantic web iswc 20\\d{2}"
+  ],
+  "MICCAI": [
+    "Medical Image Computing and Computer Assisted Intervention MICCAI",
+    "medical image computing and computer assisted intervention miccai 20\\d{2}"
+  ],
+  "PKC": [
+    "Public-Key Cryptography PKC",
+    "public key cryptography pkc 20\\d{2}"
+  ],
+  "PPSN": [
+    "Parallel Problem Solving from Nature PPSN",
+    "parallel problem solving from nature ppsn [ivxlcdm]+"
+  ],
+  "RECOMB": [
+    "Research in Computational Molecular Biology",
+    "research in computational molecular biology"
+  ],
+  "SAS": [
+    "Static Analysis",
+    "static analysis"
+  ],
+  "TCC": [
+    "Theory of Cryptography",
+    "theory of cryptography"
+  ],
+  "VMCAI": [
+    "Verification Model Checking and Abstract Interpretation",
+    "verification model checking and abstract interpretation"
+  ],
+  "WINE": [
+    "Web and Internet Economics",
+    "web and internet economics"
+  ],
+  "WISE": [
+    "Web Information Systems Engineering WISE",
+    "web information systems engineering wise 20\\d{2}"
+  ],
+  "ETAPS": [
+    "ETAPS",
+    "(?:foundations of software science and computation structures|tools and algorithms for the construction and analysis of systems|fundamental approaches to software engineering)"
+  ]
+}

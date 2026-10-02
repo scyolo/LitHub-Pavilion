@@ -6,6 +6,7 @@ from pathlib import Path
 
 import pytest
 
+from app.services.snapshot_reader import reader_entries
 from app.services.snapshot import _json_bytes, _write_content, export_snapshot, manifest_revision, validate_snapshot
 
 SPEC = importlib.util.spec_from_file_location("prepare_pages", Path(__file__).resolve().parents[2] / "scripts" / "prepare_pages.py")
@@ -23,7 +24,13 @@ def test_pages_stages_only_validated_public_assets(session_factory, sample_paper
     (source / "papers.db").write_bytes(private)
     assert MODULE.prepare_snapshot(source, target) == manifest
     assert not (target / disguised).exists()
-    assert {path.name for path in target.iterdir()} == {"manifest.json", manifest["catalog"]["path"], manifest["chunks"][0]["path"]}
+    catalog = json.loads((target / manifest["catalog"]["path"]).read_text(encoding="utf-8"))
+    expected = {"manifest.json", manifest["catalog"]["path"]}
+    expected.update(entry["path"] for entry in manifest["chunks"])
+    expected.update(entry["path"] for entry in reader_entries(catalog, target))
+    assert {path.name for path in target.iterdir()} == expected
+    assert not (target / ".env").exists()
+    assert not (target / "papers.db").exists()
 
 
 def test_pages_retains_only_a_validated_previous_revision(session_factory, sample_paper, db, tmp_path):

@@ -39,7 +39,11 @@ class FakeGitHub:
         if request.method == "GET" and path.startswith("git/commits/"):
             return httpx.Response(200, json={"tree": {"sha": self.root_tree}})
         if request.method == "GET" and path.startswith("git/trees/"):
-            return httpx.Response(200, json={"tree": self.trees.get(path.split("/")[-1], []), "truncated": False})
+            rows = self.trees.get(path.split('/')[-1], [])
+            return httpx.Response(200, json={'tree': [
+                {**row, 'size': len(self.blobs[row['sha']])} if row['type'] == 'blob' else row
+                for row in rows
+            ], 'truncated': False})
         if request.method == "GET" and path.startswith("git/blobs/"):
             raw = self.blobs[path.split("/")[-1]]
             return httpx.Response(200, json={"encoding": "base64", "content": base64.b64encode(raw).decode(), "size": len(raw)})
@@ -120,6 +124,10 @@ async def test_update_preserves_previous_files_and_uses_nonforced_ref_update(ses
     paths = {row["path"] for row in snapshot_tree}
     assert first["chunks"][0]["path"] in paths
     assert second["chunks"][0]["path"] in paths
+    from app.services.snapshot_reader import reader_entries
+    for manifest in (first, second):
+        catalog = json.loads((tmp_path / manifest['catalog']['path']).read_text())
+        assert {entry['path'] for entry in reader_entries(catalog, tmp_path)} <= paths
     update = next(request for request in reversed(github.requests) if request.method == "PATCH")
     assert json.loads(update.content)["force"] is False
 

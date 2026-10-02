@@ -73,18 +73,18 @@ def test_unsafe_display_links_are_removed_consistently(client, db, sample_paper,
     sample_paper.oa_url = url
     sample_paper.pdf_status = "closed"
     db.commit()
-    cards = [
-        client.get("/api/papers").json()["items"][0],
-        client.get("/api/search", params={"q": "speculative"}).json()["items"][0],
-        client.get(f"/api/papers/{sample_paper.id}").json(),
-    ]
+    from app.api.serializers import paper_card, paper_links
+    cards = [paper_card(sample_paper, {}, {}), paper_links(sample_paper)]
     for card in cards:
         assert card["oa_url"] is None
         assert card["official_url"] is None
+    assert client.get("/api/papers").json()["total"] == 0
+    assert client.get("/api/search", params={"q": "speculative"}).json()["total"] == 0
+    assert client.get(f"/api/papers/{sample_paper.id}").status_code == 404
     dashboard = client.get("/api/stats/dashboard").json()
     assert dashboard["with_oa_link"] == 0
     assert client.get("/api/papers", params={"access": "oa"}).json()["total"] == 0
-    assert client.get("/api/search", params={"q": "speculative", "access": "official"}).json()["total"] == 1
+    assert client.get("/api/search", params={"q": "speculative", "access": "official"}).json()["total"] == 0
     error = client.get(f"/api/papers/{sample_paper.id}/pdf").json()["error"]
     assert error.get("oa_url") is None and error.get("official_url") is None
 
@@ -131,8 +131,15 @@ def test_official_link_normalization_and_fallback(client, db, sample_paper, doi,
     sample_paper.official_url = official
     sample_paper.dblp_key = dblp_key
     db.commit()
-    assert client.get("/api/papers").json()["items"][0]["official_url"] == expected
-    assert client.get(f"/api/papers/{sample_paper.id}").json()["official_url"] == expected
+    from app.api.serializers import paper_links
+    from app.services.publication_admission import admission_reason
+    assert paper_links(sample_paper)["official_url"] == expected
+    if admission_reason(sample_paper, sample_paper.venue):
+        assert client.get("/api/papers").json()["total"] == 0
+        assert client.get(f"/api/papers/{sample_paper.id}").status_code == 404
+    else:
+        assert client.get("/api/papers").json()["items"][0]["official_url"] == expected
+        assert client.get(f"/api/papers/{sample_paper.id}").json()["official_url"] == expected
 
 
 @pytest.mark.parametrize("url,expected", [

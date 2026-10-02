@@ -8,7 +8,7 @@ import { TOPICS, filteredParams, formatDate, number, paperHref, percent, topic }
 import { APP_NAME, APP_DESCRIPTION } from "../lib/brand.js";
 import Icon from "../components/Icon.jsx";
 import ScopeTabs from "../components/ScopeTabs.jsx";
-import { AnnualChart, LinkCoverage, TopicChart } from "../components/Charts.jsx";
+import { AnnualChart, LinkCoverage, TopicChart, VenueCoverage } from "../components/Charts.jsx";
 import PaperCard from "../components/PaperCard.jsx";
 import { EmptyState, ErrorState, LoadingState, SectionTitle } from "../components/States.jsx";
 
@@ -41,14 +41,15 @@ export default function Home() {
       </section>
       <div className="dashboard-charts"><AnnualChart data={data.annual} onSelect={(year) => openPapers({ year })} /><TopicChart data={data.directions} onSelect={(direction) => openPapers({ direction })} /></div>
       <section className="topics-section">
-        <SectionTitle icon="sparkles" title="从感兴趣的方向开始" note="你的核心方向与相邻领域，始终限定在 A / B 类范围内"><span className="section-caption">点击探索论文 <Icon name="arrow" size={14} /></span></SectionTitle>
-        <div className="topic-tiles">{[...data.directions].sort((a, b) => Object.keys(TOPICS).indexOf(a.code) - Object.keys(TOPICS).indexOf(b.code)).map((d) => {
+        <SectionTitle icon="sparkles" title="从感兴趣的方向开始" note="按当前会议 / 期刊范围的真实标签数量排序；研究主题与 CCF 领域独立"><span className="section-caption">点击探索论文 <Icon name="arrow" size={14} /></span></SectionTitle>
+        <div className="topic-tiles">{[...data.directions].sort((a, b) => b.paper_count - a.paper_count || Object.keys(TOPICS).indexOf(a.code) - Object.keys(TOPICS).indexOf(b.code)).map((d) => {
           const t = topic(d.code, d.name);
           return <button key={d.code} className="topic-tile" style={{ "--topic": t.color }} onClick={() => openPapers({ direction: d.code })}>
             <span className="topic-tile-icon"><Icon name={t.icon} size={20} /></span><span className="topic-tile-copy"><strong>{d.name}</strong><small>{t.short}</small></span><span className="topic-tile-count">{number(d.paper_count)}<Icon name="chevron" size={13} /></span>
           </button>;
         })}</div>
       </section>
+      <VenueCoverage venues={data.venues} years={data.annual} onSelect={openPapers} />
       <div className="dashboard-bottom">
         <section className="recent-section"><SectionTitle icon="clock" title="最新发表" note="按上游发布日期倒序；缺少日期时按归属年份"><Link className="text-link" to={paperHref(null, scope)}>全部论文<Icon name="arrow" size={14} /></Link></SectionTitle>
           {latest.isPending ? <LoadingState rows={3} /> : latest.error ? <ErrorState message={latest.error.message} onRetry={() => latest.refetch()} /> : latest.data?.items.length ? <div className="paper-stack">{latest.data.items.map((p) => <PaperCard key={p.id} paper={p} compactMode />)}</div> : <EmptyState title="这个范围还没有论文" message="数据可能尚未回填，可以在采集管理中查看进度。" />}
@@ -59,7 +60,7 @@ export default function Home() {
           <section className="sync-panel"><div className="sync-icon"><Icon name="radar" size={23} /></div><h3>{api.isSnapshot ? "按需更新，随时阅读" : "每周同步，轻量追踪"}</h3><p>{api.isSnapshot ? "Docker 负责采集和发布。页面统计与论文详情使用同一已发布版本；数据库变更在完成导出和部署后才会显示。" : "只保留论文元数据与原始链接，不下载 PDF。图表随本地数据自动刷新。"}</p><div className="sync-detail"><span>最近一次采集</span><strong>{data.last_crawl ? formatDate(data.last_crawl.started_at) : "尚无记录"}</strong></div><Link to="/admin" className="text-link">查看同步详情<Icon name="arrow" size={14} /></Link></section>
         </aside>
       </div>
-      <div className="data-notice"><Icon name="info" size={16} /><span>统计仅覆盖已收录数据。当前年份、来源缺口与自动方向标签均可能不完整；{number(data.total - data.confirmed_count)} 篇发表归属尚待核验。目录级别以已配置 CCF 清单为准。</span></div>
+      <div className="data-notice"><Icon name="info" size={16} /><span>统计仅覆盖已收录数据。当前年份、来源缺口与自动方向标签均可能不完整；未确认发表归属的候选不进入公开列表。目录级别以已配置 CCF 清单为准。</span></div>
     </>}
   </div>;
 }

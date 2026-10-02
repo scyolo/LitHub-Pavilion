@@ -1,0 +1,68 @@
+{
+  "verified_on": "2026-10-02",
+  "sources": [
+    {
+      "venue": "TON",
+      "catalog_name": "IEEE Transactions on Networking",
+      "catalog_issn": "2998-4157",
+      "records": [
+        {
+          "issn": "1063-6692",
+          "title": "IEEE/ACM Transactions on Networking",
+          "year_from": 2023,
+          "year_to": 2024,
+          "registry": "https://api.crossref.org/journals/1063-6692"
+        }
+      ]
+    },
+    {
+      "venue": "INFORMS",
+      "catalog_name": "INFORMS Journal on Computing",
+      "catalog_issn": "0899-1499",
+      "records": [
+        {
+          "issn": "1091-9856",
+          "title": "INFORMS Journal on Computing",
+          "year_from": 2023,
+          "year_to": 2026,
+          "registry": "https://api.crossref.org/journals/1091-9856"
+        },
+        {
+          "issn": "1526-5528",
+          "title": "INFORMS Journal on Computing",
+          "year_from": 2023,
+          "year_to": 2026,
+          "registry": "https://api.crossref.org/journals/1526-5528"
+        }
+      ]
+    },
+    {
+      "venue": "Evolutionary Computation",
+      "catalog_name": "Evolutionary Computation",
+      "catalog_issn": "1063-6560",
+      "records": [
+        {
+          "issn": "1530-9304",
+          "title": "Evolutionary Computation",
+          "year_from": 2023,
+          "year_to": 2026,
+          "registry": "https://api.crossref.org/journals/1530-9304"
+        }
+      ]
+    },
+    {
+      "venue": "TCBB",
+      "catalog_name": "IEEE/ACM Transactions on Computational Biology and Bioinformatics",
+      "catalog_issn": "1545-5963",
+      "records": [
+        {
+          "issn": "2998-4165",
+          "title": "IEEE Transactions on Computational Biology and Bioinformatics",
+          "year_from": 2025,
+          "year_to": 2026,
+          "registry": "https://api.crossref.org/journals/2998-4165"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,113 @@
+{
+  "verified_on": "2026-10-01",
+  "method": "Exact ISSN Crossref journal registry responses; CCF catalog names preserved; aliases are explicit, never fuzzy.",
+  "units": [
+    {
+      "venue": "JSA",
+      "source": "https://api.crossref.org/journals/1383-7621",
+      "title": "Journal of Systems Architecture",
+      "ISSN": [
+        "1383-7621"
+      ],
+      "publisher": "Elsevier"
+    },
+    {
+      "venue": "Performance Evaluation: An International Journal",
+      "source": "https://api.crossref.org/journals/0166-5316",
+      "title": "Performance Evaluation",
+      "ISSN": [
+        "0166-5316"
+      ],
+      "publisher": "Elsevier"
+    },
+    {
+      "venue": "Computers & Security",
+      "source": "https://api.crossref.org/journals/0167-4048",
+      "title": "Computers & Security",
+      "ISSN": [
+        "0167-4048"
+      ],
+      "publisher": "Elsevier"
+    },
+    {
+      "venue": "SoSyM",
+      "source": "https://api.crossref.org/journals/1619-1366",
+      "title": "Software & Systems Modeling",
+      "ISSN": [
+        "1619-1366",
+        "1619-1374"
+      ],
+      "publisher": "Springer-Verlag"
+    },
+    {
+      "venue": "DKE",
+      "source": "https://api.crossref.org/journals/0169-023X",
+      "title": "Data & Knowledge Engineering",
+      "ISSN": [
+        "0169-023X",
+        "1872-6933"
+      ],
+      "publisher": "Elsevier"
+    },
+    {
+      "venue": "IPM",
+      "source": "https://api.crossref.org/journals/0306-4573",
+      "title": "Information Processing & Management",
+      "ISSN": [
+        "0306-4573"
+      ],
+      "publisher": "Elsevier"
+    },
+    {
+      "venue": "Machine Learning",
+      "source": "https://api.crossref.org/journals/0885-6125",
+      "title": "Machine Learning",
+      "ISSN": [
+        "0885-6125",
+        "1573-0565"
+      ],
+      "publisher": "Springer-Verlag"
+    },
+    {
+      "venue": "CSCW Journal",
+      "source": "https://api.crossref.org/journals/0925-9724",
+      "title": "Computer Supported Cooperative Work (CSCW)",
+      "ISSN": [
+        "0925-9724",
+        "1573-7551"
+      ],
+      "publisher": "Springer-Verlag"
+    },
+    {
+      "venue": "HCI",
+      "source": "https://api.crossref.org/journals/0737-0024",
+      "title": "Human-Computer Interaction",
+      "ISSN": [
+        "0737-0024",
+        "1532-7051"
+      ],
+      "publisher": "Informa UK (Taylor & Francis)"
+    },
+    {
+      "venue": "Bioinformatics",
+      "source": "https://api.crossref.org/journals/1367-4803",
+      "title": "Bioinformatics",
+      "ISSN": [
+        "1367-4803",
+        "1367-4811",
+        "1460-2059"
+      ],
+      "publisher": "Oxford University Press"
+    },
+    {
+      "venue": "JCST",
+      "source": "https://api.crossref.org/journals/1000-9000",
+      "title": "Journal of Computer Science and Technology",
+      "ISSN": [
+        "1000-9000",
+        "1860-4749"
+      ],
+      "publisher": "Springer-Verlag"
+    }
+  ]
+}

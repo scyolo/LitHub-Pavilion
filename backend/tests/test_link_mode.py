@@ -102,12 +102,53 @@ def test_set_oa_url_if_empty_first_wins(db, sample_paper):
     assert set_oa_url_if_empty(sample_paper, None) is False
 
 
+@pytest.mark.asyncio
+@pytest.mark.parametrize('status,returned_doi,expected,paused', [
+    (200, 'https://doi.org/10.5555/test.001', 'https://repository.example.org/paper.pdf', False),
+    (200, 'https://doi.org/10.5555/unrelated', None, False),
+    (429, None, None, True),
+    (403, None, None, True),
+])
+async def test_doi_only_backfill_matches_identity_and_preserves_paused_cursor(
+    db, session_factory, sample_paper, monkeypatch, status, returned_doi, expected, paused,
+):
+    from app.services import links_backfill
+    from app.models import CrawlState
+
+    sample_paper.openalex_id = None
+    sample_paper.oa_url = None
+    sample_paper.doi = '10.5555/test.001'
+    db.add(CrawlState(scope_key=links_backfill.CURSOR_KEY, cursor='0'))
+    db.commit()
+    requests = []
+
+    def respond(request):
+        requests.append(request)
+        return httpx.Response(status, json={'results': [{
+            'id': 'https://openalex.org/W789', 'doi': returned_doi,
+            'best_oa_location': {'pdf_url': 'https://repository.example.org/paper.pdf'},
+        }]})
+
+    monkeypatch.setattr(links_backfill, 'settings', SimpleNamespace(
+        openalex_rps=100.0, links_max_batches=1, contact_email='',
+    ))
+    monkeypatch.setattr(links_backfill, 'make_client', lambda: httpx.AsyncClient(transport=httpx.MockTransport(respond)))
+    result = await links_backfill.run_links_backfill(session_factory)
+    db.expire_all()
+    assert requests[0].url.params['filter'] == 'doi:10.5555/test.001'
+    assert sample_paper.oa_url == expected
+    assert result['paused'] is paused
+    assert result['openalex_filled'] == int(expected is not None)
+    cursor = db.query(CrawlState).filter_by(scope_key=links_backfill.CURSOR_KEY).one().cursor
+    assert cursor == ('0' if paused else str(sample_paper.id))
+
+
 def test_best_oa_extraction():
     """links_backfill 的 OpenAlex best OA 提取：pdf_url 优先，回退 oa_url。"""
     from app.services.links_backfill import _best_oa
 
-    assert _best_oa({"best_oa_location": {"pdf_url": "https://x/p.pdf"}}) == "https://x/p.pdf"
-    assert _best_oa({"open_access": {"oa_url": "https://y/oa"}}) == "https://y/oa"
+    assert _best_oa({"best_oa_location": {"pdf_url": "https://x.example/p.pdf"}}) == "https://x.example/p.pdf"
+    assert _best_oa({"open_access": {"oa_url": "https://y.example/oa"}}) == "https://y.example/oa"
     assert _best_oa({"best_oa_location": {}}) is None
     assert _best_oa({}) is None
     assert _best_oa({"open_access": {"oa_url": ""}}) is None  # 空串归一（迭代八）
@@ -168,3 +209,10 @@ def test_stats_uses_group_by_counts(client, sample_paper, db):
     listing = client.get("/api/directions").json()
     spec = next(d for d in listing["items"] if d["code"] == "specdec")
     assert spec["paper_count"] == body["by_direction"]["specdec"]
+
+
+def test_best_oa_uses_open_landing_page_and_skips_unsafe_preferred_url():
+    from app.services.links_backfill import _best_oa
+    assert _best_oa({'best_oa_location': {'pdf_url': 'javascript:bad', 'landing_page_url': 'https://publisher.org/open'}}) == 'https://publisher.org/open'
+    assert _best_oa({'best_oa_location': {'landing_page_url': 'https://repository.org/paper'}}) == 'https://repository.org/paper'
+    assert _best_oa({'locations': [{'is_oa': False, 'landing_page_url': 'https://publisher.org/paywall'}, {'is_oa': True, 'landing_page_url': 'https://repository.org/open'}]}) == 'https://repository.org/open'

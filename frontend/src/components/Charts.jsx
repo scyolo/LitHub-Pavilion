@@ -1,4 +1,4 @@
-import { useId } from "react";
+import { useId, useState } from "react";
 import { compact, number, percent, topic } from "../lib/presentation.js";
 import { SectionTitle } from "./States.jsx";
 
@@ -46,7 +46,7 @@ export function AnnualChart({ data = [], selectedYear, onSelect }) {
 }
 
 export function TopicChart({ data = [], onSelect }) {
-  const sorted = [...data].sort((a, b) => b.paper_count - a.paper_count).slice(0, 5);
+  const sorted = [...data].sort((a, b) => b.paper_count - a.paper_count);
   const max = Math.max(1, ...sorted.map((item) => item.paper_count));
   return <section className="panel topic-panel"><SectionTitle icon="nodes" title="研究主题分布" note="标题与摘要规则归类 · 支持一文多方向" />
     <div className="topic-bars">{sorted.length ? sorted.map((item) => {
@@ -71,4 +71,21 @@ export function LinkCoverage({ total = 0, oa = 0, onSelect }) {
 export function MiniBars({ years = [] }) {
   const max = Math.max(1, ...years.map((d) => d.count));
   return <div className="mini-bars" aria-hidden="true">{years.map((d) => <span key={d.year} title={`${d.year}: ${number(d.count)}`} style={{ height: `${Math.max(3, d.count / max * 32)}px` }} />)}</div>;
+}
+
+export function VenueCoverage({ venues = [], years = [], onSelect }) {
+  const [expanded, setExpanded] = useState(false);
+  const ordered = [...venues].sort((first, second) => first.level.localeCompare(second.level) || first.type.localeCompare(second.type) || second.paper_count - first.paper_count);
+  const maximum = Math.max(1, ...venues.flatMap((venue) => (venue.years || []).map((entry) => entry.count)));
+  return <section className="panel coverage-panel">
+    <SectionTitle icon="building" title="来源 × 年度收录矩阵" note={ordered.length > 20 ? `共 ${number(ordered.length)} 个来源 · 首屏预览 20 项，可展开全部 · 点击数量进入论文` : "覆盖全部已配置会议与期刊 · 点击数量进入对应论文"} />
+    <div className="coverage-scroll" tabIndex={0} role="region" aria-label="会议期刊年度收录数量，可横向滚动">
+      <table className="coverage-table"><caption className="sr-only">已收录论文数量，不是官方发表总量或完整率</caption><thead><tr><th scope="col">会议 / 期刊</th>{years.map(({ year }) => <th key={year} scope="col">{year}</th>)}<th scope="col">合计</th></tr></thead>
+        <tbody>{(expanded ? ordered : ordered.slice(0, 20)).map((venue) => <tr key={venue.abbr}><th scope="row"><span className={`level-badge level-${venue.level.toLowerCase()}`}>{venue.level}</span> {venue.abbr}<small>{venue.type === "journal" ? "期刊" : "会议"}</small></th>{years.map(({ year }) => {
+          const count = venue.years?.find((entry) => entry.year === year)?.count || 0;
+          return <td key={year}>{count ? <button style={{ "--intensity": .08 + .32 * Math.sqrt(count / maximum) }} onClick={() => onSelect({ venue: venue.abbr, year: String(year) })} aria-label={`${venue.abbr} ${year} 年 ${number(count)} 篇`}>{number(count)}</button> : <span className="coverage-empty" title="暂无记录；可能为尚未采集、未发表或该年未举办">—</span>}</td>;
+        })}<td><button onClick={() => onSelect({ venue: venue.abbr })} aria-label={`${venue.abbr} 全部 ${number(venue.paper_count)} 篇`}>{number(venue.paper_count)}</button></td></tr>)}</tbody>
+      </table>
+    </div>{ordered.length > 20 && <button className="button secondary small-button" aria-expanded={expanded} onClick={() => setExpanded(value => !value)}>{expanded ? "收起来源矩阵" : `展开全部 ${number(ordered.length)} 个来源`}</button>}<p className="chart-footnote">“—”表示尚无记录，不等于没有论文；两年一届、尚未发表与采集缺口需要分别核对。开放链接不等于已验证可下载。</p>
+  </section>;
 }

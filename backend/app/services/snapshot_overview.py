@@ -13,7 +13,11 @@ CARD_KEYS = {
 
 
 class OverviewBuilder:
-    def __init__(self, catalog, generated_at):
+    def __init__(self, catalog, generated_at, version=2):
+        if version not in (1, 2):
+            raise ValueError("Unsupported overview version")
+        self.version = version
+        self.venue_topics = defaultdict(Counter)
         self.catalog = catalog
         self.time = datetime.fromisoformat(generated_at.replace("Z", "+00:00")).astimezone(timezone.utc)
         self.venues = {venue["abbr"]: venue for venue in catalog["venues"]}
@@ -29,6 +33,7 @@ class OverviewBuilder:
     def add(self, rows):
         for row in rows:
             venue = self.venues[row["venue"]]
+            self.venue_topics[row["venue"]].update(set(row["directions"]))
             try:
                 created = datetime.fromisoformat((row["created_at"] or "").replace("Z", "+00:00"))
                 recent = self.time - timedelta(days=7) <= created <= self.time
@@ -74,9 +79,16 @@ class OverviewBuilder:
                                for direction in self.catalog["directions"]
                                if direction["enabled"] or scope["directions"][direction["code"]]],
                 "configured_venues": len(configured), "venues_with_papers": len(scope["venues"]),
-                "venues": [{**venue, "paper_count": scope["venues"][venue["abbr"]],
+                "venues": [{**({"abbr": venue["abbr"]} if self.version >= 2 else venue), "paper_count": scope["venues"][venue["abbr"]],
                             "years": [{"year": year, "count": count} for year, count in sorted(scope["years"][venue["abbr"]].items())]}
                            for venue in configured],
             }
             result.append({"level": scope["level"], "type": scope["type"], "dashboard": dashboard, "latest": scope["latest"]})
-        return {"version": 1, "scopes": result}
+        output = {"version": self.version, "scopes": result}
+        if self.version >= 2:
+            output["venue_topics"] = {
+                venue: [{"code": code, "paper_count": count} for code, count in sorted(
+                    self.venue_topics[venue].items(), key=lambda pair: (-pair[1], pair[0]))]
+                for venue in self.venues
+            }
+        return output

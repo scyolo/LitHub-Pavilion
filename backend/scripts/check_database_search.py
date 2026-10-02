@@ -13,7 +13,7 @@ from time import perf_counter
 from sqlalchemy import create_engine, func
 from sqlalchemy.orm import Session
 
-from app.api.filtering import PaperFilters
+from app.api.filtering import PaperFilters, paper_query
 from app.api.routers.search import _build_match_expr, search
 from app.cleaning import normalize_title
 from app.db import db_file_path
@@ -36,12 +36,14 @@ def check_search(path, samples, *, expected_count=None):
     started = perf_counter()
     try:
         with Session(engine) as session:
-            count = session.query(func.count(Paper.id)).scalar()
+            stored_count = session.query(func.count(Paper.id)).scalar()
+            public = paper_query(session, PaperFilters())
+            count = public.count()
             if expected_count is not None and count != expected_count:
                 raise ValueError('Snapshot sample report is stale: database paper count differs')
             all_title_checks = 0
             title_errors = []
-            for pid, title, stored_norm in session.query(Paper.id, Paper.title, Paper.title_norm).yield_per(1000):
+            for pid, title, stored_norm in public.with_entities(Paper.id, Paper.title, Paper.title_norm).yield_per(1000):
                 normalized = normalize_title(title)
                 if stored_norm != normalized:
                     title_errors.append({'id': pid, 'reason': 'stale normalized title'})
@@ -63,7 +65,7 @@ def check_search(path, samples, *, expected_count=None):
             assert all_title_checks == count
             for sample in samples:
                 title = sample['title']
-                result = search(q=title, filters=PaperFilters(), sort='relevance', page=1, size=100, db=session)
+                result = search(q=title, filters=PaperFilters(), sort='relevance', page=1, size=100, db=session, match='exact')
                 assert result['items'], f"No full-title result for {sample['id']}"
                 assert normalize_title(result['items'][0]['title']) == normalize_title(title), f"Exact title not first: {sample['id']}"
                 assert any(p['id'] == sample['id'] for p in result['items']), f"Expected identity missing: {sample['id']}"
@@ -81,7 +83,7 @@ def check_search(path, samples, *, expected_count=None):
         engine.dispose()
     return {'generated_at': datetime.now(timezone.utc).isoformat(), 'database': str(path),
             'read_only': True, 'query_only': True, 'api_lifespan_started': False, 'network_requests': 0,
-            'paper_count': count, 'all_title_identity_checks': all_title_checks, 'all_titles_queryable': all_title_checks == count,
+            'paper_count': count, 'stored_record_count': stored_count, 'all_title_identity_checks': all_title_checks, 'all_titles_queryable': all_title_checks == count,
             'exact_title_checks': len(results), 'non_adjacent_and_checks': and_checks,
             'elapsed_ms': round((perf_counter()-started)*1000), 'samples': results}
 

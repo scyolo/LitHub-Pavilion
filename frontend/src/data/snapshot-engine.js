@@ -1,13 +1,14 @@
 import { stemmer } from "stemmer";
 import { publicationSortKey, safeExternalUrl } from "../lib/presentation.js";
+import { expandTokens } from "./fuzzy-terms.js";
 
 export function readerError(message, status = 400, code = "INVALID_PARAM") {
   return Object.assign(new Error(message), { status, code });
 }
 
-function parseParams(params = {}, search = false) {
+export function parseParams(params = {}, search = false) {
   const values = Object.fromEntries(Object.entries(params).filter(([, value]) => value !== "" && value != null));
-  for (const [key, allowed] of Object.entries({ level: ["A", "B"], type: ["conf", "journal"], access: ["oa", "official"], pdf_status: ["pending", "downloaded", "failed", "closed"] })) {
+  for (const [key, allowed] of Object.entries({ level: ["A", "B"], type: ["conf", "journal"], access: ["oa", "official"], pdf_status: ["pending", "downloaded", "failed", "closed"], match: ["auto", "keywords", "exact", "fuzzy"] })) {
     if (values[key] !== undefined && !allowed.includes(values[key])) throw readerError(`${key} 参数不正确`);
   }
   if (values.year !== undefined && !/^[1-9][0-9]{3}$/.test(String(values.year))) throw readerError("year 必须是四位年份");
@@ -22,7 +23,7 @@ function parseParams(params = {}, search = false) {
   return { ...values, directions, venue, page, size, sort };
 }
 
-function queryTokens(q, exactTitle = false) {
+export function queryTokens(q, exactTitle = false) {
   if (typeof q !== "string" || q.length > 2000) throw readerError("完整标题最多 2000 字符");
   const tokens = normalizedTitle(q).match(/[A-Za-z0-9]+/g) || [];
   if (!tokens.length || /[\u3400-\u4dbf\u4e00-\u9fff\uf900-\ufaff\u{20000}-\u{323af}]/u.test(q)) {
@@ -36,11 +37,11 @@ function queryTokens(q, exactTitle = false) {
   return [...new Set(tokens.map((token) => stemmer(token.toLowerCase())))];
 }
 
-function normalizedTitle(value) {
+export function normalizedTitle(value) {
   return value.normalize("NFKD").replace(/\p{M}/gu, "").toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
 }
 
-export function createSnapshotEngine({ manifest, catalog, papers }) {
+export function createSnapshotEngine({ manifest, catalog, papers, preparedIndex }) {
   if (manifest.schema_version !== 1 || !Number.isFinite(Date.parse(manifest.generated_at)) || !Array.isArray(papers) || papers.length !== manifest.paper_count || !Array.isArray(catalog?.venues) || !Array.isArray(catalog?.directions) || !Array.isArray(catalog?.logs)) throw readerError("静态快照格式不正确，请重新导出", 503, "INVALID_SNAPSHOT");
   const byId = new Map(), venueMap = new Map(catalog.venues.map((venue) => [venue.abbr, venue]));
   for (const paper of papers) {
@@ -61,6 +62,10 @@ export function createSnapshotEngine({ manifest, catalog, papers }) {
   let index;
   function searchIndex() {
     if (index) return index;
+    if (preparedIndex) {
+      index = { ...preparedIndex, exactTitles, titleTokens: new Map(papers.map((paper) => [paper.id, (normalizedTitle(paper.title).match(/[a-z0-9]+/g) || []).map((term) => stemmer(term))])) };
+      return index;
+    }
     const postings = new Map(), lengths = new Map(), titleTokens = new Map();
     let totalLength = 0;
     for (const paper of papers) {
@@ -108,25 +113,46 @@ export function createSnapshotEngine({ manifest, catalog, papers }) {
   function listing(params, isSearch) {
     const filters = parseParams(params, isSearch);
     let candidates = papers;
+    let matchMode = isSearch ? (params.match || "auto") : null;
+    let expansions = [];
     const scores = new Map(), priorities = new Map();
     if (isSearch) {
       const exactTitle = typeof params.q === 'string' ? normalizedTitle(params.q) : '';
-      const tokens = queryTokens(params.q, exactTitles.has(exactTitle));
+      const tokens = queryTokens(params.q, matchMode === "exact" || exactTitles.has(exactTitle));
+      if (matchMode === "exact") {
+        candidates = (exactTitles.get(exactTitle) || []).map(id => byId.get(id));
+        for (const paper of candidates) { scores.set(paper.id, 0); priorities.set(paper.id, 0); }
+      } else {
       const { postings, lengths, titleTokens, averageLength } = tokens.length ? searchIndex() : { postings: new Map() };
       const phrase = (exactTitle.match(/[A-Za-z0-9]+/g) || []).map((token) => stemmer(token.toLowerCase()));
-      const groups = tokens.map((token) => postings.get(token) || new Map()).sort((a, b) => a.size - b.size);
+      let tokenGroups = tokens.map(token => [token]);
+      if (matchMode === "fuzzy" && tokens.length) {
+        if (preparedIndex?.tokenGroups) tokenGroups = preparedIndex.tokenGroups;
+        else {
+          const vocabulary = new Map();
+          for (const title of titleTokens.values()) for (const term of new Set(title)) vocabulary.set(term, (vocabulary.get(term) || 0) + 1);
+          tokenGroups = expandTokens(tokens, vocabulary, 4, exactTitle.match(/[a-z0-9]+/g) || []);
+        }
+        expansions = tokenGroups.map((terms, index) => ({ token: tokens[index], alternatives: terms.slice(1) })).filter(row => row.alternatives.length);
+      }
+      const groups = tokenGroups.map(terms => {
+        const merged = new Map();
+        for (const term of terms) for (const [id, frequency] of postings.get(term) || []) merged.set(id, Math.max(merged.get(id) || 0, frequency));
+        return merged;
+      }).sort((a, b) => a.size - b.size);
       candidates = [];
       for (const id of groups[0]?.keys() || []) {
-        if (!groups.every((group) => group.has(id))) continue;
+        if (!byId.has(id) || !groups.every((group) => group.has(id))) continue;
         let score = 0;
         for (const group of groups) {
           const frequency = group.get(id);
-          const idf = Math.max(1e-6, Math.log((papers.length - group.size + 0.5) / (group.size + 0.5)));
+          const idf = Math.max(1e-6, Math.log(((preparedIndex?.documentCount ?? papers.length) - group.size + 0.5) / (group.size + 0.5)));
           score -= idf * frequency * 2.2 / (frequency + 1.2 * (0.25 + 0.75 * lengths.get(id) / averageLength));
         }
         const title = titleTokens.get(id);
         const phraseMatch = title.some((_, start) => phrase.every((token, i) => title[start + i] === token));
-        priorities.set(id, normalizedTitle(byId.get(id).title) === exactTitle ? 0 : phraseMatch ? 1 : tokens.every((token) => title.includes(token)) ? 2 : 3);
+        const strict = tokens.every(token => postings.get(token)?.has(id));
+        priorities.set(id, normalizedTitle(byId.get(id).title) === exactTitle ? 0 : phraseMatch ? 1 : tokens.every((token) => title.includes(token)) ? 2 : strict ? 3 : 4);
         scores.set(id, score);
         candidates.push(byId.get(id));
       }
@@ -139,9 +165,12 @@ export function createSnapshotEngine({ manifest, catalog, papers }) {
         }
         priorities.set(id, 0);
       }
+      if (matchMode === "auto" && !candidates.some(paper => matches(paper, filters)) && !preparedIndex && tokens.length) return listing({ ...params, match: "fuzzy" }, true);
+      if (matchMode === "auto") matchMode = "keywords";
+      }
     }
     const rows = candidates.filter((paper) => matches(paper, filters)).sort(compare(filters.sort, scores, priorities));
-    return { total: rows.length, page: filters.page, size: filters.size, items: rows.slice((filters.page - 1) * filters.size, filters.page * filters.size).map((paper) => {
+    return { total: rows.length, page: filters.page, size: filters.size, ...(isSearch ? { match_mode: matchMode, query_expansions: expansions } : {}), items: rows.slice((filters.page - 1) * filters.size, filters.page * filters.size).map((paper) => {
       const { abstract, authors, direction_details, arxiv_id, dblp_key, updated_at, ...card } = paper;
       return isSearch ? { ...card, score: Number(scores.get(paper.id).toFixed(4)) } : card;
     }) };

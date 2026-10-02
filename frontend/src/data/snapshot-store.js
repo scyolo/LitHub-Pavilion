@@ -1,5 +1,6 @@
 import { createSnapshotEngine, readerError } from "./snapshot-engine.js";
 import { createOverview } from "./snapshot-overview.js";
+import { createLazyReader } from "./snapshot-reader.js";
 
 const MAX_FILE_BYTES = 8 * 1024 * 1024;
 const MAX_TOTAL_BYTES = 800 * 1024 * 1024;
@@ -25,9 +26,28 @@ async function verifyDigest(bytes, expected) {
   if (actual !== expected) throw invalid();
 }
 
-export function createSnapshotStore({ baseUrl, fetcher = globalThis.fetch.bind(globalThis), onState = () => {} }) {
+async function readLimitedBytes(body, maxBytes) {
+  const reader = body.getReader();
+  const chunks = []; let size = 0;
+  try {
+    while (true) {
+      const { value, done } = await reader.read();
+      if (done) break;
+      size += value.byteLength;
+      if (size > maxBytes) { await reader.cancel(); throw invalid(); }
+      chunks.push(value);
+    }
+  } finally {
+    reader.releaseLock();
+  }
+  const bytes = new Uint8Array(size); let offset = 0;
+  for (const chunk of chunks) { bytes.set(chunk, offset); offset += chunk.length; }
+  return bytes;
+}
+
+export function createSnapshotStore({ baseUrl, fetcher = globalThis.fetch.bind(globalThis), onState = () => {}, overviewCache = null }) {
   const base = new URL(baseUrl);
-  let active = null, pending = null, wantFull = false;
+  let active = null, pending = null, wantFull = false, initializing = null;
   let state = { status: "idle", revision: null, generation: 0, verification: null, generated_at: null, paper_count: null, loaded: 0, total: 0, error: null };
   function update(values) { state = { ...state, ...values }; onState(state); }
   async function download(path, digest, cache, maxBytes = MAX_FILE_BYTES, batchSignal) {
@@ -39,27 +59,21 @@ export function createSnapshotStore({ baseUrl, fetcher = globalThis.fetch.bind(g
     try {
       const response = await fetcher(new URL(path, base).href, { cache, mode: "same-origin", credentials: "omit", redirect: "error", signal: controller.signal });
       if (!response.ok) throw readerError(path === "manifest.json" && response.status === 404 ? "尚未发布论文快照。请在本地导出数据并完成首次发布。" : "快照文件暂时不可用，请稍后重试", 503, "SNAPSHOT_UNAVAILABLE");
-      let bytes;
-      if (response.body?.getReader) {
-        const reader = response.body.getReader();
-        const chunks = []; let size = 0;
-        while (true) {
-          const { value, done } = await reader.read();
-          if (done) break;
-          size += value.byteLength;
-          if (size > maxBytes) { await reader.cancel(); throw invalid(); }
-          chunks.push(value);
-        }
-        bytes = new Uint8Array(size); let offset = 0;
-        for (const chunk of chunks) { bytes.set(chunk, offset); offset += chunk.length; }
-      } else {
-        bytes = new TextEncoder().encode(await response.text());
+      let bytes = response.body?.getReader
+        ? await readLimitedBytes(response.body, maxBytes)
+        : new TextEncoder().encode(await response.text());
+      // Fetch may already have decoded HTTP Content-Encoding. Inspect the
+      // remaining bytes, not the URL/header, to also handle a compressed .gz
+      // file inside an extra transport-compression layer. Bound both forms.
+      if (path.endsWith(".json.gz") && bytes[0] === 0x1f && bytes[1] === 0x8b) {
+        bytes = await readLimitedBytes(new Response(bytes).body.pipeThrough(new DecompressionStream("gzip")), maxBytes);
       }
       if (bytes.byteLength > maxBytes) throw invalid();
       if (digest) await verifyDigest(bytes, digest);
+      const text = new TextDecoder().decode(bytes);
       let data;
-      try { data = JSON.parse(new TextDecoder().decode(bytes)); } catch { throw invalid(); }
-      return { data, size: bytes.byteLength };
+      try { data = JSON.parse(text); } catch { throw invalid(); }
+      return { data, size: bytes.byteLength, text };
     } finally {
       clearTimeout(timeout);
       batchSignal?.removeEventListener("abort", abort);
@@ -89,15 +103,16 @@ export function createSnapshotStore({ baseUrl, fetcher = globalThis.fetch.bind(g
     if (candidate.overview) {
       for (const scope of catalog.overview.scopes) {
         const { generated_at, last_crawl, ...dashboard } = engine.dashboard({ level: scope.level, type: scope.type });
-        if (serialize(dashboard) !== serialize(scope.dashboard) || serialize(engine.latest({ level: scope.level, type: scope.type }).items) !== serialize(scope.latest)) throw invalid();
+        const { generated_at: time, last_crawl: crawl, ...expected } = candidate.overview.dashboard({ level: scope.level, type: scope.type });
+        if (serialize(dashboard) !== serialize(expected) || serialize(engine.latest({ level: scope.level, type: scope.type }).items) !== serialize(scope.latest)) throw invalid();
       }
     }
     return { ...candidate, engine };
   }
-  function commit(candidate) {
+  function commit(candidate, fromCache = false) {
     const generation = state.generation + Number(Boolean(active && active.manifest.revision !== candidate.manifest.revision));
     active = candidate;
-    update({ status: "ready", revision: candidate.manifest.revision, generation, verification: candidate.engine ? "full" : "catalog", generated_at: candidate.manifest.generated_at, paper_count: candidate.manifest.paper_count, error: null });
+    update({ status: "ready", revision: candidate.manifest.revision, generation, verification: candidate.engine ? "full" : "catalog", from_cache: fromCache, generated_at: candidate.manifest.generated_at, paper_count: candidate.manifest.paper_count, error: null });
   }
   function run(operation) {
     if (!pending) pending = operation().catch((error) => {
@@ -111,17 +126,52 @@ export function createSnapshotStore({ baseUrl, fetcher = globalThis.fetch.bind(g
       update({ status: active ? "updating" : "loading", error: null, loaded: 0, total: 1 });
       const { data: manifest } = await download("manifest.json", null, "no-cache", 1024 * 1024);
       await validateManifest(manifest);
-      if (active?.manifest.revision === manifest.revision) { update({ status: "ready" }); return false; }
-      const { data: catalog, size } = await download(manifest.catalog.path, manifest.catalog.sha256, "default");
+      if (active?.manifest.revision === manifest.revision) { update({ status: "ready", from_cache: false }); return false; }
+      const { data: catalog, size, text: catalogText } = await download(manifest.catalog.path, manifest.catalog.sha256, "default");
       let candidate = { manifest, catalog, bytes: size, overview: createOverview({ manifest, catalog }), engine: null };
+      candidate.reader = createLazyReader({ manifest, catalog, download, onProgress: (progress) => { if (active?.manifest.revision === manifest.revision) update(progress); } });
       if (!candidate.overview || wantFull || active?.engine) candidate = await complete(candidate);
       commit(candidate);
+      if (candidate.overview) Promise.resolve(overviewCache?.write?.({ manifest, catalog_text: catalogText })).catch(() => {});
       return true;
     });
   }
+  async function ensureActive() {
+    if (active) return;
+    if (!initializing) initializing = (async () => {
+      if (overviewCache) {
+        try {
+          const saved = await overviewCache.read();
+          if (saved) {
+            await validateManifest(saved.manifest);
+            // Preserve the producer's bytes. JSON.stringify reorders integer-like
+            // search bucket keys and changes some numeric literals, breaking hashes.
+            if (typeof saved.catalog_text !== "string") throw invalid();
+            const bytes = new TextEncoder().encode(saved.catalog_text);
+            if (bytes.byteLength > MAX_FILE_BYTES) throw invalid();
+            await verifyDigest(bytes, saved.manifest.catalog.sha256);
+            const restored = { manifest: saved.manifest, catalog: JSON.parse(saved.catalog_text) };
+            const candidate = { ...restored, bytes: bytes.byteLength, overview: createOverview(restored), engine: null };
+            if (!candidate.overview) throw invalid();
+            candidate.reader = createLazyReader({ ...restored, download, onProgress: progress => {
+              if (active?.manifest.revision === saved.manifest.revision) update(progress);
+            } });
+            if (!active) commit(candidate, true);
+            // A repeat visit does not wait for network revalidation.
+            refresh().catch(() => {});
+            return;
+          }
+        } catch {
+          Promise.resolve(overviewCache.clear?.()).catch(() => {});
+        }
+      }
+      if (!active) await refresh();
+    })().finally(() => { initializing = null; });
+    await initializing;
+  }
   async function load() {
     wantFull = true;
-    if (!active) await refresh();
+    if (!active) await ensureActive();
     if (!active.engine) {
       if (pending) await pending;
       if (!active.engine) await run(async () => { commit(await complete(active)); });
@@ -130,9 +180,15 @@ export function createSnapshotStore({ baseUrl, fetcher = globalThis.fetch.bind(g
   }
   async function call(method, params, signal) {
     if (signal?.aborted) throw new DOMException("Request aborted", "AbortError");
-    const lightweight = ["dashboard", "latest", "directions", "venues", "stats", "crawlLogs", "crawlStatus"].includes(method);
+    const lightweight = ["dashboard", "latest", "directions", "venues", "venueTopics", "stats", "crawlLogs", "crawlStatus"].includes(method);
+    if (!active) await ensureActive();
+    if (active.reader && ["papers", "paper", "search"].includes(method)) {
+      const result = await active.reader.call(method, params);
+      if (signal?.aborted) throw new DOMException("Request aborted", "AbortError");
+      return result;
+    }
+    if (method === "venueTopics" && !active.overview?.supports(method, params)) return { items: {} };
     if (!lightweight) wantFull = true;
-    if (!active) await refresh();
     if (!(active.overview?.supports(method, params)) && !active.engine) await load();
     if (signal?.aborted) throw new DOMException("Request aborted", "AbortError");
     const engine = active.overview?.supports(method, params) ? active.overview : active.engine;

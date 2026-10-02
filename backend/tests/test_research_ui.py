@@ -37,4 +37,4 @@ def test_current_topics_reindex_preserves_manual_labels_and_is_idempotent(db, sa
     second = reindex_topics(db, settings.seeds_dir)
     assert sum(second["added_labels"].values()) == 0
     assert sum(second["removed_labels"].values()) == 0
-    assert db.query(Direction).count() == 9
+    assert db.query(Direction).count() == 16

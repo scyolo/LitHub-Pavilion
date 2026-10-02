@@ -10,7 +10,8 @@ from urllib.parse import urlsplit
 import httpx
 
 from app.collectors.http_client import make_client
-from app.services.snapshot import MAX_FILE_BYTES, _json_bytes, validate_snapshot
+from app.services.snapshot import MAX_FILE_BYTES, MAX_SNAPSHOT_BYTES, _json_bytes, _load_entry, validate_snapshot
+from app.services.snapshot_reader import reader_entries, read_compressed_asset, decode_compressed_asset, decode_reader_descriptor
 
 _MARKER = b"lithub-public-snapshot-v1\n"
 _REPOSITORY = re.compile(r"[A-Za-z0-9][A-Za-z0-9-]{0,38}/[A-Za-z0-9][A-Za-z0-9_.-]{0,99}")
@@ -53,6 +54,7 @@ def _publication_files(directory):
     try:
         manifest = validate_snapshot(directory)
         names = _referenced_files(manifest)
+        catalog, _ = _load_entry(directory, manifest["catalog"], "catalog")
         files = {"manifest.json": _json_bytes(manifest)}
         for name in sorted(names):
             path = directory / name
@@ -62,6 +64,10 @@ def _publication_files(directory):
             if hashlib.sha256(content).hexdigest() not in name:
                 raise ValueError("Snapshot changed during publication")
             files[name] = content
+        for entry in reader_entries(catalog, directory):
+            files[entry["path"]], _ = read_compressed_asset(directory, entry)
+        if sum(map(len, files.values())) > MAX_SNAPSHOT_BYTES:
+            raise ValueError("Publication exceeds snapshot budget")
         return manifest, files
     except (ValueError, OSError):
         raise SnapshotPublishError("Local public snapshot validation failed") from None
@@ -223,6 +229,39 @@ async def _publish(client, repository, token, manifest, files):
                 if not entry or entry.get("type") != "blob" or entry.get("mode") != "100644":
                     raise SnapshotPublishError("Existing snapshot references a missing or unsafe file")
                 retained[name] = {"path": name, "mode": "100644", "type": "blob", "sha": entry["sha"]}
+            previous_catalog_entry = previous["catalog"]
+            previous_catalog_raw = await blob(old_files[previous_catalog_entry["path"]]["sha"], MAX_FILE_BYTES)
+            if hashlib.sha256(previous_catalog_raw).hexdigest() != previous_catalog_entry["sha256"]:
+                raise SnapshotPublishError("Previous catalog digest mismatch")
+            try:
+                previous_catalog = json.loads(previous_catalog_raw)
+                descriptor = None
+                if previous_catalog.get("reader", {}).get("version") in (4, 6):
+                    index = previous_catalog["reader"]["index"]
+                    old_index = old_files.get(index["path"])
+                    if not old_index or old_index.get("type") != "blob" or old_index.get("mode") != "100644":
+                        raise ValueError("Missing previous reader descriptor")
+                    compressed = await blob(old_index["sha"], MAX_FILE_BYTES)
+                    descriptor = decode_reader_descriptor(decode_compressed_asset(compressed, index), previous_catalog["reader"])
+                previous_reader = reader_entries(previous_catalog, descriptor=descriptor)
+            except (ValueError, TypeError, KeyError, AttributeError):
+                raise SnapshotPublishError("Invalid previous reader catalog") from None
+            for asset in previous_reader:
+                entry = old_files.get(asset["path"])
+                if not entry or entry.get("type") != "blob" or entry.get("mode") != "100644":
+                    raise SnapshotPublishError("Previous reader asset is missing or unsafe")
+                retained[asset["path"]] = {"path": asset["path"], "mode": "100644", "type": "blob", "sha": entry["sha"]}
+    total_bytes = sum(map(len, files.values()))
+    for name, entry in retained.items():
+        if name in files:
+            continue
+        original = old_files.get('manifest.json' if name == 'previous-manifest.json' else name, {})
+        size = original.get('size')
+        if not isinstance(size, int) or isinstance(size, bool) or size < 0 or size > MAX_FILE_BYTES:
+            raise SnapshotPublishError('Previous snapshot has an invalid file size')
+        total_bytes += size
+    if total_bytes > MAX_SNAPSHOT_BYTES:
+        raise SnapshotPublishError('Current and previous snapshots exceed publication budget')
     entries = retained
     for name, content in files.items():
         previous = old_files.get(name)

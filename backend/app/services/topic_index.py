@@ -39,6 +39,11 @@ def _seeds(directory, filename):
         return list(csv.DictReader(stream))
 
 
+def refresh_topic_name(direction, seed):
+    if direction.code == "multimodal" and direction.name == "多模态学习" and seed["name"] == "多模态与视觉语言":
+        direction.name = seed["name"]
+
+
 def refresh_topic_rules(session, directory):
     topics = {row.code: row for row in session.query(Direction).all()}
     for seed in _seeds(directory, "directions.csv"):
@@ -47,6 +52,7 @@ def refresh_topic_rules(session, directory):
             session.add(row)
             session.flush()
             topics[row.code] = row
+        refresh_topic_name(topics[seed["code"]], seed)
     rules = {(row.direction_id, row.keyword): row for row in session.query(DirectionRule).all()}
     added = refined = 0
     for seed in _seeds(directory, "direction_rules.csv"):
@@ -89,7 +95,7 @@ def reindex_topics(session, directory):
     updated = refresh_topic_rules(session, directory)
     topics = {row.id: row for row in session.query(Direction).all()}
     rules, thresholds = load_rules(session), load_thresholds(session)
-    papers = paper_query(session, PaperFilters()).with_entities(Paper.id, Paper.title, Paper.abstract).order_by(Paper.id).all()
+    papers = paper_query(session, PaperFilters(), include_candidates=True).with_entities(Paper.id, Paper.title, Paper.abstract).order_by(Paper.id).all()
     eligible = {row.id for row in papers}
     links = {(row.paper_id, row.direction_id): row for row in session.query(PaperDirection).all() if row.paper_id in eligible}
     before = Counter(topics[did].code for _, did in links)

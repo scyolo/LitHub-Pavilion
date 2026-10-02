@@ -1,0 +1,21 @@
+{
+  "verified_on": "2026-10-02",
+  "sources": {
+    "LISA": {
+      "note": "USENIX 官方 LISA 档案最近列出 2021 年届次，未列出 2023–2026 年届次。保留来源，暂不将空记录判为漏采或声称已全量覆盖。",
+      "evidence_url": "https://www.usenix.org/conferences/byname/5"
+    },
+    "VEE": {
+      "note": "已查到 VEE 2022 官方会议记录；尚未核实 2023–2026 年独立届次或更名后继关系。不能凭旧档案推断已停办或补入其他会议论文。",
+      "evidence_url": "https://conf.researchr.org/home/vee-2022"
+    },
+    "Performance": {
+      "note": "已依据官方技术议程关联 2023、2025 长论文。2026 官网列出的是 11 月会议的 accepted presentations，截至 2026-10-01 尚未据此导入为正式论文；2024 与部分论文仍待核验。",
+      "evidence_url": "https://performance2025.sciencesconf.org/resource/page/id/3"
+    },
+    "SPM": {
+      "note": "已按迁移后的 SPM 2023 官方技术议程关联 CAD 长论文；2024–2026 仍需逐篇名单证据，不把专题序言、参考文献或整期期刊冒充会议论文。",
+      "evidence_url": "https://sites.google.com/view/spm-2023/program"
+    }
+  }
+}

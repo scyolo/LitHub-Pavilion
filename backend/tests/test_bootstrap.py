@@ -8,18 +8,18 @@ from app.config import PROJECT_ROOT
 from app.models import Direction, Venue
 
 
-def test_empty_database_is_ready_and_repeat_start_preserves_edits(engine):
+def test_empty_database_is_ready_and_repeat_start_preserves_edits(engine, seed_venue_abbrs):
     initialize_database(engine, PROJECT_ROOT / "seeds")
     with Session(engine) as session:
-        assert session.query(Venue).count() == 28
-        assert session.query(Direction).count() == 9
+        assert {abbr for abbr, in session.query(Venue.abbr)} == seed_venue_abbrs
+        assert session.query(Direction).count() == 16
         venue = session.query(Venue).filter(Venue.abbr == "ICLR").one()
         venue.openalex_source_id = "S123456"
         venue.active = 0
         session.commit()
     initialize_database(engine, PROJECT_ROOT / "seeds")
     with Session(engine) as session:
-        assert session.query(Venue).count() == 28
+        assert {abbr for abbr, in session.query(Venue.abbr)} == seed_venue_abbrs
         venue = session.query(Venue).filter(Venue.abbr == "ICLR").one()
         assert venue.openalex_source_id == "S123456"
         assert venue.active == 0

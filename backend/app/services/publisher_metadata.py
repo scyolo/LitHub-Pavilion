@@ -8,7 +8,7 @@ from app.models import Paper, Venue
 from app.services.paper_store import _safe_publication_date, ccf_track_eligible, same_authors, upsert_paper
 
 
-def apply_items(session, items, years):
+def apply_items(session, items, years, *, commit=True):
     venues = {v.abbr: v for v in session.query(Venue).filter(Venue.active == 1, Venue.ccf_level.in_(("A", "B"))).all()}
     stats = Counter()
     conflicts = []
@@ -16,6 +16,11 @@ def apply_items(session, items, years):
     for item in items:
         venue = identify_venue(item, venues)
         raw = item_to_raw(item) if venue else None
+        if raw and venue.type == "conf":
+            from app.collectors.catalog_conferences import conference_year
+            event_year = conference_year(item, venue)
+            if event_year is not None:
+                raw = replace(raw, year=event_year, publication_date=raw.publication_date if (raw.publication_date or "").startswith(str(event_year)) else None)
         if not raw or raw.year not in years or is_noise_title(normalize_title(raw.title)):
             stats["out_of_scope"] += 1
             continue
@@ -67,6 +72,10 @@ def apply_items(session, items, years):
                 provenance = "Verified publisher metadata: Crossref DOI " + raw.doi
                 if item.get("_ecml_parent"):
                     provenance += "; conference year verified from parent " + item["_ecml_parent"]["DOI"]
+                if item.get("type") == "journal-article" and venue.type == "conf":
+                    provenance += "; explicit journal research-track issue " + str(item.get("issue")) + "; year is journal publication/volume year, presentation year not inferred"
+                if item.get("_catalog_book_parent"):
+                    provenance += "; event edition verified from parent book " + item["_catalog_book_parent"]["DOI"]
                 if preserved_note and preserved_note not in (paper.note or ""):
                     paper.note = ((paper.note + "\n") if paper.note else "") + preserved_note
                 if provenance not in (paper.note or ""):
@@ -79,5 +88,6 @@ def apply_items(session, items, years):
         except ValueError as exc:
             stats["identity_conflicts"] += 1
             conflicts.append({"doi": raw.doi, "publisher_title": raw.title, "reason": str(exc)})
-    session.commit()
+    if commit:
+        session.commit()
     return {"counts": dict(stats), "changes": changed, "conflicts": conflicts}

@@ -1,4 +1,6 @@
 import { createHash, webcrypto } from "node:crypto";
+import { gzipSync } from "node:zlib";
+import { DecompressionStream } from "node:stream/web";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { snapshotFixture, withOverview } from "../test/snapshot-fixture.js";
 
@@ -20,6 +22,40 @@ beforeEach(() => vi.stubGlobal("crypto", webcrypto));
 afterEach(() => vi.unstubAllGlobals());
 
 describe("atomic static snapshot loading", () => {
+  it.each([
+    { name: "opaque gzip file", compressed: true, encoding: null },
+    { name: "HTTP-decoded JSON", compressed: false, encoding: "gzip" },
+    { name: "gzip file remaining after transport decoding", compressed: true, encoding: "gzip" },
+    { name: "decoded JSON without an encoding header", compressed: false, encoding: null },
+    { name: "corrupted decoded content", compressed: false, encoding: "gzip", bad: true },
+    { name: "oversized inflated content", compressed: true, encoding: null, oversized: true },
+  ])("verifies and bounds $name", async ({ compressed, encoding, bad, oversized }) => {
+    const { createSnapshotStore } = await import("./snapshot-store.js");
+    vi.stubGlobal("DecompressionStream", DecompressionStream);
+    const fixture = withOverview();
+    const details = JSON.stringify(fixture.papers);
+    const sha256 = createHash("sha256").update(details).digest("hex");
+    const entry = { sha256, count: fixture.papers.length, min_id: 11, max_id: 35,
+      venues: ["AC", "BJ"], years: [2024, 2025, 2026], directions: ["llm", "agent"] };
+    const fields = ["id", "title", "venue", "year", "publication_date", "created_at", "citation_count", "directions", "venue_confirmed", "doi", "official_url", "oa_url", "first_author", "authors_count", "pdf_status", "pdf_source"];
+    fixture.catalog.reader = { version: 1, paper_count: fixture.papers.length, fields,
+      browse: [{ path: `browse-${sha256}.json.gz`, sha256, count: fixture.papers.length }],
+      details: [{ ...entry, path: `compressed-${sha256}.json.gz` }] };
+    const data = bundle(fixture);
+    const fetcher = vi.fn(async (url) => {
+      const name = String(url).split("/").pop();
+      if (name.endsWith(".json.gz")) {
+        const text = oversized ? " ".repeat(8 * 1024 * 1024 + 1) : bad ? "[]" : details;
+        const bytes = compressed ? gzipSync(text) : new TextEncoder().encode(text);
+        return new Response(bytes, { headers: encoding ? { "content-encoding": encoding } : {} });
+      }
+      return new Response(data.files[name]);
+    });
+    const store = createSnapshotStore({ baseUrl: "https://reader.example/snapshot/", fetcher });
+    if (bad || oversized) await expect(store.call("paper", 11)).rejects.toMatchObject({ code: "INVALID_SNAPSHOT" });
+    else expect((await store.call("paper", 11)).title).toBe(fixture.papers[0].title);
+    expect(fetcher).toHaveBeenCalledTimes(3);
+  });
   it("renders all home queries from two verified files without downloading papers", async () => {
     const { createSnapshotStore } = await import("./snapshot-store.js");
     const data = bundle(withOverview());

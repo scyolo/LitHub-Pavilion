@@ -69,28 +69,119 @@ def pmlr_volumes(text, years):
     result = []
     for block in re.findall(r'<li>(.*?)</li>', text, re.S):
         link = re.search(r'href="(v\d+)"', block)
-        scope = re.search(r'Proceedings of (ICML|UAI) (20\d{2})$', plain(block))
+        scope = re.search(r'Proceedings of (ICML|UAI|COLT) (20\d{2})$', plain(block))
         if link and scope and int(scope[2]) in years:
             result.append((scope[1], int(scope[2]), 'https://proceedings.mlr.press/' + link[1] + '/'))
     return result
 
 
+class _PmlrInventory(HTMLParser):
+    """Keep metadata and links inside their own paper, including nested divs."""
+
+    _VOID = {"area", "base", "br", "col", "embed", "hr", "img", "input", "link", "meta", "param", "source", "track", "wbr"}
+
+    def __init__(self):
+        super().__init__(convert_charrefs=True)
+        self.papers = []
+        self.paper = None
+        self.stack = []
+
+    def handle_starttag(self, tag, attrs):
+        attrs = dict(attrs)
+        classes = (attrs.get("class") or "").split()
+        if self.paper is None:
+            if tag == "div" and "paper" in classes:
+                self.paper = {"title": "", "authors": "", "links": []}
+                self.stack = [(tag, None)]
+            return
+        if tag == "div" and "paper" in classes:
+            raise ValueError("Nested PMLR paper blocks")
+        if tag in self._VOID:
+            return
+        field = None
+        if tag == "p" and "title" in classes:
+            field = "title"
+        elif tag == "span" and "authors" in classes:
+            field = "authors"
+        elif tag == "a":
+            field = "link"
+        capture = {"field": field, "parts": [], "href": attrs.get("href")} if field else None
+        self.stack.append((tag, capture))
+
+    def handle_data(self, data):
+        for _, capture in self.stack:
+            if capture is not None:
+                capture["parts"].append(data)
+
+    def handle_endtag(self, tag):
+        if not any(open_tag == tag for open_tag, _ in self.stack):
+            return
+        while self.stack:
+            open_tag, capture = self.stack.pop()
+            if capture is not None:
+                text = " ".join("".join(capture["parts"]).split())
+                if capture["field"] == "link":
+                    self.paper["links"].append((capture["href"], text))
+                else:
+                    if self.paper[capture["field"]]:
+                        raise ValueError("Duplicate PMLR metadata field")
+                    self.paper[capture["field"]] = text
+            if open_tag == tag:
+                break
+        if not self.stack:
+            self.papers.append(self.paper)
+            self.paper = None
+
+
+def _pmlr_pdf_link(href, base, volume, slug):
+    if not href:
+        return None
+    try:
+        link = urljoin(base, html.unescape(href).strip())
+        parts = urlsplit(link)
+    except ValueError:
+        return None
+    if parts.scheme != "https" or parts.query or parts.fragment:
+        return None
+    expected = {
+        "proceedings.mlr.press": f"/v{volume}/{slug}/{slug}.pdf",
+        "raw.githubusercontent.com": f"/mlresearch/v{volume}/main/assets/{slug}/{slug}.pdf",
+    }
+    return link if parts.path == expected.get(parts.netloc) else None
+
+
 def parse_pmlr(text, year, url, venue):
-    label = "International Conference on Machine Learning" if venue == "ICML" else "Uncertainty in Artificial Intelligence"
+    label = {"ICML": "International Conference on Machine Learning", "UAI": "Uncertainty in Artificial Intelligence", "COLT": "Conference on Learning Theory"}.get(venue)
+    if not label:
+        raise ValueError("Unsupported PMLR conference")
     if label.lower() not in plain(text).lower():
         raise ValueError("PMLR volume does not match the requested conference")
-    blocks = re.findall(r'<div class="paper">(.*?)</div>', text, re.S)
+    volume = re.fullmatch(r"https://proceedings\.mlr\.press/v(\d+)/", url)
+    if not volume:
+        raise ValueError("Unverified PMLR volume URL")
+    parser = _PmlrInventory()
+    parser.feed(text)
+    parser.close()
+    if parser.paper is not None:
+        raise ValueError("PMLR inventory has an incomplete paper block")
     records = []
-    for block in blocks:
-        title = re.search(r'<p class="title">(.*?)</p>', block, re.S)
-        authors = re.search(r'<span class="authors">(.*?)</span>', block, re.S)
-        link = re.search(r'<a href="([^"]+\.html)">abs</a>', block)
-        if title and authors and link:
-            landing = urljoin(url, html.unescape(link[1]))
-            if not landing.startswith(url):
-                raise ValueError("PMLR link points outside the verified volume")
-            records.append(_raw(landing, plain(title[1]), plain(authors[1]).split(','), year))
-    return _validate(records, len(blocks))
+    for block in parser.papers:
+        details = [href for href, label in block["links"] if label.lower() == "abs" and href]
+        if len(details) != 1:
+            raise ValueError("PMLR paper must have exactly one abstract link")
+        landing = urljoin(url, html.unescape(details[0]).strip())
+        parts = urlsplit(landing)
+        slug = re.fullmatch(rf"/v{volume[1]}/([A-Za-z0-9][A-Za-z0-9_-]*)\.html", parts.path)
+        if parts.scheme != "https" or parts.netloc != "proceedings.mlr.press" or parts.query or parts.fragment or not slug:
+            raise ValueError("PMLR link points outside the verified volume")
+        raw = _raw(landing, block["title"], block["authors"].split(','), year)
+        for href, _ in block["links"]:
+            pdf = _pmlr_pdf_link(href, url, volume[1], slug[1])
+            if pdf:
+                raw.extra["oa_pdf"] = pdf
+                break
+        records.append(raw)
+    return _validate(records, len(parser.papers))
 
 
 def parse_cvf(text, year, venue):
@@ -210,7 +301,7 @@ def parse_anthology(text, year, venue, collection):
     root = ET.fromstring(text)
     if root.tag != 'collection' or root.get('id') != collection:
         raise ValueError("Anthology collection mismatch")
-    accepted = {'ACL': {'long', 'main'}, 'EMNLP': {'main'}, 'COLING': {'main'}, 'TACL': None, 'CL': None}[venue]
+    accepted = {'ACL': {'long', 'main'}, 'NAACL': {'long', 'main'}, 'EMNLP': {'main'}, 'COLING': {'main'}, 'TACL': None, 'CL': None}[venue]
     records = []
     expected = 0
     for volume in root.findall('volume'):
@@ -221,7 +312,7 @@ def parse_anthology(text, year, venue, collection):
         meta = volume.find('meta')
         if meta is None or meta.findtext('year') != str(year):
             raise ValueError("Anthology publication year mismatch")
-        if meta.findtext('venue') not in {'ACL': {'acl'}, 'EMNLP': {'emnlp'}, 'COLING': ({'lrec'} if collection == '2024.lrec' and year == 2024 else {'coling'}), 'TACL': {'tacl'}, 'CL': {'cl'}}[venue]:
+        if meta.findtext('venue') not in {'ACL': {'acl'}, 'NAACL': {'naacl'}, 'EMNLP': {'emnlp'}, 'COLING': ({'lrec'} if collection == '2024.lrec' and year == 2024 else {'coling'}), 'TACL': {'tacl'}, 'CL': {'cl'}}[venue]:
             raise ValueError("Anthology venue mismatch")
         for paper in volume.findall('paper'):
             expected += 1
@@ -245,6 +336,11 @@ async def fetch_official_inventory(client, limiter, venue, year):
         return response.text
 
     abbr = venue.abbr
+    if abbr == 'SIGKDD':
+        from app.collectors.kdd import CATALOGUES, parse_kdd_research
+        if year in CATALOGUES:
+            return parse_kdd_research(await read(CATALOGUES[year]), year)
+        return None
     if abbr == 'TPAMI':
         from app.collectors.csdl import fetch_csdl_inventory
         return await fetch_csdl_inventory(read, year)
@@ -277,7 +373,7 @@ async def fetch_official_inventory(client, limiter, venue, year):
         return parse_jmlr(await read(f'https://jmlr.org/papers/v{year - 1999}/'), year)
     if abbr in ('CVPR', 'ICCV'):
         return parse_cvf(await read(f'https://openaccess.thecvf.com/{abbr}{year}?day=all'), year, abbr)
-    if abbr in ('ICML', 'UAI'):
+    if abbr in ('ICML', 'UAI', 'COLT'):
         volumes = [v for v in pmlr_volumes(await read('https://proceedings.mlr.press/'), [year]) if v[0] == abbr]
         if not volumes and abbr == 'ICML':
             return parse_icml(await read(f'https://icml.cc/static/virtual/data/icml-{year}-orals-posters.json'), year)
@@ -285,7 +381,7 @@ async def fetch_official_inventory(client, limiter, venue, year):
             raise ValueError('Official main volume not uniquely available in publisher index')
         url = volumes[0][2]
         return parse_pmlr(await read(url), year, url, abbr)
-    if abbr in ('ACL', 'EMNLP', 'COLING', 'TACL', 'CL'):
+    if abbr in ('ACL', 'NAACL', 'EMNLP', 'COLING', 'TACL', 'CL'):
         collection = f'{year}.{abbr.lower()}' if not (abbr == 'COLING' and year == 2024) else '2024.lrec'
         url = f'https://raw.githubusercontent.com/acl-org/acl-anthology/master/data/xml/{collection}.xml'
         return parse_anthology(await read(url), year, abbr, collection)

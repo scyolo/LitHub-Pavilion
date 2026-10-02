@@ -71,7 +71,7 @@ class VenueUpsertRequest(BaseModel):
     model_config = ConfigDict(extra="forbid", str_strip_whitespace=True)
     abbr: str = Field(min_length=1, max_length=64, pattern=r"^[A-Za-z0-9][A-Za-z0-9 ._-]*$")
     name: str = Field(min_length=1, max_length=300)
-    dblp_stream: str = Field(pattern=r"^(conf|journals)/[A-Za-z0-9._-]+$")
+    dblp_stream: str | None = Field(default=None, pattern=r"^(conf|journals)/[A-Za-z0-9._-]+$")
     dblp_toc_pattern: str | None = Field(default=None, max_length=128, pattern=r"^[A-Za-z0-9._{}-]+$")
     issn: str | None = Field(default=None, pattern=r"^\d{4}-\d{3}[0-9Xx]$")
     openalex_source_id: str | None = Field(default=None, pattern=r"^S\d+$")

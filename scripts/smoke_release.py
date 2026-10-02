@@ -3,8 +3,10 @@
 This local developer command is not a server route. It never accepts remote URLs,
 resolves user-selected hosts, or follows redirects.
 """
+import csv
 import http.client
 import json
+from pathlib import Path
 
 
 def get(path):
@@ -18,6 +20,9 @@ def get(path):
 
 
 def main():
+    seeds = Path(__file__).resolve().parents[1] / "seeds"
+    with (seeds / "venues.csv").open(encoding="utf-8-sig", newline="") as source:
+        expected_venues = {row["abbr"] for row in csv.DictReader(source)}
     status, headers, body = get("/")
     assert status == 200
     assert "LitHub Pavilion" in body.decode("utf-8")
@@ -28,7 +33,7 @@ def main():
     assert status == 200
     dashboard = json.loads(body)
     assert dashboard["total"] == 0
-    assert dashboard["configured_venues"] == 28
+    assert dashboard["configured_venues"] == len(expected_venues)
     assert len(dashboard["directions"]) == 9
     status, _, body = get("/api/crawl/status")
     assert status == 200
@@ -39,10 +44,10 @@ def main():
     status, _, body = get("/api/search?q=speculative")
     assert status == 200 and json.loads(body)["total"] == 0
     status, _, body = get("/api/venues")
-    assert status == 200 and len(json.loads(body)["items"]) == 28
+    assert status == 200 and {venue["abbr"] for venue in json.loads(body)["items"]} == expected_venues
     status, _, body = get("/api/papers?level=C")
     assert status == 400 and json.loads(body)["error"]["code"] == "INVALID_PARAM"
-    print("PASS: page, security headers, empty SQLite/FTS5, 28 A/B sources, nine topics, link-only API")
+    print(f"PASS: page, security headers, empty SQLite/FTS5, {len(expected_venues)} A/B sources, nine topics, link-only API")
 
 
 if __name__ == "__main__":

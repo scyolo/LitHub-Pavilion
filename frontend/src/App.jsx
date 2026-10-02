@@ -10,9 +10,11 @@ import SearchInput from "./components/SearchInput.jsx";
 import PageScroll from "./components/PageScroll.jsx";
 import { LoadingState } from "./components/States.jsx";
 
-const Home = lazy(() => import("./pages/Home.jsx"));
+import Home from "./pages/Home.jsx";
+const Deadlines = lazy(() => import("./pages/Deadlines.jsx"));
 const PaperList = lazy(() => import("./pages/PaperList.jsx"));
 const PaperDetail = lazy(() => import("./pages/PaperDetail.jsx"));
+const SourceCoverage = lazy(() => import('./pages/SourceCoverage.jsx'));
 const Venues = lazy(() => import("./pages/Venues.jsx"));
 const Admin = lazy(() => import("./pages/Admin.jsx"));
 
@@ -20,6 +22,7 @@ const NAVIGATION = [
   { to: "/", name: "研究总览", icon: "grid", end: true },
   { to: "/papers", name: "论文探索", icon: "book" },
   { to: "/venues", name: "会议与期刊", icon: "building" },
+  { to: "/deadlines", name: "截稿日历", icon: "calendar" },
 ];
 
 function initialTheme() {
@@ -42,7 +45,7 @@ export default function App() {
   const [menuOpen, setMenuOpen] = useState(false);
   const { data: crawl } = useCrawlStatus();
   const { data: directions } = useQuery({ queryKey: ["directions"], queryFn: ({ signal }) => api.directions(signal) });
-  const pageName = location.pathname.startsWith("/admin") ? (api.isSnapshot ? "快照与更新" : "采集管理") : location.pathname.startsWith("/venues") ? "会议与期刊" : location.pathname.startsWith("/papers/") ? "论文详情" : location.pathname.startsWith("/papers") ? "论文探索" : "研究总览";
+  const pageName = location.pathname.startsWith("/coverage") ? "来源覆盖核验" : location.pathname.startsWith("/deadlines") ? "截稿日历" : location.pathname.startsWith("/admin") ? (api.isSnapshot ? "快照与更新" : "采集管理") : location.pathname.startsWith("/venues") ? "会议与期刊" : location.pathname.startsWith("/papers/") ? "论文详情" : location.pathname.startsWith("/papers") ? "论文探索" : "研究总览";
 
   useEffect(() => {
     document.documentElement.dataset.theme = theme;
@@ -94,7 +97,7 @@ export default function App() {
         <main id="main-content" className="page-content" tabIndex={-1}>
           <PageBoundary key={location.pathname}><Suspense fallback={<LoadingState />}><Routes>
             <Route path="/" element={<Home />} /><Route path="/papers" element={<PaperList />} /><Route path="/papers/:id" element={<PaperDetail />} />
-            <Route path="/venues" element={<Venues />} /><Route path="/admin" element={<Admin />} />
+            <Route path="/venues" element={<Venues />} /><Route path="/coverage" element={<SourceCoverage />} /><Route path="/deadlines" element={<Deadlines />} /><Route path="/admin" element={<Admin />} />
             <Route path="*" element={<div className="state-box"><h1>这个页面不存在</h1><NavLink to="/" className="button primary">返回研究总览</NavLink></div>} />
           </Routes></Suspense></PageBoundary>
         </main>

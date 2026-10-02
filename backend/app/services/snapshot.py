@@ -143,7 +143,7 @@ def _paper_rows(db, papers):
     ]
 
 
-def export_snapshot(session_factory, directory: Path, *, chunk_size: int = 500,
+def export_snapshot(session_factory, directory: Path, *, chunk_size: int = 1000,
                     generated_at: datetime | None = None, allow_empty: bool = False) -> dict:
     directory = Path(directory)
     if directory.is_symlink():
@@ -186,13 +186,15 @@ def export_snapshot(session_factory, directory: Path, *, chunk_size: int = 500,
     timestamp = (generated_at or datetime.now(timezone.utc)).astimezone(timezone.utc).isoformat()
     if previous and count == previous["paper_count"] and chunks == previous["chunks"]:
         old_catalog, _ = _load_entry(directory, previous["catalog"], "catalog")
-        if {key: value for key, value in old_catalog.items() if key != "overview"} == catalog_value:
+        if {key: value for key, value in old_catalog.items() if key not in ("overview", "reader")} == catalog_value:
             timestamp = previous["generated_at"]
     overview = OverviewBuilder(catalog_value, timestamp)
     for entry in chunks:
         rows, _ = _load_entry(directory, entry, "papers")
         overview.add(rows)
     catalog_value["overview"] = overview.result()
+    from app.services.snapshot_reader import build_reader_assets
+    catalog_value["reader"] = build_reader_assets(directory, {"chunks": chunks, "paper_count": count}, version=6)
     catalog_data = _json_bytes(catalog_value)
     if total_bytes + len(catalog_data) > MAX_SNAPSHOT_BYTES:
         raise ValueError("Snapshot exceeds the total size limit")
@@ -249,7 +251,7 @@ def snapshot_matches_database(session_factory, directory: Path, manifest: dict |
         query = paper_query(db, PaperFilters())
         if query.count() != current["paper_count"]:
             return False
-        if _catalog(db) != {key: value for key, value in catalog.items() if key != "overview"}:
+        if _catalog(db) != {key: value for key, value in catalog.items() if key not in ("overview", "reader")}:
             return False
         for entry in current["chunks"]:
             rows, _ = _load_entry(directory, entry, "papers")
@@ -320,7 +322,7 @@ def _validate_contents(directory: Path, manifest: dict) -> None:
     if manifest_revision(manifest) != manifest["revision"]:
         raise ValueError("Snapshot revision does not match its contents")
     catalog, total_bytes = _load_entry(directory, manifest["catalog"], "catalog")
-    _check_keys(catalog, {"venues", "directions", "logs", "last_crawl"} | ({"overview"} if "overview" in catalog else set()), "catalog")
+    _check_keys(catalog, {"venues", "directions", "logs", "last_crawl"} | ({"overview"} if "overview" in catalog else set()) | ({"reader"} if "reader" in catalog else set()), "catalog")
     if not all(isinstance(catalog[name], list) for name in ("venues", "directions", "logs")):
         raise ValueError("Invalid snapshot catalog lists")
     venues = {}
@@ -344,7 +346,7 @@ def _validate_contents(directory: Path, manifest: dict) -> None:
     if catalog["last_crawl"] is not None:
         _check_keys(catalog["last_crawl"], (_LOG_KEYS - {"task_type"}) | {"failed_units"}, "last collection")
     ids = set()
-    overview = OverviewBuilder(catalog, manifest["generated_at"]) if "overview" in catalog else None
+    overview = OverviewBuilder(catalog, manifest["generated_at"], version=catalog["overview"].get("version")) if "overview" in catalog else None
     for entry in manifest["chunks"]:
         rows, length = _load_entry(directory, entry, "papers")
         total_bytes += length
@@ -383,6 +385,15 @@ def _validate_contents(directory: Path, manifest: dict) -> None:
         raise ValueError("Public overview does not match the complete snapshot")
     if len(ids) != manifest["paper_count"]:
         raise ValueError("Snapshot paper count does not match")
+    if "reader" in catalog:
+        from app.services.snapshot_reader import build_reader_assets, reader_entries
+        if catalog["reader"].get("version") not in (1, 2, 3, 4, 5, 6):
+            raise ValueError("Unsupported reader version")
+        if catalog["reader"] != build_reader_assets(directory, manifest, write=False, version=catalog["reader"]["version"]):
+            raise ValueError("Public reader index does not match the complete snapshot")
+        total_bytes += sum((directory / entry["path"]).stat().st_size for entry in reader_entries(catalog, directory))
+        if total_bytes > MAX_SNAPSHOT_BYTES:
+            raise ValueError("Snapshot reader assets exceed the total size limit")
 
 
 def validate_snapshot(directory: Path) -> dict:

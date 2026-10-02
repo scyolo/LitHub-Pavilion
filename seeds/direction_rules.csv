@@ -93,3 +93,40 @@ rl,\breward[- ](?:learning|model|shaping)\b,both,1.0,1
 rl,\b(?:policy gradient|q[- ]learning|markov decision)\b,both,1.0,1
 retrieval,\b(?:(?:web|semantic|neural|document|passage)[- ]search|search engines?|(?:document|passage|retrieval)[- ]ranking|recommender systems?|recommendation systems?)\b,both,1.0,1
 alignment,\b(?:human|value|preference|safety|llm|language[- ]model)[- ]alignment\b,both,1.0,1
+ml,\bmachine[- ]learning\b,both,1.0,1
+ml,\b(?:supervised|unsupervised|self[- ]supervised|semi[- ]supervised|federated|continual|transfer|meta)[- ]learning\b,both,1.0,1
+dl,\bdeep[- ]learning\b,both,1.0,1
+dl,\b(?:deep|convolutional|recurrent|graph)[- ]neural[- ]networks?\b,both,1.0,1
+dl,\btransformer[- ](?:models?|networks?|architectures?)\b,both,1.0,1
+ai,\bartificial[- ]intelligence\b,both,1.0,1
+ai,\b(?:generative|explainable|responsible|trustworthy)[- ]ai\b,both,1.0,1
+hci,\bhuman[- ]computer interaction\b,both,1.0,1
+hci,\bhuman[- ](?:AI|robot) interaction\b,both,1.0,1
+hci,\b(?:information|interactive|scientific|data) visuali[sz]ation\b,both,1.0,1
+hci,\bvisual analytics\b,both,1.0,1
+hci,\b(?:user|interaction|interface|participatory)[- ]design\b,both,1.0,1
+hci,\b(?:eye[- ]tracking|gaze[- ]interaction|haptic interfaces?|immersive analytics)\b,both,1.0,1
+hci,\b(?:usability|accessibility|user experience|graphical user interfaces?)\b,both,1.0,1
+hci,\bcomputer[- ]supported cooperative work\b,both,1.0,1
+generative,\b(?:generative AI|generative artificial intelligence|generative models?)\b,both,1.0,1
+generative,\b(?:denoising|latent|score[- ]based) diffusion\b,both,1.0,1
+generative,\bdiffusion (?:models?|transformers?|probabilistic models?)\b,both,1.0,1
+generative,\b(?:flow matching|rectified flow|consistency models?)\b,both,1.0,1
+generative,\b(?:text|image)[- ]to[- ](?:image|video|3d|audio)\b,both,1.0,1
+generative,\b(?:image|video|motion|audio|3d) (?:generation|synthesis)\b,both,1.0,1
+generative,\bgenerative adversarial networks?\b,both,1.0,1
+generative,\b(?:stable diffusion|DDPM|DDIM)\b,both,1.0,1
+systems,\b(?:operating|distributed|storage|file|cloud|database)[- ]systems?\b,both,1.0,1
+systems,\b(?:distributed|fault[- ]tolerant) (?:computing|consensus|transactions?|storage)\b,both,1.0,1
+systems,\b(?:memory management|kernel schedul\w*|linux kernel|system software)\b,both,1.0,1
+systems,\b(?:serverless|cloud computing|edge computing|microservices?)\b,both,1.0,1
+systems,\b(?:replicated state machines?|distributed replication|Byzantine fault tolerance)\b,both,1.0,1
+systems,\b(?:parallel computing|high[- ]performance computing|networked systems)\b,both,1.0,1
+systems,\b(?:distributed training|distributed inference|resource scheduling)\b,both,1.0,1
+graph,\bgraph (?:neural networks?|convolutional networks?|representation learning|learning|transformers?|embeddings?)\b,both,1.0,1
+graph,\bknowledge (?:graphs?|graph completion|representation and reasoning)\b,both,1.0,1
+graph,\b(?:graph[- ]based learning|graph[- ]contrastive learning|graph[- ]structured learning)\b,both,1.0,1
+graph,\b(?:heterogeneous|temporal|dynamic) graphs?\b,both,1.0,1
+graph,\b(?:link prediction|entity alignment|ontology alignment|graph reasoning)\b,both,1.0,1
+multimodal,\bvision[- ]language[- ](?:action|models?|pretraining|understanding)\b,both,1.0,1
+multimodal,\b(?:visual question answering|image[- ]text alignment|visual grounding)\b,both,1.0,1

@@ -1,4 +1,5 @@
 """共享测试夹具：临时 SQLite 库 + FTS 表 + API TestClient。"""
+import csv
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
@@ -7,8 +8,18 @@ from fastapi.testclient import TestClient
 from sqlalchemy import text
 from sqlalchemy.orm import sessionmaker
 
+from app.config import PROJECT_ROOT
 from app.db import _make_engine
 from app.models import Author, Base, Direction, FTS_DDL, Paper, PaperAuthor, PaperDirection, Venue
+
+
+@pytest.fixture()
+def seed_venue_abbrs():
+    with (PROJECT_ROOT / "seeds" / "venues.csv").open(encoding="utf-8-sig", newline="") as source:
+        rows = list(csv.DictReader(source))
+    abbreviations = {row["abbr"] for row in rows}
+    assert len(abbreviations) == len(rows)  # Duplicate seeds must not silently pass.
+    return abbreviations
 
 
 @pytest.fixture()
@@ -138,7 +149,9 @@ def api_catalog(db):
             title="Radar model", title_norm="radar model", abstract=abstract,
             venue_id=venue.id, year=year, ccf_level=venue.ccf_level,
             official_url=f"https://publisher.example.org/{pid}", oa_url=oa_url,
-            arxiv_id=arxiv_id, venue_confirmed=confirmed, citation_count=citations,
+            # These are the admitted reader corpus; candidate visibility has
+            # dedicated admission tests rather than mixed filtering fixtures.
+            arxiv_id=arxiv_id, venue_confirmed=1, citation_count=citations,
             created_at=(now - timedelta(days=days)).isoformat(timespec="seconds"),
             publication_date=now.date().isoformat() if pid == 23 else None,
             pdf_status="downloaded" if pid == 71 else "closed",

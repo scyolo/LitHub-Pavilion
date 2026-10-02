@@ -59,7 +59,9 @@ def test_export_includes_nine_verified_overview_scopes(session_factory, db, api_
 
     manifest = export_snapshot(session_factory, tmp_path, generated_at=api_catalog["now"])
     catalog, papers = load_snapshot(tmp_path, manifest)
-    assert catalog["overview"]["version"] == 1
+    assert catalog["overview"]["version"] == 2
+    assert "venue_topics" in catalog["overview"]
+    assert all(set(v) == {"abbr", "paper_count", "years"} for scope in catalog["overview"]["scopes"] for v in scope["dashboard"]["venues"])
     scopes = catalog["overview"]["scopes"]
     assert len(scopes) == 9
     for scope in scopes:

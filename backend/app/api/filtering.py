@@ -92,12 +92,15 @@ def has_oa_link(db: Session):
     return func.api_has_oa(Paper.oa_url, Paper.arxiv_id) == 1
 
 
-def paper_query(db: Session, filters: PaperFilters):
+def paper_query(db: Session, filters: PaperFilters, *, include_candidates=False):
     query = (
         db.query(Paper)
         .join(Venue, Paper.venue_id == Venue.id)
         .filter(Paper.ccf_level.in_(LEVELS), *venue_scope(filters))
     )
+    if not include_candidates:
+        from app.services.publication_admission import reader_admission
+        query = query.filter(*reader_admission(db))
     if filters.level is not None:
         query = query.filter(Paper.ccf_level == filters.level)
     if filters.venue is not None:
