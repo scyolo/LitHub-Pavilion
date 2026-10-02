@@ -23,6 +23,10 @@ def main():
     seeds = Path(__file__).resolve().parents[1] / "seeds"
     with (seeds / "venues.csv").open(encoding="utf-8-sig", newline="") as source:
         expected_venues = {row["abbr"] for row in csv.DictReader(source)}
+    with (seeds / "directions.csv").open(encoding="utf-8-sig", newline="") as source:
+        expected_directions = {
+            row["code"] for row in csv.DictReader(source) if int(row.get("enabled", 1)) == 1
+        }
     status, headers, body = get("/")
     assert status == 200
     assert "LitHub Pavilion" in body.decode("utf-8")
@@ -34,7 +38,9 @@ def main():
     dashboard = json.loads(body)
     assert dashboard["total"] == 0
     assert dashboard["configured_venues"] == len(expected_venues)
-    assert len(dashboard["directions"]) == 9
+    actual_directions = [direction["code"] for direction in dashboard["directions"]]
+    assert len(actual_directions) == len(expected_directions), "Seeded direction count differs"
+    assert set(actual_directions) == expected_directions, "Seeded direction identities differ"
     status, _, body = get("/api/crawl/status")
     assert status == 200
     crawl = json.loads(body)
@@ -47,7 +53,10 @@ def main():
     assert status == 200 and {venue["abbr"] for venue in json.loads(body)["items"]} == expected_venues
     status, _, body = get("/api/papers?level=C")
     assert status == 400 and json.loads(body)["error"]["code"] == "INVALID_PARAM"
-    print(f"PASS: page, security headers, empty SQLite/FTS5, {len(expected_venues)} A/B sources, nine topics, link-only API")
+    print(
+        f"PASS: page, security headers, empty SQLite/FTS5, {len(expected_venues)} A/B sources, "
+        f"{len(expected_directions)} research directions, link-only API"
+    )
 
 
 if __name__ == "__main__":
