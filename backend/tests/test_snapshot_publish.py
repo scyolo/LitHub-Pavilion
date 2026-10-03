@@ -170,3 +170,39 @@ async def test_publish_failures_are_sanitized_and_never_claim_success(session_fa
     assert "private-token-must-not-appear" not in str(error.value)
     if failure[1] != "dispatches":
         assert not any(request.url.path.endswith("/dispatches") for request in github.requests)
+
+
+def test_publication_budget_retains_verified_revisions_below_pages_limit():
+    from app.services.snapshot import MAX_FILE_BYTES, MAX_SNAPSHOT_BYTES
+
+    # Measured current/previous public revisions: 3d798240bffd / b1e004556712.
+    current_bytes = 665_332_466
+    retained_previous_bytes = 239_026_762
+    assert current_bytes + retained_previous_bytes <= MAX_SNAPSHOT_BYTES
+    # Keep at least 56 MB below even a decimal 1 GB Pages site limit for the UI.
+    assert MAX_SNAPSHOT_BYTES <= 900 * 1024 * 1024
+    assert MAX_FILE_BYTES == 8 * 1024 * 1024
+
+
+@pytest.mark.asyncio
+async def test_retained_revision_still_counts_toward_publication_budget(
+    session_factory, sample_paper, db, tmp_path, monkeypatch
+):
+    from app.services import snapshot_publish as module
+
+    export_snapshot(session_factory, tmp_path)
+    github = FakeGitHub()
+    async with httpx.AsyncClient(transport=httpx.MockTransport(github)) as client:
+        await module.publish_snapshot(tmp_path, repository="owner/repo", token="token", client=client)
+        sample_paper.title = "Changed title must not discard the previous published revision"
+        db.commit()
+        export_snapshot(session_factory, tmp_path)
+        _, files = module._publication_files(tmp_path)
+        monkeypatch.setattr(module, "MAX_SNAPSHOT_BYTES", sum(map(len, files.values())))
+        before = len(github.requests)
+        with pytest.raises(module.SnapshotPublishError, match="Current and previous snapshots exceed"):
+            await module.publish_snapshot(tmp_path, repository="owner/repo", token="token", client=client)
+    assert not any(
+        request.method == "PATCH" or request.url.path.endswith("/dispatches")
+        for request in github.requests[before:]
+    )
