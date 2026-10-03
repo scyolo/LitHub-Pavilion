@@ -15,7 +15,8 @@ from app.services.snapshot_overview import OverviewBuilder
 
 SCHEMA_VERSION = 1
 MAX_FILE_BYTES = 8 * 1024 * 1024
-MAX_SNAPSHOT_BYTES = 800 * 1024 * 1024
+# Bound current + retained public data below Pages' 1 GB site limit, with UI headroom.
+MAX_SNAPSHOT_BYTES = 900 * 1024 * 1024
 _HASH = re.compile(r"[0-9a-f]{64}")
 _CONTENT_PATH = re.compile(r"(catalog|papers)-([0-9a-f]{64})\.json")
 _MANIFEST_KEYS = {"schema_version", "revision", "generated_at", "paper_count", "catalog", "chunks"}
