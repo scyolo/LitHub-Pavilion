@@ -22,7 +22,7 @@ const reference=createLazyReader({manifest,catalog:{...catalog,reader:legacy},do
   if(path.startsWith('search-'))data=data.map(row=>row.slice(0,4));
   return {data};
 }});
-const cases=[['browse', 'papers', {}],['broad-learning','search',{q:'learning'}],['rare-and','search',{q:'speculative decoding'}],['scoped','search',{q:'learning',venue:'ICML',year:2025}],['fuzzy','search',{q:'speculativ decodng'}]];
+const cases=[['browse', 'papers', {}],['broad-learning','search',{q:'learning'}],['rare-and','search',{q:'speculative decoding'}],['scoped','search',{q:'learning',venue:'ICML',year:2025}],['fuzzy','search',{q:'speculativ decodng'}],['fragments','search',{q:'SpEcUlA DeCoD',match:'fuzzy'}]];
 const report={same_corpus_legacy_engine_parity:true,environment:'Node local-file transport; transfer budgets are network-independent, not browser/Internet latency promises',cases:[]};
 for(const [name,method,params]of cases){
   let bytes=0;const requests=[];

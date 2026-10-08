@@ -35,7 +35,7 @@ export function expandTokens(tokens, vocabulary, limit = 4, rawTokens = []) {
     if (!rawByStem.has(stem)) rawByStem.set(stem, new Set());
     rawByStem.get(stem).add(raw);
   }
-  return tokens.map((token, index) => {
+  return tokens.map((token) => {
     const choices = new Map();
     if (frequencies.has(token)) choices.set(token, 0);
     for (const candidate of edits(token)) if (frequencies.has(candidate)) choices.set(candidate, 2);
@@ -44,7 +44,8 @@ export function expandTokens(tokens, vocabulary, limit = 4, rawTokens = []) {
       const candidate = stemmer(variant);
       if (frequencies.has(candidate) && !choices.has(candidate)) choices.set(candidate, 2);
     }
-    if (index === tokens.length - 1 && token.length >= 3 && token.length <= 32) {
+    // Complete each fragment ("spec dec"), still capped to four real terms per token.
+    if (token.length >= 3 && token.length <= 32) {
       for (let i = lowerBound(terms, token), end = lowerBound(terms, token + '{'); i < end; i++) {
         const candidate = terms[i];
         if (candidate.length > token.length) choices.set(candidate, Math.min(choices.get(candidate) ?? 99, 1));

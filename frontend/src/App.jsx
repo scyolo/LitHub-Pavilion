@@ -90,7 +90,7 @@ export default function App() {
         <header className="topbar">
           <button className="icon-button mobile-menu" aria-label="打开导航" aria-expanded={menuOpen} onClick={() => setMenuOpen(!menuOpen)}><Icon name="menu" size={21} /></button>
           <div className="breadcrumb">工作台 <Icon name="chevron" size={12} /><span>{pageName}</span></div>
-          <div className="topbar-search"><SearchInput key={location.pathname} automatic={false} label="全局检索论文" placeholder="检索论文标题、摘要…" onCommit={(q) => navigate(paperHref(null, { q }))} /></div>
+          <div className="topbar-search"><SearchInput key={location.pathname} automatic={false} label="全局检索论文" placeholder="模糊检索论文 · 不区分大小写…" onCommit={(q) => navigate(paperHref(null, { q }))} /></div>
           <span className={`topbar-sync ${crawl?.running ? "busy" : ""}`}><span className="status-dot" />{api.isSnapshot ? "快照浏览" : crawl?.running ? "正在同步" : "本地模式"}</span>
           <button className="icon-button theme-toggle" title={theme === "dark" ? "切换浅色主题" : "切换深色主题"} aria-label={theme === "dark" ? "切换浅色主题" : "切换深色主题"} onClick={() => setTheme(theme === "dark" ? "light" : "dark")}><Icon name={theme === "dark" ? "sun" : "moon"} size={19} /></button>
         </header>

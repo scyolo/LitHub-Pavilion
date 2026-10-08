@@ -30,7 +30,7 @@ def expand_tokens(tokens, vocabulary, *, limit=4, raw_tokens=()):
     for raw in raw_tokens:
         raw_by_stem.setdefault(stemmer(raw), set()).add(raw)
     groups = []
-    for index, token in enumerate(tokens):
+    for token in tokens:
         choices = {}
         if token in frequencies:
             choices[token] = 0
@@ -44,9 +44,9 @@ def expand_tokens(tokens, vocabulary, *, limit=4, raw_tokens=()):
                 candidate = stemmer(variant)
                 if candidate in frequencies:
                     choices.setdefault(candidate, 2)
-        # Prefix completion is only for the final query token. Never turn a
-        # two-letter acronym or a long pasted title into thousands of hits.
-        if index == len(tokens) - 1 and 3 <= len(token) <= 32:
+        # Complete every fragment ("spec dec"), with the same per-token cap
+        # as typo expansion. Keep short acronyms and long terms literal.
+        if 3 <= len(token) <= 32:
             start = bisect.bisect_left(terms, token)
             end = bisect.bisect_left(terms, token + '{')
             for candidate in terms[start:end]:

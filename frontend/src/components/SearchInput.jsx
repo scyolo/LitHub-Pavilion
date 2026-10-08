@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import Icon from "./Icon.jsx";
 
-export default function SearchInput({ value = "", onCommit, label = "搜索论文", placeholder, automatic = true, autoFocus = false }) {
+export default function SearchInput({ value = "", onCommit, label = "搜索论文", placeholder, automatic = true, autoFocus = false, descriptionId }) {
   const [draft, setDraft] = useState(value);
   const timer = useRef(null);
   const composing = useRef(false);
@@ -22,7 +22,7 @@ export default function SearchInput({ value = "", onCommit, label = "搜索论�
   return (
     <form className="search-input" role="search" onSubmit={(event) => { event.preventDefault(); if (!composing.current) submit(draft); }}>
       <Icon name="search" size={19} />
-      <input aria-label={label} value={draft} maxLength={2000} autoFocus={autoFocus} type="search"
+      <input aria-label={label} aria-describedby={descriptionId} spellCheck={false} autoCapitalize="none" autoCorrect="off" value={draft} maxLength={2000} autoFocus={autoFocus} type="search"
         placeholder={placeholder || "搜索英文标题、摘要关键词…"}
         onCompositionStart={() => { composing.current = true; clearTimeout(timer.current); }}
         onCompositionEnd={(event) => { composing.current = false; if (automatic) submit(event.currentTarget.value); }}

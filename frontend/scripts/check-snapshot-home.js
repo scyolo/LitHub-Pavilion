@@ -24,14 +24,15 @@ const store = createSnapshotStore({
   },
 });
 const started = performance.now();
-const [dashboard, directions, latest, status] = await Promise.all([
-  store.call("dashboard", {}), store.call("directions"), store.call("latest", {}), store.call("crawlStatus"),
+const [dashboard, directions, latest, status, venueTopics] = await Promise.all([
+  store.call("dashboard", {}), store.call("directions"), store.call("latest", {}), store.call("crawlStatus"), store.call("venueTopics", {}),
 ]);
 assert.equal(dashboard.total, manifest.paper_count);
 assert.equal(latest.total, manifest.paper_count);
 assert.equal(status.revision, manifest.revision);
 assert.equal(status.generated_at, manifest.generated_at);
 assert.ok(directions.items.length > 0);
+assert.equal(Object.keys(venueTopics.items).length, dashboard.configured_venues);
 for (const level of [null, "A", "B"]) for (const type of [null, "conf", "journal"]) {
   const scoped = await store.call("dashboard", { level, type });
   const recent = await store.call("latest", { level, type });

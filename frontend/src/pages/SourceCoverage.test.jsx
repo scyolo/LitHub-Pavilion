@@ -23,3 +23,15 @@ it('can filter zero-record years without equating them to absent publications',a
  expect(screen.getByRole('heading',{name:'Eurographics'})).toBeInTheDocument();
  expect(screen.getByText(/零记录年份不等于缺失论文/)).toBeInTheDocument();
 });
+
+it('fuzzy-filters source names without changing the source identity or evidence', async()=>{
+ loadAssociations.mockClear();
+ mount();await screen.findByRole('heading',{name:'Eurographics'});
+ const search=screen.getByLabelText('搜索覆盖来源');
+ for(const value of ['EURO GRAPHICS','euro grpahics','EUROGRAPHICS conf']){
+  fireEvent.change(search,{target:{value}});
+  expect(screen.getByRole('heading',{name:'Eurographics'})).toBeInTheDocument();
+  expect(screen.queryByRole('heading',{name:'Pending'})).not.toBeInTheDocument();
+ }
+ expect(loadAssociations).not.toHaveBeenCalled();
+});

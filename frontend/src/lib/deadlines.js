@@ -1,3 +1,4 @@
+import { matchesText } from "./search.js";
 import { safeExternalUrl } from "./presentation.js";
 
 const DAY = 86400000;
@@ -57,10 +58,9 @@ export function countdown(event, now = Date.now()) {
 }
 
 export function filterDeadlines(events, filters = {}, now = Date.now()) {
-  const query = (filters.q || "").trim().toLowerCase();
   return events.filter(e => (!filters.level || e.level === filters.level) && (!filters.area || e.area === filters.area)
     && (!filters.status || filters.status === "all" || deadlineStatus(e, now) === filters.status)
-    && (!query || `${e.venue} ${e.venue_name} ${e.area} ${e.round} ${e.place || ""}`.toLowerCase().includes(query)))
+    && matchesText(filters.q, [e.venue, e.venue_name, e.area, e.round, e.place]))
     .sort((a, b) => (Date.parse(a.deadline_utc) || Infinity) - (Date.parse(b.deadline_utc) || Infinity) || a.venue.localeCompare(b.venue) || a.id.localeCompare(b.id));
 }
 

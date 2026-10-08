@@ -205,3 +205,16 @@ it('position-aware ranked search preserves exact Unicode, phrase, AND, typo and 
     }
   }
 });
+
+it.each(["spec dec", "SPEC DEC", "  SpEc   DeC  ", "ＳＰＥＣ ＤＥＣ"])("keeps lazy and ranked fragment search consistent: %s", async (q) => {
+  const full = createSnapshotEngine(fixture);
+  for (const current of [reader(), pagedReader()]) {
+    for (const match of ["auto", "fuzzy"]) {
+      const params = { q, match, direction: "llm", size: 100 };
+      const actual = await current.reader.call("search", params);
+      expect(actual.items.some(paper => paper.id === 11)).toBe(true);
+      expect(actual.items.map(paper => paper.id)).toEqual(full.search(params).items.map(paper => paper.id));
+    }
+    expect(current.download.mock.calls.every(([path]) => !/^(compressed|papers)-/.test(path))).toBe(true);
+  }
+});

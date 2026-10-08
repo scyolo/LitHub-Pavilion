@@ -128,3 +128,12 @@ it('keeps known complete titles valid when filters exclude the paper', async () 
     expect(api.search({ q: title, year: data.papers[0].year + 1 })).toMatchObject({ total: 0, items: [] });
   }
 });
+
+it.each(["spec dec", "SPEC DEC", "  SpEc   DeC  ", "ＳＰＥＣ ＤＥＣ"])("matches multiple fragments without case sensitivity: %s", async (q) => {
+  const api = await engine();
+  for (const match of ["auto", "fuzzy"]) {
+    expect(api.search({ q, match }).items.some(paper => paper.id === 11)).toBe(true);
+    expect(api.search({ q, match, level: "B" }).total).toBe(0);
+  }
+  expect(api.search({ q, match: "keywords" }).total).toBe(0);
+});

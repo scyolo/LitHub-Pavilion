@@ -1,5 +1,4 @@
 import pytest
-
 from app.services.fuzzy_terms import edit_one_variants, expand_tokens
 
 
@@ -41,3 +40,18 @@ def test_fuzzy_respects_filters_and_multi_topic_or(client, sample_paper, db, sam
         assert result['total'] == 1 and result['items'][0]['id'] == sample_paper.id
     assert client.get('/api/search', params={'q': 'spceulative dec', 'match': 'fuzzy', 'year': 2001}).json()['total'] == 0
     assert client.get('/api/search', params={'q': 'speculative', 'match': 'unsafe'}).status_code == 400
+
+@pytest.mark.parametrize('query', ['spec dec', 'SPEC DEC', '  SpEc   DeC  ', 'ＳＰＥＣ ＤＥＣ'])
+def test_fuzzy_completes_each_fragment_case_insensitively(client, sample_paper, query):
+    for mode in ('auto', 'fuzzy'):
+        result = client.get('/api/search', params={'q': query, 'match': mode})
+        assert result.status_code == 200, result.text
+        assert sample_paper.id in [row['id'] for row in result.json()['items']]
+    assert client.get('/api/search', params={'q': query, 'match': 'keywords'}).json()['total'] == 0
+
+
+def test_prefix_expansion_applies_to_each_token_and_keeps_a_bounded_budget():
+    vocabulary = [('specul', 12), ('decod', 9)]
+    assert expand_tokens(['spec', 'dec'], vocabulary) == [['spec', 'specul'], ['dec', 'decod']]
+    groups = expand_tokens(['mach', 'lea'], [('mach' + str(i), i + 1) for i in range(30)])
+    assert all(len(group) <= 4 for group in groups)

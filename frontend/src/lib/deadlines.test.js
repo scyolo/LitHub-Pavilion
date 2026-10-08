@@ -51,3 +51,11 @@ describe("deadline calendar semantics", () => {
     expect(() => validateFeed({ ...feed, events: [{ ...event, link: "javascript:alert(1)" }] })).toThrow();
   });
 });
+
+it("fuzzy-searches deadline names and separated fields without changing exact filters", () => {
+  const data = [event, { ...event, id: "b", level: "B" }];
+  for (const q of ["CONFERNECE", "web round", "ＷＥＢ 交叉", "w w w"]) {
+    expect(filterDeadlines(data, { q, level: "B", status: "upcoming" }, now).map(row => row.id)).toEqual(["b"]);
+  }
+  expect(filterDeadlines(data, { q: "nonexistentxyz" }, now)).toEqual([]);
+});

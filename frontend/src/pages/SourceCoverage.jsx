@@ -5,6 +5,7 @@ import {loadCoverage,loadAssociations} from '../data/source-coverage.js';
 import {number,formatDate,paperHref} from '../lib/presentation.js';
 import {LoadingState,ErrorState,EmptyState} from '../components/States.jsx';
 import Icon from '../components/Icon.jsx';
+import {matchesText} from '../lib/search.js';
 
 function AssociatedPapers({source,revision}) {
   const [visible,setVisible]=useState(30);
@@ -25,12 +26,12 @@ export default function SourceCoverage(){
   useEffect(()=>setVisible(24),[search,status]);
   const data=query.data;
   const zeroYears=s=>[2023,2024,2025,2026].filter(y=>!(s.primary_years[y]||s.associated_years[y]));
-  const sources=(data?.sources||[]).filter(s=>(status==='all'||(status==='year_gaps'?zeroYears(s).length>0:s.status===status))&& (s.abbr+' '+s.name).toLowerCase().includes(search.trim().toLowerCase()));
+  const sources=(data?.sources||[]).filter(s=>(status==='all'||(status==='year_gaps'?zeroYears(s).length>0:s.status===status))&& matchesText(search,[s.abbr,s.name]));
   return <div className="coverage-page page-enter"><div className="page-heading"><div><div className="eyebrow"><span className="tiny-line"/>SOURCE COVERAGE</div><h1>覆盖到哪里，<span>证据说清楚。</span></h1><p>逐来源查看直接收录、期刊发表关联与待核验缺口。不把“有论文”当作“已经全量”。</p></div><Link className="button secondary" to="/venues">返回会议与期刊</Link></div>
     {query.isPending?<LoadingState rows={3}/>:query.error?<ErrorState message={query.error.message} onRetry={()=>query.refetch()}/>:<>
     <div className="coverage-summary panel"><div><strong>{number(data.represented_sources)} / {data.configured_sources}</strong><span>已有直接记录或官网关联的来源</span></div><div><strong>{number(data.snapshot_papers)}</strong><span>快照中的唯一论文 · 不重复计数</span></div><div><strong>{data.configured_sources-data.represented_sources}</strong><span>仍待核验的来源</span></div></div>
     <p className="data-notice"><Icon name="info" size={16}/><span>数据截面：{formatDate(data.snapshot_generated_at)}。原始期刊计数与会议关联计数不能相加；零年份可能是未举办、尚未出版或未收录。全量覆盖尚未验证。</span></p>
-    <div className="venues-toolbar"><div className="search-input"><Icon name="search" size={19}/><input aria-label="搜索覆盖来源" value={search} onChange={e=>setFilter('source',e.target.value)} placeholder="查找来源，例如 Eurographics、SIGGRAPH…"/></div><select aria-label="覆盖状态" value={status} onChange={e=>setFilter('status',e.target.value)}><option value="all">全部状态</option><option value="indexed">已有直接记录</option><option value="journal_linked">期刊发表关联</option><option value="unresolved">待核验缺口</option><option value="year_gaps">含零记录年份</option></select></div>
+    <div className="venues-toolbar"><div className="search-input"><Icon name="search" size={19}/><input aria-label="搜索覆盖来源" value={search} onChange={e=>setFilter('source',e.target.value)} placeholder="模糊查找来源，不区分大小写…"/></div><select aria-label="覆盖状态" value={status} onChange={e=>setFilter('status',e.target.value)}><option value="all">全部状态</option><option value="indexed">已有直接记录</option><option value="journal_linked">期刊发表关联</option><option value="unresolved">待核验缺口</option><option value="year_gaps">含零记录年份</option></select></div>
     {status==='year_gaps'&&<p className="data-notice"><Icon name="info" size={16}/><span>零记录年份不等于缺失论文：该届可能未举办、尚未出版、联合举办或仍待补采。这里仅用于定位需要进一步核验的范围。</span></p>}
     <p className="venue-result-count">{sources.length} 个匹配来源 · 展示 2023–2026 年</p>
     <div className="coverage-source-list">{sources.slice(0,visible).map(s=><section className="panel coverage-source" key={s.abbr}><div className="coverage-source-heading"><div><span className={'level-badge level-'+s.level.toLowerCase()}>CCF {s.level}</span><h2>{s.abbr}</h2><p>{s.name}</p></div><span className={s.status==='unresolved'?'venue-empty':'venue-ready'}>{s.status==='indexed'?'已有直接记录':s.status==='journal_linked'?'已核对期刊发表关联':'待核验 · 不宣称已覆盖'}</span></div>
