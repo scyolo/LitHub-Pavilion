@@ -48,15 +48,15 @@ export function AnnualChart({ data = [], selectedYear, onSelect }) {
 export function TopicChart({ data = [], onSelect }) {
   const sorted = [...data].sort((a, b) => b.paper_count - a.paper_count);
   const max = Math.max(1, ...sorted.map((item) => item.paper_count));
-  return <section className="panel topic-panel"><SectionTitle icon="nodes" title="研究主题分布" note="标题与摘要规则归类 · 支持一文多方向" />
-    <div className="topic-bars">{sorted.length ? sorted.map((item) => {
+  return <section className="panel topic-panel"><SectionTitle icon="nodes" title="研究主题分布" note={sorted.length > 5 ? `共 ${number(sorted.length)} 个方向 · 滚动查看全部` : "标题与摘要规则归类 · 支持一文多方向"} />
+    <div className="topic-bars" role="region" aria-label="研究主题列表" tabIndex={sorted.length ? 0 : undefined}>{sorted.length ? sorted.map((item) => {
       const t = topic(item.code, item.name);
       return <button key={item.code} className="topic-bar-row" onClick={() => onSelect(item.code)} aria-label={`查看${t.name}，${item.paper_count}篇`}>
         <div className="topic-bar-label"><span><i style={{ background: t.color }} />{t.name}</span><strong>{number(item.paper_count)}</strong></div>
         <div className="bar-track"><div style={{ width: `${(item.paper_count / max) * 100}%`, background: t.color }} /></div>
       </button>;
     }) : <p className="muted">暂无方向数据</p>}</div>
-    <p className="chart-footnote">方向计数可重叠，不应直接相加作为论文总数。</p>
+    <p className="chart-footnote">按标题与摘要规则归类，方向计数可重叠，不应相加作为论文总数。</p>
   </section>;
 }
 

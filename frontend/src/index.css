@@ -187,7 +187,8 @@ input::-webkit-search-cancel-button { display: none; }
 .section-heading h2 > .icon { color: var(--accent); }
 .section-heading p { font-size: 9px; color: var(--subtle); margin-top: 4px; }
 .section-caption { font-size: 10px; color: var(--subtle); display: flex; align-items: center; gap: 4px; }
-.dashboard-charts { display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr); gap: 18px; margin-bottom: 29px; }
+/* Keep the chart row compact even when every research direction is available. */
+.dashboard-charts { --chart-plot-height: 202px; display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr); align-items: start; gap: 18px; margin-bottom: 29px; }
 .annual-panel, .topic-panel { padding: 19px 20px 13px; min-width: 0; }
 .chart-legend { display: flex; align-items: center; gap: 14px; font-size: 9px; color: var(--muted); padding-top: 3px; white-space: nowrap; }
 .chart-legend span { display: flex; align-items: center; gap: 5px; }
@@ -197,7 +198,7 @@ input::-webkit-search-cancel-button { display: none; }
 .annual-chart { position: relative; }
 .search-match select { min-height: 42px; max-width: 124px; }
 .search-explanation { color: var(--muted); font-size: 12px; line-height: 1.65; margin: 0 0 14px; overflow-wrap: anywhere; }
-.annual-chart svg { width: 100%; height: 202px; overflow: visible; display: block; }
+.annual-chart svg { width: 100%; height: var(--chart-plot-height, 202px); overflow: visible; display: block; }
 .annual-controls { display: grid; position: absolute; inset: 0 4.5% 0 7.75%; }
 .chart-year-button { margin: 2px 6px; border-radius: 6px; }
 .chart-year-button:hover { background: #81b7ff0b; }
@@ -214,7 +215,7 @@ input::-webkit-search-cancel-button { display: none; }
 .chart-year:hover .chart-bar-a { fill: #88b6ff; }
 .chart-year.selected .chart-year-label { fill: var(--accent); font-weight: 700; }
 .chart-footnote { color: var(--subtle); font-size: 9px; margin-top: 10px; line-height: 1.6; }
-.topic-bars { display: grid; gap: 14px; padding: 3px 0 4px; min-height: 202px; align-content: center; }
+.topic-bars { display: grid; gap: 14px; padding: 3px 8px 4px 0; max-height: var(--chart-plot-height, 202px); overflow-y: auto; align-content: start; scrollbar-gutter: stable; border-radius: 4px; }
 .topic-bar-row { display: block; width: 100%; text-align: left; }
 .topic-bar-label { display: flex; justify-content: space-between; align-items: center; font-size: 10px; margin-bottom: 6px; gap: 8px; }
 .topic-bar-label > span { display: inline-flex; align-items: center; gap: 6px; color: var(--muted); }
@@ -484,8 +485,7 @@ fieldset.filter-group { padding-top: 10px; margin-top: 15px; }
   .page-content { padding: 34px 42px 25px; }
   .metric-value { font-size: 34px; }
   .topic-tile { padding: 16px 18px; }
-  .annual-chart svg { height: 225px; }
-  .topic-bars { min-height: 225px; }
+  .dashboard-charts { --chart-plot-height: 225px; }
 }
 @media (max-width: 1190px) {
   .sidebar { width: 205px; padding-left: 13px; padding-right: 13px; }
@@ -514,9 +514,8 @@ fieldset.filter-group { padding-top: 10px; margin-top: 15px; }
   .detail-heading h1 { font-size: 24px; }
 }
 @media (max-width: 980px) {
-  .dashboard-charts { grid-template-columns: 1fr; }
-  .annual-chart svg { height: 210px; }
-  .topic-bars { min-height: unset; grid-template-columns: 1fr 1fr; gap: 18px 24px; }
+  .dashboard-charts { --chart-plot-height: 210px; grid-template-columns: 1fr; }
+  .topic-bars { grid-template-columns: 1fr 1fr; gap: 18px 24px; }
   .dashboard-bottom { grid-template-columns: 1fr; }
   .insights-sidebar { display: grid; grid-template-columns: 1fr 1fr; padding-top: 0; }
   .topic-tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); }
@@ -822,12 +821,9 @@ fieldset.filter-group { padding-top: 10px; margin-top: 15px; }
 .coverage-years{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:22px 0}.coverage-years>div{display:flex;flex-direction:column;gap:5px;border-left:2px solid var(--border);padding-left:12px}.coverage-years span,.coverage-years small{font-size:12px;color:var(--muted)}.coverage-years strong{font-size:21px}.coverage-actions{display:flex;gap:12px;align-items:center;flex-wrap:wrap}.coverage-actions>span{font-size:13px;color:var(--muted)}.coverage-associated{margin-top:22px}.coverage-associated>p{font-size:13px;color:var(--muted)}.coverage-associated .paper-card{margin:12px 0}.coverage-associated .paper-title{overflow-wrap:anywhere}
 @media(max-width:640px){.coverage-summary{grid-template-columns:1fr;gap:18px;padding:20px}.coverage-source{padding:18px}.coverage-years{gap:6px}.coverage-years small{font-size:11px}.coverage-actions .button{width:100%;white-space:normal}.coverage-page .venues-toolbar{flex-wrap:wrap}}
 
-/* Shared CCF directory: discovery lives on the overview as well as the atlas. */
+/* CCF directory on the dedicated atlas; scope counts remain shared. */
 .scope-tab-count { font-size: 10px; line-height: 1.5; padding: 0 6px; border-radius: 4px; background: var(--surface-raised); color: var(--muted); font-variant-numeric: tabular-nums; }
 .scope-tab.active .scope-tab-count { color: var(--accent); background: var(--accent-bg); }
-.overview-directory { margin: 24px 0; padding: 24px; }
-.overview-directory > .section-heading { margin-bottom: 20px; gap: 18px; }
-.overview-directory > .section-heading > .text-link { flex-shrink: 0; }
 .venue-atlas-directory { margin-top: 24px; }
 .venue-directory .venues-toolbar { margin: 0; gap: 12px; }
 .venue-directory .venues-toolbar .search-input { min-width: 0; }
@@ -857,23 +853,13 @@ fieldset.filter-group { padding-top: 10px; margin-top: 15px; }
 .venue-year-trend { text-align: right; }
 .venue-year-trend > small { display: block; color: var(--subtle); font-variant-numeric: tabular-nums; margin-top: 3px; }
 .venue-year-trend .mini-bars { justify-content: flex-end; }
-.overview-directory .venues-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
-.overview-directory .venue-card { padding-left: 16px; padding-right: 16px; }
-.overview-directory .venue-card-footer { margin-left: -16px; margin-right: -16px; padding-left: 16px; padding-right: 16px; }
 .venue-directory .venues-load-more { display: flex; justify-content: center; align-items: center; flex-wrap: wrap; gap: 18px; margin-top: 20px; }
 .venue-directory .venues-load-more .button > span { color: var(--muted); font-size: 11px; }
-@media (max-width: 1280px) {
-  .overview-directory .venues-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-}
 @media (max-width: 760px) {
-  .overview-directory { padding: 18px; }
-  .overview-directory > .section-heading { align-items: flex-start; flex-direction: column; gap: 10px; }
   .venue-directory-note { display: none; }
   .scope-tab-count { font-size: 10px; padding: 0 4px; }
 }
 @media (max-width: 520px) {
-  .overview-directory { padding: 16px; }
-  .overview-directory .venues-grid { grid-template-columns: 1fr; }
   .venue-directory .venues-toolbar { flex-wrap: wrap; }
   .venue-directory .venues-toolbar .search-input { flex-basis: 100%; }
   .venue-directory .venues-toolbar select { min-height: 36px; margin-left: auto; }
