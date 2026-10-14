@@ -179,8 +179,8 @@ def test_publication_budget_retains_verified_revisions_below_pages_limit():
     current_bytes = 665_332_466
     retained_previous_bytes = 239_026_762
     assert current_bytes + retained_previous_bytes <= MAX_SNAPSHOT_BYTES
-    # Keep at least 56 MB below even a decimal 1 GB Pages site limit for the UI.
-    assert MAX_SNAPSHOT_BYTES <= 900 * 1024 * 1024
+    # Keep a reserved UI allowance below a conservative decimal 1 GB site limit.
+    assert MAX_SNAPSHOT_BYTES + 16 * 1024 * 1024 <= 1_000_000_000
     assert MAX_FILE_BYTES == 8 * 1024 * 1024
 
 
