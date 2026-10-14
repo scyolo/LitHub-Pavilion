@@ -10,6 +10,7 @@ on:
       - 'backend/app/**'
       - 'backend/requirements*.txt'
       - 'scripts/prepare_pages.py'
+      - 'scripts/check_pages_size.py'
       - 'backend/scripts/sync_deadlines.py'
       - 'seeds/venues.csv'
       - '.github/workflows/pages.yml'
@@ -90,6 +91,8 @@ jobs:
           VITE_DATA_MODE: snapshot
           VITE_BASE_PATH: ${{ steps.pages.outputs.base_path }}/
         run: npm run build
+      - name: Enforce the complete Pages site budget
+        run: python scripts/check_pages_size.py frontend/dist
       - uses: actions/upload-pages-artifact@v3
         with:
           path: frontend/dist
