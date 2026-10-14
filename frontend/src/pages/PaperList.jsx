@@ -38,7 +38,7 @@ export default function PaperList() {
     ...selectedDirections.map((code) => ({ label: topic(code, directions.find((d) => d.code === code)?.name).name, remove: () => toggleDirection(code) })),
     ...(filters.venue ? [{ label: filters.venue, remove: () => update({ venue: "" }) }] : []),
     ...(filters.year ? [{ label: `${filters.year} 年`, remove: () => update({ year: "" }) }] : []),
-    ...(filters.access ? [{ label: filters.access === "oa" ? "有开放版本" : "仅官方链接", remove: () => update({ access: "" }) }] : []),
+    ...(filters.access ? [{ label: filters.access === "oa" ? "有开放版本" : "待发现开放版本", remove: () => update({ access: "" }) }] : []),
   ];
 
   return <div className="explore-page page-enter">
@@ -56,7 +56,7 @@ export default function PaperList() {
         })}</div><p className="filter-explanation">同维度多选取并集，不同维度取交集。</p></fieldset>
         <div className="filter-group"><label htmlFor="year-filter">论文归属年份</label><select id="year-filter" value={filters.year} onChange={(e) => update({ year: e.target.value })}><option value="">全部年份</option>{[...(context?.annual || [])].reverse().map((d) => <option key={d.year} value={d.year}>{d.year} · {number(d.total)} 篇</option>)}</select></div>
         <div className="filter-group"><label htmlFor="venue-search">会议 / 期刊</label><div className="small-search"><Icon name="search" size={14} /><input id="venue-search" value={venueSearch} onChange={(e) => setVenueSearch(e.target.value)} placeholder="模糊查找来源，忽略大小写" /></div><div className="venue-filter-options"><button className={!filters.venue ? "selected" : ""} onClick={() => update({ venue: "" })}>全部来源<span>{context?.configured_venues ?? "—"}</span></button>{venues.map((v) => <button key={v.abbr} title={v.name} className={filters.venue === v.abbr ? "selected" : ""} onClick={() => update({ venue: v.abbr })}>{v.abbr}<span>{number(v.paper_count)}</span></button>)}{venues.length === 0 && <p className="muted small">没有匹配的来源</p>}</div></div>
-        <fieldset className="filter-group"><legend>全文访问</legend>{[{ value: "", label: "全部论文" }, { value: "oa", label: "有开放版本链接" }, { value: "official", label: "仅官方链接" }].map((item) => <label key={item.value} className="filter-radio"><input type="radio" name="access" value={item.value} checked={filters.access === item.value} onChange={() => update({ access: item.value })} />{item.label}</label>)}</fieldset>
+        <fieldset className="filter-group"><legend>全文访问</legend>{[{ value: "", label: "全部论文" }, { value: "oa", label: "有开放版本链接" }, { value: "official", label: "待发现开放版本" }].map((item) => <label key={item.value} className="filter-radio"><input type="radio" name="access" value={item.value} checked={filters.access === item.value} onChange={() => update({ access: item.value })} />{item.label}</label>)}</fieldset>
         <div className="filter-note"><Icon name="link" size={15} /><p>直接跳转原始来源<br />本站不下载 PDF</p></div>
       </aside>
       <section className="explorer-results" aria-label="论文结果" aria-busy={result.isFetching}>

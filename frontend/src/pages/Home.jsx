@@ -5,14 +5,14 @@ import { api } from "../api.js";
 import { useDashboard } from "../hooks/useResearchData.js";
 import { useFilters } from "../hooks/useFilters.js";
 import { TOPICS, filteredParams, formatDate, number, paperHref, percent, topic } from "../lib/presentation.js";
-import { APP_NAME, APP_DESCRIPTION } from "../lib/brand.js";
+import MythicHero from "../components/MythicHero.jsx";
 import Icon from "../components/Icon.jsx";
 import ScopeTabs from "../components/ScopeTabs.jsx";
 import { AnnualChart, LinkCoverage, TopicChart, VenueCoverage } from "../components/Charts.jsx";
 import PaperCard from "../components/PaperCard.jsx";
 import { EmptyState, ErrorState, LoadingState, SectionTitle } from "../components/States.jsx";
 
-export default function Home() {
+export default function Home({ theme = "dark", onThemeChange }) {
   const { filters, update } = useFilters();
   const navigate = useNavigate();
   const scope = filteredParams({ level: filters.level, type: filters.type });
@@ -28,8 +28,9 @@ export default function Home() {
   }, [data]);
 
   return <div className="dashboard-page page-enter">
+    <MythicHero theme={theme} onThemeChange={onThemeChange} />
     <section className="page-heading dashboard-heading">
-      <div><div className="eyebrow"><span className="tiny-line" /> RESEARCH OVERVIEW</div><h1>{APP_NAME}</h1><p>{APP_DESCRIPTION}</p></div>
+      <div><div className="eyebrow"><span className="tiny-line" /> RESEARCH OVERVIEW</div><h2 className="overview-heading">研究总览</h2><p>从一篇论文出发，看见更广阔的研究图景。</p></div>
       <div className="heading-actions"><span className="muted small">{api.isSnapshot ? "公开快照" : "本地数据"} · {data ? formatDate(data.generated_at, true) : "读取中"}</span><button className="button secondary small-button" onClick={async () => { if (api.isSnapshot) { await api.refreshSnapshot().catch(() => {}); } else { dashboard.refetch(); latest.refetch(); } }} disabled={dashboard.isFetching} aria-label="刷新总览数据"><Icon name="refresh" size={15} className={dashboard.isFetching ? "spin" : ""} />刷新</button></div>
     </section>
     <div className="scope-row"><ScopeTabs filters={filters} onChange={update} venues={catalog.data?.venues} /><span className="scope-hint"><Icon name="shield" size={14} />选择类别，统计与来源同步切换</span></div>
@@ -38,7 +39,7 @@ export default function Home() {
         <Metric icon="book" label="已收录论文" value={number(data.total)} note={api.isSnapshot ? "当前筛选范围的快照记录" : "当前筛选范围的本地记录"} color="blue" />
         <Metric icon="building" label="已配置会议 / 期刊" value={number(data.configured_venues)} note={`${data.venues_with_papers} 个已有论文记录`} color="mint" />
         <Metric icon="layers" label="研究方向" value={number(data.directions.length)} note="一篇论文可属于多个方向" color="violet" />
-        <Metric icon="link" label="开放链接覆盖" value={percent(data.with_oa_link, data.total)} note={`${number(data.with_oa_link)} 篇有开放版本链接`} color="amber" />
+        <Metric icon="link" label="开放链接覆盖" value={percent(data.with_oa_link, data.total)} note={`${number(data.with_oa_link)} 篇 · 出版方 / 预印本 / 仓储`} color="amber" />
       </section>
       <div className="dashboard-charts"><AnnualChart data={data.annual} onSelect={(year) => openPapers({ year })} /><TopicChart data={data.directions} onSelect={(direction) => openPapers({ direction })} /></div>
       <section className="topics-section">

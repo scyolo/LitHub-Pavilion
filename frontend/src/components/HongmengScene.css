@@ -1,0 +1,113 @@
+/* The light realm is atmosphere, not architecture: an unbounded cloud sea. */
+.mythic-hero[data-realm="heaven"] {
+  --realm-bg: #eeefec;
+  --realm-ink: #303b40;
+  --realm-gold: #8d7344;
+  --realm-muted: #697278;
+  --realm-rule: #9b875747;
+  --realm-button: #35444a;
+  --realm-button-ink: #f7f3e5;
+  --realm-header: #616a6c;
+  min-height: 690px;
+  border-radius: 3px;
+  border: 1px solid transparent;
+  box-shadow: none;
+  background: var(--bg);
+}
+[data-realm="heaven"] .hongmeng-art { inset: 0; width: 100%; height: 100%; overflow: hidden; }
+.hongmeng-art > canvas, .hongmeng-fallback, .hongmeng-aura, .hongmeng-vapour, .hongmeng-motes { position: absolute; inset: 0; width: 100%; height: 100%; }
+.hongmeng-art > canvas { opacity: 0; transition: opacity 900ms ease; }
+.hongmeng-art[data-renderer="webgl"] > canvas { opacity: 1; }
+.hongmeng-art[data-renderer="webgl"] :is(.hongmeng-aura, .hongmeng-vapour, .hongmeng-motes) { display: none; }
+.hongmeng-fallback {
+  background: radial-gradient(ellipse at 73% 46%, #fff9e8 0%, #f2e8cb7d 14%, transparent 31%),
+    radial-gradient(ellipse at 77% 13%, #f7f5ee 2%, transparent 38%),
+    radial-gradient(ellipse at 87% 78%, #8c9ca7 3%, transparent 41%),
+    radial-gradient(ellipse at 40% 85%, #aebac0 3%, transparent 43%),
+    linear-gradient(145deg, #f2f1e9, #dfe4e5 55%, #aebbc1);
+}
+.hongmeng-aura { background: radial-gradient(ellipse at 74% 46%, #fff5d623, transparent 33%); mix-blend-mode: screen; }
+.hongmeng-vapour { opacity: .23; filter: blur(22px); transform-origin: 70% 60%; pointer-events: none; }
+.hongmeng-vapour-far { background: radial-gradient(ellipse at 85% 3%, #fffdf0 0%, transparent 41%), radial-gradient(ellipse at 92% 58%, #f7f4e4 2%, transparent 23%); animation: hongmeng-mist-drift 25s ease-in-out infinite alternate; }
+.hongmeng-vapour-near { background: radial-gradient(ellipse at 24% 99%, #fffdf0 2%, transparent 33%), radial-gradient(ellipse at 95% 96%, #fffaf0 0%, transparent 29%); animation: hongmeng-mist-drift 21s ease-in-out -18s infinite alternate-reverse; }
+.hongmeng-motes i { position: absolute; left: var(--mote-x); top: var(--mote-y); width: 2px; height: 2px; border-radius: 50%; color: #c8a861; background: #fff8d8; box-shadow: 0 0 4px 1px #c3a6674d; animation: hongmeng-mote var(--mote-duration) ease-in-out var(--mote-delay) infinite; }
+.hongmeng-motes i:nth-child(5n) { width: 1px; height: 6px; opacity: .25; }
+@keyframes hongmeng-mist-drift { from { transform: translate(-1.4%, .5%) scale(1); } to { transform: translate(2.2%, -1%) scale(1.045); } }
+@keyframes hongmeng-mote { 0%, 100% { transform: translate(0, 9px); opacity: .12; } 50% { transform: translate(-8px, -6px); opacity: .77; } }
+[data-realm="heaven"] .mythic-shade {
+  background: radial-gradient(ellipse 76% 116% at 0% 46%, #f4f3edf2 0%, #f1f2ece0 24%, #edf0eca1 47%, #edf0ec45 65%, transparent 86%), linear-gradient(0deg, var(--bg), transparent 14%);
+}
+[data-realm="heaven"] .mythic-header { top: 34px; left: 45px; right: 29px; }
+[data-realm="heaven"] .mythic-emblem { width: 30px; height: 33px; color: #857044; outline-offset: 4px; }
+[data-realm="heaven"] .mythic-edition > span:last-child { font-size: 9px; letter-spacing: 1.8px; }
+[data-realm="heaven"] .realm-switch { background: #f6f4e78a; border-color: #99876547; border-radius: 2px; backdrop-filter: blur(10px); }
+[data-realm="heaven"] .realm-switch button { min-height: 32px; border-radius: 1px; }
+[data-realm="heaven"] .realm-switch button[aria-pressed="true"] { background: #d9cba936; color: #785e31; }
+[data-realm="heaven"] .mythic-copy { width: fit-content; max-width: 53%; padding: 157px 0 142px 49px; }
+[data-realm="heaven"] .mythic-eyebrow { gap: 14px; margin-bottom: 27px; font-size: 10px; letter-spacing: .16em; color: #8a7349; }
+[data-realm="heaven"] .mythic-eyebrow > span { width: 27px; height: 1px; }
+[data-realm="heaven"] .mythic-eyebrow i { display: none; }
+[data-realm="heaven"] .mythic-copy h1 { font-size: clamp(53px, 5.1vw, 75px); font-weight: 500; line-height: 1.38; letter-spacing: .13em; text-shadow: 0 2px 16px #fffdf344; }
+[data-realm="heaven"] .mythic-copy h1 > span { color: #937846; }
+[data-realm="heaven"] .mythic-description { margin: 25px 0 30px; font-size: 12px; line-height: 2.25; letter-spacing: .12em; color: #59696f; }
+[data-realm="heaven"] .mythic-actions { gap: 26px; }
+[data-realm="heaven"] .mythic-actions a { min-height: 46px; }
+[data-realm="heaven"] .mythic-primary { border-radius: 1px; padding: 0 23px; border: 1px solid #35444a; box-shadow: inset 0 0 0 3px #35444a, inset 0 0 0 4px #bbaa7980; }
+[data-realm="heaven"] .mythic-primary:hover { background: #24353e; }
+[data-realm="heaven"] .mythic-secondary { color: #44565e; border-color: #8c7c525e; }
+[data-realm="heaven"] .mythic-colophon { top: 133px; right: 29px; color: #56686f; font-size: 10px; letter-spacing: 4px; opacity: .8; }
+[data-realm="heaven"] .mythic-footer { left: 48px; right: 28px; bottom: 29px; }
+[data-realm="heaven"] .mythic-chapter { color: #8d7444; }
+[data-realm="heaven"] .mythic-scene-caption { color: #4b606a; }
+[data-realm="heaven"] .mythic-scene-caption small { letter-spacing: 1.4px; color: #62747c; }
+[data-realm="heaven"] .mythic-motion { color: #53666d; border-radius: 1px; background: #f8f5e895; border-color: #9c946461; backdrop-filter: blur(8px); min-height: 36px; }
+@media (min-width: 1600px) {
+  .mythic-hero[data-realm="heaven"] { min-height: 720px; }
+  [data-realm="heaven"] .mythic-copy { padding-left: 63px; padding-top: 163px; }
+  [data-realm="heaven"] .mythic-copy h1 { font-size: 82px; }
+  [data-realm="heaven"] .mythic-header, [data-realm="heaven"] .mythic-footer { left: 61px; }
+}
+@media (min-width: 1000px) and (max-width: 1190px) {
+  .mythic-hero[data-realm="heaven"] { min-height: 626px; }
+  [data-realm="heaven"] .mythic-copy { padding-left: 32px; padding-top: 142px; max-width: 56%; }
+  [data-realm="heaven"] .mythic-copy h1 { font-size: 54px; }
+  [data-realm="heaven"] .mythic-header, [data-realm="heaven"] .mythic-footer { left: 32px; }
+  [data-realm="heaven"] .mythic-description { font-size: 11px; }
+  [data-realm="heaven"] .mythic-colophon { right: 17px; font-size: 9px; }
+}
+@media (max-width: 999px) {
+  .mythic-hero[data-realm="heaven"] { min-height: 790px; border-radius: 3px; }
+  [data-realm="heaven"] .mythic-shade { background: radial-gradient(ellipse 155% 75% at 22% 0%, #f4f3edf5 0%, #f2f3ece8 30%, #eff1ec9c 55%, #edf0ec3b 73%, transparent 100%), linear-gradient(0deg, var(--bg), transparent 14%); }
+  [data-realm="heaven"] .mythic-header { top: 29px; left: 30px; right: 23px; }
+  [data-realm="heaven"] .mythic-copy { padding: 113px 30px 355px; max-width: 100%; }
+  [data-realm="heaven"] .mythic-eyebrow { font-size: 10px; margin-bottom: 22px; }
+  [data-realm="heaven"] .mythic-copy h1 { font-size: 54px; line-height: 1.31; }
+  [data-realm="heaven"] .mythic-description { margin: 22px 0 24px; font-size: 11px; }
+  [data-realm="heaven"] .mythic-actions { gap: 27px; }
+  [data-realm="heaven"] .mythic-actions a { min-height: 44px; font-size: 11px; }
+  [data-realm="heaven"] .mythic-colophon { display: none; }
+  [data-realm="heaven"] .mythic-footer { left: 30px; right: 24px; bottom: 25px; }
+  [data-realm="heaven"] .mythic-scene-caption { font-size: 10px; }
+}
+@media (max-width: 480px) {
+  .mythic-hero[data-realm="heaven"] { min-height: 777px; }
+  [data-realm="heaven"] .mythic-header { left: 24px; right: 19px; top: 28px; }
+  [data-realm="heaven"] .mythic-edition > span:last-child { font-size: 8px; letter-spacing: 1px; }
+  [data-realm="heaven"] .mythic-emblem { width: 26px; height: 28px; font-size: 14px; }
+  [data-realm="heaven"] .mythic-copy { padding: 109px 25px 350px; }
+  [data-realm="heaven"] .mythic-copy h1 { font-size: 47px; line-height: 1.32; }
+  [data-realm="heaven"] .mythic-eyebrow { margin-bottom: 20px; }
+  [data-realm="heaven"] .mythic-description { margin-top: 22px; }
+  [data-realm="heaven"] .mythic-primary { padding: 0 20px; }
+  [data-realm="heaven"] .mythic-footer { left: 24px; right: 20px; }
+}
+@media (max-width: 360px) {
+  [data-realm="heaven"] .mythic-copy { padding-left: 22px; padding-right: 18px; }
+  [data-realm="heaven"] .mythic-copy h1 { font-size: 40px; }
+  [data-realm="heaven"] .mythic-actions { gap: 21px; }
+  [data-realm="heaven"] .mythic-primary { padding: 0 15px; }
+  [data-realm="heaven"] .mythic-edition > span:last-child { letter-spacing: .8px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hongmeng-art * { animation: none !important; }
+}

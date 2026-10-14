@@ -53,3 +53,6 @@ output/playwright/
 # Public, revision-bound conference association assets (not test coverage).
 !frontend/static/data-sources/coverage/
 !frontend/static/data-sources/coverage/**
+
+# Local link-repair counts and browser/test evidence for this maintenance run.
+output/open-links-20261012/

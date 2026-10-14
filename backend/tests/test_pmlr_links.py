@@ -115,6 +115,7 @@ def test_oa_repair_only_changes_blank_oa_fields_and_is_idempotent(db, sample_ven
     original, = parse_pmlr(pmlr_body(), 2024, BASE, "COLT")
     apply_records(db, [original], sample_venue)
     paper = db.query(Paper).one()
+    paper.oa_url = None  # Simulate a legacy row before automatic publisher-link recognition.
     paper.note = "Keep my manual note"
     db.commit()
     before = {column.name: getattr(paper, column.name) for column in Paper.__table__.columns}
@@ -140,6 +141,8 @@ def test_oa_repair_never_inserts_or_accepts_mismatched_metadata(db, sample_venue
     assert db.query(Paper).count() == 0
     original, = parse_pmlr(pmlr_body(), 2024, BASE, "COLT")
     apply_records(db, [original], sample_venue)
+    db.query(Paper).one().oa_url = None  # Exercise historical blank-link repair, not ingestion.
+    db.commit()
     for invalid in [replace(raw, year=2023), replace(raw, title="Unrelated article"), replace(raw, authors=["Turing, Alan"])]:
         result = fill_missing_oa_links(db, [invalid], sample_venue)
         assert result["counts"] == {"identity_conflicts": 1}
@@ -154,6 +157,8 @@ async def test_scoped_cached_oa_import_backs_up_and_reports_only_requested_years
     db.commit()
     raw, = parse_pmlr(pmlr_body(), 2024, BASE, "COLT")
     apply_records(db, [raw], sample_venue)
+    db.query(Paper).one().oa_url = None  # The cached repair must handle legacy blank fields.
+    db.commit()
     output = tmp_path / "audit"
     output.mkdir()
     index = '<li><a href="v247">Proceedings of COLT 2024</a></li><li><a href="v244">Proceedings of UAI 2024</a></li>'

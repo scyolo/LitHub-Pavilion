@@ -4,23 +4,26 @@
 
 :root {
   color-scheme: dark;
-  --bg: #0c111b;
-  --sidebar: #0e1420;
-  --surface: #131c2a;
-  --surface-raised: #192436;
-  --surface-hover: #1b2b41;
-  --field: #0e1725;
-  --text: #e6edf7;
-  --heading: #f2f6fd;
-  --muted: #94a3b8;
-  --subtle: #8798af;
-  --border: #243247;
-  --border-soft: #1c2a3d;
-  --accent: #81b7ff;
-  --accent-solid: #578bec;
-  --accent-bg: #1b2e4a;
-  --mint: #66d4b2;
-  --shadow: 0 8px 28px #02071225;
+  --bg: #0b101e;
+  --sidebar: #0e1423;
+  --surface: #111929;
+  --surface-raised: #182135;
+  --surface-hover: #1c263c;
+  --field: #0f1728;
+  --text: #dedee4;
+  --heading: #f0ede6;
+  --muted: #a0a8bb;
+  --subtle: #929bad;
+  --border: #293146;
+  --border-soft: #20293b;
+  --accent: #d5bd8b;
+  --accent-solid: #d5bd8b;
+  --accent-bg: #292737;
+  --mint: #a9bad9;
+  --chart-a: #cbb081;
+  --chart-b: #869fc9;
+  --primary-ink: #171e2d;
+  --shadow: 0 10px 32px #02050e26;
   font-family: "Segoe UI", "Microsoft YaHei UI", "PingFang SC", system-ui, sans-serif;
   font-synthesis: none;
   font-weight: 400;
@@ -31,23 +34,26 @@
 }
 :root[data-theme="light"] {
   color-scheme: light;
-  --bg: #f4f6fa;
-  --sidebar: #fcfdff;
-  --surface: #fff;
-  --surface-raised: #f1f5fb;
-  --surface-hover: #eaf1fc;
-  --field: #f8fafd;
-  --text: #34435c;
-  --heading: #18263e;
-  --muted: #586a82;
-  --subtle: #697990;
-  --border: #d6e0ed;
-  --border-soft: #e3e9f2;
-  --accent: #245fae;
-  --accent-solid: #3671d7;
-  --accent-bg: #e7f0ff;
-  --mint: #16886c;
-  --shadow: 0 8px 28px #34466308;
+  --bg: #f7f7f4;
+  --sidebar: #fdfdfa;
+  --surface: #fffffd;
+  --surface-raised: #f3f2ed;
+  --surface-hover: #f0eee6;
+  --field: #fafaf6;
+  --text: #45463f;
+  --heading: #30332f;
+  --muted: #696e65;
+  --subtle: #71766b;
+  --border: #dfdfd5;
+  --border-soft: #eae9e1;
+  --accent: #876d3b;
+  --accent-solid: #876d3b;
+  --accent-bg: #f3ede0;
+  --mint: #667c9e;
+  --chart-a: #b39963;
+  --chart-b: #879bb8;
+  --primary-ink: #fffdf6;
+  --shadow: 0 9px 30px #5b51360a;
 }
 * { box-sizing: border-box; }
 body { margin: 0; background: var(--bg); color: var(--text); }
@@ -871,3 +877,24 @@ fieldset.filter-group { padding-top: 10px; margin-top: 15px; }
 
 :root[data-theme="light"] .venue-directory .venue-topic-tags span { color: var(--text); }
 :root[data-theme="light"] .venue-directory .venue-empty { color: #865924; }
+
+/* Evidence, not a promise of universal free access. */
+.overview-heading { font-size: 24px; font-weight: 650; letter-spacing: -.6px; line-height: 1.4; margin-top: 8px; }
+.coverage-evidence-label { display: block; font-size: 10px; color: var(--mint); margin-top: 5px; }
+.open-coverage-breakdown { display: grid; gap: 5px; margin-top: 20px; }
+.open-coverage-breakdown button { display: flex; justify-content: space-between; align-items: center; gap: 12px; min-height: 35px; padding: 5px 0; font-size: 11px; text-align: left; }
+.open-coverage-breakdown button:hover:not(:disabled) { color: var(--accent); }
+.open-coverage-breakdown button > span, .open-coverage-breakdown strong { display: flex; align-items: center; gap: 8px; }
+.open-coverage-breakdown strong { font-size: 12px; font-variant-numeric: tabular-nums; }
+.open-coverage-breakdown i { width: 6px; height: 6px; border-radius: 50%; background: var(--mint); }
+.open-coverage-breakdown button + button i { background: var(--subtle); }
+.open-coverage-breakdown button + button { color: var(--muted); }
+.coverage-explanation { margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border-soft); color: var(--muted); font-size: 10px; line-height: 1.85; }
+.paper-discovery { border-top: 1px solid var(--border-soft); padding-top: 19px; margin-top: 19px; }
+.paper-discovery h3 { display: flex; gap: 7px; align-items: center; font-size: 12px; }
+.paper-discovery > p { font-size: 10px; color: var(--muted); line-height: 1.8; margin-top: 7px; }
+.paper-discovery-links { display: grid; gap: 7px; margin: 13px 0 10px; }
+.paper-discovery-links a { display: flex; justify-content: space-between; align-items: center; gap: 10px; min-height: 49px; padding: 9px 12px; border: 1px solid var(--border); border-radius: 6px; font-size: 11px; background: var(--field); }
+.paper-discovery-links a:hover { border-color: var(--accent); background: var(--accent-bg); }
+.paper-discovery-links small { display: block; font-size: 9px; color: var(--muted); margin-top: 1px; }
+.paper-discovery > .discovery-disclaimer { font-size: 9px; }

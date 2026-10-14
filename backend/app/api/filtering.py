@@ -77,8 +77,8 @@ def venue_scope(filters: PaperFilters):
     return conditions
 
 
-def _has_oa(oa_url: str | None, arxiv_id: str | None) -> int:
-    return int(oa_link(oa_url, arxiv_id) is not None)
+def _has_oa(oa_url, arxiv_id, doi, publisher_key, official_url) -> int:
+    return int(oa_link(oa_url, arxiv_id, doi, publisher_key, official_url) is not None)
 
 
 def has_oa_link(db: Session):
@@ -88,8 +88,8 @@ def has_oa_link(db: Session):
     应用使用 SQLite/FTS5；连接归还池后函数保留，重复注册不会持久化到 DB。
     """
     connection = db.connection().connection.driver_connection
-    connection.create_function("api_has_oa", 2, _has_oa, deterministic=True)
-    return func.api_has_oa(Paper.oa_url, Paper.arxiv_id) == 1
+    connection.create_function("api_has_oa", 5, _has_oa, deterministic=True)
+    return func.api_has_oa(Paper.oa_url, Paper.arxiv_id, Paper.doi, Paper.publisher_key, Paper.official_url) == 1
 
 
 def paper_query(db: Session, filters: PaperFilters, *, include_candidates=False):

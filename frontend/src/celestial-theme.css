@@ -1,0 +1,80 @@
+/* The research workspace belongs to the same white-gold / midnight-gold world.
+   Functional content stays quiet; decorative treatment is concentrated in the cover. */
+::selection { background: color-mix(in srgb, var(--accent) 30%, transparent); }
+.brand-symbol { border-color: color-mix(in srgb, var(--accent) 38%, transparent); border-radius: 6px; background: transparent; color: var(--accent); }
+.brand strong { font-family: Georgia, "Times New Roman", serif; font-size: 18px; font-weight: 400; letter-spacing: -.6px; }
+.brand small { font-size: 9px; letter-spacing: 1px; }
+.sidebar { background: linear-gradient(180deg, var(--sidebar), var(--bg)); }
+.workspace-label { margin-top: 30px; margin-bottom: 31px; }
+.status-dot, .online-dot { background: var(--accent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 7%, transparent); }
+.local-tag { border-color: var(--border); font-size: 7px; letter-spacing: 1.2px; }
+.nav-section-title { font-size: 9px; letter-spacing: 1px; }
+.nav-item { position: relative; border-radius: 5px; }
+.nav-item.active { background: var(--accent-bg); border-color: transparent; }
+.nav-item.active::before { content: ""; position: absolute; left: -1px; top: 12px; bottom: 12px; width: 2px; border-radius: 1px; background: var(--accent); }
+.nav-item.active > .icon:last-child { opacity: .55; }
+.topic-nav-link { font-size: 11px; }
+.topic-dot { height: 4px; width: 4px; }
+.sidebar-note { background: transparent; border-radius: 5px; }
+.sidebar-note > .icon { color: var(--accent); }
+.topbar { background: var(--sidebar); height: 69px; }
+.topbar .search-input { border: 1px solid var(--border); background: var(--field); }
+.topbar .theme-toggle { display: inline-flex; align-items: center; gap: 8px; width: auto; min-width: 33px; white-space: nowrap; color: var(--accent); }
+.theme-label { font-size: 10px; font-weight: 400; letter-spacing: .05em; }
+.snapshot-banner { background: var(--sidebar); color: var(--muted); padding-top: 8px; padding-bottom: 8px; border-color: var(--border-soft); font-size: 10px; }
+.snapshot-banner > svg { color: var(--accent); }
+.snapshot-banner .button { background: transparent; font-size: 9px; }
+.button.primary { color: var(--primary-ink); border-color: transparent; background: var(--accent-solid); box-shadow: none; }
+.button.primary:hover:not(:disabled) { background: color-mix(in srgb, var(--accent-solid) 88%, white); color: var(--primary-ink); }
+.button.secondary:hover:not(:disabled) { border-color: color-mix(in srgb, var(--accent) 50%, transparent); }
+.search-input:focus-within { box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 7%, transparent); }
+.eyebrow { font-size: 9px; letter-spacing: 1.6px; }
+.tiny-line { background: var(--accent); }
+.overview-heading { font-family: "Songti SC", "SimSun", serif; font-size: 25px; font-weight: 600; letter-spacing: .08em; }
+.dashboard-heading { margin-bottom: 23px; }
+.dashboard-heading p { margin-top: 7px; font-size: 11px; }
+.scope-tabs { gap: 7px; }
+.scope-tab { min-height: 34px; border-radius: 5px; border-color: var(--border); background: transparent; }
+.scope-tab.active { background: var(--accent-bg); border-color: color-mix(in srgb, var(--accent) 34%, var(--border)); }
+.scope-tab-count { background: transparent; font-size: 9px; }
+.scope-tab.active .scope-tab-count { background: transparent; }
+.level-a { background: color-mix(in srgb, var(--chart-a) 12%, transparent); color: var(--accent); }
+.level-b { background: color-mix(in srgb, var(--chart-b) 12%, transparent); color: var(--mint); }
+.level-badge, .level-badge.level-b { border-color: color-mix(in srgb, currentColor 16%, transparent); }
+.metrics-grid { gap: 0; border: 1px solid var(--border); background: var(--surface); border-radius: 7px; padding: 5px 0; overflow: hidden; }
+.metric-card { background: transparent; border: 0; border-radius: 0; padding: 17px 23px 18px; }
+.metric-card + .metric-card { border-left: 1px solid var(--border-soft); }
+.metric-top { font-size: 11px; margin-bottom: 8px; }
+.metric-card .metric-icon { background: transparent; color: var(--accent); width: 21px; height: 21px; border-radius: 0; opacity: .8; }
+.metric-card .metric-value { font-family: Georgia, "Times New Roman", serif; font-size: 34px; letter-spacing: -.9px; font-weight: 400; }
+.metric-card p { font-size: 9px; line-height: 1.9; color: var(--muted); }
+.panel { border-radius: 7px; box-shadow: 0 3px 20px #00000003; }
+.chart-bar-a { fill: var(--chart-a); }
+.chart-bar-b { fill: var(--chart-b); }
+.chart-year:hover .chart-bar-a { fill: var(--accent); }
+.chart-year:hover .chart-hit, .chart-year:focus-visible .chart-hit { fill: color-mix(in srgb, var(--accent) 5%, transparent); }
+.swatch-a { background: var(--chart-a); }
+.swatch-b { background: var(--chart-b); }
+.donut-value { stroke: var(--accent); }
+.open-coverage-breakdown i { background: var(--accent); }
+.coverage-evidence-label { color: var(--accent); }
+.sync-panel { border-color: var(--border); background: linear-gradient(125deg, var(--accent-bg), var(--surface)); }
+.coverage-table button { background: color-mix(in srgb, var(--accent) calc(var(--intensity, .08) * 100%), transparent); }
+:root[data-theme="light"] .topic-tag { color: #676458; background: color-mix(in srgb, var(--topic) 13%, #fff); }
+:root[data-theme="light"] .metric-card .metric-value { color: #48483c; }
+@media (max-width: 1190px) { .theme-label { display: none; } .metric-card { padding: 15px 17px; } .metric-card .metric-value { font-size: 31px; } }
+@media (max-width: 760px) {
+  .snapshot-banner { font-size: 9px; }
+  .topbar { height: 61px; }
+  .topbar .theme-toggle { padding-left: 8px !important; }
+  .metrics-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); padding: 0; }
+  .metric-card { padding: 17px 18px; }
+  .metric-card:nth-child(3) { border-left: 0; }
+  .metric-card:nth-child(n+3) { border-top: 1px solid var(--border-soft); }
+  .metric-top { font-size: 10px; }
+  .metric-card .metric-value { font-size: 30px; }
+  .metric-card p { font-size: 9px; }
+}
+@media (prefers-reduced-motion: reduce) { .sidebar { transition: none; } }
+
+:root[data-theme="light"] .button.primary:hover:not(:disabled) { background: #7d6536; }

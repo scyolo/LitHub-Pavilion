@@ -69,12 +69,8 @@ async def resolve_source_id(
 
 
 def _oa_pdf_url(work: dict) -> str | None:
-    loc = work.get("best_oa_location") or {}
-    pdf = loc.get("pdf_url") if isinstance(loc, dict) else None
-    if pdf:
-        return pdf
-    oa = work.get("open_access") or {}
-    return oa.get("oa_url")
+    from app.services.open_access import best_openalex_url
+    return best_openalex_url(work)
 
 
 def _arxiv_id_from_locations(work: dict) -> str | None:

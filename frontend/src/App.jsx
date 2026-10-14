@@ -70,7 +70,7 @@ export default function App() {
       <a className="skip-link" href="#main-content" onClick={(event) => { event.preventDefault(); document.getElementById("main-content")?.focus(); }}>跳转至主要内容</a>
       {menuOpen && <button className="sidebar-backdrop" aria-label="关闭导航" onClick={() => setMenuOpen(false)} />}
       <aside className={`sidebar ${menuOpen ? "open" : ""}`} aria-label="主导航">
-        <NavLink to="/" className="brand"><span className="brand-symbol"><Icon name="radar" size={27} /></span><span className="brand-copy"><strong>{APP_NAME}</strong><small>{APP_DESCRIPTION}</small></span></NavLink>
+        <NavLink to="/" className="brand"><span className="brand-symbol"><Icon name="pavilion" size={27} /></span><span className="brand-copy"><strong>{APP_NAME}</strong><small>{APP_DESCRIPTION}</small></span></NavLink>
         <div className="workspace-label"><span className="status-dot" />个人研究空间<span className="local-tag">{api.isSnapshot ? "SNAPSHOT" : "LOCAL"}</span></div>
         <div className="nav-section-title">工作台 <span>WORKSPACE</span></div>
         <nav className="main-nav">{NAVIGATION.map((item) => <NavLink key={item.to} to={item.to} end={item.end} className={({ isActive }) => `nav-item ${isActive ? "active" : ""}`}><Icon name={item.icon} size={19} /><span>{item.name}</span><Icon name="chevron" size={13} /></NavLink>)}</nav>
@@ -92,11 +92,11 @@ export default function App() {
           <div className="breadcrumb">工作台 <Icon name="chevron" size={12} /><span>{pageName}</span></div>
           <div className="topbar-search"><SearchInput key={location.pathname} automatic={false} label="全局检索论文" placeholder="模糊检索论文 · 不区分大小写…" onCommit={(q) => navigate(paperHref(null, { q }))} /></div>
           <span className={`topbar-sync ${crawl?.running ? "busy" : ""}`}><span className="status-dot" />{api.isSnapshot ? "快照浏览" : crawl?.running ? "正在同步" : "本地模式"}</span>
-          <button className="icon-button theme-toggle" title={theme === "dark" ? "切换浅色主题" : "切换深色主题"} aria-label={theme === "dark" ? "切换浅色主题" : "切换深色主题"} onClick={() => setTheme(theme === "dark" ? "light" : "dark")}><Icon name={theme === "dark" ? "sun" : "moon"} size={19} /></button>
+          <button className="icon-button theme-toggle" title={theme === "dark" ? "切换浅色主题" : "切换深色主题"} aria-label={theme === "dark" ? "切换浅色主题" : "切换深色主题"} onClick={() => setTheme(theme === "dark" ? "light" : "dark")}><Icon name={theme === "dark" ? "sun" : "moon"} size={17} /><span className="theme-label">{theme === "dark" ? "鸿蒙云海" : "周天星空"}</span></button>
         </header>
         <main id="main-content" className="page-content" tabIndex={-1}>
           <PageBoundary key={location.pathname}><Suspense fallback={<LoadingState />}><Routes>
-            <Route path="/" element={<Home />} /><Route path="/papers" element={<PaperList />} /><Route path="/papers/:id" element={<PaperDetail />} />
+            <Route path="/" element={<Home theme={theme} onThemeChange={setTheme} />} /><Route path="/papers" element={<PaperList />} /><Route path="/papers/:id" element={<PaperDetail />} />
             <Route path="/venues" element={<Venues />} /><Route path="/coverage" element={<SourceCoverage />} /><Route path="/deadlines" element={<Deadlines />} /><Route path="/admin" element={<Admin />} />
             <Route path="*" element={<div className="state-box"><h1>这个页面不存在</h1><NavLink to="/" className="button primary">返回研究总览</NavLink></div>} />
           </Routes></Suspense></PageBoundary>

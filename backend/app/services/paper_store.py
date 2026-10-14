@@ -3,7 +3,7 @@ import re
 from sqlalchemy import or_
 from sqlalchemy.orm import Session
 
-from app.api.serializers import abstract_text, arxiv_url, safe_http_url
+from app.api.serializers import abstract_text, oa_link, safe_http_url
 from app.cleaning import author_name_norm, normalize_arxiv_id, normalize_doi, normalize_title
 from app.collectors.dblp import RawPaper, stream_prefix
 from app.models import Author, Paper, PaperAuthor, Venue
@@ -126,7 +126,7 @@ def upsert_paper(session: Session, raw: RawPaper, venue: Venue, author_cache: di
             venue_id=venue.id, year=raw.year, ccf_level=venue.ccf_level, ccf_area=venue.ccf_area,
             official_url=("https://doi.org/" + doi) if doi else safe_http_url(raw.official_url) or ("https://dblp.org/db/" + venue.dblp_stream + "/" if venue.dblp_stream else None),
             abstract=abstract_text(raw.extra.get("abstract")),
-            oa_url=safe_http_url(raw.extra.get("oa_pdf")) or arxiv_url(arxiv_id),
+            oa_url=oa_link(raw.extra.get("oa_pdf"), arxiv_id, doi, publisher_key, raw.official_url),
             publication_date=_safe_publication_date(raw.publication_date, raw.year), dblp_mdate=raw.mdate,
             venue_confirmed=int(raw.extra.get("provenance") in ("dblp_toc", "publisher_toc") and ccf_track_eligible(raw, venue)),
             citation_count=max(0, int(raw.extra.get("cited_by_count") or 0)),
@@ -151,7 +151,7 @@ def upsert_paper(session: Session, raw: RawPaper, venue: Venue, author_cache: di
         if abstract_text(paper.abstract) is None:
             paper.abstract = abstract_text(raw.extra.get("abstract"))
         if not safe_http_url(paper.oa_url):
-            paper.oa_url = safe_http_url(raw.extra.get("oa_pdf")) or arxiv_url(arxiv_id)
+            paper.oa_url = oa_link(raw.extra.get("oa_pdf"), arxiv_id, doi, publisher_key, raw.official_url)
         # Only TOC evidence can correct an existing year. Never mix a date
         # from a different source year into a previously confirmed record.
         if raw.extra.get("provenance") in ("dblp_toc", "publisher_toc") and paper.year != raw.year:

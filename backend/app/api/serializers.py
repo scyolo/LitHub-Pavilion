@@ -123,16 +123,33 @@ def arxiv_url(value: str | None) -> str | None:
     return "https://arxiv.org/abs/" + value
 
 
-@lru_cache(maxsize=32768)
-def _cached_oa_link(oa_url: str | None, arxiv_id: str | None) -> str | None:
+def _stored_oa_link(oa_url, arxiv_id):
     return safe_http_url(oa_url) or arxiv_url(arxiv_id)
 
 
-def oa_link(oa_url: str | None, arxiv_id: str | None) -> str | None:
-    """SQL/卡片同口径；超长键不进缓存，修改URL自然形成新键，不缓存论文状态。"""
-    if len(oa_url or "") + len(arxiv_id or "") >= 4096:
-        return safe_http_url(oa_url) or arxiv_url(arxiv_id)
-    return _cached_oa_link(oa_url, arxiv_id)
+_cached_oa_link = lru_cache(maxsize=32768)(_stored_oa_link)
+
+
+def _publisher_oa_link(doi, publisher_key, official_url):
+    from app.services.open_access import publisher_open_url
+    evidence = publisher_open_url(doi=doi, publisher_key=publisher_key, official_url=official_url)
+    return evidence.url if evidence else None
+
+
+_cached_publisher_oa_link = lru_cache(maxsize=16384)(_publisher_oa_link)
+
+
+def oa_link(oa_url: str | None, arxiv_id: str | None, doi: str | None = None,
+            publisher_key: str | None = None, official_url: str | None = None) -> str | None:
+    """One evidence policy; independent caches retain the common (None, None) hit."""
+    stored = (_cached_oa_link if len(oa_url or "") + len(arxiv_id or "") < 4096
+              else _stored_oa_link)(oa_url, arxiv_id)
+    if stored or not (doi or publisher_key or official_url):
+        return stored
+    metadata = (doi, publisher_key, official_url)
+    resolver = (_cached_publisher_oa_link if sum(len(value or "") for value in metadata) < 4096
+                else _publisher_oa_link)
+    return resolver(*metadata)
 
 
 def abstract_text(value: str | None) -> str | None:
@@ -173,7 +190,8 @@ def paper_links(paper: Paper) -> dict[str, str | None]:
             and all(part not in ("", ".", "..") for part in key.split("/"))
         ):
             official = "https://dblp.org/rec/" + key
-    return {"official_url": official, "oa_url": oa_link(paper.oa_url, paper.arxiv_id)}
+    return {"official_url": official, "oa_url": oa_link(paper.oa_url, paper.arxiv_id, paper.doi,
+                                                  getattr(paper, "publisher_key", None), paper.official_url)}
 
 
 def directions_for(db: Session, paper_ids: list[int]) -> dict[int, list[str]]:

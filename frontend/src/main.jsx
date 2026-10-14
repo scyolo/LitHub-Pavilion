@@ -5,6 +5,7 @@ import { api } from "./api.js";
 import App from "./App.jsx";
 import DataSession from "./components/DataSession.jsx";
 import "./index.css";
+import "./celestial-theme.css";
 
 // Warm the shared reader while React constructs the shell.
 if (api.isSnapshot) api.directions().catch(() => {});
