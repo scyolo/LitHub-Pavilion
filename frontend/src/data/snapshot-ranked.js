@@ -1,4 +1,5 @@
 import { createSharedTasks, throwIfAborted } from "./shared-tasks.js";
+import { createIdMembership } from "./snapshot-membership.js";
 import { stemmer } from "stemmer";
 import { expandTokens } from "./fuzzy-terms.js";
 import { normalizedTitle, parseParams, queryTokens, readerError } from "./snapshot-engine.js";
@@ -19,6 +20,7 @@ export function createRankedReader({ descriptor, manifest, catalog, batches, car
       || !Number.isSafeInteger(part.count) || part.count < 1
       || !Number.isSafeInteger(part.min_id) || !Number.isSafeInteger(part.max_id)
       || part.min_id < 1 || part.max_id < part.min_id) throw invalid();
+  const containsId = createIdMembership(ranking, manifest.paper_count);
   const rankParts = createSharedTasks({ maxCached: 8 }), queries = createSharedTasks({ maxCached: 4 });
   const vocabulary = createSharedTasks({ maxCached: 1 }), ordered = createSharedTasks({ maxCached: 4 });
   async function rankRows(ids, filters, context) {
@@ -72,23 +74,43 @@ export function createRankedReader({ descriptor, manifest, catalog, batches, car
       && (!filters.access || (filters.access==='oa' ? row[8]===1 : row[8]===0))
       && (!filters.directions.length || row[6].some(d=>filters.directions.includes(ranking.directions[d])));
   }
-  async function prepare(params, fuzzy, context) {
-    const title=normalizedTitle(params.q), titleRows=await batches(descriptor.search.titles[await bucket(title)]||[], context);
-    if(titleRows.some(row=>!Array.isArray(row)||row.length!==2||typeof row[0]!=='string'||!Number.isSafeInteger(row[1])||row[1]<1))throw invalid();
-    const exact=new Set(titleRows.filter(row=>row[0]===title).map(row=>row[1]));
-    const tokens=queryTokens(params.q, params.match==='exact'||exact.size>0), scores=new Map(),priorities=new Map();
-    if(params.match==='exact')return {ids:exact,scores:new Map([...exact].map(id=>[id,0])),priorities:new Map([...exact].map(id=>[id,0])),expansions:[],mode:'exact'};
-    let tokenGroups=tokens.map(t=>[t]);
-    if(fuzzy&&tokens.length){
+  async function titleMatches(title, context) {
+    const rows = await batches(descriptor.search.titles[await bucket(title)] || [], context);
+    if (rows.some(row => !Array.isArray(row) || row.length !== 2 || typeof row[0] !== 'string'
+        || !Number.isSafeInteger(row[1]) || row[1] < 1)) throw invalid();
+    return new Set(rows.filter(row => row[0] === title).map(row => row[1]));
+  }
+  async function termRows(tokens, fuzzy, title, context) {
+    let tokenGroups = tokens.map(t => [t]);
+    if (fuzzy && tokens.length) {
       const terms = await vocabulary.run("terms", async shared => {
         const rows = await batches(descriptor.search.vocabulary, shared);
-        if(rows.some(row=>!Array.isArray(row)||row.length!==2||!/^[a-z0-9]+$/.test(row[0])||!Number.isSafeInteger(row[1])||row[1]<1))throw invalid();
+        if (rows.some(row => !Array.isArray(row) || row.length !== 2 || !/^[a-z0-9]+$/.test(row[0])
+            || !Number.isSafeInteger(row[1]) || row[1] < 1)) throw invalid();
         return rows;
       }, context);
-      tokenGroups=expandTokens(tokens,terms,4,title.match(/[a-z0-9]+/g)||[]);
+      tokenGroups = expandTokens(tokens, terms, 4, title.match(/[a-z0-9]+/g) || []);
     }
-    const expanded=[...new Set(tokenGroups.flat())],keys=new Set(await Promise.all(expanded.map(t=>bucket(t,3))));
-    const rows=await batches([...keys].flatMap(k=>descriptor.search.terms[k]||[]), context);
+    const expanded = [...new Set(tokenGroups.flat())];
+    const keys = new Set(await Promise.all(expanded.map(t => bucket(t, 3))));
+    const rows = await batches([...keys].flatMap(k => descriptor.search.terms[k] || []), context);
+    return { tokenGroups, expanded, rows };
+  }
+  async function prepare(params, fuzzy, context) {
+    const title = normalizedTitle(params.q), exactPromise = titleMatches(title, context);
+    if (params.match === 'exact') {
+      const ids = await exactPromise;
+      return { ids, scores: new Map([...ids].map(id => [id, 0])), priorities: new Map([...ids].map(id => [id, 0])), expansions: [], mode: 'exact' };
+    }
+    let tokens, tokenError;
+    try { tokens = queryTokens(params.q); } catch (error) { tokenError = error; tokens = []; }
+    // Same request budget and shared cancellation scope: do not serialize
+    // independent title and posting downloads behind one another's latency.
+    const [exact, { tokenGroups, expanded, rows }] = await Promise.all([
+      exactPromise, termRows(tokens, fuzzy, title, context),
+    ]);
+    if (tokenError) tokens = queryTokens(params.q, exact.size > 0);
+    const scores = new Map(), priorities = new Map();
     const postings=new Map(expanded.map(t=>[t,new Map()])),positions=new Map(expanded.map(t=>[t,new Map()])),lengths=new Map();
     for(const row of rows){
       if(!Array.isArray(row)||row.length!==5||typeof row[0]!=='string'||!row.slice(1,4).every(Number.isSafeInteger)
@@ -110,6 +132,21 @@ export function createRankedReader({ descriptor, manifest, catalog, batches, car
     for(const id of exact){if(!scores.has(id))scores.set(id,0);priorities.set(id,0);}
     return {ids,scores,priorities,mode:fuzzy?'fuzzy':'keywords',expansions:fuzzy?tokenGroups.map((terms,i)=>({token:tokens[i],alternatives:terms.slice(1)})).filter(r=>r.alternatives.length):[]};
   }
+  async function matchingRows(prepared, filters, context) {
+    const unfilteredRelevance = prepared && filters.sort === 'relevance' && !filters.venue
+      && !filters.year && !filters.level && !filters.type && !filters.directions.length
+      && !filters.access && !filters.pdf_status;
+    if (containsId && unfilteredRelevance) {
+      const rows = [];
+      for (const id of prepared.ids) {
+        // Validate every candidate, including off-page IDs, before trusting the total.
+        if (!containsId(id)) throw invalid();
+        rows.push([id]);
+      }
+      return rows;
+    }
+    return (await rankRows(prepared?.ids, filters, context)).filter(row => matches(row, filters));
+  }
   function query(params, fuzzy, context) {
     if(typeof params.q!=='string'||params.q.length>2000)queryTokens(params.q);
     const key=JSON.stringify([params.q,params.match==='exact',fuzzy]);
@@ -122,8 +159,8 @@ export function createRankedReader({ descriptor, manifest, catalog, batches, car
     const key = JSON.stringify([method, mode, scope]);
     const { rows, prepared } = await ordered.run(key, async shared => {
       let prepared=isSearch?await query(params,mode==='fuzzy',shared):null;
-      let rows=(await rankRows(prepared?.ids, filters, shared)).filter(row=>matches(row,filters));
-      if(isSearch&&mode==='auto'&&!rows.length){prepared=await query(params,true,shared);rows=(await rankRows(prepared.ids, filters, shared)).filter(row=>matches(row,filters));}
+      let rows=await matchingRows(prepared, filters, shared);
+      if(isSearch&&mode==='auto'&&!rows.length){prepared=await query(params,true,shared);rows=await matchingRows(prepared, filters, shared);}
       const column={publication_desc:3,created_desc:4,year_desc:2,citation_desc:5}[filters.sort];
       rows.sort((a,b)=>(column?b[column]-a[column]:prepared.priorities.get(a[0])-prepared.priorities.get(b[0])||prepared.scores.get(a[0])-prepared.scores.get(b[0]))||b[0]-a[0]);
       return { rows, prepared };

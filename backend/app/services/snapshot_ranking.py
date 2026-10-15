@@ -5,7 +5,7 @@ from datetime import datetime, timezone
 from app.publication import publication_sort_key
 
 
-def build_ranking_assets(directory, manifest, emit):
+def build_ranking_assets(directory, manifest, emit, *, include_membership=True):
     from app.services.snapshot import _json_bytes, _load_entry
 
     rows = []
@@ -71,10 +71,25 @@ def build_ranking_assets(directory, manifest, emit):
             previous = row[0]
         part = emit("ranking", _json_bytes(encoded), len(encoded))
         parts.append({**part, "min_id": source[0][0], "max_id": source[-1][0]})
-    return {
+    result = {
         "version": 1,
         "parts": parts,
         "venues": venues,
         "directions": directions,
         "pdf_statuses": statuses,
     }
+    if include_membership:
+        # Optional v1 metadata: old browser readers ignore it. Alternating gap /
+        # run-length integers preserve exact IDs without a max-ID-sized bitmap.
+        runs, previous = [], 0
+        for row in rows:
+            paper_id = row[0]
+            if paper_id <= previous:
+                raise ValueError("Ranking IDs must be positive and unique")
+            if runs and paper_id == previous + 1:
+                runs[-1] += 1
+            else:
+                runs.extend([paper_id - previous, 1])
+            previous = paper_id
+        result["id_runs"] = runs
+    return result
