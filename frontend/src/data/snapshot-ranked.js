@@ -40,6 +40,7 @@ export function createRankedReader({ descriptor, manifest, catalog, batches, car
     const groups = await Promise.all(parts.map(part => rankParts.run(part.path, async shared => {
       const source = await chunk(part, shared);
       const ids = part.max_id <= 0xffffffff ? new Uint32Array(source.length) : new Float64Array(source.length);
+      const records = new Array(source.length);
       let id = 0;
       for (let index = 0; index < source.length; index++) {
         const row = source[index];
@@ -54,11 +55,12 @@ export function createRankedReader({ descriptor, manifest, catalog, batches, car
         id += row[0];
         if (!Number.isSafeInteger(id)) throw invalid();
         ids[index] = id;
+        const record = row.slice(); record[0] = id; records[index] = record;
       }
       if (ids[0] !== part.min_id || id !== part.max_id) throw invalid();
-      // Keep every validated ranking part hot, but materialize only matching rows.
-      // The private outer copy never mutates the shared verified download cache.
-      return { ids, rows: source.slice() };
+      // Decode once, up front: later navigation must not pay deferred row work.
+      // One private copy per row replaces the former filter/slice/spread temporaries.
+      return { ids, rows: records };
     }, context)));
     throwIfAborted(context.signal);
     const rangesById = parts.map(p => [p.min_id, p.max_id]).sort((a, b) => a[0] - b[0]);
@@ -71,12 +73,7 @@ export function createRankedReader({ descriptor, manifest, catalog, batches, car
       seen?.add(id); covered++;
       const row = group.rows[index];
       if (!matches(row, filters)) return;
-      // A positive delta equals its absolute ID only for the first row; otherwise
-      // equality means this private row has already been materialized and cached.
-      if (row[0] !== id) {
-        const value = row.slice(); value[0] = id; group.rows[index] = value;
-      }
-      selected.push(group.rows[index]);
+      selected.push(row);
     }
     function lowerBound(values, value) {
       let low = 0, high = values.length;
