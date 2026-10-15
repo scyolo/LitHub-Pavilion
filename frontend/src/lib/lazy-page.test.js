@@ -31,3 +31,20 @@ it('does not retry a broken deployment indefinitely', async () => {
   await vi.advanceTimersByTimeAsync(400); await check;
   expect(importer).toHaveBeenCalledTimes(2);
 });
+
+it('reloads an errored module map only once per build without losing the route', async () => {
+  const { reloadForChunkFailure } = await import('./lazy-page.js');
+  const values = new Map(), storage = { getItem: key => values.get(key), setItem: (key, value) => values.set(key, value) };
+  const reload = vi.fn(), options = { storage, reload, online: true, version: 'https://reader.example/assets/index-a.js' };
+  expect(reloadForChunkFailure(options)).toBe(true);
+  expect(reloadForChunkFailure(options)).toBe(false);
+  expect(reload).toHaveBeenCalledOnce();
+});
+
+it('does not force reload offline or when the one-shot guard cannot be stored', async () => {
+  const { reloadForChunkFailure } = await import('./lazy-page.js');
+  const reload = vi.fn(), version = 'https://reader.example/assets/index-a.js';
+  expect(reloadForChunkFailure({ online: false, reload, version })).toBe(false);
+  expect(reloadForChunkFailure({ storage: { getItem() { throw new Error('disabled'); } }, reload, version })).toBe(false);
+  expect(reload).not.toHaveBeenCalled();
+});
