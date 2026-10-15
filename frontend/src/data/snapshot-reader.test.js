@@ -359,3 +359,22 @@ it.each([false, true])('validates overlapping ranking ranges without hiding dupl
     expect(actual.items.map(({ id, score }) => ({ id, score }))).toEqual(expected.items.map(({ id, score }) => ({ id, score })));
   });
 });
+
+it('does not revisit raw ranking rows on navigation after the first search', async () => {
+  let rawReads = 0;
+  const current = pagedReader({ intercept: ([path], load) => {
+    const value = load();
+    if (!path.startsWith('ranking-')) return value;
+    return { ...value, data: value.data.map(row => new Proxy(row, {
+      get(target, key, receiver) {
+        if (typeof key === 'string' && /^\d+$/.test(key)) rawReads++;
+        return Reflect.get(target, key, receiver);
+      },
+    })) };
+  } });
+  await current.reader.call('search', { q: 'model' });
+  rawReads = 0;
+  const result = await current.reader.call('papers', { direction: 'llm' });
+  expect(result.items.map(p => p.id)).toEqual(createSnapshotEngine(fixture).papers({ direction: 'llm' }).items.map(p => p.id));
+  expect(rawReads).toBe(0);
+});
