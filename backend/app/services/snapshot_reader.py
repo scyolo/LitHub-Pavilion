@@ -78,8 +78,7 @@ def decode_compressed_asset(content, entry):
     return raw
 
 
-def build_reader_assets(directory: Path, manifest: dict, *, write=True, version=3,
-                        browse_chunk_size=128, include_rank_membership=True) -> dict:
+def build_reader_assets(directory: Path, manifest: dict, *, write=True, version=3, browse_chunk_size=128) -> dict:
     from app.services.snapshot import MAX_FILE_BYTES, _atomic_write, _json_bytes, _load_entry
 
     directory = Path(directory)
@@ -152,7 +151,7 @@ def build_reader_assets(directory: Path, manifest: dict, *, write=True, version=
         index["search"] = build_search_assets(directory, manifest, emit, version=3 if version >= 5 else 2 if version >= 3 else 1)
     if version >= 5:
         from app.services.snapshot_ranking import build_ranking_assets
-        index["ranking"] = build_ranking_assets(directory, manifest, emit, include_membership=include_rank_membership)
+        index["ranking"] = build_ranking_assets(directory, manifest, emit)
     if version in (4, 6):
         index["version"] = 5 if version == 6 else 3
         entry = emit("reader", _json_bytes(index), manifest["paper_count"])

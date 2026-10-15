@@ -38,12 +38,14 @@ for(const [name,method,params]of cases){
   assert.deepEqual(result,expected,'Paged versus materialized engine mismatch: '+name);
   assert.equal(result.total,again.total);assert.deepEqual(result.items,again.items);assert.equal(requests.length,before,'Warm repeat must reuse verified assets');
   const cards=requests.filter(p=>p.startsWith('browse-')).length;
+  const rankShards=requests.filter(p=>p.startsWith('ranking-')).length;
+  if(method==='search'&&result.total)assert.ok(rankShards>0,'Preserve shared ranking metadata for the next navigation: '+name);
   assert.ok(cards<=result.items.length,'Must not download cards for off-page results');
   assert.ok(bytes<=3*1024*1024,'Cold read exceeded 3 MiB: '+name+' '+bytes);
   assert.ok(requests.length<=40,'Cold read fanout exceeded 40: '+name);
   assert.ok(coldMs<6000,'Local cold processing exceeded 6s: '+name);
   assert.ok(warmMs<1500,'Local warm processing exceeded 1.5s: '+name);
-  report.cases.push({name,total:result.total,items:result.items.length,body_bytes:bytes,requests:requests.length,card_shards:cards,cold_ms:coldMs,warm_ms:warmMs});
+  report.cases.push({name,total:result.total,items:result.items.length,body_bytes:bytes,requests:requests.length,card_shards:cards,ranking_shards:rankShards,cold_ms:coldMs,warm_ms:warmMs});
 }
 if(process.argv[2]){await mkdir(dirname(resolve(process.argv[2])),{recursive:true});await writeFile(process.argv[2],JSON.stringify(report,null,2));}
 console.log(JSON.stringify(report,null,2));

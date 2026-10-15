@@ -395,8 +395,7 @@ def _validate_contents(directory: Path, manifest: dict) -> None:
             raise ValueError("Unsupported reader version")
         descriptor = load_reader_descriptor(directory, catalog)
         if catalog["reader"] != build_reader_assets(directory, manifest, write=False, version=catalog["reader"]["version"],
-                                                    browse_chunk_size=descriptor.get("browse_chunk_size"),
-                                                    include_rank_membership="id_runs" in descriptor.get("ranking", {})):
+                                                    browse_chunk_size=descriptor.get("browse_chunk_size")):
             raise ValueError("Public reader index does not match the complete snapshot")
         total_bytes += sum((directory / entry["path"]).stat().st_size for entry in reader_entries(catalog, directory))
         if total_bytes > MAX_SNAPSHOT_BYTES:

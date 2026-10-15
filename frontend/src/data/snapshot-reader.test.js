@@ -333,3 +333,29 @@ it('does not fetch word shards for exact-only, invalid, or long-title-only queri
     expect(current.download.mock.calls.some(([path]) => /^(search|vocabulary)-/.test(path))).toBe(false);
   }
 });
+
+it.each([false, true])('validates overlapping ranking ranges without hiding duplicate IDs: duplicate=%s', duplicate => {
+  const assets = new Map();
+  const current = pagedReader({
+    mutate: descriptor => {
+      const encoded = JSON.parse(gunzipSync(readFileSync(join(directory, descriptor.ranking.parts[0].path))));
+      let id = 0;
+      const rows = encoded.map(row => { id += row[0]; return [id, ...row.slice(1)]; });
+      descriptor.ranking.parts = (duplicate ? [[0, 1, 2], [2, 4]] : [[0, 2, 4], [1, 3]]).map(indices => {
+        let previous = 0;
+        const values = indices.map(index => { const row = rows[index], value = [row[0] - previous, ...row.slice(1)]; previous = row[0]; return value; });
+        const sha256 = createHash('sha256').update(JSON.stringify(values)).digest('hex');
+        const path = `ranking-${sha256}.json.gz`; assets.set(path, values);
+        return { path, sha256, count: values.length, min_id: rows[indices[0]][0], max_id: rows[indices.at(-1)][0] };
+      });
+    },
+    intercept: ([path], load) => assets.has(path) ? { data: assets.get(path) } : load(),
+  });
+  const result = current.reader.call('search', { q: 'model', size: 1 });
+  if (duplicate) return expect(result).rejects.toMatchObject({ code: 'INVALID_SNAPSHOT' });
+  return result.then(actual => {
+    const expected = createSnapshotEngine(fixture).search({ q: 'model', size: 1 });
+    expect(actual.total).toBe(expected.total);
+    expect(actual.items.map(({ id, score }) => ({ id, score }))).toEqual(expected.items.map(({ id, score }) => ({ id, score })));
+  });
+});
