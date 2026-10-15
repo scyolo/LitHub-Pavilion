@@ -902,4 +902,4 @@ fieldset.filter-group { padding-top: 10px; margin-top: 15px; }
 /* Direct entry points and confirmed open full text are different measurements. */
 .direct-link-coverage { display: grid; grid-template-columns: 1fr auto; gap: .35rem .75rem; padding: .8rem 0; border-bottom: 1px solid var(--border); font-size: .8rem; }
 .direct-link-coverage strong { font-variant-numeric: tabular-nums; }
-.direct-link-coverage small { grid-column: 1 / -1; color: var(--text-muted); }
+.direct-link-coverage small { grid-column: 1 / -1; color: var(--muted); }

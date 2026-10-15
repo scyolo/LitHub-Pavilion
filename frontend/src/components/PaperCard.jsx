@@ -1,12 +1,13 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { compact, paperHref, paperLinks, topic } from "../lib/presentation.js";
+import { compact, paperHref, paperDiscoveryLinks, paperLinks, topic } from "../lib/presentation.js";
 import Icon from "./Icon.jsx";
 
 export default function PaperCard({ paper, compactMode = false }) {
   const [expanded, setExpanded] = useState(false);
   const location = useLocation();
   const links = paperLinks(paper);
+  const discovery = !links.official && !links.oa ? paperDiscoveryLinks(paper)[0] : null;
   const authors = paper.authors_preview?.length ? paper.authors_preview.join(" · ") : paper.first_author;
   return (
     <article className={`paper-card ${compactMode ? "compact" : ""}`}>
@@ -29,6 +30,7 @@ export default function PaperCard({ paper, compactMode = false }) {
           <div className="paper-actions">
             <span className="citation-count" title="外部数据源记录的引用数，可能存在收录延迟"><Icon name="chart" size={14} />{compact(paper.citation_count)}<span>引用</span></span>
             {!compactMode && paper.abstract_preview && <button className="text-button abstract-toggle" aria-expanded={expanded} onClick={() => setExpanded(!expanded)}>{expanded ? "收起摘要" : "摘要"}<Icon name="chevronDown" size={12} /></button>}
+            {discovery && <a href={discovery.url} target="_blank" rel="noopener noreferrer" className="paper-external" title="检索入口，不是已确认的免费全文">查找原文<Icon name="external" size={13} /></a>}
             {links.official && <a href={links.official} target="_blank" rel="noopener noreferrer" className="paper-external">官方链接<Icon name="external" size={13} /></a>}
             {links.oa && links.oa !== links.official && <a href={links.oa} target="_blank" rel="noopener noreferrer" className="paper-external">开放版本<Icon name="external" size={13} /></a>}
           </div>

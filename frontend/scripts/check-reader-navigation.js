@@ -3,7 +3,7 @@ async page => {
   const browser = page.context().browser(), base = new URL(page.url()).origin + '/';
   const report = { base, cases: [] };
   const assert = (value, message) => { if (!value) throw new Error(message); };
-  const ready = p => p.waitForFunction(() => document.querySelector('.explorer-results')?.getAttribute('aria-busy') === 'false' && document.querySelectorAll('.paper-card').length > 0, { timeout: 20000 });
+  const ready = p => p.waitForFunction(() => document.querySelector('.explorer-results')?.getAttribute('aria-busy') === 'false' && document.querySelectorAll('.paper-card').length > 0, null, { timeout: 20000 });
   async function create() {
     const context = await browser.newContext({ viewport: { width: 1440, height: 1000 } });
     const p = await context.newPage();

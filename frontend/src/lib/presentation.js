@@ -116,6 +116,16 @@ function formalPublicationLink(value) {
   return safe;
 }
 
+/** Discovery is navigation, never evidence for the open-full-text percentage. */
+export function paperDiscoveryLinks(paper) {
+  const title = typeof paper.title === "string" ? paper.title.trim().slice(0, 1500) : "";
+  return title ? [
+    { name: "Google Scholar", note: "查找所有版本", url: `https://scholar.google.com/scholar?${new URLSearchParams({ q: `"${title}"` })}` },
+    { name: "Semantic Scholar", note: "查找论文与全文", url: `https://www.semanticscholar.org/search?${new URLSearchParams({ q: title, sort: "relevance" })}` },
+    { name: "arXiv", note: "按标题检索预印本", url: `https://arxiv.org/search/?${new URLSearchParams({ query: title, searchtype: "title" })}` },
+  ] : [];
+}
+
 export function paperLinks(paper) {
   const official = safeExternalUrl(paper.official_url);
   const key = typeof paper.dblp_key === "string" ? paper.dblp_key.trim() : "";

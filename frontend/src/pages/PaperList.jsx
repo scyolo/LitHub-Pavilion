@@ -17,6 +17,7 @@ export default function PaperList() {
   const [compactMode, setCompactMode] = useState(false);
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [venueSearch, setVenueSearch] = useState("");
+  const [venueLimit, setVenueLimit] = useState(40);
   const contextQuery = useDashboard(scopeParams(filters));
   const context = contextQuery.data;
   const isSearch = Boolean(filters.q.trim());
@@ -33,7 +34,12 @@ export default function PaperList() {
   const pages = Math.max(1, Math.ceil((data?.total || 0) / (data?.size || filters.size)));
   const selectedDirections = filters.direction.split(",").filter(Boolean);
   const directions = context?.directions || [];
+  // Filter the complete catalog, but do not mount hundreds of off-screen
+  // buttons on every sidebar navigation (especially in the mobile drawer).
   const venues = searchVenues(context?.venues || [], venueSearch);
+  const visibleVenues = venues.slice(0, venueLimit);
+  const selectedVenue = venues.find(venue => venue.abbr === filters.venue);
+  if (selectedVenue && !visibleVenues.includes(selectedVenue)) visibleVenues.push(selectedVenue);
   const active = [
     ...selectedDirections.map((code) => ({ label: topic(code, directions.find((d) => d.code === code)?.name).name, remove: () => toggleDirection(code) })),
     ...(filters.venue ? [{ label: filters.venue, remove: () => update({ venue: "" }) }] : []),
@@ -55,7 +61,7 @@ export default function PaperList() {
           return <label className="filter-checkbox" key={d.code}><input type="checkbox" checked={selectedDirections.includes(d.code)} onChange={() => toggleDirection(d.code)} /><span className="topic-dot" style={{ background: t.color }} /><span>{d.name}</span><small>{number(d.paper_count)}</small></label>;
         })}</div><p className="filter-explanation">同维度多选取并集，不同维度取交集。</p></fieldset>
         <div className="filter-group"><label htmlFor="year-filter">论文归属年份</label><select id="year-filter" value={filters.year} onChange={(e) => update({ year: e.target.value })}><option value="">全部年份</option>{[...(context?.annual || [])].reverse().map((d) => <option key={d.year} value={d.year}>{d.year} · {number(d.total)} 篇</option>)}</select></div>
-        <div className="filter-group"><label htmlFor="venue-search">会议 / 期刊</label><div className="small-search"><Icon name="search" size={14} /><input id="venue-search" value={venueSearch} onChange={(e) => setVenueSearch(e.target.value)} placeholder="模糊查找来源，忽略大小写" /></div><div className="venue-filter-options"><button className={!filters.venue ? "selected" : ""} onClick={() => update({ venue: "" })}>全部来源<span>{context?.configured_venues ?? "—"}</span></button>{venues.map((v) => <button key={v.abbr} title={v.name} className={filters.venue === v.abbr ? "selected" : ""} onClick={() => update({ venue: v.abbr })}>{v.abbr}<span>{number(v.paper_count)}</span></button>)}{venues.length === 0 && <p className="muted small">没有匹配的来源</p>}</div></div>
+        <div className="filter-group"><label htmlFor="venue-search">会议 / 期刊</label><div className="small-search"><Icon name="search" size={14} /><input id="venue-search" value={venueSearch} onChange={(e) => { setVenueSearch(e.target.value); setVenueLimit(40); }} placeholder="模糊查找来源，忽略大小写" /></div><div className="venue-filter-options"><button className={!filters.venue ? "selected" : ""} onClick={() => update({ venue: "" })}>全部来源<span>{context?.configured_venues ?? "—"}</span></button>{visibleVenues.map((v) => <button key={v.abbr} title={v.name} className={filters.venue === v.abbr ? "selected" : ""} onClick={() => update({ venue: v.abbr })}>{v.abbr}<span>{number(v.paper_count)}</span></button>)}{venues.length === 0 && <p className="muted small">没有匹配的来源</p>}</div>{visibleVenues.length < venues.length && <button className="text-button" onClick={() => setVenueLimit(value => value + 40)}>继续显示来源（{visibleVenues.length} / {venues.length}）</button>}</div>
         <fieldset className="filter-group"><legend>全文访问</legend>{[{ value: "", label: "全部论文" }, { value: "oa", label: "有开放版本链接" }, { value: "official", label: "待发现开放版本" }].map((item) => <label key={item.value} className="filter-radio"><input type="radio" name="access" value={item.value} checked={filters.access === item.value} onChange={() => update({ access: item.value })} />{item.label}</label>)}</fieldset>
         <div className="filter-note"><Icon name="link" size={15} /><p>直接跳转原始来源<br />本站不下载 PDF</p></div>
       </aside>

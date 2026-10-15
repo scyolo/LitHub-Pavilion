@@ -1,4 +1,4 @@
-import { Component, Suspense, lazy, useEffect, useState } from "react";
+import { Component, Suspense, useEffect, useState } from "react";
 import { NavLink, Route, Routes, useLocation, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { api } from "./api.js";
@@ -10,19 +10,26 @@ import SearchInput from "./components/SearchInput.jsx";
 import PageScroll from "./components/PageScroll.jsx";
 import { LoadingState } from "./components/States.jsx";
 
+import { createPageModule } from "./lib/lazy-page.js";
 import Home from "./pages/Home.jsx";
-const Deadlines = lazy(() => import("./pages/Deadlines.jsx"));
-const PaperList = lazy(() => import("./pages/PaperList.jsx"));
-const PaperDetail = lazy(() => import("./pages/PaperDetail.jsx"));
-const SourceCoverage = lazy(() => import('./pages/SourceCoverage.jsx'));
-const Venues = lazy(() => import("./pages/Venues.jsx"));
-const Admin = lazy(() => import("./pages/Admin.jsx"));
+const pages = {
+  deadlines: createPageModule(() => import("./pages/Deadlines.jsx")),
+  papers: createPageModule(() => import("./pages/PaperList.jsx")),
+  detail: createPageModule(() => import("./pages/PaperDetail.jsx")),
+  coverage: createPageModule(() => import("./pages/SourceCoverage.jsx")),
+  venues: createPageModule(() => import("./pages/Venues.jsx")),
+  admin: createPageModule(() => import("./pages/Admin.jsx")),
+};
+const { Component: Deadlines } = pages.deadlines, { Component: PaperList } = pages.papers;
+const { Component: PaperDetail } = pages.detail, { Component: SourceCoverage } = pages.coverage;
+const { Component: Venues } = pages.venues, { Component: Admin } = pages.admin;
+const preloadPage = page => { page?.preload().catch(() => {}); };
 
 const NAVIGATION = [
   { to: "/", name: "研究总览", icon: "grid", end: true },
-  { to: "/papers", name: "论文探索", icon: "book" },
-  { to: "/venues", name: "会议与期刊", icon: "building" },
-  { to: "/deadlines", name: "截稿日历", icon: "calendar" },
+  { to: "/papers", name: "论文探索", icon: "book", page: pages.papers },
+  { to: "/venues", name: "会议与期刊", icon: "building", page: pages.venues },
+  { to: "/deadlines", name: "截稿日历", icon: "calendar", page: pages.deadlines },
 ];
 
 function initialTheme() {
@@ -73,15 +80,15 @@ export default function App() {
         <NavLink to="/" className="brand"><span className="brand-symbol"><Icon name="pavilion" size={27} /></span><span className="brand-copy"><strong>{APP_NAME}</strong><small>{APP_DESCRIPTION}</small></span></NavLink>
         <div className="workspace-label"><span className="status-dot" />个人研究空间<span className="local-tag">{api.isSnapshot ? "SNAPSHOT" : "LOCAL"}</span></div>
         <div className="nav-section-title">工作台 <span>WORKSPACE</span></div>
-        <nav className="main-nav">{NAVIGATION.map((item) => <NavLink key={item.to} to={item.to} end={item.end} className={({ isActive }) => `nav-item ${isActive ? "active" : ""}`}><Icon name={item.icon} size={19} /><span>{item.name}</span><Icon name="chevron" size={13} /></NavLink>)}</nav>
+        <nav className="main-nav">{NAVIGATION.map((item) => <NavLink key={item.to} onPointerEnter={() => preloadPage(item.page)} onFocus={() => preloadPage(item.page)} to={item.to} end={item.end} className={({ isActive }) => `nav-item ${isActive ? "active" : ""}`}><Icon name={item.icon} size={19} /><span>{item.name}</span><Icon name="chevron" size={13} /></NavLink>)}</nav>
         <div className="nav-section-title topic-nav-heading">研究方向 <span>TOPICS</span></div>
         <nav className="topic-nav" aria-label="按研究方向浏览">{(directions?.items || []).map((d) => {
           const t = topic(d.code, d.name);
           const selected = new URLSearchParams(location.search).get("direction")?.split(",").includes(d.code);
-          return <NavLink key={d.code} to={paperHref(null, { direction: d.code })} className={`topic-nav-link ${selected && location.pathname === "/papers" ? "selected" : ""}`}><span className="topic-dot" style={{ background: t.color }} />{d.name}</NavLink>;
+          return <NavLink key={d.code} onPointerEnter={() => preloadPage(pages.papers)} onFocus={() => preloadPage(pages.papers)} to={paperHref(null, { direction: d.code })} className={`topic-nav-link ${selected && location.pathname === "/papers" ? "selected" : ""}`}><span className="topic-dot" style={{ background: t.color }} />{d.name}</NavLink>;
         })}</nav>
         <div className="sidebar-bottom">
-          <NavLink to="/admin" className={({ isActive }) => `nav-item ${isActive ? "active" : ""}`}><Icon name="sliders" size={19} /><span>{api.isSnapshot ? "快照与更新" : "采集管理"}</span><Icon name="chevron" size={13} /></NavLink>
+          <NavLink to="/admin" onPointerEnter={() => preloadPage(pages.admin)} onFocus={() => preloadPage(pages.admin)} className={({ isActive }) => `nav-item ${isActive ? "active" : ""}`}><Icon name="sliders" size={19} /><span>{api.isSnapshot ? "快照与更新" : "采集管理"}</span><Icon name="chevron" size={13} /></NavLink>
           <div className="sidebar-note"><Icon name="shield" size={16} /><div><strong>仅追踪 CCF A / B</strong><p>保留元数据与官方链接<br />不下载、不存储 PDF</p></div></div>
           <div className="sidebar-footer"><span className="avatar">R</span><div><strong>Researcher</strong><small>专注下一篇好论文</small></div><span className="online-dot" /></div>
         </div>

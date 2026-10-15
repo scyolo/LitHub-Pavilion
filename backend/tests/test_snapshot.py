@@ -59,7 +59,7 @@ def test_export_includes_nine_verified_overview_scopes(session_factory, db, api_
 
     manifest = export_snapshot(session_factory, tmp_path, generated_at=api_catalog["now"])
     catalog, papers = load_snapshot(tmp_path, manifest)
-    assert catalog["overview"]["version"] == 2
+    assert catalog["overview"]["version"] == 3
     assert "venue_topics" in catalog["overview"]
     assert all(set(v) == {"abbr", "paper_count", "years"} for scope in catalog["overview"]["scopes"] for v in scope["dashboard"]["venues"])
     scopes = catalog["overview"]["scopes"]
@@ -68,6 +68,7 @@ def test_export_includes_nine_verified_overview_scopes(session_factory, db, api_
         rows = [p for p in papers if (not scope["level"] or p["level"] == scope["level"])
                 and (not scope["type"] or p["venue_type"] == scope["type"])]
         assert scope["dashboard"]["total"] == len(rows)
+        assert scope["dashboard"]["with_direct_link"] == sum(bool(p["official_url"] or p["oa_url"]) for p in rows)
         expected = sorted(rows, key=lambda p: (publication_sort_key(p), p["id"]), reverse=True)[:5]
         assert [p["id"] for p in scope["latest"]] == [p["id"] for p in expected]
         assert all("abstract" not in p and "note" not in p for p in scope["latest"])

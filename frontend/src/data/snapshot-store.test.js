@@ -246,3 +246,49 @@ describe("atomic static snapshot loading", () => {
     expect((await store.call("papers", {})).total).toBe(3);
   });
 });
+
+function detailReaderBundle(fixture) {
+  withOverview(fixture);
+  const text = JSON.stringify(fixture.papers), sha256 = createHash('sha256').update(text).digest('hex');
+  const fields = ['id', 'title', 'venue', 'year', 'publication_date', 'created_at', 'citation_count', 'directions', 'venue_confirmed', 'doi', 'official_url', 'oa_url', 'first_author', 'authors_count', 'pdf_status', 'pdf_source'];
+  fixture.catalog.reader = { version: 1, paper_count: fixture.papers.length, fields,
+    browse: [{ path: `browse-${sha256}.json.gz`, sha256, count: fixture.papers.length }],
+    details: [{ path: `compressed-${sha256}.json.gz`, sha256, count: fixture.papers.length, min_id: 11, max_id: 35, venues: ['AC', 'BJ'], years: [2024, 2025, 2026], directions: ['llm', 'agent'] }] };
+  const data = bundle(fixture);
+  data.detailPath = `compressed-${sha256}.json.gz`;
+  data.files[data.detailPath] = gzipSync(text);
+  return data;
+}
+
+it('recovers once when a deployment removed a verified older catalog\'s shards', async () => {
+  vi.stubGlobal('DecompressionStream', DecompressionStream);
+  const first = detailReaderBundle(snapshotFixture()), fixture = snapshotFixture();
+  fixture.papers[0].title = 'Newly deployed paper title';
+  const next = detailReaderBundle(fixture);
+  let active = first;
+  const fetcher = vi.fn(async url => {
+    const path = new URL(url).pathname.split('/').at(-1);
+    return active.files[path] ? new Response(active.files[path]) : new Response('removed', { status: 404 });
+  });
+  const { createSnapshotStore } = await import('./snapshot-store.js');
+  const store = createSnapshotStore({ baseUrl: 'https://reader.example/snapshot/', fetcher });
+  await store.call('directions'); active = next;
+  expect((await store.call('paper', 11)).title).toBe('Newly deployed paper title');
+  expect(store.getState().revision).toBe(next.manifest.revision);
+  expect(fetcher.mock.calls.filter(([url]) => url.endsWith(first.detailPath))).toHaveLength(1);
+  expect(fetcher.mock.calls.filter(([url]) => url.endsWith('manifest.json'))).toHaveLength(2);
+});
+
+it('does not refresh-loop or report empty results if the current revision itself is incomplete', async () => {
+  vi.stubGlobal('DecompressionStream', DecompressionStream);
+  const data = detailReaderBundle(snapshotFixture());
+  const fetcher = vi.fn(async url => {
+    const path = new URL(url).pathname.split('/').at(-1);
+    return path === data.detailPath ? new Response('removed', { status: 404 }) : new Response(data.files[path]);
+  });
+  const { createSnapshotStore } = await import('./snapshot-store.js');
+  const store = createSnapshotStore({ baseUrl: 'https://reader.example/snapshot/', fetcher });
+  await expect(store.call('paper', 11)).rejects.toMatchObject({ code: 'SNAPSHOT_UNAVAILABLE' });
+  expect(fetcher.mock.calls.filter(([url]) => url.endsWith('manifest.json'))).toHaveLength(2);
+  expect((await store.call('dashboard')).total).toBe(3);
+});

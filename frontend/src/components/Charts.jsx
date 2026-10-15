@@ -74,7 +74,7 @@ export function LinkCoverage({ total = 0, oa = 0, direct, onSelect }) {
       <button onClick={() => onSelect("oa")} disabled={!covered}><span><i />已找到开放版本</span><strong>{number(covered)}<Icon name="chevron" size={13} /></strong></button>
       <button onClick={() => onSelect("official")} disabled={covered === total}><span><i />待发现开放版本</span><strong>{number(total - covered)}<Icon name="chevron" size={13} /></strong></button>
     </div>
-    <p className="coverage-explanation">可跳转不等于免费全文。开放覆盖仅包含出版方开放全文、预印本与机构仓储；普通出版页和检索入口不计入。未找到开放版本，不影响已有官方链接的跳转。</p>
+    <p className="coverage-explanation">可跳转不等于免费全文。开放覆盖仅包含出版方开放全文、预印本与机构仓储；普通出版页和检索入口不计入。未找到不代表没有开放版本；已有官方链接仍可直接跳转。</p>
   </div>;
 }
 

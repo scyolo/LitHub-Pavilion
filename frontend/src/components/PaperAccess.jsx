@@ -1,4 +1,4 @@
-import { paperLinks } from "../lib/presentation.js";
+import { paperDiscoveryLinks, paperLinks } from "../lib/presentation.js";
 import Icon from "./Icon.jsx";
 
 const external = { target: "_blank", rel: "noopener noreferrer" };
@@ -7,12 +7,7 @@ const external = { target: "_blank", rel: "noopener noreferrer" };
 export default function PaperAccess({ paper }) {
   const links = paperLinks(paper);
   const preprint = paperLinks({ arxiv_id: paper.arxiv_id }).oa;
-  const title = typeof paper.title === "string" ? paper.title.trim().slice(0, 1500) : "";
-  const discoveries = title ? [
-    { name: "Google Scholar", note: "查找所有版本", url: `https://scholar.google.com/scholar?${new URLSearchParams({ q: `"${title}"` })}` },
-    { name: "Semantic Scholar", note: "查找论文与全文", url: `https://www.semanticscholar.org/search?${new URLSearchParams({ q: title, sort: "relevance" })}` },
-    { name: "arXiv", note: "按标题检索预印本", url: `https://arxiv.org/search/?${new URLSearchParams({ query: title, searchtype: "title" })}` },
-  ] : [];
+  const discoveries = paperDiscoveryLinks(paper);
 
   return <section className="panel read-panel">
     <div className="read-panel-title"><span className="read-icon"><Icon name="link" size={24} /></span><div><h2>阅读原文</h2><p>直达来源，不在本地存档</p></div></div>
