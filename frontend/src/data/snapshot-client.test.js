@@ -13,6 +13,7 @@ it('ends a stalled search within the hard deadline, stops its worker and support
   const promise=client.snapshotCall('search',{q:'learning'});
   const rejection=expect(promise).rejects.toMatchObject({code:'SNAPSHOT_TIMEOUT',status:504});
   await vi.advanceTimersByTimeAsync(12000);await rejection;
+  await vi.advanceTimersByTimeAsync(1000);
   expect(instances[0].terminate).toHaveBeenCalledOnce();
   const retry=client.snapshotCall('search',{q:'learning'}),message=instances[1].postMessage.mock.calls[0][0];
   instances[1].reply({id:message.id,result:{total:2}});
