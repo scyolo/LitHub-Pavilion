@@ -1,7 +1,7 @@
 import { fireEvent, render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { expect, it, vi } from "vitest";
-import { TopicChart, VenueCoverage } from "./Charts.jsx";
+import { LinkCoverage, TopicChart, VenueCoverage } from "./Charts.jsx";
 
 const directions = Array.from({ length: 16 }, (_, index) => ({
   code: `test-topic-${index}`, name: `测试方向 ${index + 1}`, paper_count: (index + 1) * 10,
@@ -68,4 +68,12 @@ it('bounds initial matrix rendering while preserving access to every configured 
   expect(screen.getAllByRole('row')).toHaveLength(41);
   fireEvent.click(screen.getByRole('button',{name:'收起来源矩阵'}));
   expect(screen.getAllByRole('row')).toHaveLength(21);
+});
+
+it('explains that full direct-link coverage is not full free-text availability', () => {
+  render(<LinkCoverage total={100} oa={33} direct={100} onSelect={() => {}} />);
+  expect(screen.getByText('可直接跳转')).toBeInTheDocument();
+  expect(screen.getByText('100%')).toBeInTheDocument();
+  expect(screen.getByText('33%')).toBeInTheDocument();
+  expect(screen.getByText(/可跳转不等于免费全文/)).toBeInTheDocument();
 });

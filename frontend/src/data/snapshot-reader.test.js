@@ -218,3 +218,23 @@ it.each(["spec dec", "SPEC DEC", "  SpEc   DeC  ", "ＳＰＥＣ ＤＥＣ"])("k
     expect(current.download.mock.calls.every(([path]) => !/^(compressed|papers)-/.test(path))).toBe(true);
   }
 });
+
+it('cancels abandoned card downloads and can immediately retry without poisoned cached promises', async () => {
+  const controller = new AbortController();
+  let started, blockedSignal, first = true;
+  const active = new Promise(resolve => { started = resolve; });
+  const download = vi.fn(async (path, digest, cache, maxBytes, signal) => {
+    if (path.startsWith('browse-') && first) {
+      first = false; blockedSignal = signal; started();
+      await new Promise((resolve, reject) => signal?.addEventListener('abort', () => reject(signal.reason), { once: true }));
+    }
+    return { data: JSON.parse(gunzipSync(readFileSync(join(directory, path)))) };
+  });
+  const lazy = createLazyReader({ manifest: data.manifest, catalog: { ...fixture.catalog, reader: data.paged }, download });
+  const abandoned = lazy.call('papers', {}, { signal: controller.signal });
+  const check = expect(abandoned).rejects.toMatchObject({ name: 'AbortError' });
+  await active; controller.abort(); await check;
+  expect(blockedSignal.aborted).toBe(true);
+  const again = await lazy.call('papers');
+  expect(again.total).toBe(fixture.papers.length);
+});

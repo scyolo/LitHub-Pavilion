@@ -27,3 +27,17 @@ it("rejects topic counts greater than the venue's actual public paper count", ()
   data.catalog.overview.venue_topics.AC[0].paper_count = 999;
   expect(() => createOverview(data)).toThrow();
 });
+
+it('validates direct-link coverage independently from open-full-text coverage in v3', () => {
+  const fixture = compactFixture(); fixture.catalog.overview.version = 3;
+  for (const scope of fixture.catalog.overview.scopes) scope.dashboard.with_direct_link = scope.dashboard.total;
+  const overview = createOverview(fixture);
+  expect(overview.dashboard({}).with_direct_link).toBe(3);
+  expect(overview.dashboard({}).with_oa_link).toBe(2);
+  fixture.catalog.overview.scopes[0].dashboard.with_direct_link = 1;
+  expect(() => createOverview(fixture)).toThrow();
+});
+
+it('does not claim complete direct coverage for older snapshots without that statistic', () => {
+  expect(createOverview(compactFixture()).dashboard({}).with_direct_link).toBeUndefined();
+});
