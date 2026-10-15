@@ -46,3 +46,17 @@ def test_paged_reader_is_revision_bound_and_carries_ranking_metadata(
                 assert len(row) == 5
                 assert all(type(pos) is int and pos >= 0 for pos in row[4])
     validate_snapshot(tmp_path)
+
+
+def test_small_card_pages_do_not_transfer_256_unrelated_papers(session_factory, api_catalog, tmp_path):
+    from app.services.snapshot import _json_bytes, _write_content
+
+    original = export_snapshot(session_factory, tmp_path)
+    base = json.loads((tmp_path / original['chunks'][0]['path']).read_bytes())[0]
+    rows = [{**base, 'id': index + 1, 'title': f'Indexed paper {index}'} for index in range(260)]
+    entry = {**_write_content(tmp_path, 'papers', _json_bytes(rows)), 'count': len(rows)}
+    manifest = {**original, 'paper_count': len(rows), 'chunks': [entry]}
+    pointer = build_reader_assets(tmp_path, manifest, version=6)
+    descriptor = load_reader_descriptor(tmp_path, {'reader': pointer})
+    assert descriptor['browse_chunk_size'] == 128
+    assert [part['count'] for part in descriptor['browse']] == [128, 128, 4]

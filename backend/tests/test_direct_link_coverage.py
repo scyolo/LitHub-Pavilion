@@ -21,7 +21,7 @@ def test_direct_coverage_is_not_the_oa_percentage(client, db, sample_paper, sess
 
 def test_unsafe_or_missing_urls_are_not_counted_as_direct_access(client, db, sample_paper):
     sample_paper.doi = None
-    sample_paper.dblp_key = None
+    sample_paper.dblp_key = "unusable-legacy-identifier"
     sample_paper.publisher_key = None
     sample_paper.official_url = 'javascript:alert(1)'
     sample_paper.oa_url = 'http://127.0.0.1/private'
