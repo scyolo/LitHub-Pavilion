@@ -165,7 +165,7 @@ it("scoped searches do not download cards outside the candidate metadata ranges"
 });
 
 
-function pagedReader() {
+function pagedReader({ mutate = () => {}, intercept = (_args, load) => load() } = {}) {
   const descriptor = structuredClone(data.paged), values = new Map();
   descriptor.browse = fixture.papers.map(paper => {
     const rows = [descriptor.fields.map(field => paper[field])];
@@ -173,7 +173,10 @@ function pagedReader() {
     const path = 'browse-' + sha256 + '.json.gz'; values.set(path, rows);
     return { path, sha256, count: 1, min_id: paper.id, max_id: paper.id };
   });
-  const download = vi.fn(async path => ({ data: values.get(path) ?? JSON.parse(gunzipSync(readFileSync(join(directory, path)))) }));
+  mutate(descriptor);
+  const download = vi.fn(async (...args) => intercept(args, () => ({
+    data: values.get(args[0]) ?? JSON.parse(gunzipSync(readFileSync(join(directory, args[0])))),
+  })));
   return { download, values, descriptor, reader: createLazyReader({ manifest: data.manifest, catalog: { ...fixture.catalog, reader: descriptor }, download }) };
 }
 
@@ -237,4 +240,111 @@ it('cancels abandoned card downloads and can immediately retry without poisoned 
   expect(blockedSignal.aborted).toBe(true);
   const again = await lazy.call('papers');
   expect(again.total).toBe(fixture.papers.length);
+});
+
+
+function withMembership(descriptor) {
+  const runs = [], ids = fixture.papers.map(p => p.id).sort((a, b) => a - b);
+  let previous = 0;
+  for (const id of ids) {
+    if (runs.length && id === previous + 1) runs[runs.length - 1]++;
+    else runs.push(id - previous, 1);
+    previous = id;
+  }
+  descriptor.ranking.id_runs = runs;
+}
+
+it.each(['auto', 'keywords', 'fuzzy', 'exact'])('avoids full ranking downloads for unfiltered %s relevance searches', async match => {
+  const current = pagedReader({ mutate: withMembership });
+  const params = { q: match === 'exact' ? fixture.papers[0].title : 'model', match, size: 1 };
+  const expected = createSnapshotEngine(fixture).search(params);
+  const result = await current.reader.call('search', params);
+  expect(result.items.map(({ id, score }) => ({ id, score }))).toEqual(expected.items.map(({ id, score }) => ({ id, score })));
+  expect(result.total).toBe(expected.total);
+  expect(current.download.mock.calls.some(([path]) => path.startsWith('ranking-'))).toBe(false);
+  const count = current.download.mock.calls.length;
+  expect(await current.reader.call('search', params)).toEqual(result);
+  expect(current.download).toHaveBeenCalledTimes(count);
+});
+
+it('retains filtering, alternative sorting, and old snapshot compatibility', async () => {
+  const full = createSnapshotEngine(fixture);
+  for (const extra of [{ level: 'A' }, { type: 'journal' }, { year: 2025 }, { venue: 'AC' },
+    { direction: 'agent' }, { access: 'oa' }, { access: 'official' }, { pdf_status: 'closed' },
+    ...['publication_desc', 'created_desc', 'year_desc', 'citation_desc'].map(sort => ({ sort }))]) {
+    const current = pagedReader({ mutate: withMembership }), params = { q: 'model', ...extra };
+    const result = await current.reader.call('search', params), expected = full.search(params);
+    expect(result.total).toBe(expected.total);
+    expect(result.items.map(({ id, score }) => ({ id, score }))).toEqual(expected.items.map(({ id, score }) => ({ id, score })));
+    expect(current.download.mock.calls.some(([path]) => path.startsWith('ranking-'))).toBe(true);
+  }
+  const legacy = pagedReader({ mutate: d => { delete d.ranking.id_runs; } });
+  const result = await legacy.reader.call('search', { q: 'model' });
+  expect(result.items.map(p => p.id)).toEqual(full.search({ q: 'model' }).items.map(p => p.id));
+  expect(legacy.download.mock.calls.some(([path]) => path.startsWith('ranking-'))).toBe(true);
+});
+
+it.each([
+  null, {}, [11], [0, 5], [11, 0], [11, -1], [11, 1.5], [11, 1, 1, 4],
+  [11, 4], [10, 1, 13, 1, 12, 1, 22, 1, 12, 1], [Number.MAX_SAFE_INTEGER, 2],
+].map(idRuns => [idRuns]))('rejects invalid compact membership before starting downloads: %j', idRuns => {
+  expect(() => pagedReader({ mutate: d => { d.ranking.id_runs = idRuns; } })).toThrow();
+});
+
+it('rejects a dangling off-page posting without downloading ranking or unrelated cards', async () => {
+  const current = pagedReader({
+    mutate: withMembership,
+    intercept: ([path], load) => {
+      const value = load();
+      return path.startsWith('search-') && value.data.some(row => row[0] === 'model')
+        ? { ...value, data: value.data.map(row => row[0] === 'model' && row[1] === 23 ? ['model', 12, 1, 100000, []] : row) } : value;
+    },
+  });
+  await expect(current.reader.call('search', { q: 'model', size: 1 })).rejects.toMatchObject({ code: 'INVALID_SNAPSHOT' });
+  expect(current.download.mock.calls.some(([path]) => /^(ranking|browse)-/.test(path))).toBe(false);
+});
+
+it('starts independent postings while exact-title lookup is still pending', async () => {
+  let release;
+  const titleGate = new Promise(resolve => { release = resolve; });
+  const current = pagedReader({
+    mutate: withMembership,
+    intercept: async ([path], load) => { if (path.startsWith('titles-')) await titleGate; return load(); },
+  });
+  const result = current.reader.call('search', { q: fixture.papers[0].title });
+  try {
+    await vi.waitFor(() => expect(current.download.mock.calls.some(([path]) => path.startsWith('search-'))).toBe(true), { timeout: 300, interval: 5 });
+  } finally { release(); }
+  expect((await result).total).toBe(createSnapshotEngine(fixture).search({ q: fixture.papers[0].title }).total);
+});
+
+it('cancels both parallel lookups and does not poison a following search', async () => {
+  const signals = new Map(), controller = new AbortController();
+  let blocked = true;
+  const current = pagedReader({
+    mutate: withMembership,
+    intercept: async ([path, , , , signal], load) => {
+      if (blocked && /^(titles|search)-/.test(path)) {
+        signals.set(path.split('-')[0], signal);
+        await new Promise((resolve, reject) => signal.addEventListener('abort', () => reject(signal.reason), { once: true }));
+      }
+      return load();
+    },
+  });
+  const result = current.reader.call('search', { q: fixture.papers[0].title }, { signal: controller.signal });
+  const cancelled = expect(result).rejects.toMatchObject({ name: 'AbortError' });
+  try {
+    await vi.waitFor(() => expect([...signals.keys()].sort()).toEqual(['search', 'titles']), { timeout: 300, interval: 5 });
+  } finally { controller.abort(); await cancelled; blocked = false; }
+  expect([...signals.values()].every(signal => signal.aborted)).toBe(true);
+  expect((await current.reader.call('search', { q: fixture.papers[0].title })).total).toBe(createSnapshotEngine(fixture).search({ q: fixture.papers[0].title }).total);
+});
+
+it('does not fetch word shards for exact-only, invalid, or long-title-only queries', async () => {
+  for (const params of [{ q: fixture.papers[3].title }, { q: '中文 model' },
+    { q: 'model '.repeat(60) }, { q: fixture.papers[0].title, match: 'exact' }]) {
+    const current = pagedReader({ mutate: withMembership });
+    try { await current.reader.call('search', params); } catch (error) { expect(error.status).toBe(400); }
+    expect(current.download.mock.calls.some(([path]) => /^(search|vocabulary)-/.test(path))).toBe(false);
+  }
 });
