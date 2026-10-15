@@ -16,3 +16,11 @@ it('does not duplicate the same official and open access resource', () => {
   render(<MemoryRouter><PaperCard paper={{ ...paper, oa_url: paper.official_url }} /></MemoryRouter>);
   expect(screen.getAllByRole('link').filter((link) => link.target === '_blank')).toHaveLength(1);
 });
+
+it('always offers a clearly labelled discovery route when no direct paper URL is known', () => {
+  render(<MemoryRouter><PaperCard paper={{ ...paper, official_url: null, oa_url: null, title: 'A & B: "Exact title"' }} /></MemoryRouter>);
+  const link = screen.getByRole('link', { name: /查找原文/ });
+  expect(new URL(link.href).searchParams.get('q')).toBe('"A & B: "Exact title""');
+  expect(link).toHaveAttribute('rel', 'noopener noreferrer');
+  expect(screen.queryByText('开放获取')).not.toBeInTheDocument();
+});
