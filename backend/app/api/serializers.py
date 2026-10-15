@@ -17,6 +17,8 @@ _BAD_PERCENT = re.compile(r"%(?![0-9a-f]{2})", re.I)
 _HOST_LABEL = re.compile(r"[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?")
 _NUMERIC_HOST = re.compile(r"(?:[0-9]+|0x[0-9a-f]+)", re.I)
 _LOCAL_HOST_SUFFIXES = (".localhost", ".local", ".localdomain")
+_PLAIN_DOI = re.compile(r"10\.\d{4,9}/[a-z0-9._;()/:-]+", re.I | re.ASCII)
+_REPOSITORY_DOIS = ("10.48550/", "10.5281/", "10.6084/", "10.31219/", "10.21203/")
 _DOI = re.compile(r"10\.\d{4,9}/[^\s]+", re.ASCII)
 _ARXIV = re.compile(
     r"(?:\d{2}(?:0[1-9]|1[0-2])\.\d{4,5}|[a-z][a-z.-]*/\d{7})(?:v[1-9]\d*)?",
@@ -80,6 +82,10 @@ def doi_url(value: str | None) -> str | None:
     if not value:
         return None
     value = value.strip()
+    # Canonical ASCII identifiers dominate the corpus. This is exactly the
+    # already-safe subset of quote(..., safe="/:;()-._"), not a looser URL policy.
+    if _PLAIN_DOI.fullmatch(value) and all(part not in (".", "..") for part in value.split("/")):
+        return "https://doi.org/" + value.lower()
     if value.lower().startswith(("http://", "https://")):
         url = safe_http_url(value)
         if not url:
@@ -176,22 +182,32 @@ def _formal_publication_url(value: str | None) -> str | None:
     return url
 
 
-def paper_links(paper: Paper) -> dict[str, str | None]:
-    # Formal DOI -> publisher -> stored formal link -> DBLP. A repository
-    # DOI must not short-circuit that chain; its open version stays separate.
-    official = (_formal_publication_url(doi_url(paper.doi))
-                or _formal_publication_url(getattr(paper, "publisher_key", None))
-                or _formal_publication_url(paper.official_url))
-    if not official and paper.dblp_key:
-        key = paper.dblp_key.strip()
-        if (
-            re.fullmatch(r"(?:conf|journals|books|reference|series)/[A-Za-z0-9._/-]+", key)
-            and len(key.split("/")) >= 3
-            and all(part not in ("", ".", "..") for part in key.split("/"))
-        ):
+def official_link(doi, publisher_key=None, official_url=None, dblp_key=None):
+    """The same validated publisher/DBLP fallback for cards and aggregate counts."""
+    canonical = doi_url(doi)
+    official = (canonical if canonical and not canonical.removeprefix("https://doi.org/").startswith(_REPOSITORY_DOIS)
+                else None)
+    official = official or _formal_publication_url(publisher_key) or _formal_publication_url(official_url)
+    if not official and dblp_key:
+        key = dblp_key.strip()
+        if (re.fullmatch(r"(?:conf|journals|books|reference|series)/[A-Za-z0-9._/-]+", key)
+                and len(key.split("/")) >= 3
+                and all(part not in ("", ".", "..") for part in key.split("/"))):
             official = "https://dblp.org/rec/" + key
-    return {"official_url": official, "oa_url": oa_link(paper.oa_url, paper.arxiv_id, paper.doi,
-                                                  getattr(paper, "publisher_key", None), paper.official_url)}
+    return official
+
+
+def has_direct_url(oa_url, arxiv_id, doi, publisher_key, official_url, dblp_key):
+    return int(bool(official_link(doi, publisher_key, official_url, dblp_key)
+                    or oa_link(oa_url, arxiv_id, doi, publisher_key, official_url)))
+
+
+def paper_links(paper: Paper) -> dict[str, str | None]:
+    publisher_key = getattr(paper, "publisher_key", None)
+    return {
+        "official_url": official_link(paper.doi, publisher_key, paper.official_url, paper.dblp_key),
+        "oa_url": oa_link(paper.oa_url, paper.arxiv_id, paper.doi, publisher_key, paper.official_url),
+    }
 
 
 def directions_for(db: Session, paper_ids: list[int]) -> dict[int, list[str]]:

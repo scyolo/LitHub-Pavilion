@@ -56,3 +56,6 @@ output/playwright/
 
 # Local link-repair counts and browser/test evidence for this maintenance run.
 output/open-links-20261012/
+
+# Local proof and regenerated snapshot staging (2026-10-15)
+output/links-search-20261015/

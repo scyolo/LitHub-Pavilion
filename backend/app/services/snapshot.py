@@ -390,10 +390,12 @@ def _validate_contents(directory: Path, manifest: dict) -> None:
     if len(ids) != manifest["paper_count"]:
         raise ValueError("Snapshot paper count does not match")
     if "reader" in catalog:
-        from app.services.snapshot_reader import build_reader_assets, reader_entries
+        from app.services.snapshot_reader import build_reader_assets, load_reader_descriptor, reader_entries
         if catalog["reader"].get("version") not in (1, 2, 3, 4, 5, 6):
             raise ValueError("Unsupported reader version")
-        if catalog["reader"] != build_reader_assets(directory, manifest, write=False, version=catalog["reader"]["version"]):
+        descriptor = load_reader_descriptor(directory, catalog)
+        if catalog["reader"] != build_reader_assets(directory, manifest, write=False, version=catalog["reader"]["version"],
+                                                    browse_chunk_size=descriptor.get("browse_chunk_size")):
             raise ValueError("Public reader index does not match the complete snapshot")
         total_bytes += sum((directory / entry["path"]).stat().st_size for entry in reader_entries(catalog, directory))
         if total_bytes > MAX_SNAPSHOT_BYTES:

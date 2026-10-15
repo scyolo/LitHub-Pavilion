@@ -898,3 +898,8 @@ fieldset.filter-group { padding-top: 10px; margin-top: 15px; }
 .paper-discovery-links a:hover { border-color: var(--accent); background: var(--accent-bg); }
 .paper-discovery-links small { display: block; font-size: 9px; color: var(--muted); margin-top: 1px; }
 .paper-discovery > .discovery-disclaimer { font-size: 9px; }
+
+/* Direct entry points and confirmed open full text are different measurements. */
+.direct-link-coverage { display: grid; grid-template-columns: 1fr auto; gap: .35rem .75rem; padding: .8rem 0; border-bottom: 1px solid var(--border); font-size: .8rem; }
+.direct-link-coverage strong { font-variant-numeric: tabular-nums; }
+.direct-link-coverage small { grid-column: 1 / -1; color: var(--text-muted); }

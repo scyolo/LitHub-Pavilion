@@ -61,19 +61,20 @@ export function TopicChart({ data = [], onSelect }) {
   </section>;
 }
 
-export function LinkCoverage({ total = 0, oa = 0, onSelect }) {
+export function LinkCoverage({ total = 0, oa = 0, direct, onSelect }) {
   const covered = Math.max(0, Math.min(oa, total));
   const value = total ? covered / total : 0;
   return <div className="open-coverage-panel">
     <div className="link-coverage">
       <div className="donut-chart"><svg viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="40" className="donut-track" /><circle cx="50" cy="50" r="40" className="donut-value" strokeDasharray={`${value * 251.33} 251.33`} /></svg><strong>{total ? percent(covered, total) : "—"}</strong></div>
-      <div><h3>开放链接覆盖</h3><p>当前范围 · {number(total)} 篇论文</p><span className="coverage-evidence-label">以实际全文入口为依据</span></div>
+      <div><h3>开放全文覆盖</h3><p>当前范围 · {number(total)} 篇论文</p><span className="coverage-evidence-label">以实际全文入口为依据</span></div>
     </div>
+    {Number.isInteger(direct) && direct >= covered && direct <= total && <div className="direct-link-coverage"><span>可直接跳转</span><strong>{total ? percent(direct, total) : "—"}</strong><small>{number(direct)} 篇 · 官方页面或开放版本</small></div>}
     <div className="open-coverage-breakdown">
       <button onClick={() => onSelect("oa")} disabled={!covered}><span><i />已找到开放版本</span><strong>{number(covered)}<Icon name="chevron" size={13} /></strong></button>
       <button onClick={() => onSelect("official")} disabled={covered === total}><span><i />待发现开放版本</span><strong>{number(total - covered)}<Icon name="chevron" size={13} /></strong></button>
     </div>
-    <p className="coverage-explanation">包含出版方开放全文、预印本与机构仓储。未找到不代表没有开放版本；普通出版页、检索入口不计入覆盖。</p>
+    <p className="coverage-explanation">可跳转不等于免费全文。开放覆盖仅包含出版方开放全文、预印本与机构仓储；普通出版页和检索入口不计入。未找到开放版本，不影响已有官方链接的跳转。</p>
   </div>;
 }
 

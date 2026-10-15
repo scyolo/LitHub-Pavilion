@@ -52,14 +52,27 @@ for _hosts, _pattern, _source in _ARTICLE_RULES:
 # predominantly unresolved DOI records. A positive match still uses the full URL validator.
 _ARTICLE_ORIGIN = re.compile(
     r'https?://(?:' + '|'.join(re.escape(host) for host in sorted(set(_RULES_BY_HOST) | {
-        'openreview.net', 'www.openreview.net', 'arxiv.org', 'www.arxiv.org', 'export.arxiv.org',
+        'openreview.net', 'www.openreview.net', 'arxiv.org', 'www.arxiv.org', 'export.arxiv.org', 'dl.acm.org',
     })) + r')\.?(?::(?:80|443))?(?=[/?#]|$)', re.IGNORECASE | re.ASCII,
 )
 _OPEN_DOI_NAMESPACES = {
     '10.18653', '10.1609', '10.24963', '10.1371', '10.4230', '10.14778', '10.14722',
-    '10.48786', '10.1613', '10.1162', '10.21437', '10.46298', '10.4086', '10.18637',
+    '10.1145', '10.48786', '10.1613', '10.1162', '10.21437', '10.46298', '10.4086', '10.18637',
 }
 _DOI_NAMESPACE = re.compile(r'10\.\d{4,9}', re.ASCII)
+_ACM_DOI = re.compile(r"10\.1145/[0-9]+(?:\.[0-9]+)?", re.ASCII)
+_ACM_PATH = re.compile(r"/doi/(?:abs/|full/|pdf/|epdf/)?(10\.1145/[0-9]+(?:\.[0-9]+)?)/?", re.ASCII)
+
+
+def _acm_link(canonical):
+    # ACM officially opened its entire publication archive on 2026-01-01.
+    # https://www.acm.org/articles/bulletins/2026/january/acm-open-access
+    identifier = (canonical or "").removeprefix("https://doi.org/")
+    if _ACM_DOI.fullmatch(identifier):
+        return OpenLink("https://dl.acm.org/doi/" + identifier, "ACM Open")
+    return None
+
+
 _SIMPLE_DOI = re.compile(r'10\.\d{4,9}/[a-z0-9._;()/:+-]+', re.IGNORECASE | re.ASCII)
 
 
@@ -73,6 +86,9 @@ def publisher_open_url(*, doi=None, publisher_key=None, official_url=None) -> Op
             same_identity = (None, '', doi, 'https://doi.org/' + doi)
             if publisher_key in same_identity and official_url in same_identity:
                 return None
+    if isinstance(doi, str) and "10.1145/" in doi.lower():
+        if acm := _acm_link(doi_url(doi)):
+            return acm
     for value in (publisher_key, official_url):
         if not isinstance(value, str) or not _ARTICLE_ORIGIN.match(value.strip()):
             continue
@@ -81,6 +97,14 @@ def publisher_open_url(*, doi=None, publisher_key=None, official_url=None) -> Op
             continue
         parts = urlsplit(link)
         if parts.port not in (None, 80, 443) or any(part in ('.', '..') for part in parts.path.split('/')):
+            continue
+        if parts.hostname == "dl.acm.org":
+            match = _ACM_PATH.fullmatch(parts.path)
+            if match:
+                canonical = "https://doi.org/" + match[1]
+                authoritative = doi_url(doi)
+                if not authoritative or authoritative == canonical:
+                    return _acm_link(canonical)
             continue
         if parts.hostname in ('openreview.net', 'www.openreview.net') and parts.path in ('/forum', '/pdf'):
             ids = parse_qs(parts.query).get('id', [])
@@ -106,6 +130,8 @@ def publisher_open_url(*, doi=None, publisher_key=None, official_url=None) -> Op
                 break
     if not canonical:
         return None
+    if acm := _acm_link(canonical):
+        return acm
     identifier = canonical.removeprefix('https://doi.org/')
     if match := re.fullmatch(r'10\.18653/v1/(\d{4}\.[a-z0-9-]+\.\d+)', identifier):
         return OpenLink(f'https://aclanthology.org/{match[1]}/', 'ACL Anthology')

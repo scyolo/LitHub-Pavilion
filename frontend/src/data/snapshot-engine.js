@@ -2,9 +2,8 @@ import { stemmer } from "stemmer";
 import { publicationSortKey, safeExternalUrl } from "../lib/presentation.js";
 import { expandTokens } from "./fuzzy-terms.js";
 
-export function readerError(message, status = 400, code = "INVALID_PARAM") {
-  return Object.assign(new Error(message), { status, code });
-}
+import { readerError } from "./reader-errors.js";
+export { readerError } from "./reader-errors.js";
 
 export function parseParams(params = {}, search = false) {
   const values = Object.fromEntries(Object.entries(params).filter(([, value]) => value !== "" && value != null));
@@ -183,10 +182,11 @@ export function createSnapshotEngine({ manifest, catalog, papers, preparedIndex 
     const by_level = { A: 0, B: 0 }, by_type = { conf: 0, journal: 0 };
     const annual = Array.from({ length: Math.max(0, currentYear - 2023 + 1) }, (_, i) => ({ year: i + 2023, A: 0, B: 0, total: 0 }));
     const directionCounts = new Map(), venueCounts = new Map(), venueYears = new Map();
-    let with_oa_link = 0, with_abstract = 0, confirmed_count = 0, recent_count = 0;
+    let with_direct_link = 0, with_oa_link = 0, with_abstract = 0, confirmed_count = 0, recent_count = 0;
     for (const paper of rows) {
       by_level[paper.level]++; by_type[paper.venue_type]++;
       with_oa_link += Number(Boolean(paper.oa_url));
+      with_direct_link += Number(Boolean(paper.oa_url || paper.official_url));
       with_abstract += Number(Boolean(paper.abstract));
       confirmed_count += Number(Boolean(paper.venue_confirmed));
       const created = timestamps.get(paper.id);
@@ -207,6 +207,7 @@ export function createSnapshotEngine({ manifest, catalog, papers, preparedIndex 
       venues: configured.filter((venue) => !filters.venue || venue.abbr === filters.venue).map((venue) => ({ ...venue, paper_count: venueCounts.get(venue.abbr) || 0,
         years: [...(venueYears.get(venue.abbr) || new Map())].sort(([a], [b]) => a - b).map(([year, count]) => ({ year, count })) })),
     };
+    if (catalog.overview?.version >= 3) result.with_direct_link = with_direct_link;
     if (dashboards.size >= 32) dashboards.clear();
     dashboards.set(key, result);
     return result;

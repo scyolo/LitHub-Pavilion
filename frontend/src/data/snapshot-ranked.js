@@ -1,3 +1,4 @@
+import { createSharedTasks, throwIfAborted } from "./shared-tasks.js";
 import { stemmer } from "stemmer";
 import { expandTokens } from "./fuzzy-terms.js";
 import { normalizedTitle, parseParams, queryTokens, readerError } from "./snapshot-engine.js";
@@ -18,9 +19,9 @@ export function createRankedReader({ descriptor, manifest, catalog, batches, car
       || !Number.isSafeInteger(part.count) || part.count < 1
       || !Number.isSafeInteger(part.min_id) || !Number.isSafeInteger(part.max_id)
       || part.min_id < 1 || part.max_id < part.min_id) throw invalid();
-  const rankParts = new Map(), queries = new Map();
-  let vocabulary;
-  async function rankRows(ids, filters) {
+  const rankParts = createSharedTasks({ maxCached: 8 }), queries = createSharedTasks({ maxCached: 4 });
+  const vocabulary = createSharedTasks({ maxCached: 1 }), ordered = createSharedTasks({ maxCached: 4 });
+  async function rankRows(ids, filters, context) {
     const scoped = filters.venue || filters.year || filters.level || filters.type || filters.directions.length;
     const ranges = scoped ? [] : null;
     if (scoped) for (const range of selectedEntries(filters).map(part=>[part.min_id,part.max_id]).sort((a,b)=>a[0]-b[0])) {
@@ -36,8 +37,8 @@ export function createRankedReader({ descriptor, manifest, catalog, batches, car
     if (ids && scoped) ids = new Set([...ids].filter(inScope));
     const sorted = ids ? [...ids].sort((a,b)=>a-b) : null;
     const parts = ranking.parts.filter(p => (!ranges || ranges.some(([low,high])=>low<=p.max_id&&high>=p.min_id)) && (!sorted || overlaps(p, sorted)));
-    for (const part of parts) if (!rankParts.has(part.path)) {
-      const promise = chunk(part).then(rows => {
+    const groups = await Promise.all(parts.map(part => rankParts.run(part.path, async shared => {
+        const rows = await chunk(part, shared);
         let id = 0;
         const records = rows.map(row => {
           if (!Array.isArray(row) || row.length !== 9 || !row.filter((_, i)=>i!==6).every(Number.isSafeInteger)
@@ -51,11 +52,9 @@ export function createRankedReader({ descriptor, manifest, catalog, batches, car
         });
         if (records[0]?.[0] !== part.min_id || id !== part.max_id) throw invalid();
         return records;
-      });
-      rankParts.set(part.path, promise);
-      promise.catch(()=>{if(rankParts.get(part.path)===promise)rankParts.delete(part.path);});
-    }
-    const result = (await Promise.all(parts.map(p=>rankParts.get(p.path)))).flat();
+    }, context)));
+    throwIfAborted(context.signal);
+    const result = groups.flat();
     const selected = ids ? result.filter(row=>ids.has(row[0])) : result;
     if ((ids && selected.length !== ids.size) || new Set(selected.map(row=>row[0])).size !== selected.length) throw invalid();
     return selected;
@@ -73,22 +72,23 @@ export function createRankedReader({ descriptor, manifest, catalog, batches, car
       && (!filters.access || (filters.access==='oa' ? row[8]===1 : row[8]===0))
       && (!filters.directions.length || row[6].some(d=>filters.directions.includes(ranking.directions[d])));
   }
-  async function prepare(params, fuzzy) {
-    const title=normalizedTitle(params.q), titleRows=await batches(descriptor.search.titles[await bucket(title)]||[]);
+  async function prepare(params, fuzzy, context) {
+    const title=normalizedTitle(params.q), titleRows=await batches(descriptor.search.titles[await bucket(title)]||[], context);
     if(titleRows.some(row=>!Array.isArray(row)||row.length!==2||typeof row[0]!=='string'||!Number.isSafeInteger(row[1])||row[1]<1))throw invalid();
     const exact=new Set(titleRows.filter(row=>row[0]===title).map(row=>row[1]));
     const tokens=queryTokens(params.q, params.match==='exact'||exact.size>0), scores=new Map(),priorities=new Map();
     if(params.match==='exact')return {ids:exact,scores:new Map([...exact].map(id=>[id,0])),priorities:new Map([...exact].map(id=>[id,0])),expansions:[],mode:'exact'};
     let tokenGroups=tokens.map(t=>[t]);
     if(fuzzy&&tokens.length){
-      if(!vocabulary)vocabulary=batches(descriptor.search.vocabulary).then(rows=>{
+      const terms = await vocabulary.run("terms", async shared => {
+        const rows = await batches(descriptor.search.vocabulary, shared);
         if(rows.some(row=>!Array.isArray(row)||row.length!==2||!/^[a-z0-9]+$/.test(row[0])||!Number.isSafeInteger(row[1])||row[1]<1))throw invalid();
         return rows;
-      }).catch(error=>{vocabulary=null;throw error;});
-      tokenGroups=expandTokens(tokens,await vocabulary,4,title.match(/[a-z0-9]+/g)||[]);
+      }, context);
+      tokenGroups=expandTokens(tokens,terms,4,title.match(/[a-z0-9]+/g)||[]);
     }
     const expanded=[...new Set(tokenGroups.flat())],keys=new Set(await Promise.all(expanded.map(t=>bucket(t,3))));
-    const rows=await batches([...keys].flatMap(k=>descriptor.search.terms[k]||[]));
+    const rows=await batches([...keys].flatMap(k=>descriptor.search.terms[k]||[]), context);
     const postings=new Map(expanded.map(t=>[t,new Map()])),positions=new Map(expanded.map(t=>[t,new Map()])),lengths=new Map();
     for(const row of rows){
       if(!Array.isArray(row)||row.length!==5||typeof row[0]!=='string'||!row.slice(1,4).every(Number.isSafeInteger)
@@ -110,22 +110,28 @@ export function createRankedReader({ descriptor, manifest, catalog, batches, car
     for(const id of exact){if(!scores.has(id))scores.set(id,0);priorities.set(id,0);}
     return {ids,scores,priorities,mode:fuzzy?'fuzzy':'keywords',expansions:fuzzy?tokenGroups.map((terms,i)=>({token:tokens[i],alternatives:terms.slice(1)})).filter(r=>r.alternatives.length):[]};
   }
-  function query(params,fuzzy){
+  function query(params, fuzzy, context) {
     if(typeof params.q!=='string'||params.q.length>2000)queryTokens(params.q);
     const key=JSON.stringify([params.q,params.match==='exact',fuzzy]);
-    if(!queries.has(key)){const promise=prepare(params,fuzzy);queries.set(key,promise);promise.catch(()=>{if(queries.get(key)===promise)queries.delete(key);});while(queries.size>4)queries.delete(queries.keys().next().value);}
-    return queries.get(key);
+    return queries.run(key, shared => prepare(params, fuzzy, shared), context);
   }
-  return {async call(method, params={}){
+  return {async call(method, params={}, context={}){
+    throwIfAborted(context.signal);
     const isSearch=method==='search',filters=parseParams(params,isSearch),mode=params.match||'auto';
-    let prepared=isSearch?await query(params,mode==='fuzzy'):null;
-    let rows=(await rankRows(prepared?.ids, filters)).filter(row=>matches(row,filters));
-    if(isSearch&&mode==='auto'&&!rows.length){prepared=await query(params,true);rows=(await rankRows(prepared.ids, filters)).filter(row=>matches(row,filters));}
-    const column={publication_desc:3,created_desc:4,year_desc:2,citation_desc:5}[filters.sort];
-    rows.sort((a,b)=>(column?b[column]-a[column]:prepared.priorities.get(a[0])-prepared.priorities.get(b[0])||prepared.scores.get(a[0])-prepared.scores.get(b[0]))||b[0]-a[0]);
+    const { page: pageNumber, size: pageSize, ...scope } = filters;
+    const key = JSON.stringify([method, mode, scope]);
+    const { rows, prepared } = await ordered.run(key, async shared => {
+      let prepared=isSearch?await query(params,mode==='fuzzy',shared):null;
+      let rows=(await rankRows(prepared?.ids, filters, shared)).filter(row=>matches(row,filters));
+      if(isSearch&&mode==='auto'&&!rows.length){prepared=await query(params,true,shared);rows=(await rankRows(prepared.ids, filters, shared)).filter(row=>matches(row,filters));}
+      const column={publication_desc:3,created_desc:4,year_desc:2,citation_desc:5}[filters.sort];
+      rows.sort((a,b)=>(column?b[column]-a[column]:prepared.priorities.get(a[0])-prepared.priorities.get(b[0])||prepared.scores.get(a[0])-prepared.scores.get(b[0]))||b[0]-a[0]);
+      return { rows, prepared };
+    }, context);
+    throwIfAborted(context.signal);
     const page=rows.slice((filters.page-1)*filters.size,filters.page*filters.size),ids=new Set(page.map(row=>row[0])),sorted=[...ids].sort((a,b)=>a-b);
     const entries=descriptor.browse.filter(p=>overlaps(p,sorted));
-    const loaded=cards((await batches(entries)).filter(row=>ids.has(row[0]))),byId=new Map(loaded.map(row=>[row.id,row]));
+    const loaded=cards((await batches(entries, context)).filter(row=>ids.has(row[0]))),byId=new Map(loaded.map(row=>[row.id,row]));
     if(byId.size!==ids.size||loaded.length!==ids.size)throw invalid();
     const items=page.map(row=>{const {abstract,authors,direction_details,...card}=byId.get(row[0]);return isSearch?{...card,score:Number(prepared.scores.get(row[0]).toFixed(4))}:card;});
     return {total:rows.length,page:filters.page,size:filters.size,...(isSearch?{match_mode:prepared.mode,query_expansions:prepared.expansions}:{}),items};

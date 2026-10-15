@@ -1,3 +1,4 @@
+import { throwIfAborted, waitFor } from "./shared-tasks.js";
 import { createSnapshotEngine, readerError } from "./snapshot-engine.js";
 import { createOverview } from "./snapshot-overview.js";
 import { createLazyReader } from "./snapshot-reader.js";
@@ -26,7 +27,7 @@ async function verifyDigest(bytes, expected) {
   if (actual !== expected) throw invalid();
 }
 
-async function readLimitedBytes(body, maxBytes) {
+async function readLimitedBytes(body, maxBytes, onProgress) {
   const reader = body.getReader();
   const chunks = []; let size = 0;
   try {
@@ -36,6 +37,7 @@ async function readLimitedBytes(body, maxBytes) {
       size += value.byteLength;
       if (size > maxBytes) { await reader.cancel(); throw invalid(); }
       chunks.push(value);
+      if (value.byteLength) onProgress?.({ bytes: size });
     }
   } finally {
     reader.releaseLock();
@@ -50,7 +52,7 @@ export function createSnapshotStore({ baseUrl, fetcher = globalThis.fetch.bind(g
   let active = null, pending = null, wantFull = false, initializing = null;
   let state = { status: "idle", revision: null, generation: 0, verification: null, generated_at: null, paper_count: null, loaded: 0, total: 0, error: null };
   function update(values) { state = { ...state, ...values }; onState(state); }
-  async function download(path, digest, cache, maxBytes = MAX_FILE_BYTES, batchSignal) {
+  async function download(path, digest, cache, maxBytes = MAX_FILE_BYTES, batchSignal, onProgress) {
     const controller = new AbortController();
     const abort = () => controller.abort();
     batchSignal?.addEventListener("abort", abort, { once: true });
@@ -58,9 +60,9 @@ export function createSnapshotStore({ baseUrl, fetcher = globalThis.fetch.bind(g
     const timeout = setTimeout(abort, 45000);
     try {
       const response = await fetcher(new URL(path, base).href, { cache, mode: "same-origin", credentials: "omit", redirect: "error", signal: controller.signal });
-      if (!response.ok) throw readerError(path === "manifest.json" && response.status === 404 ? "尚未发布论文快照。请在本地导出数据并完成首次发布。" : "快照文件暂时不可用，请稍后重试", 503, "SNAPSHOT_UNAVAILABLE");
+      if (!response.ok) throw Object.assign(readerError(path === "manifest.json" && response.status === 404 ? "尚未发布论文快照。请在本地导出数据并完成首次发布。" : "快照文件暂时不可用，请稍后重试", 503, "SNAPSHOT_UNAVAILABLE"), { httpStatus: response.status });
       let bytes = response.body?.getReader
-        ? await readLimitedBytes(response.body, maxBytes)
+        ? await readLimitedBytes(response.body, maxBytes, onProgress)
         : new TextEncoder().encode(await response.text());
       // Fetch may already have decoded HTTP Content-Encoding. Inspect the
       // remaining bytes, not the URL/header, to also handle a compressed .gz
@@ -69,11 +71,16 @@ export function createSnapshotStore({ baseUrl, fetcher = globalThis.fetch.bind(g
         bytes = await readLimitedBytes(new Response(bytes).body.pipeThrough(new DecompressionStream("gzip")), maxBytes);
       }
       if (bytes.byteLength > maxBytes) throw invalid();
+      throwIfAborted(controller.signal);
       if (digest) await verifyDigest(bytes, digest);
+      onProgress?.({ bytes: bytes.byteLength });
       const text = new TextDecoder().decode(bytes);
       let data;
       try { data = JSON.parse(text); } catch { throw invalid(); }
       return { data, size: bytes.byteLength, text };
+    } catch (error) {
+      if (controller.signal.aborted && !batchSignal?.aborted) throw readerError("单个快照文件读取超时，请重试", 504, "SNAPSHOT_TIMEOUT");
+      throw error;
     } finally {
       clearTimeout(timeout);
       batchSignal?.removeEventListener("abort", abort);
@@ -178,14 +185,26 @@ export function createSnapshotStore({ baseUrl, fetcher = globalThis.fetch.bind(g
     }
     return active.manifest;
   }
-  async function call(method, params, signal) {
+  async function call(method, params, signal, onProgress) {
     if (signal?.aborted) throw new DOMException("Request aborted", "AbortError");
     const lightweight = ["dashboard", "latest", "directions", "venues", "venueTopics", "stats", "crawlLogs", "crawlStatus"].includes(method);
-    if (!active) await ensureActive();
+    if (!active) await waitFor(ensureActive(), signal);
+    throwIfAborted(signal);
     if (active.reader && ["papers", "paper", "search"].includes(method)) {
-      const result = await active.reader.call(method, params);
-      if (signal?.aborted) throw new DOMException("Request aborted", "AbortError");
-      return result;
+      const candidate = active;
+      try {
+        const result = await candidate.reader.call(method, params, { signal, onProgress });
+        throwIfAborted(signal);
+        return result;
+      } catch (error) {
+        throwIfAborted(signal);
+        // A returning tab may hold a verified catalog whose immutable shards
+        // were removed by a deployment. Recheck once, never treat 404 as no hits.
+        if (error.httpStatus !== 404) throw error;
+        await waitFor(refresh(), signal);
+        if (active.manifest.revision === candidate.manifest.revision || !active.reader) throw error;
+        return active.reader.call(method, params, { signal, onProgress });
+      }
     }
     if (method === "venueTopics" && !active.overview?.supports(method, params)) return { items: {} };
     if (!lightweight) wantFull = true;

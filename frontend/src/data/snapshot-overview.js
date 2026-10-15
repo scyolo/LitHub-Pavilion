@@ -33,15 +33,16 @@ export function createOverview({ manifest, catalog }) {
   for (const log of catalog.logs) keys(log, logKeys);
   if (catalog.last_crawl !== null) keys(catalog.last_crawl, [...logKeys.filter((key) => key !== "task_type"), "failed_units"]);
   if (!Object.hasOwn(catalog, "overview")) return null;
-  keys(catalog.overview, ["version", "scopes", ...(catalog.overview.version === 2 ? ["venue_topics"] : [])]);
-  check([1, 2].includes(catalog.overview.version) && Array.isArray(catalog.overview.scopes) && catalog.overview.scopes.length === 9);
+  keys(catalog.overview, ["version", "scopes", ...(catalog.overview.version >= 2 ? ["venue_topics"] : [])]);
+  check([1, 2, 3].includes(catalog.overview.version) && Array.isArray(catalog.overview.scopes) && catalog.overview.scopes.length === 9);
+  const expectedDashboardKeys = [...dashboardKeys, ...(catalog.overview.version >= 3 ? ["with_direct_link"] : [])];
   const scopes = new Map();
   for (const stored of catalog.overview.scopes) {
     keys(stored, ["level", "type", "dashboard", "latest"]);
-    keys(stored.dashboard, dashboardKeys);
+    keys(stored.dashboard, expectedDashboardKeys);
     check(Array.isArray(stored.dashboard.venues));
     // v2 stores venue metadata once; scope rows contain only counts and years.
-    const scope = catalog.overview.version === 2 ? { ...stored, dashboard: {
+    const scope = catalog.overview.version >= 2 ? { ...stored, dashboard: {
       ...stored.dashboard, venues: stored.dashboard.venues.map(value => {
         keys(value, ["abbr", "paper_count", "years"]);
         check(venues.has(value.abbr));
@@ -52,9 +53,10 @@ export function createOverview({ manifest, catalog }) {
     const key = `${scope.level || ""}:${scope.type || ""}`;
     check(!scopes.has(key)); scopes.set(key, scope);
     const data = scope.dashboard;
-    keys(data, dashboardKeys);
+    keys(data, expectedDashboardKeys);
     for (const name of ["total", "with_oa_link", "with_abstract", "confirmed_count", "recent_count", "configured_venues", "venues_with_papers"]) check(count(data[name]));
     for (const name of ["with_oa_link", "with_abstract", "confirmed_count", "recent_count"]) check(data[name] <= data.total);
+    if (catalog.overview.version >= 3) check(count(data.with_direct_link) && data.with_oa_link <= data.with_direct_link && data.with_direct_link <= data.total);
     check(data.total <= manifest.paper_count && data.venues_with_papers <= data.configured_venues);
     keys(data.by_level, ["A", "B"]); keys(data.by_type, ["conf", "journal"]);
     check(Object.values(data.by_level).every(count) && data.by_level.A + data.by_level.B === data.total);
@@ -105,7 +107,7 @@ export function createOverview({ manifest, catalog }) {
   }
   check(scopes.get(":")?.dashboard.total === manifest.paper_count);
   const venueTopics = catalog.overview.venue_topics || {};
-  if (catalog.overview.version === 2) {
+  if (catalog.overview.version >= 2) {
     keys(venueTopics, [...venues.keys()]);
     const totals = new Map(scopes.get(":").dashboard.venues.map(v => [v.abbr, v.paper_count]));
     for (const [abbr, values] of Object.entries(venueTopics)) {

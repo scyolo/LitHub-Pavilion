@@ -78,12 +78,20 @@ def decode_compressed_asset(content, entry):
     return raw
 
 
-def build_reader_assets(directory: Path, manifest: dict, *, write=True, version=3) -> dict:
+def build_reader_assets(directory: Path, manifest: dict, *, write=True, version=3, browse_chunk_size=128) -> dict:
     from app.services.snapshot import MAX_FILE_BYTES, _atomic_write, _json_bytes, _load_entry
 
     directory = Path(directory)
     index = {"version": version,
              "paper_count": manifest["paper_count"], "fields": FIELDS, "browse": [], "details": []}
+    # None reproduces historical v5/v6 bytes for full verification. New readers
+    # carry an explicit packing size, without changing their search semantics.
+    page_size = 256
+    if version >= 5 and browse_chunk_size is not None:
+        if type(browse_chunk_size) is not int or not 1 <= browse_chunk_size <= 4096:
+            raise ValueError("Invalid browse chunk size")
+        page_size = max(browse_chunk_size, (manifest["paper_count"] + 4095) // 4096)
+        index["browse_chunk_size"] = page_size
     pending = []
 
     def emit(prefix, content, count):
@@ -130,9 +138,9 @@ def build_reader_assets(directory: Path, manifest: dict, *, write=True, version=
         })
         pending.extend([[row[field] for field in FIELDS] for row in rows])
         if version >= 5:
-            while len(pending) >= 256:
-                write_browse(pending[:256])
-                pending = pending[256:]
+            while len(pending) >= page_size:
+                write_browse(pending[:page_size])
+                pending = pending[page_size:]
         elif len(pending) >= 4000:
             write_browse(pending)
             pending = []

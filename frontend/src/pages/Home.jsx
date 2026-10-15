@@ -39,7 +39,7 @@ export default function Home({ theme = "dark", onThemeChange }) {
         <Metric icon="book" label="已收录论文" value={number(data.total)} note={api.isSnapshot ? "当前筛选范围的快照记录" : "当前筛选范围的本地记录"} color="blue" />
         <Metric icon="building" label="已配置会议 / 期刊" value={number(data.configured_venues)} note={`${data.venues_with_papers} 个已有论文记录`} color="mint" />
         <Metric icon="layers" label="研究方向" value={number(data.directions.length)} note="一篇论文可属于多个方向" color="violet" />
-        <Metric icon="link" label="开放链接覆盖" value={percent(data.with_oa_link, data.total)} note={`${number(data.with_oa_link)} 篇 · 出版方 / 预印本 / 仓储`} color="amber" />
+        <Metric icon="link" label="开放全文覆盖" value={percent(data.with_oa_link, data.total)} note={`${number(data.with_oa_link)} 篇 · 不等于可跳转比例`} color="amber" />
       </section>
       <div className="dashboard-charts"><AnnualChart data={data.annual} onSelect={(year) => openPapers({ year })} /><TopicChart data={data.directions} onSelect={(direction) => openPapers({ direction })} /></div>
       <section className="topics-section">
@@ -58,7 +58,7 @@ export default function Home({ theme = "dark", onThemeChange }) {
         </section>
         <aside className="insights-sidebar">
           <section className="panel venue-ranking"><SectionTitle icon="building" title="收录量较多的来源" note={api.isSnapshot ? "快照论文数 · 非学术质量排名" : "本地论文数 · 非学术质量排名"} /><ol>{[...data.venues].filter((v) => v.paper_count).sort((a, b) => b.paper_count - a.paper_count).slice(0, 5).map((v, index) => <li key={v.abbr}><button onClick={() => openPapers({ venue: v.abbr })}><span className="rank numeric">{String(index + 1).padStart(2, "0")}</span><span className="ranking-name">{v.abbr}<small>{v.type === "journal" ? "期刊" : "会议"} · CCF {v.level}</small></span><strong className="numeric">{number(v.paper_count)}</strong><Icon name="chevron" size={13} /></button></li>)}</ol><Link to="/venues" className="text-link">浏览会议与期刊<Icon name="arrow" size={14} /></Link></section>
-          <section className="panel"><LinkCoverage total={data.total} oa={data.with_oa_link} onSelect={(access) => openPapers({ access })} /></section>
+          <section className="panel"><LinkCoverage total={data.total} oa={data.with_oa_link} direct={data.with_direct_link} onSelect={(access) => openPapers({ access })} /></section>
           <section className="sync-panel"><div className="sync-icon"><Icon name="radar" size={23} /></div><h3>{api.isSnapshot ? "按需更新，随时阅读" : "每周同步，轻量追踪"}</h3><p>{api.isSnapshot ? "Docker 负责采集和发布。页面统计与论文详情使用同一已发布版本；数据库变更在完成导出和部署后才会显示。" : "只保留论文元数据与原始链接，不下载 PDF。图表随本地数据自动刷新。"}</p><div className="sync-detail"><span>最近一次采集</span><strong>{data.last_crawl ? formatDate(data.last_crawl.started_at) : "尚无记录"}</strong></div><Link to="/admin" className="text-link">查看同步详情<Icon name="arrow" size={14} /></Link></section>
         </aside>
       </div>

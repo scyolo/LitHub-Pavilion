@@ -13,8 +13,8 @@ CARD_KEYS = {
 
 
 class OverviewBuilder:
-    def __init__(self, catalog, generated_at, version=2):
-        if version not in (1, 2):
+    def __init__(self, catalog, generated_at, version=3):
+        if version not in (1, 2, 3):
             raise ValueError("Unsupported overview version")
         self.version = version
         self.venue_topics = defaultdict(Counter)
@@ -46,6 +46,7 @@ class OverviewBuilder:
                     continue
                 scope["counts"].update({
                     "total": 1, "with_oa_link": int(bool(row["oa_url"])),
+                    "with_direct_link": int(bool(row["oa_url"] or row["official_url"])),
                     "with_abstract": int(bool(row["abstract"])), "confirmed_count": int(bool(row["venue_confirmed"])),
                     "recent_count": int(recent),
                 })
@@ -83,6 +84,8 @@ class OverviewBuilder:
                             "years": [{"year": year, "count": count} for year, count in sorted(scope["years"][venue["abbr"]].items())]}
                            for venue in configured],
             }
+            if self.version >= 3:
+                dashboard["with_direct_link"] = counts["with_direct_link"]
             result.append({"level": scope["level"], "type": scope["type"], "dashboard": dashboard, "latest": scope["latest"]})
         output = {"version": self.version, "scopes": result}
         if self.version >= 2:

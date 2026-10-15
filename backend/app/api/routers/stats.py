@@ -7,7 +7,7 @@ from sqlalchemy.orm import Session
 
 from app.api.deps import get_db
 from app.api.filtering import PaperFilters, has_oa_link, paper_filters, paper_query, venue_scope
-from app.api.serializers import abstract_text
+from app.api.serializers import abstract_text, has_direct_url
 from app.models import CrawlLog, Direction, Paper, PaperDirection, Venue
 
 router = APIRouter(prefix="/api/stats", tags=["stats"])
@@ -82,6 +82,8 @@ def dashboard(filters: PaperFilters = Depends(paper_filters), db: Session = Depe
     oa = has_oa_link(db)
     connection = db.connection().connection.driver_connection
     connection.create_function("api_has_abstract", 1, lambda value: int(abstract_text(value) is not None), deterministic=True)
+    connection.create_function("api_has_direct", 6, has_direct_url, deterministic=True)
+    direct = func.api_has_direct(Paper.oa_url, Paper.arxiv_id, Paper.doi, Paper.publisher_key, Paper.official_url, Paper.dblp_key) == 1
     # SQLite julianday 会处理 UTC/时区偏移；避免 ISO 字符串格式影响七天边界。
     recent = func.julianday(Paper.created_at).between(
         func.julianday((now - timedelta(days=7)).isoformat()), func.julianday(generated_at),
@@ -89,6 +91,7 @@ def dashboard(filters: PaperFilters = Depends(paper_filters), db: Session = Depe
     summary = query.with_entities(
         func.count(Paper.id).label("total"),
         _count_if(oa).label("with_oa_link"),
+        _count_if(direct).label("with_direct_link"),
         _count_if(func.api_has_abstract(Paper.abstract) == 1).label("with_abstract"),
         _count_if(Paper.venue_confirmed == 1).label("confirmed_count"),
         _count_if(recent).label("recent_count"),
@@ -141,6 +144,7 @@ def dashboard(filters: PaperFilters = Depends(paper_filters), db: Session = Depe
         "generated_at": generated_at,
         "total": summary.total,
         "with_oa_link": summary.with_oa_link,
+        "with_direct_link": summary.with_direct_link,
         "with_abstract": summary.with_abstract,
         "confirmed_count": summary.confirmed_count,
         "recent_count": summary.recent_count,
