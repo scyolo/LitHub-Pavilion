@@ -74,23 +74,63 @@ SOURCES={'CIDR':('https://www.cidrdb.org/cidr{year}/program.html',parse_cidr),
          'INTER- SPEECH':('https://www.isca-archive.org/interspeech_{year}/index.html',parse_isca)}
 
 
-def parse_i3d(text,year):
-    tree=Tree();tree.feed(text)
-    if not any(re.search(r'I3D\s+'+str(year)+r'\b',n.text(),re.IGNORECASE) for n in tree.root.find(lambda n:n.tag=='title')):raise ValueError('I3D edition mismatch')
-    rows=[]
-    for dl in tree.root.find(lambda n:n.tag=='dl'):
-        current=None;authors=None
-        for n in dl.children:
-            if not isinstance(n,Node):continue
-            if n.tag=='dt':current=n.text().strip();authors=None
-            elif n.tag=='dd' and current:
-                links=n.find(lambda a:a.tag=='a' and re.fullmatch(r'https://dl.acm.org/doi/10\.1145/[0-9]+',a.attrs.get('href','')))
-                if links and authors:
-                    doi=links[0].attrs['href'].removeprefix('https://dl.acm.org/doi/')
-                    names=re.split(r',|\band\b',authors)
-                    rows.append(_raw('https://doi.org/'+doi,current,names,year,doi=doi));current=None
-                elif authors is None:authors=n.text().strip()
-    return checked(rows)
+def parse_i3d(text, year):
+    tree = Tree()
+    tree.feed(text)
+    if not any(
+        re.search(r'I3D\s+' + str(year) + r'\b', n.text(), re.IGNORECASE)
+        for n in tree.root.find(lambda n: n.tag == 'title')
+    ):
+        raise ValueError('I3D edition mismatch')
+    groups = []
+    for dl in tree.root.find(lambda n: n.tag == 'dl'):
+        current = None
+        for node in dl.children:
+            if not isinstance(node, Node):
+                continue
+            if node.tag == 'dt':
+                current = [node]
+                groups.append(current)
+            elif node.tag == 'dd' and current is not None:
+                current.append(node)
+    rows = []
+    for group in groups:
+        if len(group) < 3:
+            continue
+        metadata = [n for n in group[1:] if not n.find(lambda a: a.tag == 'details')]
+        if any(re.search(r'\binvited\b', n.text(), re.IGNORECASE) for n in metadata):
+            continue
+        links = [a for n in metadata for a in n.find(
+            lambda a: a.tag == 'a' and re.fullmatch(
+                r'https://(?:dl\.acm\.org/doi/|doi\.org/)10\.1145/[0-9]+',
+                a.attrs.get('href', ''),
+            )
+        )]
+        dois = {re.search(r'10\.1145/[0-9]+$', a.attrs['href'])[0] for a in links}
+        if not dois:
+            continue
+        if len(dois) != 1:
+            raise ValueError('Ambiguous I3D publication DOI')
+        doi = dois.pop()
+        abstracts = [n.text(exclude=('summary', 'script', 'style'))
+                     for block in group[1:]
+                     for n in block.find(lambda a: a.tag == 'details')
+                     if n.find(lambda a: a.tag == 'summary' and a.text().strip() == 'Abstract')]
+        abstract = re.sub(r'\s+', ' ', ' '.join(abstracts)).strip() or None
+        rows.append(_raw(
+            'https://doi.org/' + doi, group[0].text().strip(),
+            re.split(r',|\band\b', group[1].text()), year, doi=doi, abstract=abstract,
+        ))
+    records = checked(rows)
+    expected = re.findall(r'\bwith (\d+) high-quality papers selected\b', tree.root.text())
+    if expected and (len(set(expected)) != 1 or len(records) > int(expected[0])):
+        raise ValueError('I3D selected-paper count does not match the official program')
+    if expected:
+        # Accepted-paper totals need not equal the published DOI listing.
+        # Preserve that distinction instead of inventing the missing record.
+        for record in records:
+            record.extra['official_selected_count'] = int(expected[0])
+    return records
 
 
 def parse_msst(text,year):

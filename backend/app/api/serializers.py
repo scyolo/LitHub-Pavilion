@@ -187,7 +187,17 @@ def official_link(doi, publisher_key=None, official_url=None, dblp_key=None):
     canonical = doi_url(doi)
     official = (canonical if canonical and not canonical.removeprefix("https://doi.org/").startswith(_REPOSITORY_DOIS)
                 else None)
-    official = official or _formal_publication_url(publisher_key) or _formal_publication_url(official_url)
+    if official:
+        return official
+    publisher = _formal_publication_url(publisher_key)
+    direct = _formal_publication_url(official_url)
+    # A verified PMLR transition retains the OpenReview identity for replay,
+    # while the saved publication link points at the formal proceedings.
+    if (not official
+            and re.fullmatch(r"https://openreview\.net/forum\?id=[A-Za-z0-9_-]+", publisher or "")
+            and re.fullmatch(r"https://proceedings\.mlr\.press/v[0-9]+/[A-Za-z0-9][A-Za-z0-9_-]*\.html", direct or "")):
+        official = direct
+    official = official or publisher or direct
     if not official and dblp_key:
         key = dblp_key.strip()
         if (re.fullmatch(r"(?:conf|journals|books|reference|series)/[A-Za-z0-9._/-]+", key)

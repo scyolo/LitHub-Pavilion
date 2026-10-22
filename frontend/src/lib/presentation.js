@@ -3,6 +3,7 @@ export const TOPICS = {
   dl: { name: "深度学习", short: "Deep Learning", icon: "nodes", color: "#93aaff" },
   ai: { name: "人工智能", short: "Artificial Intelligence", icon: "sparkles", color: "#e3b779" },
   llm: { name: "大语言模型", short: "LLM", icon: "sparkles", color: "#79b7ff" },
+  inference: { name: "推理优化", short: "Inference Efficiency", icon: "bolt", color: "#88c4c0" },
   specdec: { name: "投机解码", short: "Speculative Decoding", icon: "bolt", color: "#9c96ff" },
   agent: { name: "智能体", short: "AI Agents", icon: "nodes", color: "#d4b88b" },
   cv: { name: "计算机视觉", short: "Computer Vision", icon: "scan", color: "#efb97a" },
@@ -27,6 +28,13 @@ export const SCOPES = [
 
 export function topic(code, name) {
   return TOPICS[code] || { name: name || code, short: code, icon: "layers", color: "#9ba8ba" };
+}
+
+export function prioritizeDirections(directions) {
+  const priority = new Map([['llm', 0], ['inference', 1], ['specdec', 2]]);
+  return directions.map((direction, index) => ({direction, index})).sort((a, b) =>
+    (priority.get(a.direction.code) ?? 3) - (priority.get(b.direction.code) ?? 3) || a.index - b.index
+  ).map(row => row.direction);
 }
 
 export function number(value) {
@@ -168,6 +176,7 @@ export function parseFilters(search) {
     type: ["conf", "journal"].includes(params.get("type")) ? params.get("type") : "",
     direction: params.get("direction") || "",
     venue: params.get("venue") || "",
+    ...(params.has('include_associated') ? {include_associated: ['1', 'true'].includes(params.get('include_associated')) ? '1' : ''} : {}),
     year: params.get("year") || "",
     access: ["oa", "official"].includes(params.get("access")) ? params.get("access") : "",
     sort: allowedSorts.includes(sort) && (sort !== "relevance" || params.get("q")?.trim()) ? sort : (params.get("q")?.trim() ? "relevance" : "publication_desc"),

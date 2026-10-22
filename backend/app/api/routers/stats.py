@@ -2,7 +2,7 @@
 from datetime import datetime, timedelta, timezone
 
 from fastapi import APIRouter, Depends
-from sqlalchemy import case, func, or_
+from sqlalchemy import case, func, literal, or_
 from sqlalchemy.orm import Session
 
 from app.api.deps import get_db
@@ -132,11 +132,14 @@ def dashboard(filters: PaperFilters = Depends(paper_filters), db: Session = Depe
         .all()
     ):
         years_by_venue.setdefault(venue_id, []).append({"year": year, "count": count})
+    from app.services.conference_scope import associated_counts
+    linked_counts = associated_counts(db, filters)
     venues = [
         {
             "id": venue.id, "abbr": venue.abbr, "name": venue.name, "type": venue.type,
             "level": venue.ccf_level, "ccf_area": venue.ccf_area, "active": venue.active,
             "paper_count": count, "years": years_by_venue.get(venue.id, []),
+            **({'associated_paper_count': linked_counts[venue.abbr]} if linked_counts.get(venue.abbr) else {}),
         }
         for venue, count in venue_query.order_by(Venue.type, Venue.ccf_level, Venue.abbr).all()
     ]
@@ -163,10 +166,11 @@ def dashboard(filters: PaperFilters = Depends(paper_filters), db: Session = Depe
 def venue_topics(filters: PaperFilters = Depends(paper_filters), db: Session = Depends(get_db)):
     """Per-venue multi-label counts, distinct from the CCF disciplinary area."""
     query = paper_query(db, filters)
-    rows = (query.with_entities(Venue.abbr, Direction.code, func.count(Paper.id))
+    source_name = literal(filters.venue) if filters.include_associated and filters.venue else Venue.abbr
+    rows = (query.with_entities(source_name, Direction.code, func.count(Paper.id))
             .join(PaperDirection, PaperDirection.paper_id == Paper.id)
             .join(Direction, Direction.id == PaperDirection.direction_id)
-            .group_by(Venue.abbr, Direction.code).all())
+            .group_by(source_name, Direction.code).all())
     values = {abbr: [] for (abbr,) in db.query(Venue.abbr).filter(*venue_scope(filters)).all()}
     for abbr, code, count in rows:
         values[abbr].append({"code": code, "paper_count": count})

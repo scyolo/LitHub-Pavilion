@@ -83,5 +83,44 @@
     "title": "EMDM: Efficient Motion Diffusion Model for Fast and High-Quality Motion Generation",
     "source": "https://api.crossref.org/works/10.1007/978-3-031-72627-9_2",
     "verified_at": "2026-09-29"
+  },
+  {
+    "publisher_key": "https://doi.org/10.1145/3676641.3715996",
+    "doi": "10.1145/3676641.3715996",
+    "year": 2025,
+    "catalogue_title": "POD-A ttention : Unlocking Full Prefill-Decode Overlap for Faster LLM Inference",
+    "catalogue_authors": [
+      "Kamath, Aditya K.",
+      "Prabhu, Ramya",
+      "Mohan, Jayashree",
+      "Peter, Simon",
+      "Ramjee, Ramachandran",
+      "Panwar, Ashish"
+    ],
+    "title": "POD-Attention: Unlocking Full Prefill-Decode Overlap for Faster LLM Inference",
+    "source": "https://api.crossref.org/works/10.1145/3676641.3715996",
+    "verified_at": "2026-10-19"
+  },
+  {
+    "publisher_key": "https://doi.org/10.1145/3695053.3731008",
+    "doi": "10.1145/3695053.3731008",
+    "year": 2025,
+    "catalogue_title": "H 2 -LLM: Hardware-Dataflow Co-Exploration for Heterogeneous Hybrid-Bonding-based Low-Batch LLM Inference",
+    "catalogue_authors": [
+      "Li, Cong",
+      "Yin, Yihan",
+      "Wu, Xintong",
+      "Zhu, Jingchen",
+      "Gao, Zhutianya",
+      "Niu, Dimin",
+      "Wu, Qiang",
+      "Si, Xin",
+      "Xie, Yuan",
+      "Zhang, Chen",
+      "Sun, Guangyu"
+    ],
+    "title": "H2-LLM: Hardware-Dataflow Co-Exploration for Heterogeneous Hybrid-Bonding-based Low-Batch LLM Inference",
+    "source": "https://api.crossref.org/works/10.1145/3695053.3731008",
+    "verified_at": "2026-10-19"
   }
 ]

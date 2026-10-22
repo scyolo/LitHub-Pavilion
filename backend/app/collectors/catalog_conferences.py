@@ -45,6 +45,11 @@ def canonical_container(title, abbr):
     )
     value = re.sub(r"\b(?:20\d{2}|\d+(?:st|nd|rd|th))\b", " ", value)
     value = re.sub(r"[, ]+volume\s+[0-9]+$", " ", value)
+    if abbr == "SIGKDD":
+        # The publisher's two KDD 2026 archival volumes use V.1 / V.2.
+        # Only the volume suffix is removed; explicit event-year and main
+        # conference identity checks below still apply to every article.
+        value = re.sub(r"\s+v\.\s*[12]$", " ", value)
     value = re.sub(
         r"\b(?:twenty|thirty|forty|fifty|sixty)[- ](?:first|second|third|fourth|fifth|sixth|seventh|eighth|ninth)\b",
         " ",
@@ -68,6 +73,12 @@ def canonical_container(title, abbr):
     ):
         value = "special interest group on computer graphics"
     aliases = {
+        # Official 2026 series renames: sigmobile.org/grav/events/conferences/sensys
+        # and ieee-ceda.org/event/conference/2026-63rd-acmieee-chips-systems-conference-dac.
+        "SenSys": {
+            "international conference on embedded artificial intelligence and sensing systems": "conference on embedded networked sensor systems"
+        },
+        "DAC": {"chips to systems conference": "design automation conference"},
         "FSE": {
             "joint european software engineering conference and symposium on foundations of software engineering": "international conference on foundations of software engineering"
         },
@@ -91,7 +102,10 @@ def canonical_container(title, abbr):
             "international conference on hardware software codesign and system synthesis": "international conference on hardware software co design and system synthesis"
         },
         "NOSSDAV": {
-            "workshop on network and operating system support for digital audio and video": "international workshop on network and operating system support for digital audio and video"
+            "workshop on network and operating system support for digital audio and video": "international workshop on network and operating system support for digital audio and video",
+            # The official NOSSDAV 2025 ACM volume says "35th edition of the".
+            # Keep this an exact, source-specific alias, not a fuzzy title match.
+            "edition workshop on network and operating system support for digital audio and video": "international workshop on network and operating system support for digital audio and video",
         },
         "IWQoS": {
             "international symposium on quality of service": "international workshop on quality of service"

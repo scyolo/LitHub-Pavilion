@@ -1,11 +1,16 @@
 direction_code,keyword,field,weight,enabled
+inference,\bspeculative[- ](?:decoding|sampling|inference|reasoning)\b,both,2.0,1
+inference,\b(?:kv[- ]cache|key[- ]value[- ]cache|pagedattention|flashattention(?:[- ]?\d+)?|flashinfer|sglang|sarathi[- ]serve|distserve)\b,both,2.0,1
+inference,(?s)\A(?=.*\b(?:llms?|mllms?|language[- ]models?|large[- ]autoregressive[- ]models?|transformers?|gpt(?:[- ]?\d+)?|llama|qwen|deepseek)\b)(?=.*\b(?:inference|serving|prefill|decoding|quantization|compression|attention|cache)\b)(?=.*\b(?:accelerat\w*|efficien\w*|optimiz\w*|throughput|latency|quantiz\w*|cache|serving|prefill)\b).+,both,2.0,1
+llm,\b(?:large[- ]autoregressive[- ]models?|language[- ]model(?:l)?ing)\b,both,1.0,1
+specdec,(?s)\A(?=.*\b(?:llms?|language[- ]models?)\b)(?=.*\b(?:multiple[- ]decoding[- ]heads|draft[- ]trees?|draft[- ]and[- ]verify)\b).+,both,1.0,1
 llm,large language models?,both,1.0,1
 llm,\bllms?\b,both,1.0,1
 llm,\bgpt(-?\d|\b),both,1.0,1
 llm,\bllama\b,both,1.0,1
 llm,instruction tun(ing|ed),both,1.0,1
 specdec,speculative (decoding|sampling|inference),both,1.0,1
-specdec,draft model,both,1.0,1
+specdec,(?s)\A(?=.*\bdraft[- ]models?\b)(?=.*\b(?:llms?|language[- ]models?|tokens?|decod\w*|verification)\b).+,both,1.0,1
 specdec,self-speculative,both,1.0,1
 agent,multi-?agents?,both,1.0,1
 agent,autonomous agents?,both,1.0,1

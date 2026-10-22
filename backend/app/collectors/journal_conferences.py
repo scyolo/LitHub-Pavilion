@@ -29,6 +29,7 @@ SERIES = {
             "CSCW2": "CSCW",
             "ISS": "ISS",
             "MHCI": "MobileHCI",
+            "GROUP": "GROUP",
         },
     ),
     "2994-970X": (

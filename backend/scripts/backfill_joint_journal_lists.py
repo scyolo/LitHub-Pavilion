@@ -20,6 +20,7 @@ from app.models import Venue
 from app.services.listed_journal_papers import store_listed_paper
 from app.services.tagging import apply_tagging, load_rules, load_thresholds
 from scripts.reconcile_papers import _backup
+from scripts.backfill_registry_gaps import save_report
 
 CONFIGS = [
     (
@@ -55,7 +56,13 @@ def run(args):
         report["backup"] = str(_backup(args.database.resolve()))
     engine = _make_engine("sqlite:///" + args.database.resolve().as_posix())
     try:
-        for abbr, year, filename, metadata_name, url in CONFIGS:
+        selected = CONFIGS
+        if getattr(args, 'year', None) is not None:
+            selected = [config for config in [*CONFIGS, (
+                'PODS', 2026, 'pods2026-list.html', 'PACMMOD-metadata.json',
+                'https://2026.sigmod.org/pods_papers.shtml')]
+                if config[1] == args.year]
+        for abbr, year, filename, metadata_name, url in selected:
             html = (args.evidence / filename).read_text(encoding="utf-8")
             papers = parse_publication_list(html, abbr, year)
             items = json.loads(
@@ -123,12 +130,7 @@ def run(args):
                     db.rollback()
             unit["counts"] = dict(stats)
             report["units"].append(unit)
-            path = args.output / "report.json"
-            temp = path.with_suffix(".tmp")
-            temp.write_text(
-                json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8"
-            )
-            temp.replace(path)
+            save_report(args.output / 'report.json', report)
             print(
                 json.dumps(
                     {
@@ -152,6 +154,7 @@ def main():
     p.add_argument("--output", type=Path, required=True)
     p.add_argument("--as-of", type=date.fromisoformat, required=True)
     p.add_argument("--apply", action="store_true")
+    p.add_argument("--year", type=int, choices=(2023,2024,2025,2026))
     run(p.parse_args())
 
 

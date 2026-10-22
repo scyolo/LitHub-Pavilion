@@ -11,6 +11,7 @@ export function useFilters() {
         if (value === "" || value === null || value === undefined) next.delete(key);
         else next.set(key, String(value));
       });
+      if (Object.hasOwn(changes, 'venue') && !changes.venue) next.delete('include_associated');
       if (resetPage) next.delete("page");
       if (Object.hasOwn(changes, "q") && !String(changes.q || "").trim() && next.get("sort") === "relevance") next.delete("sort");
       return next;

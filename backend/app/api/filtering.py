@@ -3,11 +3,11 @@ import re
 from dataclasses import dataclass
 
 from fastapi import HTTPException
-from sqlalchemy import func, select
-from sqlalchemy.orm import Session
+from sqlalchemy import func, or_, select
+from sqlalchemy.orm import Session, aliased
 
 from app.api.serializers import oa_link
-from app.models import Direction, Paper, PaperDirection, Venue
+from app.models import Direction, Paper, PaperConference, PaperDirection, Venue
 
 LEVELS = ("A", "B")
 VENUE_TYPES = ("conf", "journal")
@@ -33,6 +33,7 @@ class PaperFilters:
     year: int | None = None
     access: str | None = None
     pdf_status: str | None = None
+    include_associated: bool = False
 
 
 def paper_filters(
@@ -43,6 +44,7 @@ def paper_filters(
     year: str | None = None,
     access: str | None = None,
     pdf_status: str | None = None,
+    include_associated: bool = False,
 ) -> PaperFilters:
     for name, value, allowed in (
         ("level", level, LEVELS), ("type", type, VENUE_TYPES),
@@ -64,6 +66,7 @@ def paper_filters(
     return PaperFilters(
         level=level, type=type, directions=directions, venue=venue,
         year=int(year) if year is not None else None, access=access, pdf_status=pdf_status,
+        include_associated=include_associated,
     )
 
 
@@ -93,17 +96,31 @@ def has_oa_link(db: Session):
 
 
 def paper_query(db: Session, filters: PaperFilters, *, include_candidates=False):
+    associated_scope = bool(filters.include_associated and filters.venue)
     query = (
         db.query(Paper)
         .join(Venue, Paper.venue_id == Venue.id)
-        .filter(Paper.ccf_level.in_(LEVELS), *venue_scope(filters))
+        .filter(Paper.ccf_level.in_(LEVELS), *venue_scope(PaperFilters() if associated_scope else filters))
     )
     if not include_candidates:
         from app.services.publication_admission import reader_admission
         query = query.filter(*reader_admission(db))
-    if filters.level is not None:
+    if associated_scope:
+        # The opt-in explicitly selects the conference's publication scope.
+        # Canonical journal metadata and its publication year remain intact.
+        source = aliased(Venue)
+        conditions = [source.abbr == filters.venue, source.ccf_level.in_(LEVELS),
+                      source.type.in_(VENUE_TYPES)]
+        if filters.level is not None:
+            conditions.append(source.ccf_level == filters.level)
+        if filters.type is not None:
+            conditions.append(source.type == filters.type)
+        source_ids = select(source.id).where(*conditions)
+        associated_ids = select(PaperConference.paper_id).where(PaperConference.venue_id.in_(source_ids))
+        query = query.filter(or_(Paper.venue_id.in_(source_ids), Paper.id.in_(associated_ids)))
+    elif filters.level is not None:
         query = query.filter(Paper.ccf_level == filters.level)
-    if filters.venue is not None:
+    if filters.venue is not None and not associated_scope:
         query = query.filter(Venue.abbr == filters.venue)
     if filters.year is not None:
         query = query.filter(Paper.year == filters.year)

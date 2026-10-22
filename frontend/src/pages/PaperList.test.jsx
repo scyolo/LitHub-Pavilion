@@ -37,3 +37,26 @@ it('keeps a selected source visible even when it lies outside the initial previe
   expect(await screen.findByRole('button', { name: /^V199/ })).toHaveClass('selected');
   await waitFor(() => expect(within(document.querySelector('.venue-filter-options')).getAllByRole('button')).toHaveLength(42));
 });
+
+it('includes official affiliations when a linked source is chosen and exposes the scope control', async () => {
+  api.dashboard.mockResolvedValue({directions: [], annual: [], configured_venues: 1,
+    venues: [{abbr: 'VIS', name: 'Visualization', paper_count: 0, associated_paper_count: 12}]});
+  show();
+  fireEvent.click(await screen.findByRole('button', {name: /^VIS/}));
+  await waitFor(() => expect(api.papers).toHaveBeenCalledWith(expect.objectContaining({venue: 'VIS', include_associated: '1'}), expect.anything()));
+  expect(screen.getByRole('checkbox', {name: '包含官方期刊发表关联'})).toBeChecked();
+  expect(screen.getByText(/关联论文按期刊发表年份筛选/)).toBeInTheDocument();
+  fireEvent.click(screen.getByRole('button', {name: /^全部来源/}));
+  await waitFor(() => expect(api.papers.mock.calls.at(-1)[0]).not.toHaveProperty('include_associated'));
+});
+
+it('shows a verified accepted paper without calling it a published result or an empty search', async () => {
+  api.search.mockResolvedValue({total: 0, items: [], page: 1, size: 20,
+    accepted_items: [{reference_id: 'accepted-example', title: 'Future LLM Serving', venue: 'ATC', year: 2026,
+      level: 'A', authors: ['Ada Lee'], official_url: 'https://example.org/accepted', preprint_url: null}]});
+  show('/papers?q=Future+LLM+Serving');
+  expect(await screen.findByRole('link', {name: 'Future LLM Serving'})).toHaveAttribute('href', 'https://example.org/accepted');
+  expect(screen.getByText('官方已录用 · 出版待核验')).toBeInTheDocument();
+  expect(screen.getByText(/上方录用记录不计入正式论文总数/)).toBeInTheDocument();
+  expect(screen.queryByText('清除所有筛选')).not.toBeInTheDocument();
+});

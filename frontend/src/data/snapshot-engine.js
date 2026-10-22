@@ -1,6 +1,9 @@
 import { stemmer } from "stemmer";
 import { publicationSortKey, safeExternalUrl } from "../lib/presentation.js";
 import { expandTokens } from "./fuzzy-terms.js";
+import { keywordQuery, queryTopic } from "./query-aliases.js";
+import { createConferenceScope, includesAssociated } from './conference-scope.js';
+import { acceptedTitleParams, attachAcceptedReferences, validateAcceptedReferences } from './accepted-publications.js';
 
 import { readerError } from "./reader-errors.js";
 export { readerError } from "./reader-errors.js";
@@ -11,6 +14,7 @@ export function parseParams(params = {}, search = false) {
     if (values[key] !== undefined && !allowed.includes(values[key])) throw readerError(`${key} 参数不正确`);
   }
   if (values.year !== undefined && !/^[1-9][0-9]{3}$/.test(String(values.year))) throw readerError("year 必须是四位年份");
+  if (values.include_associated !== undefined && ![true, false, 1, 0, '1', '0', 'true', 'false'].includes(values.include_associated)) throw readerError('include_associated 参数不正确');
   const directions = values.direction === undefined ? [] : [...new Set(String(values.direction).split(",").map((code) => code.trim()))];
   if (directions.some((code) => !code)) throw readerError("direction 必须是非空 code");
   const venue = values.venue === undefined ? null : String(values.venue).trim();
@@ -27,7 +31,7 @@ export function queryTokens(q, exactTitle = false) {
   const tokens = normalizedTitle(q).match(/[A-Za-z0-9]+/g) || [];
   if (!tokens.length || /[\u3400-\u4dbf\u4e00-\u9fff\uf900-\ufaff\u{20000}-\u{323af}]/u.test(q)) {
     if (exactTitle && tokens.length) return [];
-    throw readerError("请输入可检索的英文词条；暂不支持中文检索", 400, "EMPTY_QUERY");
+    throw readerError("请输入英文关键词或已收录的中文方向名称", 400, "EMPTY_QUERY");
   }
   if (q.length > 300 || tokens.length > 24) {
     if (exactTitle) return [];
@@ -43,6 +47,8 @@ export function normalizedTitle(value) {
 export function createSnapshotEngine({ manifest, catalog, papers, preparedIndex }) {
   if (manifest.schema_version !== 1 || !Number.isFinite(Date.parse(manifest.generated_at)) || !Array.isArray(papers) || papers.length !== manifest.paper_count || !Array.isArray(catalog?.venues) || !Array.isArray(catalog?.directions) || !Array.isArray(catalog?.logs)) throw readerError("静态快照格式不正确，请重新导出", 503, "INVALID_SNAPSHOT");
   const byId = new Map(), venueMap = new Map(catalog.venues.map((venue) => [venue.abbr, venue]));
+  const conferenceScope = createConferenceScope(catalog);
+  validateAcceptedReferences(catalog.accepted_papers || [], catalog.venues);
   for (const paper of papers) {
     if (!Number.isSafeInteger(paper.id) || paper.id <= 0 || byId.has(paper.id) || !venueMap.has(paper.venue) || !["A", "B"].includes(paper.level) || !["conf", "journal"].includes(paper.venue_type) || typeof paper.title !== "string" || !Array.isArray(paper.directions) || !Array.isArray(paper.authors) || !Array.isArray(paper.direction_details)) throw readerError("静态快照含重复或无效论文", 503, "INVALID_SNAPSHOT");
     for (const field of ["official_url", "oa_url"]) if (paper[field] && !safeExternalUrl(paper[field])) throw readerError("静态快照含不安全的论文链接", 503, "INVALID_SNAPSHOT");
@@ -89,13 +95,12 @@ export function createSnapshotEngine({ manifest, catalog, papers, preparedIndex 
     return index;
   }
   function matches(paper, filters) {
-    const venue = venueMap.get(paper.venue);
-    return (!filters.level || paper.level === filters.level && venue.level === filters.level)
-      && (!filters.type || venue.type === filters.type)
-      && (!filters.venue || paper.venue === filters.venue)
+    return conferenceScope.matches(paper.id, paper.venue, filters)
+      && (!filters.level || includesAssociated(filters) && filters.venue || paper.level === filters.level)
       && (!filters.year || paper.year === Number(filters.year))
       && (!filters.pdf_status || paper.pdf_status === filters.pdf_status)
       && (!filters.directions.length || filters.directions.some((code) => paper.directions.includes(code)))
+      && (!filters.queryTopic || paper.directions.includes(filters.queryTopic))
       && (!filters.access || (filters.access === "oa" ? Boolean(paper.oa_url) : !paper.oa_url));
   }
   function compare(sort, scores, priorities = new Map()) {
@@ -111,11 +116,27 @@ export function createSnapshotEngine({ manifest, catalog, papers, preparedIndex 
   }
   function listing(params, isSearch) {
     const filters = parseParams(params, isSearch);
+    const rewritten=isSearch?keywordQuery(params?.q):undefined;
+    if(isSearch&&(params.match||'auto')==='auto'&&rewritten!==params.q){
+      const canonical=listing({...params,q:rewritten,match:'keywords'},true);
+      if(canonical.total)return {...canonical,query_rewrite:rewritten};
+      let original;
+      try{original=listing({...params,match:'keywords'},true);}
+      catch(error){if(error.status!==400||error.code!=='EMPTY_QUERY')throw error;}
+      if(original?.total)return original;
+      return {...listing({...params,q:rewritten,match:'auto'},true),query_rewrite:rewritten};
+    }
+    const selectedTopic=isSearch?queryTopic(params.q,params.match||'auto',catalog.directions):null;
+    filters.queryTopic=selectedTopic?.code||null;
+    if(selectedTopic&&filters.sort==='relevance')filters.sort='publication_desc';
     let candidates = papers;
     let matchMode = isSearch ? (params.match || "auto") : null;
     let expansions = [];
     const scores = new Map(), priorities = new Map();
-    if (isSearch) {
+    if (selectedTopic) {
+      matchMode='topic';
+      for(const paper of papers){scores.set(paper.id,0);priorities.set(paper.id,0);}
+    } else if (isSearch) {
       const exactTitle = typeof params.q === 'string' ? normalizedTitle(params.q) : '';
       const tokens = queryTokens(params.q, matchMode === "exact" || exactTitles.has(exactTitle));
       if (matchMode === "exact") {
@@ -169,7 +190,7 @@ export function createSnapshotEngine({ manifest, catalog, papers, preparedIndex 
       }
     }
     const rows = candidates.filter((paper) => matches(paper, filters)).sort(compare(filters.sort, scores, priorities));
-    return { total: rows.length, page: filters.page, size: filters.size, ...(isSearch ? { match_mode: matchMode, query_expansions: expansions } : {}), items: rows.slice((filters.page - 1) * filters.size, filters.page * filters.size).map((paper) => {
+    return { total: rows.length, page: filters.page, size: filters.size, ...(isSearch ? { match_mode: matchMode, query_expansions: expansions } : {}), ...(selectedTopic?{query_topic:{code:selectedTopic.code,name:selectedTopic.name},effective_sort:filters.sort}:{}), items: rows.slice((filters.page - 1) * filters.size, filters.page * filters.size).map((paper) => {
       const { abstract, authors, direction_details, arxiv_id, dblp_key, updated_at, ...card } = paper;
       return isSearch ? { ...card, score: Number(scores.get(paper.id).toFixed(4)) } : card;
     }) };
@@ -207,6 +228,8 @@ export function createSnapshotEngine({ manifest, catalog, papers, preparedIndex 
       venues: configured.filter((venue) => !filters.venue || venue.abbr === filters.venue).map((venue) => ({ ...venue, paper_count: venueCounts.get(venue.abbr) || 0,
         years: [...(venueYears.get(venue.abbr) || new Map())].sort(([a], [b]) => a - b).map(([year, count]) => ({ year, count })) })),
     };
+    const associationFilters = {...filters, venue: null, level: null, type: null, include_associated: false};
+    result.venues = conferenceScope.decorate(result.venues, id => byId.has(id) && matches(byId.get(id), associationFilters));
     if (catalog.overview?.version >= 3) result.with_direct_link = with_direct_link;
     if (dashboards.size >= 32) dashboards.clear();
     dashboards.set(key, result);
@@ -214,8 +237,8 @@ export function createSnapshotEngine({ manifest, catalog, papers, preparedIndex 
   }
   return {
     latest: (params = {}) => listing({ ...params, page: 1, size: 5, sort: "publication_desc" }, false),
-    papers: (params = {}) => listing(params, false),
-    search: (params = {}) => listing(params, true),
+    papers: (params = {}) => attachAcceptedReferences(catalog, listing(params, false), '', params),
+    search: (params = {}) => { const selected = acceptedTitleParams(catalog, params); return attachAcceptedReferences(catalog, listing(selected, true), params.q, selected); },
     verifyTitleCoverage: () => {
       const failures = [];
       let checked = 0;

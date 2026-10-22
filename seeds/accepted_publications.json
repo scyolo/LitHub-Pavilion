@@ -1,0 +1,307 @@
+{
+  "version": 1,
+  "papers": [
+    {
+      "reference_id": "accepted-7d18ca7c67f653c4",
+      "title": "Axon: Asynchronous Global KV-Aware Scheduling Across Distributed Instances for Agentic Workloads",
+      "authors": [
+        "Qiu, Yuqi",
+        "Zou, Jinting",
+        "Mo, Zizhao",
+        "Chen, Junlin",
+        "Chen, Liao",
+        "Xu, Huanle",
+        "Xu, Guoyao",
+        "Yang, Guodong",
+        "Zhang, Liping",
+        "Xu, ChengZhong"
+      ],
+      "venue": "ACM SIGOPS ATC",
+      "year": 2026,
+      "level": "A",
+      "status": "accepted_publication_unverified",
+      "official_url": "https://sigops.org/s/conferences/atc/2026/accepted.html",
+      "preprint_url": null,
+      "aliases": [
+        "Axon"
+      ],
+      "directions": [
+        "inference",
+        "llm"
+      ],
+      "evidence_sha256": "c76855f12cfe139bb37da60fdded9239fa1ca62dbfcc0d4fdf0ee417d049f72e",
+      "verified_on": "2026-10-19"
+    },
+    {
+      "reference_id": "accepted-15df30b7704a27c1",
+      "title": "ELDR: Expert-Locality-Aware Decode Routing for PD-Disaggregated MoE Serving",
+      "authors": [
+        "Choi, Sangjin",
+        "Cho, Sukmin",
+        "Xiong, Yifan",
+        "Yang, Ziyue",
+        "Kwon, Youngjin",
+        "Cheng, Peng"
+      ],
+      "venue": "ACM SIGOPS ATC",
+      "year": 2026,
+      "level": "A",
+      "status": "accepted_publication_unverified",
+      "official_url": "https://sigops.org/s/conferences/atc/2026/accepted.html",
+      "preprint_url": "https://arxiv.org/abs/2607.00466",
+      "aliases": [
+        "ELDR"
+      ],
+      "directions": [
+        "inference",
+        "llm"
+      ],
+      "evidence_sha256": "c76855f12cfe139bb37da60fdded9239fa1ca62dbfcc0d4fdf0ee417d049f72e",
+      "verified_on": "2026-10-19"
+    },
+    {
+      "reference_id": "accepted-cff260e97363bc87",
+      "title": "InfiniLoRA: Disaggregated Multi-LoRA Serving for Large Language Models",
+      "authors": [
+        "Chen, Hongyu",
+        "Ruan, Letian",
+        "Xu, Zilin",
+        "Li, Yuchen",
+        "Chen, Xinyu",
+        "He, Bingsheng",
+        "Leng, Jingwen",
+        "Zhao, Jieru",
+        "Sun, Shixuan",
+        "Guo, Minyi"
+      ],
+      "venue": "ACM SIGOPS ATC",
+      "year": 2026,
+      "level": "A",
+      "status": "accepted_publication_unverified",
+      "official_url": "https://sigops.org/s/conferences/atc/2026/accepted.html",
+      "preprint_url": null,
+      "aliases": [
+        "InfiniLoRA"
+      ],
+      "directions": [
+        "inference",
+        "llm"
+      ],
+      "evidence_sha256": "c76855f12cfe139bb37da60fdded9239fa1ca62dbfcc0d4fdf0ee417d049f72e",
+      "verified_on": "2026-10-19"
+    },
+    {
+      "reference_id": "accepted-65a53a090ce2c4c1",
+      "title": "ExoMem: OS-Governed Memory for Local Large-LLM Inference on Mobile Edge Devices",
+      "authors": [
+        "You, Jun",
+        "Wang, Kun",
+        "Chen, Jiesong",
+        "Liu, Zhidan",
+        "Li, Zhenjiang"
+      ],
+      "venue": "MobiCom",
+      "year": 2026,
+      "level": "A",
+      "status": "accepted_publication_unverified",
+      "official_url": "https://www.sigmobile.org/mobicom/2026/accepted.html",
+      "preprint_url": null,
+      "aliases": [
+        "ExoMem"
+      ],
+      "directions": [
+        "inference",
+        "llm"
+      ],
+      "evidence_sha256": "56a35f8ea169edee5f81b65d6ebd7f11260d94d27fdc01ddfff9d6875a7f4bf1",
+      "verified_on": "2026-10-19"
+    },
+    {
+      "reference_id": "accepted-7dfce6da9daade2b",
+      "title": "mzCache: On-Device LLM Memory Management under Multitasking",
+      "authors": [
+        "Yu, Hongseung",
+        "Kim, Minsung",
+        "Park, Jongseok",
+        "Lee, Kyunghan"
+      ],
+      "venue": "MobiCom",
+      "year": 2026,
+      "level": "A",
+      "status": "accepted_publication_unverified",
+      "official_url": "https://www.sigmobile.org/mobicom/2026/accepted.html",
+      "preprint_url": "https://arxiv.org/abs/2609.01338",
+      "aliases": [
+        "mzCache"
+      ],
+      "directions": [
+        "inference",
+        "llm"
+      ],
+      "evidence_sha256": "56a35f8ea169edee5f81b65d6ebd7f11260d94d27fdc01ddfff9d6875a7f4bf1",
+      "verified_on": "2026-10-19"
+    },
+    {
+      "reference_id": "accepted-62a30d7230a841f0",
+      "title": "NPUGen: NPU as KV Generator for Stable Long-Context Mobile LLM Inference",
+      "authors": [
+        "Wang, Kun",
+        "Cao, Jiani",
+        "Li, Zhenjiang"
+      ],
+      "venue": "MobiCom",
+      "year": 2026,
+      "level": "A",
+      "status": "accepted_publication_unverified",
+      "official_url": "https://www.sigmobile.org/mobicom/2026/accepted.html",
+      "preprint_url": null,
+      "aliases": [
+        "NPUGen"
+      ],
+      "directions": [
+        "inference",
+        "llm"
+      ],
+      "evidence_sha256": "56a35f8ea169edee5f81b65d6ebd7f11260d94d27fdc01ddfff9d6875a7f4bf1",
+      "verified_on": "2026-10-19"
+    },
+    {
+      "reference_id": "accepted-bacd6508e5ea9c25",
+      "title": "LeanStream: A Speculate-and-Refine Streaming Framework for Efficient on-Device LLM Inference",
+      "authors": [
+        "Liu, Renyuan",
+        "Leng, Yuyang",
+        "Liu, Kaiyan",
+        "Zhong, Yuzhou",
+        "Hu, Shaohan",
+        "Chen, Chun-Fu",
+        "Zhao, Peijun",
+        "Yun, Heechul",
+        "Yao, Shuochao"
+      ],
+      "venue": "MobiCom",
+      "year": 2026,
+      "level": "A",
+      "status": "accepted_publication_unverified",
+      "official_url": "https://www.sigmobile.org/mobicom/2026/accepted.html",
+      "preprint_url": null,
+      "aliases": [
+        "LeanStream"
+      ],
+      "directions": [
+        "inference",
+        "llm"
+      ],
+      "evidence_sha256": "56a35f8ea169edee5f81b65d6ebd7f11260d94d27fdc01ddfff9d6875a7f4bf1",
+      "verified_on": "2026-10-19"
+    },
+    {
+      "reference_id": "accepted-df24ceaac59fcf6f",
+      "title": "CFMoE: Cache-Friendly Mixture of Experts Model Serving System on Edge Devices",
+      "authors": [
+        "Zhang, Haoyu",
+        "Wang, Hongyi",
+        "Zheng, Jianwei",
+        "Li, Yu",
+        "Jiang, Tianyang",
+        "Li, Zhenhua",
+        "Jia, Ning"
+      ],
+      "venue": "MobiCom",
+      "year": 2026,
+      "level": "A",
+      "status": "accepted_publication_unverified",
+      "official_url": "https://www.sigmobile.org/mobicom/2026/accepted.html",
+      "preprint_url": null,
+      "aliases": [
+        "CFMoE"
+      ],
+      "directions": [
+        "inference",
+        "llm"
+      ],
+      "evidence_sha256": "56a35f8ea169edee5f81b65d6ebd7f11260d94d27fdc01ddfff9d6875a7f4bf1",
+      "verified_on": "2026-10-19"
+    },
+    {
+      "reference_id": "accepted-3f462dc71ed11b65",
+      "title": "CRISP: Co-designing Pruning and Scheduling for Efficient MoE Inference on Edge Servers",
+      "authors": [
+        "Zhang, Congwei",
+        "Tao, Youming",
+        "Zou, Yifei",
+        "Yang, Yu",
+        "Zhang, Ruirui",
+        "Zhang, Xiaoyu",
+        "Dressler, Falko",
+        "Cheng, Xiuzhen",
+        "Yu, Dongxiao"
+      ],
+      "venue": "MobiCom",
+      "year": 2026,
+      "level": "A",
+      "status": "accepted_publication_unverified",
+      "official_url": "https://www.sigmobile.org/mobicom/2026/accepted.html",
+      "preprint_url": null,
+      "aliases": [
+        "CRISP"
+      ],
+      "directions": [
+        "inference",
+        "llm"
+      ],
+      "evidence_sha256": "56a35f8ea169edee5f81b65d6ebd7f11260d94d27fdc01ddfff9d6875a7f4bf1",
+      "verified_on": "2026-10-19"
+    },
+    {
+      "reference_id": "accepted-44e9d8989d41127e",
+      "title": "InstMeter: An Instruction-Level Method to Predict Energy and Latency of DL Model Inference on MCUs",
+      "authors": [
+        "Liu, Hao",
+        "Wang, Qing",
+        "Zuniga, Marco"
+      ],
+      "venue": "MobiCom",
+      "year": 2026,
+      "level": "A",
+      "status": "accepted_publication_unverified",
+      "official_url": "https://www.sigmobile.org/mobicom/2026/accepted.html",
+      "preprint_url": "https://arxiv.org/abs/2603.04134",
+      "aliases": [
+        "InstMeter"
+      ],
+      "directions": [
+        "inference"
+      ],
+      "evidence_sha256": "56a35f8ea169edee5f81b65d6ebd7f11260d94d27fdc01ddfff9d6875a7f4bf1",
+      "verified_on": "2026-10-19"
+    },
+    {
+      "reference_id": "accepted-b731312be92bb999",
+      "title": "EdgeXpert: An Edge Device for Memory-Efficient LLM Inference with Mixture-of-Experts and Speculative Decoding",
+      "authors": [
+        "Ha, Sangwoo",
+        "Seo, Hyunwoo",
+        "Jo, Yurim",
+        "Moon, Youngjin",
+        "Yoo, Hoi-Jun"
+      ],
+      "venue": "MICRO",
+      "year": 2026,
+      "level": "A",
+      "status": "accepted_publication_unverified",
+      "official_url": "https://microarch.org/micro59/program/",
+      "preprint_url": "https://arxiv.org/abs/2608.05303",
+      "aliases": [
+        "EdgeXpert"
+      ],
+      "directions": [
+        "inference",
+        "llm",
+        "specdec"
+      ],
+      "evidence_sha256": "554902ead41954b3325250a17f0fc85dfd031b36812130f46a9e0f516d062912",
+      "verified_on": "2026-10-19"
+    }
+  ]
+}

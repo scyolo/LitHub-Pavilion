@@ -2,6 +2,9 @@ import { createSharedTasks, throwIfAborted } from "./shared-tasks.js";
 import { stemmer } from "stemmer";
 import { expandTokens } from "./fuzzy-terms.js";
 import { normalizedTitle, parseParams, queryTokens, readerError } from "./snapshot-engine.js";
+import { queryTopic } from "./query-aliases.js";
+import { createConferenceScope } from './conference-scope.js';
+import { acceptedTitleParams, attachAcceptedReferences } from './accepted-publications.js';
 
 const invalid = () => readerError("分页索引校验失败，请重新发布快照", 503, "INVALID_SNAPSHOT");
 
@@ -9,6 +12,7 @@ const invalid = () => readerError("分页索引校验失败，请重新发布快
 // needs only compact numeric rows, never every candidate's display card.
 export function createRankedReader({ descriptor, manifest, catalog, batches, cards, chunk, bucket, selectedEntries }) {
   const ranking = descriptor.ranking, venues = new Map(catalog.venues.map(v => [v.abbr, v]));
+  const conferenceScope = createConferenceScope(catalog);
   if (ranking?.version !== 1 || !Array.isArray(ranking.parts) || ranking.parts.length > 4096
       || ranking.parts.reduce((s, p) => s + p.count, 0) !== manifest.paper_count
       || !Array.isArray(ranking.venues) || ranking.venues.some(v => !venues.has(v))
@@ -22,9 +26,9 @@ export function createRankedReader({ descriptor, manifest, catalog, batches, car
   const rankParts = createSharedTasks({ maxCached: 8 }), queries = createSharedTasks({ maxCached: 4 });
   const vocabulary = createSharedTasks({ maxCached: 1 }), ordered = createSharedTasks({ maxCached: 4 });
   async function rankRows(ids, filters, context) {
-    const scoped = filters.venue || filters.year || filters.level || filters.type || filters.directions.length;
+    const scoped = filters.venue || filters.year || filters.level || filters.type || filters.directions.length || filters.queryTopic;
     const ranges = scoped ? [] : null;
-    if (scoped) for (const range of selectedEntries(filters).map(part=>[part.min_id,part.max_id]).sort((a,b)=>a[0]-b[0])) {
+    if (scoped) for (const range of selectedEntries(filters.queryTopic ? {...filters,directions:[filters.queryTopic]} : filters).map(part=>[part.min_id,part.max_id]).sort((a,b)=>a[0]-b[0])) {
       const previous=ranges.at(-1);
       if(previous&&range[0]<=previous[1]+1)previous[1]=Math.max(previous[1],range[1]);else ranges.push(range);
     }
@@ -103,12 +107,12 @@ export function createRankedReader({ descriptor, manifest, catalog, batches, car
     return lo<sorted.length && sorted[lo]<=part.max_id;
   }
   function matches(row, filters) {
-    const name=ranking.venues[row[1]],venue=venues.get(name);
-    return (!filters.venue || filters.venue===name) && (!filters.level || filters.level===venue.level)
-      && (!filters.type || filters.type===venue.type) && (!filters.year || Number(filters.year)===row[2])
+    const name=ranking.venues[row[1]];
+    return conferenceScope.matches(row[0], name, filters) && (!filters.year || Number(filters.year)===row[2])
       && (!filters.pdf_status || filters.pdf_status===ranking.pdf_statuses[row[7]])
       && (!filters.access || (filters.access==='oa' ? row[8]===1 : row[8]===0))
-      && (!filters.directions.length || row[6].some(d=>filters.directions.includes(ranking.directions[d])));
+      && (!filters.directions.length || row[6].some(d=>filters.directions.includes(ranking.directions[d])))
+      && (!filters.queryTopic || row[6].some(d=>ranking.directions[d]===filters.queryTopic));
   }
   async function titleMatches(title, context) {
     const rows = await batches(descriptor.search.titles[await bucket(title)] || [], context);
@@ -177,13 +181,17 @@ export function createRankedReader({ descriptor, manifest, catalog, batches, car
   }
   return {async call(method, params={}, context={}){
     throwIfAborted(context.signal);
+    if (method === 'search') params = acceptedTitleParams(catalog, params);
     const isSearch=method==='search',filters=parseParams(params,isSearch),mode=params.match||'auto';
+    const selectedTopic=isSearch?queryTopic(params.q,mode,catalog.directions):null;
+    filters.queryTopic=selectedTopic?.code || null;
+    if(selectedTopic&&filters.sort==='relevance')filters.sort='publication_desc';
     const { page: pageNumber, size: pageSize, ...scope } = filters;
     const key = JSON.stringify([method, mode, scope]);
     const { rows, prepared } = await ordered.run(key, async shared => {
-      let prepared=isSearch?await query(params,mode==='fuzzy',shared):null;
+      let prepared=selectedTopic?{mode:'topic',expansions:[]}:isSearch?await query(params,mode==='fuzzy',shared):null;
       let rows=await rankRows(prepared?.ids, filters, shared);
-      if(isSearch&&mode==='auto'&&!rows.length){prepared=await query(params,true,shared);rows=await rankRows(prepared.ids, filters, shared);}
+      if(isSearch&&!selectedTopic&&mode==='auto'&&!rows.length){prepared=await query(params,true,shared);rows=await rankRows(prepared.ids, filters, shared);}
       const column={publication_desc:3,created_desc:4,year_desc:2,citation_desc:5}[filters.sort];
       rows.sort((a,b)=>(column?b[column]-a[column]:prepared.priorities.get(a[0])-prepared.priorities.get(b[0])||prepared.scores.get(a[0])-prepared.scores.get(b[0]))||b[0]-a[0]);
       return { rows, prepared };
@@ -193,7 +201,8 @@ export function createRankedReader({ descriptor, manifest, catalog, batches, car
     const entries=descriptor.browse.filter(p=>overlaps(p,sorted));
     const loaded=cards((await batches(entries, context)).filter(row=>ids.has(row[0]))),byId=new Map(loaded.map(row=>[row.id,row]));
     if(byId.size!==ids.size||loaded.length!==ids.size)throw invalid();
-    const items=page.map(row=>{const {abstract,authors,direction_details,...card}=byId.get(row[0]);return isSearch?{...card,score:Number(prepared.scores.get(row[0]).toFixed(4))}:card;});
-    return {total:rows.length,page:filters.page,size:filters.size,...(isSearch?{match_mode:prepared.mode,query_expansions:prepared.expansions}:{}),items};
+    const items=page.map(row=>{const {abstract,authors,direction_details,...card}=byId.get(row[0]);return isSearch?{...card,score:selectedTopic?0:Number(prepared.scores.get(row[0]).toFixed(4))}:card;});
+    const result = {total:rows.length,page:filters.page,size:filters.size,...(isSearch?{match_mode:prepared.mode,query_expansions:prepared.expansions}:{}),...(selectedTopic?{query_topic:{code:selectedTopic.code,name:selectedTopic.name},effective_sort:filters.sort}:{}),items};
+    return attachAcceptedReferences(catalog, result, isSearch ? params.q : '', params);
   }};
 }

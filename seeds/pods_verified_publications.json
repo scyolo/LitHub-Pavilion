@@ -1,5 +1,5 @@
 {
-  "verified_on": "2026-10-02",
+  "verified_on": "2026-10-17",
   "scope": "Only exact official PODS list + PACMMOD metadata matches; not whole-issue inference.",
   "papers": [
     {
@@ -533,6 +533,265 @@
       "event_year": 2024,
       "source": "https://2024.sigmod.org/pods_list.shtml",
       "source_sha256": "6352b8e7c3d057de6df795b2a6f10c28368f9487dafbeff8381174560db76725"
+    },
+    {
+      "doi": "10.1145/3767711",
+      "conference": "PODS",
+      "event_year": 2026,
+      "source": "https://2026.sigmod.org/pods_papers.shtml",
+      "source_sha256": "6b43b741c9ee5cf1bfe510b47d2f95960bb3cca635e8312f94fa851a71520ada"
+    },
+    {
+      "doi": "10.1145/3767720",
+      "conference": "PODS",
+      "event_year": 2026,
+      "source": "https://2026.sigmod.org/pods_papers.shtml",
+      "source_sha256": "6b43b741c9ee5cf1bfe510b47d2f95960bb3cca635e8312f94fa851a71520ada"
+    },
+    {
+      "doi": "10.1145/3767710",
+      "conference": "PODS",
+      "event_year": 2026,
+      "source": "https://2026.sigmod.org/pods_papers.shtml",
+      "source_sha256": "6b43b741c9ee5cf1bfe510b47d2f95960bb3cca635e8312f94fa851a71520ada"
+    },
+    {
+      "doi": "10.1145/3767713",
+      "conference": "PODS",
+      "event_year": 2026,
+      "source": "https://2026.sigmod.org/pods_papers.shtml",
+      "source_sha256": "6b43b741c9ee5cf1bfe510b47d2f95960bb3cca635e8312f94fa851a71520ada"
+    },
+    {
+      "doi": "10.1145/3767714",
+      "conference": "PODS",
+      "event_year": 2026,
+      "source": "https://2026.sigmod.org/pods_papers.shtml",
+      "source_sha256": "6b43b741c9ee5cf1bfe510b47d2f95960bb3cca635e8312f94fa851a71520ada"
+    },
+    {
+      "doi": "10.1145/3767719",
+      "conference": "PODS",
+      "event_year": 2026,
+      "source": "https://2026.sigmod.org/pods_papers.shtml",
+      "source_sha256": "6b43b741c9ee5cf1bfe510b47d2f95960bb3cca635e8312f94fa851a71520ada"
+    },
+    {
+      "doi": "10.1145/3767717",
+      "conference": "PODS",
+      "event_year": 2026,
+      "source": "https://2026.sigmod.org/pods_papers.shtml",
+      "source_sha256": "6b43b741c9ee5cf1bfe510b47d2f95960bb3cca635e8312f94fa851a71520ada"
+    },
+    {
+      "doi": "10.1145/3767716",
+      "conference": "PODS",
+      "event_year": 2026,
+      "source": "https://2026.sigmod.org/pods_papers.shtml",
+      "source_sha256": "6b43b741c9ee5cf1bfe510b47d2f95960bb3cca635e8312f94fa851a71520ada"
+    },
+    {
+      "doi": "10.1145/3767718",
+      "conference": "PODS",
+      "event_year": 2026,
+      "source": "https://2026.sigmod.org/pods_papers.shtml",
+      "source_sha256": "6b43b741c9ee5cf1bfe510b47d2f95960bb3cca635e8312f94fa851a71520ada"
+    },
+    {
+      "doi": "10.1145/3767712",
+      "conference": "PODS",
+      "event_year": 2026,
+      "source": "https://2026.sigmod.org/pods_papers.shtml",
+      "source_sha256": "6b43b741c9ee5cf1bfe510b47d2f95960bb3cca635e8312f94fa851a71520ada"
+    },
+    {
+      "doi": "10.1145/3767715",
+      "conference": "PODS",
+      "event_year": 2026,
+      "source": "https://2026.sigmod.org/pods_papers.shtml",
+      "source_sha256": "6b43b741c9ee5cf1bfe510b47d2f95960bb3cca635e8312f94fa851a71520ada"
+    },
+    {
+      "doi": "10.1145/3767709",
+      "conference": "PODS",
+      "event_year": 2026,
+      "source": "https://2026.sigmod.org/pods_papers.shtml",
+      "source_sha256": "6b43b741c9ee5cf1bfe510b47d2f95960bb3cca635e8312f94fa851a71520ada"
+    },
+    {
+      "doi": "10.1145/3801906",
+      "conference": "PODS",
+      "event_year": 2026,
+      "source": "https://2026.sigmod.org/pods_papers.shtml",
+      "source_sha256": "6b43b741c9ee5cf1bfe510b47d2f95960bb3cca635e8312f94fa851a71520ada"
+    },
+    {
+      "doi": "10.1145/3801912",
+      "conference": "PODS",
+      "event_year": 2026,
+      "source": "https://2026.sigmod.org/pods_papers.shtml",
+      "source_sha256": "6b43b741c9ee5cf1bfe510b47d2f95960bb3cca635e8312f94fa851a71520ada"
+    },
+    {
+      "doi": "10.1145/3801917",
+      "conference": "PODS",
+      "event_year": 2026,
+      "source": "https://2026.sigmod.org/pods_papers.shtml",
+      "source_sha256": "6b43b741c9ee5cf1bfe510b47d2f95960bb3cca635e8312f94fa851a71520ada"
+    },
+    {
+      "doi": "10.1145/3801901",
+      "conference": "PODS",
+      "event_year": 2026,
+      "source": "https://2026.sigmod.org/pods_papers.shtml",
+      "source_sha256": "6b43b741c9ee5cf1bfe510b47d2f95960bb3cca635e8312f94fa851a71520ada"
+    },
+    {
+      "doi": "10.1145/3801900",
+      "conference": "PODS",
+      "event_year": 2026,
+      "source": "https://2026.sigmod.org/pods_papers.shtml",
+      "source_sha256": "6b43b741c9ee5cf1bfe510b47d2f95960bb3cca635e8312f94fa851a71520ada"
+    },
+    {
+      "doi": "10.1145/3801904",
+      "conference": "PODS",
+      "event_year": 2026,
+      "source": "https://2026.sigmod.org/pods_papers.shtml",
+      "source_sha256": "6b43b741c9ee5cf1bfe510b47d2f95960bb3cca635e8312f94fa851a71520ada"
+    },
+    {
+      "doi": "10.1145/3801910",
+      "conference": "PODS",
+      "event_year": 2026,
+      "source": "https://2026.sigmod.org/pods_papers.shtml",
+      "source_sha256": "6b43b741c9ee5cf1bfe510b47d2f95960bb3cca635e8312f94fa851a71520ada"
+    },
+    {
+      "doi": "10.1145/3801899",
+      "conference": "PODS",
+      "event_year": 2026,
+      "source": "https://2026.sigmod.org/pods_papers.shtml",
+      "source_sha256": "6b43b741c9ee5cf1bfe510b47d2f95960bb3cca635e8312f94fa851a71520ada"
+    },
+    {
+      "doi": "10.1145/3801911",
+      "conference": "PODS",
+      "event_year": 2026,
+      "source": "https://2026.sigmod.org/pods_papers.shtml",
+      "source_sha256": "6b43b741c9ee5cf1bfe510b47d2f95960bb3cca635e8312f94fa851a71520ada"
+    },
+    {
+      "doi": "10.1145/3801891",
+      "conference": "PODS",
+      "event_year": 2026,
+      "source": "https://2026.sigmod.org/pods_papers.shtml",
+      "source_sha256": "6b43b741c9ee5cf1bfe510b47d2f95960bb3cca635e8312f94fa851a71520ada"
+    },
+    {
+      "doi": "10.1145/3801907",
+      "conference": "PODS",
+      "event_year": 2026,
+      "source": "https://2026.sigmod.org/pods_papers.shtml",
+      "source_sha256": "6b43b741c9ee5cf1bfe510b47d2f95960bb3cca635e8312f94fa851a71520ada"
+    },
+    {
+      "doi": "10.1145/3801913",
+      "conference": "PODS",
+      "event_year": 2026,
+      "source": "https://2026.sigmod.org/pods_papers.shtml",
+      "source_sha256": "6b43b741c9ee5cf1bfe510b47d2f95960bb3cca635e8312f94fa851a71520ada"
+    },
+    {
+      "doi": "10.1145/3801909",
+      "conference": "PODS",
+      "event_year": 2026,
+      "source": "https://2026.sigmod.org/pods_papers.shtml",
+      "source_sha256": "6b43b741c9ee5cf1bfe510b47d2f95960bb3cca635e8312f94fa851a71520ada"
+    },
+    {
+      "doi": "10.1145/3801898",
+      "conference": "PODS",
+      "event_year": 2026,
+      "source": "https://2026.sigmod.org/pods_papers.shtml",
+      "source_sha256": "6b43b741c9ee5cf1bfe510b47d2f95960bb3cca635e8312f94fa851a71520ada"
+    },
+    {
+      "doi": "10.1145/3801892",
+      "conference": "PODS",
+      "event_year": 2026,
+      "source": "https://2026.sigmod.org/pods_papers.shtml",
+      "source_sha256": "6b43b741c9ee5cf1bfe510b47d2f95960bb3cca635e8312f94fa851a71520ada"
+    },
+    {
+      "doi": "10.1145/3801897",
+      "conference": "PODS",
+      "event_year": 2026,
+      "source": "https://2026.sigmod.org/pods_papers.shtml",
+      "source_sha256": "6b43b741c9ee5cf1bfe510b47d2f95960bb3cca635e8312f94fa851a71520ada"
+    },
+    {
+      "doi": "10.1145/3801916",
+      "conference": "PODS",
+      "event_year": 2026,
+      "source": "https://2026.sigmod.org/pods_papers.shtml",
+      "source_sha256": "6b43b741c9ee5cf1bfe510b47d2f95960bb3cca635e8312f94fa851a71520ada"
+    },
+    {
+      "doi": "10.1145/3801908",
+      "conference": "PODS",
+      "event_year": 2026,
+      "source": "https://2026.sigmod.org/pods_papers.shtml",
+      "source_sha256": "6b43b741c9ee5cf1bfe510b47d2f95960bb3cca635e8312f94fa851a71520ada"
+    },
+    {
+      "doi": "10.1145/3801919",
+      "conference": "PODS",
+      "event_year": 2026,
+      "source": "https://2026.sigmod.org/pods_papers.shtml",
+      "source_sha256": "6b43b741c9ee5cf1bfe510b47d2f95960bb3cca635e8312f94fa851a71520ada"
+    },
+    {
+      "doi": "10.1145/3801894",
+      "conference": "PODS",
+      "event_year": 2026,
+      "source": "https://2026.sigmod.org/pods_papers.shtml",
+      "source_sha256": "6b43b741c9ee5cf1bfe510b47d2f95960bb3cca635e8312f94fa851a71520ada"
+    },
+    {
+      "doi": "10.1145/3801895",
+      "conference": "PODS",
+      "event_year": 2026,
+      "source": "https://2026.sigmod.org/pods_papers.shtml",
+      "source_sha256": "6b43b741c9ee5cf1bfe510b47d2f95960bb3cca635e8312f94fa851a71520ada"
+    },
+    {
+      "doi": "10.1145/3801902",
+      "conference": "PODS",
+      "event_year": 2026,
+      "source": "https://2026.sigmod.org/pods_papers.shtml",
+      "source_sha256": "6b43b741c9ee5cf1bfe510b47d2f95960bb3cca635e8312f94fa851a71520ada"
+    },
+    {
+      "doi": "10.1145/3801905",
+      "conference": "PODS",
+      "event_year": 2026,
+      "source": "https://2026.sigmod.org/pods_papers.shtml",
+      "source_sha256": "6b43b741c9ee5cf1bfe510b47d2f95960bb3cca635e8312f94fa851a71520ada"
+    },
+    {
+      "doi": "10.1145/3801896",
+      "conference": "PODS",
+      "event_year": 2026,
+      "source": "https://2026.sigmod.org/pods_papers.shtml",
+      "source_sha256": "6b43b741c9ee5cf1bfe510b47d2f95960bb3cca635e8312f94fa851a71520ada"
+    },
+    {
+      "doi": "10.1145/3801903",
+      "conference": "PODS",
+      "event_year": 2026,
+      "source": "https://2026.sigmod.org/pods_papers.shtml",
+      "source_sha256": "6b43b741c9ee5cf1bfe510b47d2f95960bb3cca635e8312f94fa851a71520ada"
     }
   ]
 }

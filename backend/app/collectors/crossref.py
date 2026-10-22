@@ -8,6 +8,7 @@ import html
 import re
 from datetime import date
 
+import httpcore
 import httpx
 
 from app.cleaning import clean_author_name, clean_title, normalize_doi, normalize_title
@@ -27,8 +28,10 @@ async def request_with_retry(client, url, *, params=None, attempts=5):
     for attempt in range(attempts):
         try:
             response = await client.get(url, params=params)
-        except httpx.TransportError:
+        except (httpx.TransportError, httpcore.RemoteProtocolError) as error:
             if attempt == attempts - 1:
+                if isinstance(error, httpcore.RemoteProtocolError):
+                    raise httpx.RemoteProtocolError(str(error)) from error
                 raise
             await asyncio.sleep(min(60.0, 5.0 * (attempt + 1)))
             continue
@@ -199,7 +202,7 @@ def item_to_raw(item: dict) -> RawPaper | None:
         published = published if published and published.startswith(f"{year}-") else None
     if not doi or not titles or not year or item.get("type") not in ("proceedings-article", "journal-article", "book-chapter"):
         return None
-    return RawPaper(
+    raw = RawPaper(
         # The existing schema uses 'manual' for DOI-identified imports.
         # Provenance is explicit in extra/note; never forge a DBLP/OpenAlex ID.
         source="manual", venue_key=doi, doi=doi, title=clean_title(metadata_text(titles[0])), year=year,
@@ -207,6 +210,9 @@ def item_to_raw(item: dict) -> RawPaper | None:
         authors=[clean_author_name(" ".join(filter(None, (a.get("given"), a.get("family"))))) for a in item.get("author", [])],
         extra={"provenance": "crossref_publisher"},
     )
+    from app.collectors.title_corrections import correct_catalogue_title
+
+    return correct_catalogue_title(raw)
 
 
 async def fetch_prefix(client, prefix, year_from, year_to, *, on_page=None, max_pages=200):
@@ -358,6 +364,21 @@ async def fetch_configured_inventory(client, venue, year, *, cache=None):
     else:
         prefix = {"AAAI": "10.1609", "ICAPS": "10.1609", "IJCAI": "10.24963", "KR": "10.24963", "ECAI": "10.3233"}.get(venue.abbr)
         if prefix: requests = [(prefix, fetch_prefix)]
+        elif venue.type == "conf":
+            from app.collectors.journal_conferences import DEDICATED, SERIES
+
+            serials = {issn for issn, (_, issues) in SERIES.items() if venue.abbr in issues.values()}
+            if venue.abbr in DEDICATED:
+                serials.add(DEDICATED[venue.abbr][0])
+            if serials:
+                requests = [(issn, fetch_journal) for issn in sorted(serials)]
+            else:
+                from app.collectors.conference_registry import fetch_discovered_inventory
+
+                key = ("discovered-main-conference", venue.abbr, year)
+                if key not in cache:
+                    cache[key] = await fetch_discovered_inventory(client, venue, year)
+                return cache[key]
     result, seen = [], set()
     # Include early-access deposits around a formal publication year; filter
     # records again by the publisher's issue/conference year, not deposit year.

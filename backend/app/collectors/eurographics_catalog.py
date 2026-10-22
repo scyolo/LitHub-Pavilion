@@ -29,6 +29,16 @@ def collection_identity(collection):
         html = " ".join(values(meta, "dc.description"))
         titles = re.findall(r"<title>(.*?)</title>", html, re.DOTALL | re.IGNORECASE)
         description = " ".join(plain(t) for t in titles)
+        if not description.strip():
+            # The 2026 issue has an empty title/description but opens its
+            # publisher-supplied HTML with an explicit conference heading.
+            headings = re.findall(
+                r'<body\b[^>]*>\s*EuroVis (20\d{2}) - '
+                r'[0-9]+(?:st|nd|rd|th) EG Conference on Visualization\s*<br\s*/?>',
+                html, re.IGNORECASE,
+            )
+            if len(set(headings)) == 1:
+                description = 'EuroVis ' + headings[0]
     for abbr, pattern in NAMES.items():
         found = re.fullmatch(
             "(?:"
@@ -59,9 +69,14 @@ def parse_item(item, year, volume, issue, *, verified_membership=False):
         return None
     if not set(values(meta, "dc.identifier.issn")) & {"1467-8659", "0167-7055"}:
         return None
-    if not any(
+    joint_imprint = any(
         "Eurographics" in p and "Wiley" in p for p in values(meta, "dc.publisher")
-    ):
+    )
+    eg_imprint = (
+        values(meta, 'dc.publisher') == ['The Eurographics Association']
+        and values(meta, 'dc.description.seriesinformation') == ['Computer Graphics Forum']
+    )
+    if not (joint_imprint or eg_imprint):
         return None
     titles = values(meta, "dc.title")
     dois = values(meta, "dc.identifier.doi")

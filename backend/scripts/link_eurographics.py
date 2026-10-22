@@ -8,15 +8,16 @@ import re
 from collections import Counter
 from pathlib import Path
 
-import httpx
 from sqlalchemy import text
 from sqlalchemy.orm import Session
 
 from app.collectors.crossref import request_with_retry
 from app.collectors.eurographics_catalog import collection_identity, parse_item
+from app.collectors.http_client import make_client
 from app.db import _make_engine
-from app.models import PaperConference, Venue
+from app.models import Paper, PaperConference, Venue
 from app.services.paper_conferences import associate_publication
+from app.services.program_abstracts import fill_program_abstracts
 from app.services.tagging import apply_tagging, load_rules, load_thresholds
 from scripts.reconcile_papers import _backup
 
@@ -40,7 +41,7 @@ async def run(args):
         tmp.replace(p)
 
     try:
-        async with httpx.AsyncClient(timeout=45, follow_redirects=False) as client:
+        async with make_client() as client:
             for file in sorted(args.collections.glob("cgf-*-issues.json")):
                 collections = json.loads(file.read_text(encoding="utf-8"))["_embedded"][
                     "collections"
@@ -155,6 +156,9 @@ async def run(args):
                             )
                             session.rollback()
                             session.execute(text("BEGIN IMMEDIATE"))
+                            enriched = fill_program_abstracts(session, journal, year, records, evidence)
+                            unit['abstracts_filled'] = enriched['filled']
+                            unit['abstract_identity_conflicts'] = len(enriched['rejected'])
                             for raw in records:
                                 try:
                                     with session.begin_nested():
@@ -169,8 +173,8 @@ async def run(args):
                                         apply_tagging(
                                             session,
                                             link.paper_id,
-                                            raw.title,
-                                            raw.extra.get("abstract"),
+                                            session.get(Paper, link.paper_id).title,
+                                            session.get(Paper, link.paper_id).abstract,
                                             rules,
                                             thresholds,
                                         )

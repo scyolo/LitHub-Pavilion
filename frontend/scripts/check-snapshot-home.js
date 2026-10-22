@@ -1,9 +1,11 @@
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import { performance } from "node:perf_hooks";
+import { resolve } from "node:path";
+import { pathToFileURL } from "node:url";
 import { createSnapshotStore } from "../src/data/snapshot-store.js";
 
-const directory = new URL("../static/snapshot/", import.meta.url);
+const directory = process.env.SNAPSHOT_DIR ? pathToFileURL(resolve(process.env.SNAPSHOT_DIR) + "/") : new URL("../static/snapshot/", import.meta.url);
 const manifest = JSON.parse(await readFile(new URL("manifest.json", directory), "utf8"));
 const requests = [];
 let bytes = 0;

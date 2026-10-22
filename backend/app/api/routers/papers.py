@@ -39,12 +39,15 @@ def list_papers(
     )
     directions = directions_for(db, [p.id for p in items])
     authors = authors_for(db, [p.id for p in items])
-    return {
+    result = {
         "total": total,
         "page": page,
         "size": size,
         "items": [paper_card(p, directions, authors) for p in items],
     }
+    from app.services.accepted_publications import attach_accepted_references
+
+    return attach_accepted_references(db, result, '', filters)
 
 
 @router.post("", status_code=201)

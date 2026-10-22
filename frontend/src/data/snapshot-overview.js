@@ -1,5 +1,7 @@
 import { publicationSortKey, safeExternalUrl } from "../lib/presentation.js";
 import { readerError } from "./snapshot-engine.js";
+import { createConferenceScope } from './conference-scope.js';
+import { validateAcceptedReferences } from './accepted-publications.js';
 
 const invalid = () => readerError("静态快照首页摘要校验失败，请重新导出", 503, "INVALID_SNAPSHOT");
 const count = (value) => Number.isSafeInteger(value) && value >= 0;
@@ -16,7 +18,7 @@ function check(condition) { if (!condition) throw invalid(); }
 function unique(values) { return new Set(values).size === values.length; }
 
 export function createOverview({ manifest, catalog }) {
-  keys(catalog, ["venues", "directions", "logs", "last_crawl", ...(Object.hasOwn(catalog, "overview") ? ["overview"] : []), ...(Object.hasOwn(catalog, "reader") ? ["reader"] : [])]);
+  keys(catalog, ["venues", "directions", "logs", "last_crawl", ...(Object.hasOwn(catalog, "overview") ? ["overview"] : []), ...(Object.hasOwn(catalog, "reader") ? ["reader"] : []), ...(Object.hasOwn(catalog, 'conference_associations') ? ['conference_associations'] : []), ...(Object.hasOwn(catalog, 'accepted_papers') ? ['accepted_papers'] : [])]);
   check(Array.isArray(catalog.venues) && Array.isArray(catalog.directions) && Array.isArray(catalog.logs));
   const venues = new Map(), directions = new Map();
   for (const venue of catalog.venues) {
@@ -30,6 +32,8 @@ export function createOverview({ manifest, catalog }) {
     directions.set(direction.code, direction);
   }
   check(catalog.logs.length <= 100);
+  const conferenceScope = createConferenceScope(catalog);
+  validateAcceptedReferences(catalog.accepted_papers || [], catalog.venues);
   for (const log of catalog.logs) keys(log, logKeys);
   if (catalog.last_crawl !== null) keys(catalog.last_crawl, [...logKeys.filter((key) => key !== "task_type"), "failed_units"]);
   if (!Object.hasOwn(catalog, "overview")) return null;
@@ -123,14 +127,14 @@ export function createOverview({ manifest, catalog }) {
     if (values.some(([key]) => !["level", "type"].includes(key))) return null;
     return scopes.get(`${params.level || ""}:${params.type || ""}`) || null;
   }
-  function dashboard(scope) { return { ...scope.dashboard, generated_at: manifest.generated_at, last_crawl: catalog.last_crawl }; }
+  function dashboard(scope) { return { ...scope.dashboard, venues: conferenceScope.decorate(scope.dashboard.venues), generated_at: manifest.generated_at, last_crawl: catalog.last_crawl }; }
   return {
     supports: (method, params) => ["directions", "stats", "crawlLogs", "crawlStatus"].includes(method) || ["dashboard", "latest", "venues", "venueTopics"].includes(method) && Boolean(select(params)),
     dashboard: (params) => dashboard(select(params)),
     latest: (params) => { const scope = select(params); return { total: scope.dashboard.total, page: 1, size: 5, items: scope.latest }; },
     directions: () => ({ items: scopes.get(":").dashboard.directions.filter((d) => d.enabled) }),
     venueTopics: (params) => ({ items: Object.fromEntries(select(params).dashboard.venues.map(v => [v.abbr, venueTopics[v.abbr] || []])) }),
-    venues: (params) => ({ items: select(params).dashboard.venues }),
+    venues: (params) => ({ items: conferenceScope.decorate(select(params).dashboard.venues) }),
     stats: () => { const result = dashboard(scopes.get(":")); return { ...result, by_direction: Object.fromEntries(result.directions.map((d) => [d.code, d.paper_count])), by_year: Object.fromEntries(result.annual.map((y) => [y.year, y.total])), pdf_archived: 0, last_crawl_at: catalog.last_crawl?.started_at }; },
     crawlStatus: () => ({ running: false, read_only: true, schedule: null, mode: "snapshot", generated_at: manifest.generated_at, revision: manifest.revision }),
     crawlLogs: (page = 1) => { if (!Number.isSafeInteger(Number(page)) || page < 1) throw readerError("page 必须大于零"); return { total: catalog.logs.length, page: Number(page), size: 10, items: catalog.logs.slice((page - 1) * 10, page * 10) }; },

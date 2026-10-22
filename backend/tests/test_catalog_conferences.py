@@ -54,6 +54,34 @@ def test_ccf_workshop_itself_is_allowed_but_not_satellite():
     assert conference_year(row,v) is None
 
 
+def test_nossdav_edition_wording_uses_explicit_event_year():
+    target = venue('NOSSDAV', 'International Workshop on Network and Operating System Support for Digital Audio and Video')
+    row = article(
+        'Proceedings of the 35th edition of the Workshop on Network and Operating System Support for Digital Audio and Video',
+        "MMSys '25",
+    )
+    row['event']['name'] = "MMSys '25: ACM Multimedia Systems Conference 2025"
+    row['published'] = {'date-parts': [[2026]]}
+    assert conference_year(row, target) == 2025
+    assert identify_catalog_conference(row, {'NOSSDAV': target}) is target
+    row['event'] = {}
+    assert conference_year(row, target) is None
+
+
+@pytest.mark.parametrize('change', ['Companion', 'Posters and Demos', 'Other Conference', 'conflicting_year'])
+def test_nossdav_edition_alias_keeps_source_track_and_year_guards(change):
+    target = venue('NOSSDAV', 'International Workshop on Network and Operating System Support for Digital Audio and Video')
+    row = article(
+        'Proceedings of the 35th edition of the Workshop on Network and Operating System Support for Digital Audio and Video',
+        'MMSys 2025',
+    )
+    if change == 'conflicting_year':
+        row['event']['start'] = {'date-parts': [[2026]]}
+    else:
+        row['container-title'][0] += ' ' + change
+    assert conference_year(row, target) is None
+
+
 @pytest.mark.asyncio
 async def test_discovery_ignores_unrelated_results_and_tries_aliases():
     import httpx
@@ -74,8 +102,8 @@ async def test_discovery_ignores_unrelated_results_and_tries_aliases():
             pass
     containers, count = await discover_containers(Client(), v, 2024, Limiter())
     assert 'isbn:9781450399999' in containers
-    assert [q['query.container-title'] for q in queries] == [v.name, 'CHI', 'chi']
-    assert count == 3
+    assert [q['query.container-title'] for q in queries] == [v.name + ' 2024', 'CHI 2024', v.name, 'CHI', 'chi']
+    assert count == 5
     assert all('from-pub-date:2023-01-01,until-pub-date:2025-12-31' in q['filter'] for q in queries)
 
 
@@ -97,6 +125,22 @@ async def test_discovery_rejects_other_years_and_companion_containers():
             pass
     containers, _ = await discover_containers(Client(), v, 2024, Limiter())
     assert containers == {}
+
+
+@pytest.mark.parametrize('abbr,name,container', [
+    ('SenSys', 'ACM Conference on Embedded Networked Sensor Systems',
+     'Proceedings of the 2026 ACM/IEEE International Conference on Embedded Artificial Intelligence and Sensing Systems'),
+    ('DAC', 'Design Automation Conference',
+     '2026 63rd ACM/IEEE The Chips to Systems Conference (DAC)'),
+])
+def test_official_series_renames_preserve_main_track_and_event_checks(abbr, name, container):
+    v = venue(abbr, name)
+    row = article(container, abbr + ' 2026')
+    assert conference_year(row, v) == 2026
+    for suffix in (' - Posters and Demos', ' - Adjunct', ' - Workshops'):
+        assert conference_year(article(container + suffix, abbr + ' 2026'), v) is None
+    row['event'] = {'acronym': abbr + ' 2025'}
+    assert conference_year(row, v) is None
 
 
 @pytest.mark.parametrize('value', [object(), SimpleNamespace(type='conf'), SimpleNamespace(type='conf', ccf_level='A')])

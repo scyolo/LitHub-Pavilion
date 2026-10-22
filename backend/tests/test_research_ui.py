@@ -20,7 +20,7 @@ def test_real_abstract_is_preserved():
     assert abstract_text("提出一种图像分割方法。") == "提出一种图像分割方法。"
 
 
-def test_current_topics_reindex_preserves_manual_labels_and_is_idempotent(db, sample_paper, sample_direction):
+def test_current_topics_reindex_preserves_manual_labels_and_is_idempotent(db, sample_paper, sample_direction, seed_direction_codes):
     from app.config import settings
     from app.models import Direction, PaperDirection
     from app.services.topic_index import reindex_topics
@@ -37,4 +37,4 @@ def test_current_topics_reindex_preserves_manual_labels_and_is_idempotent(db, sa
     second = reindex_topics(db, settings.seeds_dir)
     assert sum(second["added_labels"].values()) == 0
     assert sum(second["removed_labels"].values()) == 0
-    assert db.query(Direction).count() == 16
+    assert {code for code, in db.query(Direction.code)} == seed_direction_codes

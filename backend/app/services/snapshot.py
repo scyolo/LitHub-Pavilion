@@ -100,7 +100,14 @@ def _public_logs(db):
 
 def _catalog(db):
     logs, last_crawl = _public_logs(db)
+    from app.services.conference_scope import public_conference_associations
+    from app.services.accepted_publications import accepted_references
+
+    associations = public_conference_associations(db)
+    accepted = accepted_references(db)
     return {
+        **({'conference_associations': associations} if associations else {}),
+        **({'accepted_papers': accepted} if accepted else {}),
         "venues": [
             {"id": venue.id, "abbr": venue.abbr, "name": venue.name, "type": venue.type,
              "level": venue.ccf_level, "ccf_area": venue.ccf_area, "active": venue.active}
@@ -326,7 +333,7 @@ def _validate_contents(directory: Path, manifest: dict) -> None:
     if manifest_revision(manifest) != manifest["revision"]:
         raise ValueError("Snapshot revision does not match its contents")
     catalog, total_bytes = _load_entry(directory, manifest["catalog"], "catalog")
-    _check_keys(catalog, {"venues", "directions", "logs", "last_crawl"} | ({"overview"} if "overview" in catalog else set()) | ({"reader"} if "reader" in catalog else set()), "catalog")
+    _check_keys(catalog, {"venues", "directions", "logs", "last_crawl"} | ({"overview"} if "overview" in catalog else set()) | ({"reader"} if "reader" in catalog else set()) | ({'conference_associations'} if 'conference_associations' in catalog else set()) | ({'accepted_papers'} if 'accepted_papers' in catalog else set()), "catalog")
     if not all(isinstance(catalog[name], list) for name in ("venues", "directions", "logs")):
         raise ValueError("Invalid snapshot catalog lists")
     venues = {}
@@ -389,6 +396,14 @@ def _validate_contents(directory: Path, manifest: dict) -> None:
         raise ValueError("Public overview does not match the complete snapshot")
     if len(ids) != manifest["paper_count"]:
         raise ValueError("Snapshot paper count does not match")
+    if 'conference_associations' in catalog:
+        from app.services.conference_scope import validate_conference_associations
+
+        validate_conference_associations(catalog['conference_associations'], venues, ids)
+    if 'accepted_papers' in catalog:
+        from app.services.accepted_publications import validate_accepted_references
+
+        validate_accepted_references(catalog['accepted_papers'], venues)
     if "reader" in catalog:
         from app.services.snapshot_reader import build_reader_assets, load_reader_descriptor, reader_entries
         if catalog["reader"].get("version") not in (1, 2, 3, 4, 5, 6):

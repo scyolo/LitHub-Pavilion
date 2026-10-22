@@ -4,10 +4,11 @@ import { api } from "../api.js";
 import { shouldRetryRead } from "../data/retry-policy.js";
 import { useFilters } from "../hooks/useFilters.js";
 import { useDashboard } from "../hooks/useResearchData.js";
-import { filteredParams, number, scopeParams, topic } from "../lib/presentation.js";
+import { filteredParams, number, prioritizeDirections, scopeParams, topic } from "../lib/presentation.js";
 import Icon from "../components/Icon.jsx";
 import { searchVenues } from "../lib/search.js";
 import PaperCard from "../components/PaperCard.jsx";
+import AcceptedPapers from '../components/AcceptedPapers.jsx';
 import ScopeTabs from "../components/ScopeTabs.jsx";
 import SearchInput from "../components/SearchInput.jsx";
 import { EmptyState, ErrorState, LoadingState } from "../components/States.jsx";
@@ -31,18 +32,21 @@ export default function PaperList() {
     retry: shouldRetryRead,
   });
   const data = result.data;
+  const accepted = data?.accepted_items || [];
   const pages = Math.max(1, Math.ceil((data?.total || 0) / (data?.size || filters.size)));
   const selectedDirections = filters.direction.split(",").filter(Boolean);
-  const directions = context?.directions || [];
+  const directions = prioritizeDirections(context?.directions || []);
   // Filter the complete catalog, but do not mount hundreds of off-screen
   // buttons on every sidebar navigation (especially in the mobile drawer).
   const venues = searchVenues(context?.venues || [], venueSearch);
   const visibleVenues = venues.slice(0, venueLimit);
   const selectedVenue = venues.find(venue => venue.abbr === filters.venue);
+  const sourceInfo = context?.venues?.find(venue => venue.abbr === filters.venue);
   if (selectedVenue && !visibleVenues.includes(selectedVenue)) visibleVenues.push(selectedVenue);
   const active = [
     ...selectedDirections.map((code) => ({ label: topic(code, directions.find((d) => d.code === code)?.name).name, remove: () => toggleDirection(code) })),
     ...(filters.venue ? [{ label: filters.venue, remove: () => update({ venue: "" }) }] : []),
+    ...(filters.venue && filters.include_associated ? [{label: '含期刊发表关联', remove: () => update({include_associated: ''})}] : []),
     ...(filters.year ? [{ label: `${filters.year} 年`, remove: () => update({ year: "" }) }] : []),
     ...(filters.access ? [{ label: filters.access === "oa" ? "有开放版本" : "待发现开放版本", remove: () => update({ access: "" }) }] : []),
   ];
@@ -50,8 +54,8 @@ export default function PaperList() {
   return <div className="explore-page page-enter">
     <div className="page-heading"><div><div className="eyebrow"><span className="tiny-line" />PAPER EXPLORER</div><h1>让下一篇好论文，<span>被你发现。</span></h1><p>按方向深入，按来源追踪。所有论文都保留通往原文的链接。</p></div><span className="page-heading-tag"><Icon name="book" size={15} />CCF A / B 论文库</span></div>
     <ScopeTabs filters={filters} onChange={update} />
-    <div className="explorer-searchbar"><SearchInput value={filters.q} onCommit={(q) => update({ q })} label="搜索论文" descriptionId="paper-search-help" placeholder="输入完整标题或关键词片段，例如 specula decod…" /><label className="search-match"><span className="sr-only">检索方式</span><select aria-label="检索方式" value={filters.match} onChange={(event) => update({ match: event.target.value })}><option value="auto">智能匹配</option><option value="exact">完整标题</option><option value="fuzzy">模糊匹配</option><option value="keywords">关键词 AND</option></select></label><button className="button secondary filter-toggle" onClick={() => setFiltersOpen(!filtersOpen)} aria-expanded={filtersOpen}><Icon name="sliders" size={17} />筛选{active.length > 0 ? ` · ${active.length}` : ""}</button></div>
-    <p className="search-help paper-search-help" id="paper-search-help"><Icon name="sparkles" size={13} />不区分大小写 · 支持英文词首片段和轻微拼写错误 · 智能匹配在无结果时自动尝试模糊查询</p>
+    <div className="explorer-searchbar"><SearchInput value={filters.q} onCommit={(q) => update({ q })} label="搜索论文" descriptionId="paper-search-help" placeholder="输入标题、关键词或方向，如投机解码、EAGLE3…" /><label className="search-match"><span className="sr-only">检索方式</span><select aria-label="检索方式" value={filters.match} onChange={(event) => update({ match: event.target.value })}><option value="auto">智能匹配</option><option value="exact">完整标题</option><option value="fuzzy">模糊匹配</option><option value="keywords">关键词 AND</option></select></label><button className="button secondary filter-toggle" onClick={() => setFiltersOpen(!filtersOpen)} aria-expanded={filtersOpen}><Icon name="sliders" size={17} />筛选{active.length > 0 ? ` · ${active.length}` : ""}</button></div>
+    <p className="search-help paper-search-help" id="paper-search-help"><Icon name="sparkles" size={13} />不区分大小写 · 支持中文方向和常用简称 · 英文可用词首片段或轻微拼写错误</p>
     {contextQuery.error && <ErrorState message="筛选选项暂时无法加载，已显示的论文仍可浏览。" onRetry={() => contextQuery.refetch()} />}
     <div className="explorer-layout">
       <aside className={`filters-panel panel ${filtersOpen ? "expanded" : ""}`} aria-label="论文筛选器">
@@ -61,18 +65,22 @@ export default function PaperList() {
           return <label className="filter-checkbox" key={d.code}><input type="checkbox" checked={selectedDirections.includes(d.code)} onChange={() => toggleDirection(d.code)} /><span className="topic-dot" style={{ background: t.color }} /><span>{d.name}</span><small>{number(d.paper_count)}</small></label>;
         })}</div><p className="filter-explanation">同维度多选取并集，不同维度取交集。</p></fieldset>
         <div className="filter-group"><label htmlFor="year-filter">论文归属年份</label><select id="year-filter" value={filters.year} onChange={(e) => update({ year: e.target.value })}><option value="">全部年份</option>{[...(context?.annual || [])].reverse().map((d) => <option key={d.year} value={d.year}>{d.year} · {number(d.total)} 篇</option>)}</select></div>
-        <div className="filter-group"><label htmlFor="venue-search">会议 / 期刊</label><div className="small-search"><Icon name="search" size={14} /><input id="venue-search" value={venueSearch} onChange={(e) => { setVenueSearch(e.target.value); setVenueLimit(40); }} placeholder="模糊查找来源，忽略大小写" /></div><div className="venue-filter-options"><button className={!filters.venue ? "selected" : ""} onClick={() => update({ venue: "" })}>全部来源<span>{context?.configured_venues ?? "—"}</span></button>{visibleVenues.map((v) => <button key={v.abbr} title={v.name} className={filters.venue === v.abbr ? "selected" : ""} onClick={() => update({ venue: v.abbr })}>{v.abbr}<span>{number(v.paper_count)}</span></button>)}{venues.length === 0 && <p className="muted small">没有匹配的来源</p>}</div>{visibleVenues.length < venues.length && <button className="text-button" onClick={() => setVenueLimit(value => value + 40)}>继续显示来源（{visibleVenues.length} / {venues.length}）</button>}</div>
+        <div className="filter-group"><label htmlFor="venue-search">会议 / 期刊</label><div className="small-search"><Icon name="search" size={14} /><input id="venue-search" value={venueSearch} onChange={(e) => { setVenueSearch(e.target.value); setVenueLimit(40); }} placeholder="模糊查找来源，忽略大小写" /></div><div className="venue-filter-options"><button className={!filters.venue ? "selected" : ""} onClick={() => update({ venue: "" })}>全部来源<span>{context?.configured_venues ?? "—"}</span></button>{visibleVenues.map((v) => <button key={v.abbr} title={v.name + (v.associated_paper_count ? ` · 含 ${v.associated_paper_count} 篇官方期刊关联` : '')} className={filters.venue === v.abbr ? "selected" : ""} onClick={() => update({ venue: v.abbr, include_associated: v.associated_paper_count ? '1' : '' })}>{v.abbr}<span>{number(v.paper_count + (v.associated_paper_count || 0))}</span></button>)}{venues.length === 0 && <p className="muted small">没有匹配的来源</p>}</div>{visibleVenues.length < venues.length && <button className="text-button" onClick={() => setVenueLimit(value => value + 40)}>继续显示来源（{visibleVenues.length} / {venues.length}）</button>}{sourceInfo?.associated_paper_count > 0 && <label className="filter-radio"><input type="checkbox" aria-label="包含官方期刊发表关联" checked={Boolean(filters.include_associated)} onChange={event => update({include_associated: event.target.checked ? '1' : ''})}/><span>包含官方期刊发表关联</span></label>}</div>
         <fieldset className="filter-group"><legend>全文访问</legend>{[{ value: "", label: "全部论文" }, { value: "oa", label: "有开放版本链接" }, { value: "official", label: "待发现开放版本" }].map((item) => <label key={item.value} className="filter-radio"><input type="radio" name="access" value={item.value} checked={filters.access === item.value} onChange={() => update({ access: item.value })} />{item.label}</label>)}</fieldset>
         <div className="filter-note"><Icon name="link" size={15} /><p>直接跳转原始来源<br />本站不下载 PDF</p></div>
       </aside>
       <section className="explorer-results" aria-label="论文结果" aria-busy={result.isFetching}>
+        {filters.venue && filters.include_associated && <p className="search-explanation" role="status">已包含 {filters.venue} 的官方期刊发表关联。关联论文按期刊发表年份筛选，卡片展示正式出版来源。</p>}
+        {isSearch && data?.query_topic && <p className="search-explanation" role="status">按研究方向“{data.query_topic.name}”检索，已应用当前年份、来源等筛选。</p>}
+        {isSearch && data?.query_rewrite && <p className="search-explanation" role="status">按常见写法“{data.query_rewrite}”检索。</p>}
         {isSearch && data?.match_mode === "fuzzy" && <p className="search-explanation" role="status">正在显示近似词项匹配：容忍一次拼写编辑／相邻字母颠倒，并补全各个英文词首片段（至少 3 个字符）。需要逐字核对时请选择“完整标题”。{data.query_expansions?.length > 0 && <span> 展开词：{data.query_expansions.map(row => `${row.token} → ${row.alternatives.join(" / ")}`).join("；")}</span>}</p>}
         {isSearch && !result.isFetching && !result.error && data?.total === 0 && active.length > 0 && <button className="button secondary" onClick={() => update({ direction: "", venue: "", year: "", access: "", level: "", type: "" })}>保留关键词，在全部已核验论文中查找</button>}
         {active.length > 0 && <div className="active-filters">{active.map((item) => <button key={item.label} onClick={item.remove} aria-label={`移除筛选：${item.label}`}>{item.label}<Icon name="close" size={12} /></button>)}</div>}
-        <div className="results-toolbar"><div><strong>{result.error ? "查询未完成" : result.isPending ? "正在查找论文…" : `${number(data?.total)} 篇论文`}</strong><span>{isSearch ? `匹配 “${filters.q}”` : "探索已收录研究"}</span>{result.isFetching && !result.isPending && <Icon name="refresh" className="spin" size={13} />}</div><div className="results-options"><label className="sr-only" htmlFor="sort-papers">论文排序</label><select id="sort-papers" value={requestParams.sort} onChange={(e) => update({ sort: e.target.value })}>{isSearch && <option value="relevance">相关性优先</option>}<option value="publication_desc">发表时间从新到旧</option><option value="created_desc">最近收录</option><option value="year_desc">年份从新到旧</option><option value="citation_desc">引用数优先</option></select><div className="view-switch" role="group" aria-label="列表显示密度"><button aria-label="舒适视图" aria-pressed={!compactMode} className={!compactMode ? "active" : ""} onClick={() => setCompactMode(false)}><Icon name="grid" size={16} /></button><button aria-label="紧凑视图" aria-pressed={compactMode} className={compactMode ? "active" : ""} onClick={() => setCompactMode(true)}><Icon name="list" size={17} /></button></div></div></div>
-        {result.error ? <ErrorState message={result.error.message} onRetry={() => result.refetch()} /> : result.isPending ? <LoadingState rows={4} /> : data?.items.length ? <div className={`paper-stack ${result.isPlaceholderData ? "refreshing" : ""}`}>{data.items.map((p) => <PaperCard key={p.id} paper={p} compactMode={compactMode} />)}</div> : <EmptyState action={<button className="button secondary" onClick={clear}>清除所有筛选</button>} />}
+        <div className="results-toolbar"><div><strong>{result.error ? "查询未完成" : result.isPending ? "正在查找论文…" : `${number(data?.total)} 篇论文`}</strong><span>{isSearch ? `匹配 “${filters.q}”` : "探索已收录研究"}</span>{result.isFetching && !result.isPending && <Icon name="refresh" className="spin" size={13} />}</div><div className="results-options"><label className="sr-only" htmlFor="sort-papers">论文排序</label><select id="sort-papers" value={data?.query_topic && requestParams.sort === "relevance" ? "publication_desc" : requestParams.sort} onChange={(e) => update({ sort: e.target.value })}>{isSearch && !data?.query_topic && <option value="relevance">相关性优先</option>}<option value="publication_desc">发表时间从新到旧</option><option value="created_desc">最近收录</option><option value="year_desc">年份从新到旧</option><option value="citation_desc">引用数优先</option></select><div className="view-switch" role="group" aria-label="列表显示密度"><button aria-label="舒适视图" aria-pressed={!compactMode} className={!compactMode ? "active" : ""} onClick={() => setCompactMode(false)}><Icon name="grid" size={16} /></button><button aria-label="紧凑视图" aria-pressed={compactMode} className={compactMode ? "active" : ""} onClick={() => setCompactMode(true)}><Icon name="list" size={17} /></button></div></div></div>
+        {!result.error && !result.isPending && <AcceptedPapers items={accepted}/>}
+        {result.error ? <ErrorState message={result.error.message} onRetry={() => result.refetch()} /> : result.isPending ? <LoadingState rows={4} /> : data?.items.length ? <div className={`paper-stack ${result.isPlaceholderData ? "refreshing" : ""}`}>{data.items.map((p) => <PaperCard key={p.id} paper={p} compactMode={compactMode} />)}</div> : accepted.length ? <p className="muted small">本次没有匹配的正式发表论文；上方录用记录不计入正式论文总数。</p> : <EmptyState action={<button className="button secondary" onClick={clear}>清除所有筛选</button>} />}
         {!result.error && data && <nav className="pagination" aria-label="论文分页"><span>第 {filters.page} / {number(pages)} 页 · 共 {number(data.total)} 篇</span><div><label className="sr-only" htmlFor="page-size">每页条数</label><select id="page-size" value={filters.size} onChange={(e) => update({ size: e.target.value })}><option value="10">10 条 / 页</option><option value="20">20 条 / 页</option><option value="50">50 条 / 页</option></select><button className="icon-button" aria-label="上一页" disabled={filters.page <= 1 || result.isPlaceholderData} onClick={() => update({ page: filters.page - 1 }, { resetPage: false })}><Icon name="back" size={17} /></button><span className="current-page">{filters.page}</span><button className="icon-button" aria-label="下一页" disabled={filters.page >= pages || result.isPlaceholderData} onClick={() => update({ page: filters.page + 1 }, { resetPage: false })}><Icon name="arrow" size={17} /></button></div></nav>}
-        <p className="results-note"><Icon name="info" size={14} />缺少完整发布日期时按归属年份排序，同年仅有年份的记录排在具体日期之后。支持英文检索；方向标签为规则归类，发表归属待核验的记录会单独提示。</p>
+        <p className="results-note"><Icon name="info" size={14} />缺少完整发布日期时按归属年份排序，同年仅有年份的记录排在具体日期之后。支持英文关键词、完整标题和常用中文主题；方向标签为规则归类，发表归属待核验的记录会单独提示。</p>
       </section>
     </div>
   </div>;

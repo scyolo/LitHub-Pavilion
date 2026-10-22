@@ -1,5 +1,6 @@
 code,name,min_score,enabled
 llm,大语言模型,2.0,1
+inference,推理优化,2.0,1
 specdec,投机解码,2.0,1
 agent,智能体,2.0,1
 cv,计算机视觉,2.0,1

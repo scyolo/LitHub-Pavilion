@@ -175,6 +175,16 @@ def parse_pmlr(text, year, url, venue):
         if parts.scheme != "https" or parts.netloc != "proceedings.mlr.press" or parts.query or parts.fragment or not slug:
             raise ValueError("PMLR link points outside the verified volume")
         raw = _raw(landing, block["title"], block["authors"].split(','), year)
+        aliases = list(dict.fromkeys(
+            html.unescape(href).strip()
+            for href, label in block["links"]
+            if href and label.casefold() == 'openreview'
+            and re.fullmatch(r'https://openreview\.net/forum\?id=[A-Za-z0-9_-]+', html.unescape(href).strip())
+        ))
+        if len(aliases) > 1:
+            raise ValueError("PMLR paper has conflicting OpenReview identities")
+        if aliases:
+            raw.extra['publisher_aliases'] = aliases
         for href, _ in block["links"]:
             pdf = _pmlr_pdf_link(href, url, volume[1], slug[1])
             if pdf:

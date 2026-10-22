@@ -13,6 +13,8 @@ import { createLazyReader } from "./snapshot-reader.js";
 const fixture = snapshotFixture();
 fixture.papers.push({ ...fixture.papers[0], id: 57, title: "Unicode α and 𝔹 mathematics " + "retrieval ".repeat(35) });
 fixture.papers.push({ ...fixture.papers[1], id: 69, title: "Other title", abstract: "Onlyabstract matching retrieval" });
+fixture.papers[0].abstract += " FlashAttention-2";
+fixture.papers[1].abstract += " FlashAttention2";
 fixture.manifest.paper_count = fixture.papers.length;
 let directory, data;
 
@@ -44,6 +46,55 @@ function reader() {
   const download = vi.fn(async (path) => ({ data: JSON.parse(gunzipSync(readFileSync(join(directory, path)))) }));
   return { download, reader: createLazyReader({ manifest: data.manifest, catalog: { ...fixture.catalog, reader: data.reader }, download }) };
 }
+
+it('retains journal rows through range pruning for an opted-in conference source', async () => {
+  const catalog = {...fixture.catalog, conference_associations: {AC: {'2025': [23], '2026': [23]}}};
+  const full = createSnapshotEngine({...fixture, catalog});
+  for (const descriptor of [data.reader, data.paged]) {
+    const download = vi.fn(async path => ({data: JSON.parse(gunzipSync(readFileSync(join(directory, path))))}));
+    const current = createLazyReader({manifest: data.manifest, catalog: {...catalog, reader: descriptor}, download});
+    for (const params of [
+      {q: 'Agents in planning', match: 'exact', venue: 'AC', level: 'A', type: 'conf', year: 2024, include_associated: '1'},
+      {q: 'model', venue: 'AC', type: 'conf', include_associated: true, direction: 'agent'},
+      {q: 'Agents in planning', venue: 'AC', include_associated: true, year: 2025},
+      {q: 'Agents in planning', venue: 'AC'},
+    ]) {
+      const actual = await current.call('search', params), expected = full.search(params);
+      expect(actual.total).toBe(expected.total);
+      expect(actual.items.map(p => p.id)).toEqual(expected.items.map(p => p.id));
+    }
+    expect((await current.call('papers', {venue: 'AC', level: 'A', type: 'conf', year: 2024, include_associated: '1'})).items.map(p => p.id)).toEqual([23]);
+  }
+});
+
+it('prefers the known method spelling, retaining literal mode and scoped fallback', async () => {
+  for (const create of [reader, pagedReader]) {
+    const current=create();
+    const canonical=await current.reader.call('search',{q:'FlashAttention2'});
+    expect(canonical.items.map(p=>p.id)).toEqual([11]);
+    expect(canonical.query_rewrite).toBe('FlashAttention 2');
+    const expected=createSnapshotEngine(fixture).search({q:'FlashAttention2'});
+    expect(canonical.total).toBe(expected.total);
+    expect(canonical.items.map(({id,score})=>({id,score}))).toEqual(expected.items.map(({id,score})=>({id,score})));
+    const literal=await current.reader.call('search',{q:'FlashAttention2',match:'keywords'});
+    expect(literal.items.map(p=>p.id)).toEqual([23]);
+    const scoped=await current.reader.call('search',{q:'FlashAttention2',year:2024});
+    expect(scoped.items.map(p=>p.id)).toEqual([23]);
+    expect(scoped.query_rewrite).toBeUndefined();
+  }
+});
+
+it("resolves Chinese topics consistently without loading text postings in the paged reader", async () => {
+  for (const create of [reader, pagedReader]) {
+    const current=create();
+    const result=await current.reader.call('search',{q:'大模型',direction:'agent',size:1});
+    const expected=fixture.papers.filter(p=>p.directions.includes('llm')&&p.directions.includes('agent'));
+    expect(result.total).toBe(expected.length);
+    expect(result.match_mode).toBe('topic');
+    expect(result.items).toHaveLength(1);
+    if(create===pagedReader)expect(current.download.mock.calls.some(([path])=>path.startsWith('search-')||path.startsWith('vocabulary-'))).toBe(false);
+  }
+});
 
 it("matches the full engine for AND, stemming, abstract, exact title, filters and pagination without details", async () => {
   const current = reader();

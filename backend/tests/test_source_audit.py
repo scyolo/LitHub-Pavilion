@@ -40,6 +40,9 @@ def test_export_links_shared_papers_without_inflating_snapshot_total(
     assert linked["papers"][0]["id"] == sample_paper.id
     assert linked["papers"][0]["canonical_venue"] == "NeurIPS"
     assert db.query(Venue).count() == 2
+    assert index["zero_source_year_units"] == 6
+    assert index["zero_year_status_counts"] == {"unverified": 6}
+    assert "2024" not in row["year_checks"]
 
 
 def test_legacy_papers_are_preserved_but_not_counted_in_2023_2026_coverage(

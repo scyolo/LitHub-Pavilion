@@ -1,6 +1,22 @@
 {
-  "verified_on": "2026-10-02",
+  "verified_on": "2026-10-16",
   "sources": [
+    {
+      "venue": "JASA",
+      "catalog_name": "The Journal of the Acoustical Society of America",
+      "catalog_issn": "0001-4966",
+      "records": [
+        {
+          "issn": "1520-8524",
+          "title": "The Journal of the Acoustical Society of America",
+          "year_from": 2023,
+          "year_to": 2026,
+          "registry": "https://api.crossref.org/journals/0001-4966",
+          "verified_on": "2026-10-16",
+          "note": "The configured print-ISSN registry explicitly lists this electronic ISSN; newer article deposits carry only the electronic ISSN."
+        }
+      ]
+    },
     {
       "venue": "TON",
       "catalog_name": "IEEE Transactions on Networking",
@@ -33,6 +49,16 @@
           "year_from": 2023,
           "year_to": 2026,
           "registry": "https://api.crossref.org/journals/1526-5528"
+        },
+        {
+          "issn": "2326-3245",
+          "title": "INFORMS Journal on Computing",
+          "year_from": 2023,
+          "year_to": 2026,
+          "registry": "https://api.crossref.org/journals/2326-3245",
+          "catalog_registry": "https://api.crossref.org/journals/0899-1499",
+          "verified_on": "2026-10-16",
+          "note": "Both registry endpoints list both ISSNs and the same exact journal title."
         }
       ]
     },
@@ -61,6 +87,2047 @@
           "year_from": 2025,
           "year_to": 2026,
           "registry": "https://api.crossref.org/journals/2998-4165"
+        },
+        {
+          "issn": "1557-9964",
+          "title": "IEEE/ACM Transactions on Computational Biology and Bioinformatics",
+          "year_from": 2023,
+          "year_to": 2026,
+          "registry": "https://api.crossref.org/journals/1557-9964",
+          "catalog_registry": "https://api.crossref.org/journals/1545-5963",
+          "verified_on": "2026-10-16",
+          "note": "Both registry endpoints list both ISSNs and the same exact journal title."
+        },
+        {
+          "issn": "2374-0043",
+          "title": "IEEE/ACM Transactions on Computational Biology and Bioinformatics",
+          "year_from": 2023,
+          "year_to": 2026,
+          "registry": "https://api.crossref.org/journals/2374-0043",
+          "catalog_registry": "https://api.crossref.org/journals/1545-5963",
+          "verified_on": "2026-10-16",
+          "note": "Both registry endpoints list both ISSNs and the same exact journal title."
+        }
+      ]
+    },
+    {
+      "venue": "ASE Journal",
+      "catalog_name": "Automated Software Engineering",
+      "catalog_issn": "0928-8910",
+      "records": [
+        {
+          "issn": "1573-7535",
+          "title": "Automated Software Engineering",
+          "year_from": 2023,
+          "year_to": 2026,
+          "registry": "https://api.crossref.org/journals/1573-7535",
+          "catalog_registry": "https://api.crossref.org/journals/0928-8910",
+          "verified_on": "2026-10-16",
+          "note": "Both registry endpoints list both ISSNs and the same exact journal title."
+        }
+      ]
+    },
+    {
+      "venue": "Algorithmica",
+      "catalog_name": "Algorithmica",
+      "catalog_issn": "0178-4617",
+      "records": [
+        {
+          "issn": "1432-0541",
+          "title": "Algorithmica",
+          "year_from": 2023,
+          "year_to": 2026,
+          "registry": "https://api.crossref.org/journals/1432-0541",
+          "catalog_registry": "https://api.crossref.org/journals/0178-4617",
+          "verified_on": "2026-10-16",
+          "note": "Both registry endpoints list both ISSNs and the same exact journal title."
+        }
+      ]
+    },
+    {
+      "venue": "Bioinformatics",
+      "catalog_name": "Bioinformatics",
+      "catalog_issn": "1367-4803",
+      "records": [
+        {
+          "issn": "1367-4811",
+          "title": "Bioinformatics",
+          "year_from": 2023,
+          "year_to": 2026,
+          "registry": "https://api.crossref.org/journals/1367-4811",
+          "catalog_registry": "https://api.crossref.org/journals/1367-4803",
+          "verified_on": "2026-10-16",
+          "note": "Both registry endpoints list both ISSNs and the same exact journal title."
+        },
+        {
+          "issn": "1460-2059",
+          "title": "Bioinformatics",
+          "year_from": 2023,
+          "year_to": 2026,
+          "registry": "https://api.crossref.org/journals/1460-2059",
+          "catalog_registry": "https://api.crossref.org/journals/1367-4803",
+          "verified_on": "2026-10-16",
+          "note": "Both registry endpoints list both ISSNs and the same exact journal title."
+        }
+      ]
+    },
+    {
+      "venue": "Briefings in Bioinformatics",
+      "catalog_name": "Briefings in Bioinformatics",
+      "catalog_issn": "1467-5463",
+      "records": [
+        {
+          "issn": "1477-4054",
+          "title": "Briefings in Bioinformatics",
+          "year_from": 2023,
+          "year_to": 2026,
+          "registry": "https://api.crossref.org/journals/1477-4054",
+          "catalog_registry": "https://api.crossref.org/journals/1467-5463",
+          "verified_on": "2026-10-16",
+          "note": "Both registry endpoints list both ISSNs and the same exact journal title."
+        }
+      ]
+    },
+    {
+      "venue": "CC Journal",
+      "catalog_name": "Computational Complexity",
+      "catalog_issn": "1016-3328",
+      "records": [
+        {
+          "issn": "1420-8954",
+          "title": "Computational Complexity",
+          "year_from": 2023,
+          "year_to": 2026,
+          "registry": "https://api.crossref.org/journals/1420-8954",
+          "catalog_registry": "https://api.crossref.org/journals/1016-3328",
+          "verified_on": "2026-10-16",
+          "note": "Both registry endpoints list both ISSNs and the same exact journal title."
+        }
+      ]
+    },
+    {
+      "venue": "CCF TPCI",
+      "catalog_name": "CCF Transactions on Pervasive Computing and Interaction",
+      "catalog_issn": "2524-521X",
+      "records": [
+        {
+          "issn": "2524-5228",
+          "title": "CCF Transactions on Pervasive Computing and Interaction",
+          "year_from": 2023,
+          "year_to": 2026,
+          "registry": "https://api.crossref.org/journals/2524-5228",
+          "catalog_registry": "https://api.crossref.org/journals/2524-521X",
+          "verified_on": "2026-10-16",
+          "note": "Both registry endpoints list both ISSNs and the same exact journal title."
+        }
+      ]
+    },
+    {
+      "venue": "CGF",
+      "catalog_name": "Computer Graphics Forum",
+      "catalog_issn": "0167-7055",
+      "records": [
+        {
+          "issn": "1467-8659",
+          "title": "Computer Graphics Forum",
+          "year_from": 2023,
+          "year_to": 2026,
+          "registry": "https://api.crossref.org/journals/1467-8659",
+          "catalog_registry": "https://api.crossref.org/journals/0167-7055",
+          "verified_on": "2026-10-16",
+          "note": "Both registry endpoints list both ISSNs and the same exact journal title."
+        }
+      ]
+    },
+    {
+      "venue": "CL",
+      "catalog_name": "Computational Linguistics",
+      "catalog_issn": "0891-2017",
+      "records": [
+        {
+          "issn": "1530-9312",
+          "title": "Computational Linguistics",
+          "year_from": 2023,
+          "year_to": 2026,
+          "registry": "https://api.crossref.org/journals/1530-9312",
+          "catalog_registry": "https://api.crossref.org/journals/0891-2017",
+          "verified_on": "2026-10-16",
+          "note": "Both registry endpoints list both ISSNs and the same exact journal title."
+        }
+      ]
+    },
+    {
+      "venue": "CSCW Journal",
+      "catalog_name": "Computer Supported Cooperative Work",
+      "catalog_issn": "0925-9724",
+      "records": [
+        {
+          "issn": "1573-7551",
+          "title": "Computer Supported Cooperative Work (CSCW)",
+          "year_from": 2023,
+          "year_to": 2026,
+          "registry": "https://api.crossref.org/journals/1573-7551",
+          "catalog_registry": "https://api.crossref.org/journals/0925-9724",
+          "verified_on": "2026-10-16",
+          "note": "Both registry endpoints list both ISSNs and the same exact journal title."
+        }
+      ]
+    },
+    {
+      "venue": "CVIU",
+      "catalog_name": "Computer Vision and Image Understanding",
+      "catalog_issn": "1077-3142",
+      "records": [
+        {
+          "issn": "1090-235X",
+          "title": "Computer Vision and Image Understanding",
+          "year_from": 2023,
+          "year_to": 2026,
+          "registry": "https://api.crossref.org/journals/1090-235X",
+          "catalog_registry": "https://api.crossref.org/journals/1077-3142",
+          "verified_on": "2026-10-16",
+          "note": "Both registry endpoints list both ISSNs and the same exact journal title."
+        }
+      ]
+    },
+    {
+      "venue": "CVMJ",
+      "catalog_name": "Computational Visual Media",
+      "catalog_issn": "2096-0433",
+      "records": [
+        {
+          "issn": "2096-0662",
+          "title": "Computational Visual Media",
+          "year_from": 2023,
+          "year_to": 2026,
+          "registry": "https://api.crossref.org/journals/2096-0662",
+          "catalog_registry": "https://api.crossref.org/journals/2096-0433",
+          "verified_on": "2026-10-16",
+          "note": "Both registry endpoints list both ISSNs and the same exact journal title."
+        }
+      ]
+    },
+    {
+      "venue": "DKE",
+      "catalog_name": "Data & Knowledge Engineering",
+      "catalog_issn": "0169-023X",
+      "records": [
+        {
+          "issn": "1872-6933",
+          "title": "Data & Knowledge Engineering",
+          "year_from": 2023,
+          "year_to": 2026,
+          "registry": "https://api.crossref.org/journals/1872-6933",
+          "catalog_registry": "https://api.crossref.org/journals/0169-023X",
+          "verified_on": "2026-10-16",
+          "note": "Both registry endpoints list both ISSNs and the same exact journal title."
+        }
+      ]
+    },
+    {
+      "venue": "DMKD",
+      "catalog_name": "Data Mining and Knowledge Discovery",
+      "catalog_issn": "1384-5810",
+      "records": [
+        {
+          "issn": "1573-756X",
+          "title": "Data Mining and Knowledge Discovery",
+          "year_from": 2023,
+          "year_to": 2026,
+          "registry": "https://api.crossref.org/journals/1573-756X",
+          "catalog_registry": "https://api.crossref.org/journals/1384-5810",
+          "verified_on": "2026-10-16",
+          "note": "Both registry endpoints list both ISSNs and the same exact journal title."
+        }
+      ]
+    },
+    {
+      "venue": "DSE",
+      "catalog_name": "Data Science and Engineering",
+      "catalog_issn": "2364-1185",
+      "records": [
+        {
+          "issn": "2364-1541",
+          "title": "Data Science and Engineering",
+          "year_from": 2023,
+          "year_to": 2026,
+          "registry": "https://api.crossref.org/journals/2364-1541",
+          "catalog_registry": "https://api.crossref.org/journals/2364-1185",
+          "verified_on": "2026-10-16",
+          "note": "Both registry endpoints list both ISSNs and the same exact journal title."
+        }
+      ]
+    },
+    {
+      "venue": "Designs, Codes and Cryptography",
+      "catalog_name": "Designs, Codes and Cryptography",
+      "catalog_issn": "0925-1022",
+      "records": [
+        {
+          "issn": "1573-7586",
+          "title": "Designs Codes and Cryptography",
+          "year_from": 2023,
+          "year_to": 2026,
+          "registry": "https://api.crossref.org/journals/1573-7586",
+          "catalog_registry": "https://api.crossref.org/journals/0925-1022",
+          "verified_on": "2026-10-16",
+          "note": "Both registry endpoints list both ISSNs and the same exact journal title."
+        }
+      ]
+    },
+    {
+      "venue": "EJIS",
+      "catalog_name": "European Journal of Information Systems",
+      "catalog_issn": "0960-085X",
+      "records": [
+        {
+          "issn": "1476-9344",
+          "title": "European Journal of Information Systems",
+          "year_from": 2023,
+          "year_to": 2026,
+          "registry": "https://api.crossref.org/journals/1476-9344",
+          "catalog_registry": "https://api.crossref.org/journals/0960-085X",
+          "verified_on": "2026-10-16",
+          "note": "Both registry endpoints list both ISSNs and the same exact journal title."
+        }
+      ]
+    },
+    {
+      "venue": "ESE",
+      "catalog_name": "Empirical Software Engineering",
+      "catalog_issn": "1382-3256",
+      "records": [
+        {
+          "issn": "1573-7616",
+          "title": "Empirical Software Engineering",
+          "year_from": 2023,
+          "year_to": 2026,
+          "registry": "https://api.crossref.org/journals/1573-7616",
+          "catalog_registry": "https://api.crossref.org/journals/1382-3256",
+          "verified_on": "2026-10-16",
+          "note": "Both registry endpoints list both ISSNs and the same exact journal title."
+        }
+      ]
+    },
+    {
+      "venue": "FAC",
+      "catalog_name": "Formal Aspects of Computing",
+      "catalog_issn": "0934-5043",
+      "records": [
+        {
+          "issn": "1433-299X",
+          "title": "Formal Aspects of Computing",
+          "year_from": 2023,
+          "year_to": 2026,
+          "registry": "https://api.crossref.org/journals/1433-299X",
+          "catalog_registry": "https://api.crossref.org/journals/0934-5043",
+          "verified_on": "2026-10-16",
+          "note": "Both registry endpoints list both ISSNs and the same exact journal title."
+        }
+      ]
+    },
+    {
+      "venue": "FCS",
+      "catalog_name": "Frontiers of Computer Science",
+      "catalog_issn": "2095-2228",
+      "records": [
+        {
+          "issn": "2095-2236",
+          "title": "Frontiers of Computer Science",
+          "year_from": 2023,
+          "year_to": 2026,
+          "registry": "https://api.crossref.org/journals/2095-2236",
+          "catalog_registry": "https://api.crossref.org/journals/2095-2228",
+          "verified_on": "2026-10-16",
+          "note": "Both registry endpoints list both ISSNs and the same exact journal title."
+        }
+      ]
+    },
+    {
+      "venue": "FMSD",
+      "catalog_name": "Formal Methods in System Design",
+      "catalog_issn": "0925-9856",
+      "records": [
+        {
+          "issn": "1572-8102",
+          "title": "Formal Methods in System Design",
+          "year_from": 2023,
+          "year_to": 2026,
+          "registry": "https://api.crossref.org/journals/1572-8102",
+          "catalog_registry": "https://api.crossref.org/journals/0925-9856",
+          "verified_on": "2026-10-16",
+          "note": "Both registry endpoints list both ISSNs and the same exact journal title."
+        }
+      ]
+    },
+    {
+      "venue": "GeoInformatica",
+      "catalog_name": "GeoInformatica",
+      "catalog_issn": "1384-6175",
+      "records": [
+        {
+          "issn": "1573-7624",
+          "title": "GeoInformatica",
+          "year_from": 2023,
+          "year_to": 2026,
+          "registry": "https://api.crossref.org/journals/1573-7624",
+          "catalog_registry": "https://api.crossref.org/journals/1384-6175",
+          "verified_on": "2026-10-16",
+          "note": "Both registry endpoints list both ISSNs and the same exact journal title."
+        }
+      ]
+    },
+    {
+      "venue": "HCI",
+      "catalog_name": "Human-Computer Interaction",
+      "catalog_issn": "0737-0024",
+      "records": [
+        {
+          "issn": "1532-7051",
+          "title": "Human-Computer Interaction",
+          "year_from": 2023,
+          "year_to": 2026,
+          "registry": "https://api.crossref.org/journals/1532-7051",
+          "catalog_registry": "https://api.crossref.org/journals/0737-0024",
+          "verified_on": "2026-10-16",
+          "note": "Both registry endpoints list both ISSNs and the same exact journal title."
+        }
+      ]
+    },
+    {
+      "venue": "IANDC",
+      "catalog_name": "Information and Computation",
+      "catalog_issn": "0890-5401",
+      "records": [
+        {
+          "issn": "1090-2651",
+          "title": "Information and Computation",
+          "year_from": 2023,
+          "year_to": 2026,
+          "registry": "https://api.crossref.org/journals/1090-2651",
+          "catalog_registry": "https://api.crossref.org/journals/0890-5401",
+          "verified_on": "2026-10-16",
+          "note": "Both registry endpoints list both ISSNs and the same exact journal title."
+        }
+      ]
+    },
+    {
+      "venue": "IEEE Transactions on Cybernetics",
+      "catalog_name": "IEEE Transactions on Cybernetics",
+      "catalog_issn": "2168-2267",
+      "records": [
+        {
+          "issn": "2168-2275",
+          "title": "IEEE Transactions on Cybernetics",
+          "year_from": 2023,
+          "year_to": 2026,
+          "registry": "https://api.crossref.org/journals/2168-2275",
+          "catalog_registry": "https://api.crossref.org/journals/2168-2267",
+          "verified_on": "2026-10-16",
+          "note": "Both registry endpoints list both ISSNs and the same exact journal title."
+        }
+      ]
+    },
+    {
+      "venue": "IEEE Transactions on Human-Machine Systems",
+      "catalog_name": "IEEE Transactions on Human-Machine Systems",
+      "catalog_issn": "2168-2291",
+      "records": [
+        {
+          "issn": "2168-2305",
+          "title": "IEEE Transactions on Human-Machine Systems",
+          "year_from": 2023,
+          "year_to": 2026,
+          "registry": "https://api.crossref.org/journals/2168-2305",
+          "catalog_registry": "https://api.crossref.org/journals/2168-2291",
+          "verified_on": "2026-10-16",
+          "note": "Both registry endpoints list both ISSNs and the same exact journal title."
+        }
+      ]
+    },
+    {
+      "venue": "IETS",
+      "catalog_name": "IET Software",
+      "catalog_issn": "1751-8806",
+      "records": [
+        {
+          "issn": "1751-8814",
+          "title": "IET Software",
+          "year_from": 2023,
+          "year_to": 2026,
+          "registry": "https://api.crossref.org/journals/1751-8814",
+          "catalog_registry": "https://api.crossref.org/journals/1751-8806",
+          "verified_on": "2026-10-16",
+          "note": "Both registry endpoints list both ISSNs and the same exact journal title."
+        }
+      ]
+    },
+    {
+      "venue": "IJCV",
+      "catalog_name": "International Journal of Computer Vision",
+      "catalog_issn": "0920-5691",
+      "records": [
+        {
+          "issn": "1573-1405",
+          "title": "International Journal of Computer Vision",
+          "year_from": 2023,
+          "year_to": 2026,
+          "registry": "https://api.crossref.org/journals/1573-1405",
+          "catalog_registry": "https://api.crossref.org/journals/0920-5691",
+          "verified_on": "2026-10-16",
+          "note": "Both registry endpoints list both ISSNs and the same exact journal title."
+        }
+      ]
+    },
+    {
+      "venue": "IJHCI",
+      "catalog_name": "International Journal of Human-Computer Interaction",
+      "catalog_issn": "1044-7318",
+      "records": [
+        {
+          "issn": "1532-7590",
+          "title": "International Journal of Human-Computer Interaction",
+          "year_from": 2023,
+          "year_to": 2026,
+          "registry": "https://api.crossref.org/journals/1532-7590",
+          "catalog_registry": "https://api.crossref.org/journals/1044-7318",
+          "verified_on": "2026-10-16",
+          "note": "Both registry endpoints list both ISSNs and the same exact journal title."
+        }
+      ]
+    },
+    {
+      "venue": "IJHCS",
+      "catalog_name": "International Journal of Human-Computer Studies",
+      "catalog_issn": "1071-5819",
+      "records": [
+        {
+          "issn": "1095-9300",
+          "title": "International Journal of Human-Computer Studies",
+          "year_from": 2023,
+          "year_to": 2026,
+          "registry": "https://api.crossref.org/journals/1095-9300",
+          "catalog_registry": "https://api.crossref.org/journals/1071-5819",
+          "verified_on": "2026-10-16",
+          "note": "Both registry endpoints list both ISSNs and the same exact journal title."
+        }
+      ]
+    },
+    {
+      "venue": "IS",
+      "catalog_name": "Information Systems",
+      "catalog_issn": "0306-4379",
+      "records": [
+        {
+          "issn": "1873-6076",
+          "title": "Information Systems",
+          "year_from": 2023,
+          "year_to": 2026,
+          "registry": "https://api.crossref.org/journals/1873-6076",
+          "catalog_registry": "https://api.crossref.org/journals/0306-4379",
+          "verified_on": "2026-10-16",
+          "note": "Both registry endpoints list both ISSNs and the same exact journal title."
+        }
+      ]
+    },
+    {
+      "venue": "IWC",
+      "catalog_name": "Interacting with Computers",
+      "catalog_issn": "0953-5438",
+      "records": [
+        {
+          "issn": "1873-7951",
+          "title": "Interacting with Computers",
+          "year_from": 2023,
+          "year_to": 2026,
+          "registry": "https://api.crossref.org/journals/1873-7951",
+          "catalog_registry": "https://api.crossref.org/journals/0953-5438",
+          "verified_on": "2026-10-16",
+          "note": "Both registry endpoints list both ISSNs and the same exact journal title."
+        }
+      ]
+    },
+    {
+      "venue": "JAAMAS",
+      "catalog_name": "Autonomous Agents and Multi-Agent Systems",
+      "catalog_issn": "1387-2532",
+      "records": [
+        {
+          "issn": "1573-7454",
+          "title": "Autonomous Agents and Multi-Agent Systems",
+          "year_from": 2023,
+          "year_to": 2026,
+          "registry": "https://api.crossref.org/journals/1573-7454",
+          "catalog_registry": "https://api.crossref.org/journals/1387-2532",
+          "verified_on": "2026-10-16",
+          "note": "Both registry endpoints list both ISSNs and the same exact journal title."
+        }
+      ]
+    },
+    {
+      "venue": "JACM",
+      "catalog_name": "Journal of the ACM",
+      "catalog_issn": "0004-5411",
+      "records": [
+        {
+          "issn": "1557-735X",
+          "title": "Journal of the ACM",
+          "year_from": 2023,
+          "year_to": 2026,
+          "registry": "https://api.crossref.org/journals/1557-735X",
+          "catalog_registry": "https://api.crossref.org/journals/0004-5411",
+          "verified_on": "2026-10-16",
+          "note": "Both registry endpoints list both ISSNs and the same exact journal title."
+        }
+      ]
+    },
+    {
+      "venue": "JAMIA",
+      "catalog_name": "Journal of the American Medical Informatics Association",
+      "catalog_issn": "1067-5027",
+      "records": [
+        {
+          "issn": "1527-974X",
+          "title": "Journal of the American Medical Informatics Association",
+          "year_from": 2023,
+          "year_to": 2026,
+          "registry": "https://api.crossref.org/journals/1527-974X",
+          "catalog_registry": "https://api.crossref.org/journals/1067-5027",
+          "verified_on": "2026-10-16",
+          "note": "Both registry endpoints list both ISSNs and the same exact journal title."
+        }
+      ]
+    },
+    {
+      "venue": "JASIST",
+      "catalog_name": "Journal of the Association for Information Science and Technology",
+      "catalog_issn": "2330-1635",
+      "records": [
+        {
+          "issn": "2330-1643",
+          "title": "Journal of the Association for Information Science and Technology",
+          "year_from": 2023,
+          "year_to": 2026,
+          "registry": "https://api.crossref.org/journals/2330-1643",
+          "catalog_registry": "https://api.crossref.org/journals/2330-1635",
+          "verified_on": "2026-10-16",
+          "note": "Both registry endpoints list both ISSNs and the same exact journal title."
+        }
+      ]
+    },
+    {
+      "venue": "JCS",
+      "catalog_name": "Journal of Computer Security",
+      "catalog_issn": "0926-227X",
+      "records": [
+        {
+          "issn": "1875-8924",
+          "title": "Journal of Computer Security",
+          "year_from": 2023,
+          "year_to": 2026,
+          "registry": "https://api.crossref.org/journals/1875-8924",
+          "catalog_registry": "https://api.crossref.org/journals/0926-227X",
+          "verified_on": "2026-10-16",
+          "note": "Both registry endpoints list both ISSNs and the same exact journal title."
+        }
+      ]
+    },
+    {
+      "venue": "JCSS",
+      "catalog_name": "Journal of Computer and System Sciences",
+      "catalog_issn": "0022-0000",
+      "records": [
+        {
+          "issn": "1090-2724",
+          "title": "Journal of Computer and System Sciences",
+          "year_from": 2023,
+          "year_to": 2026,
+          "registry": "https://api.crossref.org/journals/1090-2724",
+          "catalog_registry": "https://api.crossref.org/journals/0022-0000",
+          "verified_on": "2026-10-16",
+          "note": "Both registry endpoints list both ISSNs and the same exact journal title."
+        }
+      ]
+    },
+    {
+      "venue": "JCST",
+      "catalog_name": "Journal of Computer Science and Technology",
+      "catalog_issn": "1000-9000",
+      "records": [
+        {
+          "issn": "1860-4749",
+          "title": "Journal of Computer Science and Technology",
+          "year_from": 2023,
+          "year_to": 2026,
+          "registry": "https://api.crossref.org/journals/1860-4749",
+          "catalog_registry": "https://api.crossref.org/journals/1000-9000",
+          "verified_on": "2026-10-16",
+          "note": "Both registry endpoints list both ISSNs and the same exact journal title."
+        }
+      ]
+    },
+    {
+      "venue": "JFP",
+      "catalog_name": "Journal of Functional Programming",
+      "catalog_issn": "0956-7968",
+      "records": [
+        {
+          "issn": "1469-7653",
+          "title": "Journal of Functional Programming",
+          "year_from": 2023,
+          "year_to": 2026,
+          "registry": "https://api.crossref.org/journals/1469-7653",
+          "catalog_registry": "https://api.crossref.org/journals/0956-7968",
+          "verified_on": "2026-10-16",
+          "note": "Both registry endpoints list both ISSNs and the same exact journal title."
+        }
+      ]
+    },
+    {
+      "venue": "JGO",
+      "catalog_name": "Journal of Global Optimization",
+      "catalog_issn": "0925-5001",
+      "records": [
+        {
+          "issn": "1573-2916",
+          "title": "Journal of Global Optimization",
+          "year_from": 2023,
+          "year_to": 2026,
+          "registry": "https://api.crossref.org/journals/1573-2916",
+          "catalog_registry": "https://api.crossref.org/journals/0925-5001",
+          "verified_on": "2026-10-16",
+          "note": "Both registry endpoints list both ISSNs and the same exact journal title."
+        }
+      ]
+    },
+    {
+      "venue": "JPDC",
+      "catalog_name": "Journal of Parallel and Distributed Computing",
+      "catalog_issn": "0743-7315",
+      "records": [
+        {
+          "issn": "1096-0848",
+          "title": "Journal of Parallel and Distributed Computing",
+          "year_from": 2023,
+          "year_to": 2026,
+          "registry": "https://api.crossref.org/journals/1096-0848",
+          "catalog_registry": "https://api.crossref.org/journals/0743-7315",
+          "verified_on": "2026-10-16",
+          "note": "Both registry endpoints list both ISSNs and the same exact journal title."
+        }
+      ]
+    },
+    {
+      "venue": "JSAC",
+      "catalog_name": "IEEE Journal on Selected Areas in Communications",
+      "catalog_issn": "0733-8716",
+      "records": [
+        {
+          "issn": "1558-0008",
+          "title": "IEEE Journal on Selected Areas in Communications",
+          "year_from": 2023,
+          "year_to": 2026,
+          "registry": "https://api.crossref.org/journals/1558-0008",
+          "catalog_registry": "https://api.crossref.org/journals/0733-8716",
+          "verified_on": "2026-10-16",
+          "note": "Both registry endpoints list both ISSNs and the same exact journal title."
+        }
+      ]
+    },
+    {
+      "venue": "JSC",
+      "catalog_name": "Journal of Symbolic Computation",
+      "catalog_issn": "0747-7171",
+      "records": [
+        {
+          "issn": "1095-855X",
+          "title": "Journal of Symbolic Computation",
+          "year_from": 2023,
+          "year_to": 2026,
+          "registry": "https://api.crossref.org/journals/1095-855X",
+          "catalog_registry": "https://api.crossref.org/journals/0747-7171",
+          "verified_on": "2026-10-16",
+          "note": "Both registry endpoints list both ISSNs and the same exact journal title."
+        }
+      ]
+    },
+    {
+      "venue": "JSLHR",
+      "catalog_name": "Journal of Speech, Language, and Hearing Research",
+      "catalog_issn": "1092-4388",
+      "records": [
+        {
+          "issn": "1558-9102",
+          "title": "Journal of Speech Language and Hearing Research",
+          "year_from": 2023,
+          "year_to": 2026,
+          "registry": "https://api.crossref.org/journals/1558-9102",
+          "catalog_registry": "https://api.crossref.org/journals/1092-4388",
+          "verified_on": "2026-10-16",
+          "note": "Both registry endpoints list both ISSNs and the same exact journal title."
+        }
+      ]
+    },
+    {
+      "venue": "Journal of Automated Reasoning",
+      "catalog_name": "Journal of Automated Reasoning",
+      "catalog_issn": "0168-7433",
+      "records": [
+        {
+          "issn": "1573-0670",
+          "title": "Journal of Automated Reasoning",
+          "year_from": 2023,
+          "year_to": 2026,
+          "registry": "https://api.crossref.org/journals/1573-0670",
+          "catalog_registry": "https://api.crossref.org/journals/0168-7433",
+          "verified_on": "2026-10-16",
+          "note": "Both registry endpoints list both ISSNs and the same exact journal title."
+        }
+      ]
+    },
+    {
+      "venue": "Journal of Cryptology",
+      "catalog_name": "Journal of Cryptology",
+      "catalog_issn": "0933-2790",
+      "records": [
+        {
+          "issn": "1432-1378",
+          "title": "Journal of Cryptology",
+          "year_from": 2023,
+          "year_to": 2026,
+          "registry": "https://api.crossref.org/journals/1432-1378",
+          "catalog_registry": "https://api.crossref.org/journals/0933-2790",
+          "verified_on": "2026-10-16",
+          "note": "Both registry endpoints list both ISSNs and the same exact journal title."
+        }
+      ]
+    },
+    {
+      "venue": "Journal of Software: Evolution and Process",
+      "catalog_name": "Journal of Software: Evolution and Process",
+      "catalog_issn": "2047-7473",
+      "records": [
+        {
+          "issn": "2047-7481",
+          "title": "Journal of Software Evolution and Process",
+          "year_from": 2023,
+          "year_to": 2026,
+          "registry": "https://api.crossref.org/journals/2047-7481",
+          "catalog_registry": "https://api.crossref.org/journals/2047-7473",
+          "verified_on": "2026-10-16",
+          "note": "Both registry endpoints list both ISSNs and the same exact journal title."
+        }
+      ]
+    },
+    {
+      "venue": "KAIS",
+      "catalog_name": "Knowledge and Information Systems",
+      "catalog_issn": "0219-1377",
+      "records": [
+        {
+          "issn": "0219-3116",
+          "title": "Knowledge and Information Systems",
+          "year_from": 2023,
+          "year_to": 2026,
+          "registry": "https://api.crossref.org/journals/0219-3116",
+          "catalog_registry": "https://api.crossref.org/journals/0219-1377",
+          "verified_on": "2026-10-16",
+          "note": "Both registry endpoints list both ISSNs and the same exact journal title."
+        }
+      ]
+    },
+    {
+      "venue": "MSCS",
+      "catalog_name": "Mathematical Structures in Computer Science",
+      "catalog_issn": "0960-1295",
+      "records": [
+        {
+          "issn": "1469-8072",
+          "title": "Mathematical Structures in Computer Science",
+          "year_from": 2023,
+          "year_to": 2026,
+          "registry": "https://api.crossref.org/journals/1469-8072",
+          "catalog_registry": "https://api.crossref.org/journals/0960-1295",
+          "verified_on": "2026-10-16",
+          "note": "Both registry endpoints list both ISSNs and the same exact journal title."
+        }
+      ]
+    },
+    {
+      "venue": "Machine Learning",
+      "catalog_name": "Machine Learning",
+      "catalog_issn": "0885-6125",
+      "records": [
+        {
+          "issn": "1573-0565",
+          "title": "Machine Learning",
+          "year_from": 2023,
+          "year_to": 2026,
+          "registry": "https://api.crossref.org/journals/1573-0565",
+          "catalog_registry": "https://api.crossref.org/journals/0885-6125",
+          "verified_on": "2026-10-16",
+          "note": "Both registry endpoints list both ISSNs and the same exact journal title."
+        }
+      ]
+    },
+    {
+      "venue": "Neural Computation",
+      "catalog_name": "Neural Computation",
+      "catalog_issn": "0899-7667",
+      "records": [
+        {
+          "issn": "1530-888X",
+          "title": "Neural Computation",
+          "year_from": 2023,
+          "year_to": 2026,
+          "registry": "https://api.crossref.org/journals/1530-888X",
+          "catalog_registry": "https://api.crossref.org/journals/0899-7667",
+          "verified_on": "2026-10-16",
+          "note": "Both registry endpoints list both ISSNs and the same exact journal title."
+        }
+      ]
+    },
+    {
+      "venue": "PLOS Computational Biology",
+      "catalog_name": "PLOS Computational Biology",
+      "catalog_issn": "1553-7358",
+      "records": [
+        {
+          "issn": "1553-734X",
+          "title": "PLoS Computational Biology",
+          "year_from": 2023,
+          "year_to": 2026,
+          "registry": "https://api.crossref.org/journals/1553-734X",
+          "catalog_registry": "https://api.crossref.org/journals/1553-7358",
+          "verified_on": "2026-10-16",
+          "note": "Both registry endpoints list both ISSNs and the same exact journal title."
+        }
+      ]
+    },
+    {
+      "venue": "Proc. IEEE",
+      "catalog_name": "Proceedings of the IEEE",
+      "catalog_issn": "0018-9219",
+      "records": [
+        {
+          "issn": "1558-2256",
+          "title": "Proceedings of the IEEE",
+          "year_from": 2023,
+          "year_to": 2026,
+          "registry": "https://api.crossref.org/journals/1558-2256",
+          "catalog_registry": "https://api.crossref.org/journals/0018-9219",
+          "verified_on": "2026-10-16",
+          "note": "Both registry endpoints list both ISSNs and the same exact journal title."
+        }
+      ]
+    },
+    {
+      "venue": "RE Journal",
+      "catalog_name": "Requirements Engineering",
+      "catalog_issn": "0947-3602",
+      "records": [
+        {
+          "issn": "1432-010X",
+          "title": "Requirements Engineering",
+          "year_from": 2023,
+          "year_to": 2026,
+          "registry": "https://api.crossref.org/journals/1432-010X",
+          "catalog_registry": "https://api.crossref.org/journals/0947-3602",
+          "verified_on": "2026-10-16",
+          "note": "Both registry endpoints list both ISSNs and the same exact journal title."
+        }
+      ]
+    },
+    {
+      "venue": "SCIS",
+      "catalog_name": "Science China Information Sciences",
+      "catalog_issn": "1674-733X",
+      "records": [
+        {
+          "issn": "1869-1919",
+          "title": "Science China Information Sciences",
+          "year_from": 2023,
+          "year_to": 2026,
+          "registry": "https://api.crossref.org/journals/1869-1919",
+          "catalog_registry": "https://api.crossref.org/journals/1674-733X",
+          "verified_on": "2026-10-16",
+          "note": "Both registry endpoints list both ISSNs and the same exact journal title."
+        }
+      ]
+    },
+    {
+      "venue": "SICOMP",
+      "catalog_name": "SIAM Journal on Computing",
+      "catalog_issn": "0097-5397",
+      "records": [
+        {
+          "issn": "1095-7111",
+          "title": "SIAM Journal on Computing",
+          "year_from": 2023,
+          "year_to": 2026,
+          "registry": "https://api.crossref.org/journals/1095-7111",
+          "catalog_registry": "https://api.crossref.org/journals/0097-5397",
+          "verified_on": "2026-10-16",
+          "note": "Both registry endpoints list both ISSNs and the same exact journal title."
+        }
+      ]
+    },
+    {
+      "venue": "SPE",
+      "catalog_name": "Software: Practice and Experience",
+      "catalog_issn": "0038-0644",
+      "records": [
+        {
+          "issn": "1097-024X",
+          "title": "Software Practice and Experience",
+          "year_from": 2023,
+          "year_to": 2026,
+          "registry": "https://api.crossref.org/journals/1097-024X",
+          "catalog_registry": "https://api.crossref.org/journals/0038-0644",
+          "verified_on": "2026-10-16",
+          "note": "Both registry endpoints list both ISSNs and the same exact journal title."
+        }
+      ]
+    },
+    {
+      "venue": "STVR",
+      "catalog_name": "Software Testing, Verification and Reliability",
+      "catalog_issn": "0960-0833",
+      "records": [
+        {
+          "issn": "1099-1689",
+          "title": "Software Testing Verification and Reliability",
+          "year_from": 2023,
+          "year_to": 2026,
+          "registry": "https://api.crossref.org/journals/1099-1689",
+          "catalog_registry": "https://api.crossref.org/journals/0960-0833",
+          "verified_on": "2026-10-16",
+          "note": "Both registry endpoints list both ISSNs and the same exact journal title."
+        }
+      ]
+    },
+    {
+      "venue": "SoSyM",
+      "catalog_name": "Software and Systems Modeling",
+      "catalog_issn": "1619-1366",
+      "records": [
+        {
+          "issn": "1619-1374",
+          "title": "Software & Systems Modeling",
+          "year_from": 2023,
+          "year_to": 2026,
+          "registry": "https://api.crossref.org/journals/1619-1374",
+          "catalog_registry": "https://api.crossref.org/journals/1619-1366",
+          "verified_on": "2026-10-16",
+          "note": "Both registry endpoints list both ISSNs and the same exact journal title."
+        }
+      ]
+    },
+    {
+      "venue": "TAAS",
+      "catalog_name": "ACM Transactions on Autonomous and Adaptive Systems",
+      "catalog_issn": "1556-4665",
+      "records": [
+        {
+          "issn": "1556-4703",
+          "title": "ACM Transactions on Autonomous and Adaptive Systems",
+          "year_from": 2023,
+          "year_to": 2026,
+          "registry": "https://api.crossref.org/journals/1556-4703",
+          "catalog_registry": "https://api.crossref.org/journals/1556-4665",
+          "verified_on": "2026-10-16",
+          "note": "Both registry endpoints list both ISSNs and the same exact journal title."
+        }
+      ]
+    },
+    {
+      "venue": "TAC",
+      "catalog_name": "IEEE Transactions on Affective Computing",
+      "catalog_issn": "1949-3045",
+      "records": [
+        {
+          "issn": "2371-9850",
+          "title": "IEEE Transactions on Affective Computing",
+          "year_from": 2023,
+          "year_to": 2026,
+          "registry": "https://api.crossref.org/journals/2371-9850",
+          "catalog_registry": "https://api.crossref.org/journals/1949-3045",
+          "verified_on": "2026-10-16",
+          "note": "Both registry endpoints list both ISSNs and the same exact journal title."
+        }
+      ]
+    },
+    {
+      "venue": "TACO",
+      "catalog_name": "ACM Transactions on Architecture and Code Optimization",
+      "catalog_issn": "1544-3566",
+      "records": [
+        {
+          "issn": "1544-3973",
+          "title": "ACM Transactions on Architecture and Code Optimization",
+          "year_from": 2023,
+          "year_to": 2026,
+          "registry": "https://api.crossref.org/journals/1544-3973",
+          "catalog_registry": "https://api.crossref.org/journals/1544-3566",
+          "verified_on": "2026-10-16",
+          "note": "Both registry endpoints list both ISSNs and the same exact journal title."
+        }
+      ]
+    },
+    {
+      "venue": "TALG",
+      "catalog_name": "ACM Transactions on Algorithms",
+      "catalog_issn": "1549-6325",
+      "records": [
+        {
+          "issn": "1549-6333",
+          "title": "ACM Transactions on Algorithms",
+          "year_from": 2023,
+          "year_to": 2026,
+          "registry": "https://api.crossref.org/journals/1549-6333",
+          "catalog_registry": "https://api.crossref.org/journals/1549-6325",
+          "verified_on": "2026-10-16",
+          "note": "Both registry endpoints list both ISSNs and the same exact journal title."
+        }
+      ]
+    },
+    {
+      "venue": "TAP",
+      "catalog_name": "ACM Transactions on Applied Perception",
+      "catalog_issn": "1544-3558",
+      "records": [
+        {
+          "issn": "1544-3965",
+          "title": "ACM Transactions on Applied Perception",
+          "year_from": 2023,
+          "year_to": 2026,
+          "registry": "https://api.crossref.org/journals/1544-3965",
+          "catalog_registry": "https://api.crossref.org/journals/1544-3558",
+          "verified_on": "2026-10-16",
+          "note": "Both registry endpoints list both ISSNs and the same exact journal title."
+        }
+      ]
+    },
+    {
+      "venue": "TASAE",
+      "catalog_name": "IEEE Transactions on Automation Science and Engineering",
+      "catalog_issn": "1545-5955",
+      "records": [
+        {
+          "issn": "1558-3783",
+          "title": "IEEE Transactions on Automation Science and Engineering",
+          "year_from": 2023,
+          "year_to": 2026,
+          "registry": "https://api.crossref.org/journals/1558-3783",
+          "catalog_registry": "https://api.crossref.org/journals/1545-5955",
+          "verified_on": "2026-10-16",
+          "note": "Both registry endpoints list both ISSNs and the same exact journal title."
+        }
+      ]
+    },
+    {
+      "venue": "TC",
+      "catalog_name": "IEEE Transactions on Computers",
+      "catalog_issn": "0018-9340",
+      "records": [
+        {
+          "issn": "0016-9340",
+          "title": "IEEE Transactions on Computers",
+          "year_from": 2023,
+          "year_to": 2026,
+          "registry": "https://api.crossref.org/journals/0016-9340",
+          "catalog_registry": "https://api.crossref.org/journals/0018-9340",
+          "verified_on": "2026-10-16",
+          "note": "Both registry endpoints list both ISSNs and the same exact journal title."
+        },
+        {
+          "issn": "1557-9956",
+          "title": "IEEE Transactions on Computers",
+          "year_from": 2023,
+          "year_to": 2026,
+          "registry": "https://api.crossref.org/journals/1557-9956",
+          "catalog_registry": "https://api.crossref.org/journals/0018-9340",
+          "verified_on": "2026-10-16",
+          "note": "Both registry endpoints list both ISSNs and the same exact journal title."
+        },
+        {
+          "issn": "2326-3814",
+          "title": "IEEE Transactions on Computers",
+          "year_from": 2023,
+          "year_to": 2026,
+          "registry": "https://api.crossref.org/journals/2326-3814",
+          "catalog_registry": "https://api.crossref.org/journals/0018-9340",
+          "verified_on": "2026-10-16",
+          "note": "Both registry endpoints list both ISSNs and the same exact journal title."
+        }
+      ]
+    },
+    {
+      "venue": "TCAD",
+      "catalog_name": "IEEE Transactions on Computer-Aided Design of Integrated Circuits and Systems",
+      "catalog_issn": "0278-0070",
+      "records": [
+        {
+          "issn": "1937-4151",
+          "title": "IEEE Transactions on Computer-Aided Design of Integrated Circuits and Systems",
+          "year_from": 2023,
+          "year_to": 2026,
+          "registry": "https://api.crossref.org/journals/1937-4151",
+          "catalog_registry": "https://api.crossref.org/journals/0278-0070",
+          "verified_on": "2026-10-16",
+          "note": "Both registry endpoints list both ISSNs and the same exact journal title."
+        }
+      ]
+    },
+    {
+      "venue": "TCOM",
+      "catalog_name": "IEEE Transactions on Communications",
+      "catalog_issn": "0090-6778",
+      "records": [
+        {
+          "issn": "1558-0857",
+          "title": "IEEE Transactions on Communications",
+          "year_from": 2023,
+          "year_to": 2026,
+          "registry": "https://api.crossref.org/journals/1558-0857",
+          "catalog_registry": "https://api.crossref.org/journals/0090-6778",
+          "verified_on": "2026-10-16",
+          "note": "Both registry endpoints list both ISSNs and the same exact journal title."
+        }
+      ]
+    },
+    {
+      "venue": "TCSVT",
+      "catalog_name": "IEEE Transactions on Circuits and Systems for Video Technology",
+      "catalog_issn": "1051-8215",
+      "records": [
+        {
+          "issn": "1558-2205",
+          "title": "IEEE Transactions on Circuits and Systems for Video Technology",
+          "year_from": 2023,
+          "year_to": 2026,
+          "registry": "https://api.crossref.org/journals/1558-2205",
+          "catalog_registry": "https://api.crossref.org/journals/1051-8215",
+          "verified_on": "2026-10-16",
+          "note": "Both registry endpoints list both ISSNs and the same exact journal title."
+        }
+      ]
+    },
+    {
+      "venue": "TEC",
+      "catalog_name": "IEEE Transactions on Evolutionary Computation",
+      "catalog_issn": "1089-778X",
+      "records": [
+        {
+          "issn": "1941-0026",
+          "title": "IEEE Transactions on Evolutionary Computation",
+          "year_from": 2023,
+          "year_to": 2026,
+          "registry": "https://api.crossref.org/journals/1941-0026",
+          "catalog_registry": "https://api.crossref.org/journals/1089-778X",
+          "verified_on": "2026-10-16",
+          "note": "Both registry endpoints list both ISSNs and the same exact journal title."
+        }
+      ]
+    },
+    {
+      "venue": "TECS",
+      "catalog_name": "ACM Transactions on Embedded Computing Systems",
+      "catalog_issn": "1539-9087",
+      "records": [
+        {
+          "issn": "1558-3465",
+          "title": "ACM Transactions on Embedded Computing Systems",
+          "year_from": 2023,
+          "year_to": 2026,
+          "registry": "https://api.crossref.org/journals/1558-3465",
+          "catalog_registry": "https://api.crossref.org/journals/1539-9087",
+          "verified_on": "2026-10-16",
+          "note": "Both registry endpoints list both ISSNs and the same exact journal title."
+        }
+      ]
+    },
+    {
+      "venue": "TFS",
+      "catalog_name": "IEEE Transactions on Fuzzy Systems",
+      "catalog_issn": "1063-6706",
+      "records": [
+        {
+          "issn": "1941-0034",
+          "title": "IEEE Transactions on Fuzzy Systems",
+          "year_from": 2023,
+          "year_to": 2026,
+          "registry": "https://api.crossref.org/journals/1941-0034",
+          "catalog_registry": "https://api.crossref.org/journals/1063-6706",
+          "verified_on": "2026-10-16",
+          "note": "Both registry endpoints list both ISSNs and the same exact journal title."
+        }
+      ]
+    },
+    {
+      "venue": "TGARS",
+      "catalog_name": "IEEE Transactions on Geoscience and Remote Sensing",
+      "catalog_issn": "0196-2892",
+      "records": [
+        {
+          "issn": "1558-0644",
+          "title": "IEEE Transactions on Geoscience and Remote Sensing",
+          "year_from": 2023,
+          "year_to": 2026,
+          "registry": "https://api.crossref.org/journals/1558-0644",
+          "catalog_registry": "https://api.crossref.org/journals/0196-2892",
+          "verified_on": "2026-10-16",
+          "note": "Both registry endpoints list both ISSNs and the same exact journal title."
+        }
+      ]
+    },
+    {
+      "venue": "TIFS",
+      "catalog_name": "IEEE Transactions on Information Forensics and Security",
+      "catalog_issn": "1556-6013",
+      "records": [
+        {
+          "issn": "1556-6021",
+          "title": "IEEE Transactions on Information Forensics and Security",
+          "year_from": 2023,
+          "year_to": 2026,
+          "registry": "https://api.crossref.org/journals/1556-6021",
+          "catalog_registry": "https://api.crossref.org/journals/1556-6013",
+          "verified_on": "2026-10-16",
+          "note": "Both registry endpoints list both ISSNs and the same exact journal title."
+        }
+      ]
+    },
+    {
+      "venue": "TIP",
+      "catalog_name": "IEEE Transactions on Image Processing",
+      "catalog_issn": "1057-7149",
+      "records": [
+        {
+          "issn": "1941-0042",
+          "title": "IEEE Transactions on Image Processing",
+          "year_from": 2023,
+          "year_to": 2026,
+          "registry": "https://api.crossref.org/journals/1941-0042",
+          "catalog_registry": "https://api.crossref.org/journals/1057-7149",
+          "verified_on": "2026-10-16",
+          "note": "Both registry endpoints list both ISSNs and the same exact journal title."
+        }
+      ]
+    },
+    {
+      "venue": "TIT",
+      "catalog_name": "IEEE Transactions on Information Theory",
+      "catalog_issn": "0018-9448",
+      "records": [
+        {
+          "issn": "1557-9654",
+          "title": "IEEE Transactions on Information Theory",
+          "year_from": 2023,
+          "year_to": 2026,
+          "registry": "https://api.crossref.org/journals/1557-9654",
+          "catalog_registry": "https://api.crossref.org/journals/0018-9448",
+          "verified_on": "2026-10-16",
+          "note": "Both registry endpoints list both ISSNs and the same exact journal title."
+        }
+      ]
+    },
+    {
+      "venue": "TITS",
+      "catalog_name": "IEEE Transactions on Intelligent Transportation Systems",
+      "catalog_issn": "1524-9050",
+      "records": [
+        {
+          "issn": "1558-0016",
+          "title": "IEEE Transactions on Intelligent Transportation Systems",
+          "year_from": 2023,
+          "year_to": 2026,
+          "registry": "https://api.crossref.org/journals/1558-0016",
+          "catalog_registry": "https://api.crossref.org/journals/1524-9050",
+          "verified_on": "2026-10-16",
+          "note": "Both registry endpoints list both ISSNs and the same exact journal title."
+        }
+      ]
+    },
+    {
+      "venue": "TKDD",
+      "catalog_name": "ACM Transactions on Knowledge Discovery from Data",
+      "catalog_issn": "1556-4681",
+      "records": [
+        {
+          "issn": "1556-472X",
+          "title": "ACM Transactions on Knowledge Discovery from Data",
+          "year_from": 2023,
+          "year_to": 2026,
+          "registry": "https://api.crossref.org/journals/1556-472X",
+          "catalog_registry": "https://api.crossref.org/journals/1556-4681",
+          "verified_on": "2026-10-16",
+          "note": "Both registry endpoints list both ISSNs and the same exact journal title."
+        }
+      ]
+    },
+    {
+      "venue": "TKDE",
+      "catalog_name": "IEEE Transactions on Knowledge and Data Engineering",
+      "catalog_issn": "1041-4347",
+      "records": [
+        {
+          "issn": "1558-2191",
+          "title": "IEEE Transactions on Knowledge and Data Engineering",
+          "year_from": 2023,
+          "year_to": 2026,
+          "registry": "https://api.crossref.org/journals/1558-2191",
+          "catalog_registry": "https://api.crossref.org/journals/1041-4347",
+          "verified_on": "2026-10-16",
+          "note": "Both registry endpoints list both ISSNs and the same exact journal title."
+        },
+        {
+          "issn": "2326-3865",
+          "title": "IEEE Transactions on Knowledge and Data Engineering",
+          "year_from": 2023,
+          "year_to": 2026,
+          "registry": "https://api.crossref.org/journals/2326-3865",
+          "catalog_registry": "https://api.crossref.org/journals/1041-4347",
+          "verified_on": "2026-10-16",
+          "note": "Both registry endpoints list both ISSNs and the same exact journal title."
+        }
+      ]
+    },
+    {
+      "venue": "TMC",
+      "catalog_name": "IEEE Transactions on Mobile Computing",
+      "catalog_issn": "1536-1233",
+      "records": [
+        {
+          "issn": "1558-0660",
+          "title": "IEEE Transactions on Mobile Computing",
+          "year_from": 2023,
+          "year_to": 2026,
+          "registry": "https://api.crossref.org/journals/1558-0660",
+          "catalog_registry": "https://api.crossref.org/journals/1536-1233",
+          "verified_on": "2026-10-16",
+          "note": "Both registry endpoints list both ISSNs and the same exact journal title."
+        },
+        {
+          "issn": "2161-9875",
+          "title": "IEEE Transactions on Mobile Computing",
+          "year_from": 2023,
+          "year_to": 2026,
+          "registry": "https://api.crossref.org/journals/2161-9875",
+          "catalog_registry": "https://api.crossref.org/journals/1536-1233",
+          "verified_on": "2026-10-16",
+          "note": "Both registry endpoints list both ISSNs and the same exact journal title."
+        }
+      ]
+    },
+    {
+      "venue": "TMI",
+      "catalog_name": "IEEE Transactions on Medical Imaging",
+      "catalog_issn": "0278-0062",
+      "records": [
+        {
+          "issn": "1558-254X",
+          "title": "IEEE Transactions on Medical Imaging",
+          "year_from": 2023,
+          "year_to": 2026,
+          "registry": "https://api.crossref.org/journals/1558-254X",
+          "catalog_registry": "https://api.crossref.org/journals/0278-0062",
+          "verified_on": "2026-10-16",
+          "note": "Both registry endpoints list both ISSNs and the same exact journal title."
+        }
+      ]
+    },
+    {
+      "venue": "TMM",
+      "catalog_name": "IEEE Transactions on Multimedia",
+      "catalog_issn": "1520-9210",
+      "records": [
+        {
+          "issn": "1941-0077",
+          "title": "IEEE Transactions on Multimedia",
+          "year_from": 2023,
+          "year_to": 2026,
+          "registry": "https://api.crossref.org/journals/1941-0077",
+          "catalog_registry": "https://api.crossref.org/journals/1520-9210",
+          "verified_on": "2026-10-16",
+          "note": "Both registry endpoints list both ISSNs and the same exact journal title."
+        }
+      ]
+    },
+    {
+      "venue": "TNNLS",
+      "catalog_name": "IEEE Transactions on Neural Networks and Learning Systems",
+      "catalog_issn": "2162-237X",
+      "records": [
+        {
+          "issn": "2162-2388",
+          "title": "IEEE Transactions on Neural Networks and Learning Systems",
+          "year_from": 2023,
+          "year_to": 2026,
+          "registry": "https://api.crossref.org/journals/2162-2388",
+          "catalog_registry": "https://api.crossref.org/journals/2162-237X",
+          "verified_on": "2026-10-16",
+          "note": "Both registry endpoints list both ISSNs and the same exact journal title."
+        }
+      ]
+    },
+    {
+      "venue": "TOCHI",
+      "catalog_name": "ACM Transactions on Computer-Human Interaction",
+      "catalog_issn": "1073-0516",
+      "records": [
+        {
+          "issn": "1557-7325",
+          "title": "ACM Transactions on Computer-Human Interaction",
+          "year_from": 2023,
+          "year_to": 2026,
+          "registry": "https://api.crossref.org/journals/1557-7325",
+          "catalog_registry": "https://api.crossref.org/journals/1073-0516",
+          "verified_on": "2026-10-16",
+          "note": "Both registry endpoints list both ISSNs and the same exact journal title."
+        }
+      ]
+    },
+    {
+      "venue": "TOCL",
+      "catalog_name": "ACM Transactions on Computational Logic",
+      "catalog_issn": "1529-3785",
+      "records": [
+        {
+          "issn": "1557-945X",
+          "title": "ACM Transactions on Computational Logic",
+          "year_from": 2023,
+          "year_to": 2026,
+          "registry": "https://api.crossref.org/journals/1557-945X",
+          "catalog_registry": "https://api.crossref.org/journals/1529-3785",
+          "verified_on": "2026-10-16",
+          "note": "Both registry endpoints list both ISSNs and the same exact journal title."
+        }
+      ]
+    },
+    {
+      "venue": "TOCS",
+      "catalog_name": "ACM Transactions on Computer Systems",
+      "catalog_issn": "0734-2071",
+      "records": [
+        {
+          "issn": "1557-7333",
+          "title": "ACM Transactions on Computer Systems",
+          "year_from": 2023,
+          "year_to": 2026,
+          "registry": "https://api.crossref.org/journals/1557-7333",
+          "catalog_registry": "https://api.crossref.org/journals/0734-2071",
+          "verified_on": "2026-10-16",
+          "note": "Both registry endpoints list both ISSNs and the same exact journal title."
+        }
+      ]
+    },
+    {
+      "venue": "TODAES",
+      "catalog_name": "ACM Transactions on Design Automation of Electronic Systems",
+      "catalog_issn": "1084-4309",
+      "records": [
+        {
+          "issn": "1557-7309",
+          "title": "ACM Transactions on Design Automation of Electronic Systems",
+          "year_from": 2023,
+          "year_to": 2026,
+          "registry": "https://api.crossref.org/journals/1557-7309",
+          "catalog_registry": "https://api.crossref.org/journals/1084-4309",
+          "verified_on": "2026-10-16",
+          "note": "Both registry endpoints list both ISSNs and the same exact journal title."
+        }
+      ]
+    },
+    {
+      "venue": "TODS",
+      "catalog_name": "ACM Transactions on Database Systems",
+      "catalog_issn": "0362-5915",
+      "records": [
+        {
+          "issn": "1557-4644",
+          "title": "ACM Transactions on Database Systems",
+          "year_from": 2023,
+          "year_to": 2026,
+          "registry": "https://api.crossref.org/journals/1557-4644",
+          "catalog_registry": "https://api.crossref.org/journals/0362-5915",
+          "verified_on": "2026-10-16",
+          "note": "Both registry endpoints list both ISSNs and the same exact journal title."
+        }
+      ]
+    },
+    {
+      "venue": "TOG",
+      "catalog_name": "ACM Transactions on Graphics",
+      "catalog_issn": "0730-0301",
+      "records": [
+        {
+          "issn": "1557-7368",
+          "title": "ACM Transactions on Graphics",
+          "year_from": 2023,
+          "year_to": 2026,
+          "registry": "https://api.crossref.org/journals/1557-7368",
+          "catalog_registry": "https://api.crossref.org/journals/0730-0301",
+          "verified_on": "2026-10-16",
+          "note": "Both registry endpoints list both ISSNs and the same exact journal title."
+        }
+      ]
+    },
+    {
+      "venue": "TOIS",
+      "catalog_name": "ACM Transactions on Information Systems",
+      "catalog_issn": "1046-8188",
+      "records": [
+        {
+          "issn": "1558-2868",
+          "title": "ACM Transactions on Information Systems",
+          "year_from": 2023,
+          "year_to": 2026,
+          "registry": "https://api.crossref.org/journals/1558-2868",
+          "catalog_registry": "https://api.crossref.org/journals/1046-8188",
+          "verified_on": "2026-10-16",
+          "note": "Both registry endpoints list both ISSNs and the same exact journal title."
+        }
+      ]
+    },
+    {
+      "venue": "TOIT",
+      "catalog_name": "ACM Transactions on Internet Technology",
+      "catalog_issn": "1533-5399",
+      "records": [
+        {
+          "issn": "1557-6051",
+          "title": "ACM Transactions on Internet Technology",
+          "year_from": 2023,
+          "year_to": 2026,
+          "registry": "https://api.crossref.org/journals/1557-6051",
+          "catalog_registry": "https://api.crossref.org/journals/1533-5399",
+          "verified_on": "2026-10-16",
+          "note": "Both registry endpoints list both ISSNs and the same exact journal title."
+        }
+      ]
+    },
+    {
+      "venue": "TOMM",
+      "catalog_name": "ACM Transactions on Multimedia Computing Communications and Applications",
+      "catalog_issn": "1551-6857",
+      "records": [
+        {
+          "issn": "1551-6865",
+          "title": "ACM Transactions on Multimedia Computing Communications and Applications",
+          "year_from": 2023,
+          "year_to": 2026,
+          "registry": "https://api.crossref.org/journals/1551-6865",
+          "catalog_registry": "https://api.crossref.org/journals/1551-6857",
+          "verified_on": "2026-10-16",
+          "note": "Both registry endpoints list both ISSNs and the same exact journal title."
+        }
+      ]
+    },
+    {
+      "venue": "TOMS",
+      "catalog_name": "ACM Transactions on Mathematical Software",
+      "catalog_issn": "0098-3500",
+      "records": [
+        {
+          "issn": "1557-7295",
+          "title": "ACM Transactions on Mathematical Software",
+          "year_from": 2023,
+          "year_to": 2026,
+          "registry": "https://api.crossref.org/journals/1557-7295",
+          "catalog_registry": "https://api.crossref.org/journals/0098-3500",
+          "verified_on": "2026-10-16",
+          "note": "Both registry endpoints list both ISSNs and the same exact journal title."
+        }
+      ]
+    },
+    {
+      "venue": "TOPLAS",
+      "catalog_name": "ACM Transactions on Programming Languages and Systems",
+      "catalog_issn": "0164-0925",
+      "records": [
+        {
+          "issn": "1558-4593",
+          "title": "ACM Transactions on Programming Languages and Systems",
+          "year_from": 2023,
+          "year_to": 2026,
+          "registry": "https://api.crossref.org/journals/1558-4593",
+          "catalog_registry": "https://api.crossref.org/journals/0164-0925",
+          "verified_on": "2026-10-16",
+          "note": "Both registry endpoints list both ISSNs and the same exact journal title."
+        }
+      ]
+    },
+    {
+      "venue": "TOPS",
+      "catalog_name": "ACM Transactions on Privacy and Security",
+      "catalog_issn": "2471-2566",
+      "records": [
+        {
+          "issn": "2471-2574",
+          "title": "ACM Transactions on Privacy and Security",
+          "year_from": 2023,
+          "year_to": 2026,
+          "registry": "https://api.crossref.org/journals/2471-2574",
+          "catalog_registry": "https://api.crossref.org/journals/2471-2566",
+          "verified_on": "2026-10-16",
+          "note": "Both registry endpoints list both ISSNs and the same exact journal title."
+        }
+      ]
+    },
+    {
+      "venue": "TOS",
+      "catalog_name": "ACM Transactions on Storage",
+      "catalog_issn": "1553-3077",
+      "records": [
+        {
+          "issn": "1553-3093",
+          "title": "ACM Transactions on Storage",
+          "year_from": 2023,
+          "year_to": 2026,
+          "registry": "https://api.crossref.org/journals/1553-3093",
+          "catalog_registry": "https://api.crossref.org/journals/1553-3077",
+          "verified_on": "2026-10-16",
+          "note": "Both registry endpoints list both ISSNs and the same exact journal title."
+        }
+      ]
+    },
+    {
+      "venue": "TOSEM",
+      "catalog_name": "ACM Transactions on Software Engineering and Methodology",
+      "catalog_issn": "1049-331X",
+      "records": [
+        {
+          "issn": "1557-7392",
+          "title": "ACM Transactions on Software Engineering and Methodology",
+          "year_from": 2023,
+          "year_to": 2026,
+          "registry": "https://api.crossref.org/journals/1557-7392",
+          "catalog_registry": "https://api.crossref.org/journals/1049-331X",
+          "verified_on": "2026-10-16",
+          "note": "Both registry endpoints list both ISSNs and the same exact journal title."
+        }
+      ]
+    },
+    {
+      "venue": "TOSN",
+      "catalog_name": "ACM Transactions on Sensor Networks",
+      "catalog_issn": "1550-4859",
+      "records": [
+        {
+          "issn": "1550-4867",
+          "title": "ACM Transactions on Sensor Networks",
+          "year_from": 2023,
+          "year_to": 2026,
+          "registry": "https://api.crossref.org/journals/1550-4867",
+          "catalog_registry": "https://api.crossref.org/journals/1550-4859",
+          "verified_on": "2026-10-16",
+          "note": "Both registry endpoints list both ISSNs and the same exact journal title."
+        }
+      ]
+    },
+    {
+      "venue": "TPAMI",
+      "catalog_name": "IEEE Transactions on Pattern Analysis and Machine Intelligence",
+      "catalog_issn": "0162-8828",
+      "records": [
+        {
+          "issn": "1939-3539",
+          "title": "IEEE Transactions on Pattern Analysis and Machine Intelligence",
+          "year_from": 2023,
+          "year_to": 2026,
+          "registry": "https://api.crossref.org/journals/1939-3539",
+          "catalog_registry": "https://api.crossref.org/journals/0162-8828",
+          "verified_on": "2026-10-16",
+          "note": "Both registry endpoints list both ISSNs and the same exact journal title."
+        },
+        {
+          "issn": "2160-9292",
+          "title": "IEEE Transactions on Pattern Analysis and Machine Intelligence",
+          "year_from": 2023,
+          "year_to": 2026,
+          "registry": "https://api.crossref.org/journals/2160-9292",
+          "catalog_registry": "https://api.crossref.org/journals/0162-8828",
+          "verified_on": "2026-10-16",
+          "note": "Both registry endpoints list both ISSNs and the same exact journal title."
+        }
+      ]
+    },
+    {
+      "venue": "TPDS",
+      "catalog_name": "IEEE Transactions on Parallel and Distributed Systems",
+      "catalog_issn": "1045-9219",
+      "records": [
+        {
+          "issn": "1558-2183",
+          "title": "IEEE Transactions on Parallel and Distributed Systems",
+          "year_from": 2023,
+          "year_to": 2026,
+          "registry": "https://api.crossref.org/journals/1558-2183",
+          "catalog_registry": "https://api.crossref.org/journals/1045-9219",
+          "verified_on": "2026-10-16",
+          "note": "Both registry endpoints list both ISSNs and the same exact journal title."
+        },
+        {
+          "issn": "2161-9883",
+          "title": "IEEE Transactions on Parallel and Distributed Systems",
+          "year_from": 2023,
+          "year_to": 2026,
+          "registry": "https://api.crossref.org/journals/2161-9883",
+          "catalog_registry": "https://api.crossref.org/journals/1045-9219",
+          "verified_on": "2026-10-16",
+          "note": "Both registry endpoints list both ISSNs and the same exact journal title."
+        }
+      ]
+    },
+    {
+      "venue": "TR",
+      "catalog_name": "IEEE Transactions on Robotics",
+      "catalog_issn": "1552-3098",
+      "records": [
+        {
+          "issn": "1546-1904",
+          "title": "IEEE Transactions on Robotics",
+          "year_from": 2023,
+          "year_to": 2026,
+          "registry": "https://api.crossref.org/journals/1546-1904",
+          "catalog_registry": "https://api.crossref.org/journals/1552-3098",
+          "verified_on": "2026-10-16",
+          "note": "Both registry endpoints list both ISSNs and the same exact journal title."
+        },
+        {
+          "issn": "1941-0468",
+          "title": "IEEE Transactions on Robotics",
+          "year_from": 2023,
+          "year_to": 2026,
+          "registry": "https://api.crossref.org/journals/1941-0468",
+          "catalog_registry": "https://api.crossref.org/journals/1552-3098",
+          "verified_on": "2026-10-16",
+          "note": "Both registry endpoints list both ISSNs and the same exact journal title."
+        }
+      ]
+    },
+    {
+      "venue": "TRETS",
+      "catalog_name": "ACM Transactions on Reconfigurable Technology and Systems",
+      "catalog_issn": "1936-7406",
+      "records": [
+        {
+          "issn": "1936-7414",
+          "title": "ACM Transactions on Reconfigurable Technology and Systems",
+          "year_from": 2023,
+          "year_to": 2026,
+          "registry": "https://api.crossref.org/journals/1936-7414",
+          "catalog_registry": "https://api.crossref.org/journals/1936-7406",
+          "verified_on": "2026-10-16",
+          "note": "Both registry endpoints list both ISSNs and the same exact journal title."
+        }
+      ]
+    },
+    {
+      "venue": "TSC",
+      "catalog_name": "IEEE Transactions on Services Computing",
+      "catalog_issn": "1939-1374",
+      "records": [
+        {
+          "issn": "2372-0204",
+          "title": "IEEE Transactions on Services Computing",
+          "year_from": 2023,
+          "year_to": 2026,
+          "registry": "https://api.crossref.org/journals/2372-0204",
+          "catalog_registry": "https://api.crossref.org/journals/1939-1374",
+          "verified_on": "2026-10-16",
+          "note": "Both registry endpoints list both ISSNs and the same exact journal title."
+        }
+      ]
+    },
+    {
+      "venue": "TSE",
+      "catalog_name": "IEEE Transactions on Software Engineering",
+      "catalog_issn": "0098-5589",
+      "records": [
+        {
+          "issn": "1939-3520",
+          "title": "IEEE Transactions on Software Engineering",
+          "year_from": 2023,
+          "year_to": 2026,
+          "registry": "https://api.crossref.org/journals/1939-3520",
+          "catalog_registry": "https://api.crossref.org/journals/0098-5589",
+          "verified_on": "2026-10-16",
+          "note": "Both registry endpoints list both ISSNs and the same exact journal title."
+        },
+        {
+          "issn": "2326-3881",
+          "title": "IEEE Transactions on Software Engineering",
+          "year_from": 2023,
+          "year_to": 2026,
+          "registry": "https://api.crossref.org/journals/2326-3881",
+          "catalog_registry": "https://api.crossref.org/journals/0098-5589",
+          "verified_on": "2026-10-16",
+          "note": "Both registry endpoints list both ISSNs and the same exact journal title."
+        }
+      ]
+    },
+    {
+      "venue": "TSMC",
+      "catalog_name": "IEEE Transactions on Systems, Man,and Cybernetics: Systems",
+      "catalog_issn": "2168-2216",
+      "records": [
+        {
+          "issn": "2168-2232",
+          "title": "IEEE Transactions on Systems Man and Cybernetics Systems",
+          "year_from": 2023,
+          "year_to": 2026,
+          "registry": "https://api.crossref.org/journals/2168-2232",
+          "catalog_registry": "https://api.crossref.org/journals/2168-2216",
+          "verified_on": "2026-10-16",
+          "note": "Both registry endpoints list both ISSNs and the same exact journal title."
+        }
+      ]
+    },
+    {
+      "venue": "TVCG",
+      "catalog_name": "IEEE Transactions on Visualization and Computer Graphics",
+      "catalog_issn": "1077-2626",
+      "records": [
+        {
+          "issn": "1941-0506",
+          "title": "IEEE Transactions on Visualization and Computer Graphics",
+          "year_from": 2023,
+          "year_to": 2026,
+          "registry": "https://api.crossref.org/journals/1941-0506",
+          "catalog_registry": "https://api.crossref.org/journals/1077-2626",
+          "verified_on": "2026-10-16",
+          "note": "Both registry endpoints list both ISSNs and the same exact journal title."
+        },
+        {
+          "issn": "2160-9306",
+          "title": "IEEE Transactions on Visualization and Computer Graphics",
+          "year_from": 2023,
+          "year_to": 2026,
+          "registry": "https://api.crossref.org/journals/2160-9306",
+          "catalog_registry": "https://api.crossref.org/journals/1077-2626",
+          "verified_on": "2026-10-16",
+          "note": "Both registry endpoints list both ISSNs and the same exact journal title."
+        }
+      ]
+    },
+    {
+      "venue": "TVLSI",
+      "catalog_name": "IEEE Transactions on Very Large Scale Integration (VLSI) Systems",
+      "catalog_issn": "1063-8210",
+      "records": [
+        {
+          "issn": "1557-9999",
+          "title": "IEEE Transactions on Very Large Scale Integration (VLSI) Systems",
+          "year_from": 2023,
+          "year_to": 2026,
+          "registry": "https://api.crossref.org/journals/1557-9999",
+          "catalog_registry": "https://api.crossref.org/journals/1063-8210",
+          "verified_on": "2026-10-16",
+          "note": "Both registry endpoints list both ISSNs and the same exact journal title."
+        }
+      ]
+    },
+    {
+      "venue": "TWC",
+      "catalog_name": "IEEE Transactions on Wireless Communications",
+      "catalog_issn": "1536-1276",
+      "records": [
+        {
+          "issn": "1558-2248",
+          "title": "IEEE Transactions on Wireless Communications",
+          "year_from": 2023,
+          "year_to": 2026,
+          "registry": "https://api.crossref.org/journals/1558-2248",
+          "catalog_registry": "https://api.crossref.org/journals/1536-1276",
+          "verified_on": "2026-10-16",
+          "note": "Both registry endpoints list both ISSNs and the same exact journal title."
+        }
+      ]
+    },
+    {
+      "venue": "TWEB",
+      "catalog_name": "ACM Transactions on the Web",
+      "catalog_issn": "1559-1131",
+      "records": [
+        {
+          "issn": "1559-114X",
+          "title": "ACM Transactions on the Web",
+          "year_from": 2023,
+          "year_to": 2026,
+          "registry": "https://api.crossref.org/journals/1559-114X",
+          "catalog_registry": "https://api.crossref.org/journals/1559-1131",
+          "verified_on": "2026-10-16",
+          "note": "Both registry endpoints list both ISSNs and the same exact journal title."
+        }
+      ]
+    },
+    {
+      "venue": "The Computer Journal",
+      "catalog_name": "The Computer Journal",
+      "catalog_issn": "0010-4620",
+      "records": [
+        {
+          "issn": "1460-2067",
+          "title": "The Computer Journal",
+          "year_from": 2023,
+          "year_to": 2026,
+          "registry": "https://api.crossref.org/journals/1460-2067",
+          "catalog_registry": "https://api.crossref.org/journals/0010-4620",
+          "verified_on": "2026-10-16",
+          "note": "Both registry endpoints list both ISSNs and the same exact journal title."
+        }
+      ]
+    },
+    {
+      "venue": "UMUAI",
+      "catalog_name": "User Modeling and User-Adapted Interaction",
+      "catalog_issn": "0924-1868",
+      "records": [
+        {
+          "issn": "1573-1391",
+          "title": "User Modeling and User-Adapted Interaction",
+          "year_from": 2023,
+          "year_to": 2026,
+          "registry": "https://api.crossref.org/journals/1573-1391",
+          "catalog_registry": "https://api.crossref.org/journals/0924-1868",
+          "verified_on": "2026-10-16",
+          "note": "Both registry endpoints list both ISSNs and the same exact journal title."
+        }
+      ]
+    },
+    {
+      "venue": "VLDBJ",
+      "catalog_name": "The VLDB Journal",
+      "catalog_issn": "0949-877X",
+      "records": [
+        {
+          "issn": "1066-8888",
+          "title": "The VLDB Journal",
+          "year_from": 2023,
+          "year_to": 2026,
+          "registry": "https://api.crossref.org/journals/1066-8888",
+          "catalog_registry": "https://api.crossref.org/journals/0949-877X",
+          "verified_on": "2026-10-16",
+          "note": "Both registry endpoints list both ISSNs and the same exact journal title."
+        }
+      ]
+    },
+    {
+      "venue": "WWW Journal",
+      "catalog_name": "World Wide Web",
+      "catalog_issn": "1386-145X",
+      "records": [
+        {
+          "issn": "1573-1413",
+          "title": "World Wide Web",
+          "year_from": 2023,
+          "year_to": 2026,
+          "registry": "https://api.crossref.org/journals/1573-1413",
+          "catalog_registry": "https://api.crossref.org/journals/1386-145X",
+          "verified_on": "2026-10-16",
+          "note": "Both registry endpoints list both ISSNs and the same exact journal title."
         }
       ]
     }

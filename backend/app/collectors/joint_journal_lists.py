@@ -69,11 +69,18 @@ def parse_publication_list(text, abbr, year):
         if len(titles) != 1:
             raise ValueError("Ambiguous title in official list")
         title = re.sub(r"\s+", " ", titles[0].text()).strip()
-        names = [
-            clean_author_name(x.strip())
-            for x in re.split(r",|\band\b", author_text(node))
-            if x.strip()
-        ]
+        if abbr == "PODS" and year == 2026:
+            # The 2026 list uses semicolons and parenthesized affiliations.
+            # Commas inside institutions must not create extra authors.
+            from app.collectors.kdd import _authors
+            names = [clean_author_name(name.replace("*", "").strip())
+                     for name in _authors(author_text(node))]
+        else:
+            names = [
+                clean_author_name(x.strip())
+                for x in re.split(r",|\band\b", author_text(node))
+                if x.strip()
+            ]
         if not names or not title or title in seen:
             raise ValueError("Missing or duplicated paper identity")
         seen.add(title)

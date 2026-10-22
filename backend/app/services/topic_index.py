@@ -11,6 +11,8 @@ from app.services.tagging import load_rules, load_thresholds, score_text
 LEGACY_MULTIMODAL = r"\bmulti[- ]?modal\b"
 REFINED_MULTIMODAL = r"\bmulti[- ]?modal\b(?!\s+(?:optim(?:iz|is)ation|functions?|problems?|landscapes?))"
 RULE_REFINEMENTS = {
+    ("specdec", "draft model"):
+        r"(?s)\A(?=.*\bdraft[- ]models?\b)(?=.*\b(?:llms?|language[- ]models?|tokens?|decod\w*|verification)\b).+",
     ("multimodal", LEGACY_MULTIMODAL): REFINED_MULTIMODAL,
     ("llm", r"\b(?:pre[- ]trained|parameter[- ]efficient)[- ](?:language )?models?\b"):
         r"\b(?:pre[- ]trained|parameter[- ]efficient)[- ]language[- ]models?\b",

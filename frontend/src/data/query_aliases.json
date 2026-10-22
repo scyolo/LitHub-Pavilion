@@ -1,0 +1,30 @@
+{
+  "topics": {
+    "大模型": "llm",
+    "大语言模型": "llm",
+    "大型语言模型": "llm",
+    "推理优化": "inference",
+    "推理加速": "inference",
+    "推理效率": "inference",
+    "大模型推理优化": "inference",
+    "大模型推理加速": "inference",
+    "投机解码": "specdec",
+    "推测解码": "specdec"
+  },
+  "keywords": {
+    "eagle2": "EAGLE 2",
+    "eagle3": "EAGLE 3",
+    "flashattention2": "FlashAttention 2",
+    "flashattention3": "FlashAttention 3",
+    "flash attention 2": "FlashAttention 2",
+    "flash attention 3": "FlashAttention 3",
+    "kv缓存": "KV cache",
+    "kv 缓存": "KV cache",
+    "键值缓存": "KV cache",
+    "paged attention": "PagedAttention",
+    "muxwise: towards high-goodput llm serving with prefill-decode multiplexing": "Towards High-Goodput LLM Serving with Prefill-decode Multiplexing",
+    "smurfs: towards efficient llm inference via collective and adaptive speculative decoding": "Towards Efficient LLM Inference via Collective and Adaptive Speculative Decoding",
+    "megascale-infer: serving mixture-of-experts at scale with disaggregated expert parallelism": "MegaScale-Infer: Efficient Mixture-of-Experts Model Serving with Disaggregated Expert Parallelism",
+    "elastic on-device llm service (elastilm)": "Elastic On-Device LLM Service"
+  }
+}

@@ -1,21 +1,836 @@
 {
-  "verified_on": "2026-10-02",
+  "verified_on": "2026-10-21",
   "sources": {
     "LISA": {
-      "note": "USENIX 官方 LISA 档案最近列出 2021 年届次，未列出 2023–2026 年届次。保留来源，暂不将空记录判为漏采或声称已全量覆盖。",
-      "evidence_url": "https://www.usenix.org/conferences/byname/5"
+      "note": "2026-10-18 复核：USENIX 官方 LISA 档案仍只列至 2021 年，未列出 2023–2026 年届次。保留来源，不将目标年份的零记录直接判为漏采，也不据此声称已停办或全量覆盖。",
+      "evidence_url": "https://www.usenix.org/conferences/byname/5",
+      "year_checks": {
+        "2023": {
+          "status": "edition_unverified",
+          "note": "USENIX 官方 LISA 档案当前列至 2021 年，未核实 2023–2026 独立届次。保留来源和真实零计数，不从旧档案推断正式停办。",
+          "evidence_url": "https://www.usenix.org/conferences/byname/5",
+          "checked_at": "2026-10-21"
+        },
+        "2024": {
+          "status": "edition_unverified",
+          "note": "USENIX 官方 LISA 档案当前列至 2021 年，未核实 2023–2026 独立届次。保留来源和真实零计数，不从旧档案推断正式停办。",
+          "evidence_url": "https://www.usenix.org/conferences/byname/5",
+          "checked_at": "2026-10-21"
+        },
+        "2025": {
+          "status": "edition_unverified",
+          "note": "USENIX 官方 LISA 档案当前列至 2021 年，未核实 2023–2026 独立届次。保留来源和真实零计数，不从旧档案推断正式停办。",
+          "evidence_url": "https://www.usenix.org/conferences/byname/5",
+          "checked_at": "2026-10-21"
+        },
+        "2026": {
+          "status": "edition_unverified",
+          "note": "USENIX 官方 LISA 档案当前列至 2021 年，未核实 2023–2026 独立届次。保留来源和真实零计数，不从旧档案推断正式停办。",
+          "evidence_url": "https://www.usenix.org/conferences/byname/5",
+          "checked_at": "2026-10-21"
+        }
+      }
     },
     "VEE": {
-      "note": "已查到 VEE 2022 官方会议记录；尚未核实 2023–2026 年独立届次或更名后继关系。不能凭旧档案推断已停办或补入其他会议论文。",
-      "evidence_url": "https://conf.researchr.org/home/vee-2022"
+      "note": "2026-10-18 复核：VEE 官方系列页最新列出 2022 年；尚未核实 2023–2026 年独立届次或更名后继关系。不能凭旧档案推断已停办，也不能补入其他会议论文来消除零记录。",
+      "evidence_url": "https://conf.researchr.org/home/vee-2022",
+      "year_checks": {
+        "2023": {
+          "status": "edition_unverified",
+          "note": "VEE 官方系列当前列至 2022 年，未核实这里的独立届次或正式更名继承关系；不把其他虚拟化会议论文移入以消除零记录。",
+          "evidence_url": "https://conf.researchr.org/home/vee-2022",
+          "checked_at": "2026-10-21"
+        },
+        "2024": {
+          "status": "edition_unverified",
+          "note": "VEE 官方系列当前列至 2022 年，未核实这里的独立届次或正式更名继承关系；不把其他虚拟化会议论文移入以消除零记录。",
+          "evidence_url": "https://conf.researchr.org/home/vee-2022",
+          "checked_at": "2026-10-21"
+        },
+        "2025": {
+          "status": "edition_unverified",
+          "note": "VEE 官方系列当前列至 2022 年，未核实这里的独立届次或正式更名继承关系；不把其他虚拟化会议论文移入以消除零记录。",
+          "evidence_url": "https://conf.researchr.org/home/vee-2022",
+          "checked_at": "2026-10-21"
+        },
+        "2026": {
+          "status": "edition_unverified",
+          "note": "VEE 官方系列当前列至 2022 年，未核实这里的独立届次或正式更名继承关系；不把其他虚拟化会议论文移入以消除零记录。",
+          "evidence_url": "https://conf.researchr.org/home/vee-2022",
+          "checked_at": "2026-10-21"
+        }
+      }
     },
     "Performance": {
       "note": "已依据官方技术议程关联 2023、2025 长论文。2026 官网列出的是 11 月会议的 accepted presentations，截至 2026-10-01 尚未据此导入为正式论文；2024 与部分论文仍待核验。",
-      "evidence_url": "https://performance2025.sciencesconf.org/resource/page/id/3"
+      "evidence_url": "https://performance2025.sciencesconf.org/resource/page/id/3",
+      "year_checks": {
+        "2024": {
+          "status": "unverified",
+          "note": "已复核 Performance 2024 的来源全名、简称与相邻出版年份元数据。有限查询尚不能证明本届研究论文已完整收录，需继续核对官方主会目录及逐篇身份；检索不到不代表会议未举办或论文未出版。",
+          "checked_at": "2026-10-21",
+          "evidence_url": "https://api.crossref.org/works?query.container-title=International+Symposium+on+Computer+Performance%2C+Modeling%2C+Measurements+and+Evaluation&filter=from-pub-date%3A2023-01-01%2Cuntil-pub-date%3A2025-12-31&rows=100&select=DOI%2Ctitle%2Cauthor%2Ctype%2Cpublished%2Cpublished-print%2Cpublished-online%2Cevent%2Ccontainer-title%2Cvolume%2Cissue%2CISSN%2CISBN"
+        },
+        "2026": {
+          "status": "unverified",
+          "note": "已复核 Performance 2026 的来源全名、简称与相邻出版年份元数据。有限查询尚不能证明本届研究论文已完整收录，需继续核对官方主会目录及逐篇身份；检索不到不代表会议未举办或论文未出版。",
+          "checked_at": "2026-10-21",
+          "evidence_url": "https://api.crossref.org/works?query.container-title=International+Symposium+on+Computer+Performance%2C+Modeling%2C+Measurements+and+Evaluation+2026&filter=from-pub-date%3A2025-01-01%2Cuntil-pub-date%3A2027-12-31&rows=100&select=DOI%2Ctitle%2Cauthor%2Ctype%2Cpublished%2Cpublished-print%2Cpublished-online%2Cevent%2Ccontainer-title%2Cvolume%2Cissue%2CISSN%2CISBN"
+        }
+      }
     },
     "SPM": {
       "note": "已按迁移后的 SPM 2023 官方技术议程关联 CAD 长论文；2024–2026 仍需逐篇名单证据，不把专题序言、参考文献或整期期刊冒充会议论文。",
-      "evidence_url": "https://sites.google.com/view/spm-2023/program"
+      "evidence_url": "https://sites.google.com/view/spm-2023/program",
+      "year_checks": {
+        "2024": {
+          "status": "unverified",
+          "note": "已复核 SPM 2024 的来源全名、简称与相邻出版年份元数据。有限查询尚不能证明本届研究论文已完整收录，需继续核对官方主会目录及逐篇身份；检索不到不代表会议未举办或论文未出版。",
+          "checked_at": "2026-10-21",
+          "evidence_url": "https://api.crossref.org/works?query.container-title=Symposium+on+Solid+and+Physical+Modeling&filter=from-pub-date%3A2023-01-01%2Cuntil-pub-date%3A2025-12-31&rows=100&select=DOI%2Ctitle%2Cauthor%2Ctype%2Cpublished%2Cpublished-print%2Cpublished-online%2Cevent%2Ccontainer-title%2Cvolume%2Cissue%2CISSN%2CISBN"
+        },
+        "2025": {
+          "status": "unverified",
+          "note": "已复核 SPM 2025 的来源全名、简称与相邻出版年份元数据。有限查询尚不能证明本届研究论文已完整收录，需继续核对官方主会目录及逐篇身份；检索不到不代表会议未举办或论文未出版。",
+          "checked_at": "2026-10-21",
+          "evidence_url": "https://api.crossref.org/works?query.container-title=Symposium+on+Solid+and+Physical+Modeling&filter=from-pub-date%3A2024-01-01%2Cuntil-pub-date%3A2026-12-31&rows=100&select=DOI%2Ctitle%2Cauthor%2Ctype%2Cpublished%2Cpublished-print%2Cpublished-online%2Cevent%2Ccontainer-title%2Cvolume%2Cissue%2CISSN%2CISBN"
+        },
+        "2026": {
+          "status": "unverified",
+          "note": "已复核 SPM 2026 的来源全名、简称与相邻出版年份元数据。有限查询尚不能证明本届研究论文已完整收录，需继续核对官方主会目录及逐篇身份；检索不到不代表会议未举办或论文未出版。",
+          "checked_at": "2026-10-21",
+          "evidence_url": "https://api.crossref.org/works?query.container-title=Symposium+on+Solid+and+Physical+Modeling&filter=from-pub-date%3A2025-01-01%2Cuntil-pub-date%3A2027-12-31&rows=100&select=DOI%2Ctitle%2Cauthor%2Ctype%2Cpublished%2Cpublished-print%2Cpublished-online%2Cevent%2Ccontainer-title%2Cvolume%2Cissue%2CISSN%2CISBN"
+        }
+      }
+    },
+    "ACM MM": {
+      "year_checks": {
+        "2026": {
+          "status": "unverified",
+          "note": "已复核 ACM MM 2026 的来源全名、简称与相邻出版年份元数据。有限查询尚不能证明本届研究论文已完整收录，需继续核对官方主会目录及逐篇身份；检索不到不代表会议未举办或论文未出版。",
+          "checked_at": "2026-10-21",
+          "evidence_url": "https://api.crossref.org/works?query.container-title=ACM+International+Conference+on+Multimedia&filter=from-pub-date%3A2025-01-01%2Cuntil-pub-date%3A2027-12-31&rows=100&select=DOI%2Ctitle%2Cauthor%2Ctype%2Cpublished%2Cpublished-print%2Cpublished-online%2Cevent%2Ccontainer-title%2Cvolume%2Cissue%2CISSN%2CISBN"
+        }
+      }
+    },
+    "ACM SIGOPS ATC": {
+      "year_checks": {
+        "2026": {
+          "status": "unverified",
+          "note": "已复核 ACM SIGOPS ATC 2026 的来源全名、简称与相邻出版年份元数据。有限查询尚不能证明本届研究论文已完整收录，需继续核对官方主会目录及逐篇身份；检索不到不代表会议未举办或论文未出版。",
+          "checked_at": "2026-10-21",
+          "evidence_url": "https://api.crossref.org/works?query.container-title=ACM+SIGOPS+Annual+Technical+Conference&filter=from-pub-date%3A2025-01-01%2Cuntil-pub-date%3A2027-12-31&rows=100&select=DOI%2Ctitle%2Cauthor%2Ctype%2Cpublished%2Cpublished-print%2Cpublished-online%2Cevent%2Ccontainer-title%2Cvolume%2Cissue%2CISSN%2CISBN"
+        }
+      }
+    },
+    "ACSAC": {
+      "year_checks": {
+        "2026": {
+          "status": "unverified",
+          "note": "已复核 ACSAC 2026 的来源全名、简称与相邻出版年份元数据。有限查询尚不能证明本届研究论文已完整收录，需继续核对官方主会目录及逐篇身份；检索不到不代表会议未举办或论文未出版。",
+          "checked_at": "2026-10-21",
+          "evidence_url": "https://api.crossref.org/works?query.container-title=Annual+Computer+Security+Applications+Conference&filter=from-pub-date%3A2025-01-01%2Cuntil-pub-date%3A2027-12-31&rows=100&select=DOI%2Ctitle%2Cauthor%2Ctype%2Cpublished%2Cpublished-print%2Cpublished-online%2Cevent%2Ccontainer-title%2Cvolume%2Cissue%2CISSN%2CISBN"
+        }
+      }
+    },
+    "ASE": {
+      "year_checks": {
+        "2026": {
+          "status": "unverified",
+          "note": "已复核 ASE 2026 的来源全名、简称与相邻出版年份元数据。有限查询尚不能证明本届研究论文已完整收录，需继续核对官方主会目录及逐篇身份；检索不到不代表会议未举办或论文未出版。",
+          "checked_at": "2026-10-21",
+          "evidence_url": "https://api.crossref.org/works?query.container-title=International+Conference+on+Automated+Software+Engineering&filter=from-pub-date%3A2025-01-01%2Cuntil-pub-date%3A2027-12-31&rows=100&select=DOI%2Ctitle%2Cauthor%2Ctype%2Cpublished%2Cpublished-print%2Cpublished-online%2Cevent%2Ccontainer-title%2Cvolume%2Cissue%2CISSN%2CISBN"
+        }
+      }
+    },
+    "ASIACRYPT": {
+      "year_checks": {
+        "2026": {
+          "status": "unverified",
+          "note": "已复核 ASIACRYPT 2026 的来源全名、简称与相邻出版年份元数据。有限查询尚不能证明本届研究论文已完整收录，需继续核对官方主会目录及逐篇身份；检索不到不代表会议未举办或论文未出版。",
+          "checked_at": "2026-10-21",
+          "evidence_url": "https://api.crossref.org/works?query.container-title=Annual+International+Conference+on+the+Theory+and+Application+of+Cryptology+and+Information+Security&filter=from-pub-date%3A2025-01-01%2Cuntil-pub-date%3A2027-12-31&rows=100&select=DOI%2Ctitle%2Cauthor%2Ctype%2Cpublished%2Cpublished-print%2Cpublished-online%2Cevent%2Ccontainer-title%2Cvolume%2Cissue%2CISSN%2CISBN"
+        }
+      }
+    },
+    "BIBM": {
+      "year_checks": {
+        "2026": {
+          "status": "unverified",
+          "note": "已复核 BIBM 2026 的来源全名、简称与相邻出版年份元数据。有限查询尚不能证明本届研究论文已完整收录，需继续核对官方主会目录及逐篇身份；检索不到不代表会议未举办或论文未出版。",
+          "checked_at": "2026-10-21",
+          "evidence_url": "https://api.crossref.org/works?query.container-title=IEEE+International+Conference+on+Bioinformatics+and+Biomedicine&filter=from-pub-date%3A2025-01-01%2Cuntil-pub-date%3A2027-12-31&rows=100&select=DOI%2Ctitle%2Cauthor%2Ctype%2Cpublished%2Cpublished-print%2Cpublished-online%2Cevent%2Ccontainer-title%2Cvolume%2Cissue%2CISSN%2CISBN"
+        }
+      }
+    },
+    "CADE": {
+      "year_checks": {
+        "2024": {
+          "status": "joint_edition",
+          "note": "CADE 在这些年份参与 IJCAR 联合会议。IJCAR 官方系列列出 2024 和 2026；不把联合论文集全部改标为 CADE，也不以此声称 CADE 已全量覆盖。",
+          "evidence_url": "https://ijcar.org/conferences",
+          "checked_at": "2026-10-21"
+        },
+        "2026": {
+          "status": "joint_edition",
+          "note": "CADE 在这些年份参与 IJCAR 联合会议。IJCAR 官方系列列出 2024 和 2026；不把联合论文集全部改标为 CADE，也不以此声称 CADE 已全量覆盖。",
+          "evidence_url": "https://ijcar.org/conferences",
+          "checked_at": "2026-10-21"
+        }
+      }
+    },
+    "CCS": {
+      "year_checks": {
+        "2026": {
+          "status": "unverified",
+          "note": "已复核 CCS 2026 的来源全名、简称与相邻出版年份元数据。有限查询尚不能证明本届研究论文已完整收录，需继续核对官方主会目录及逐篇身份；检索不到不代表会议未举办或论文未出版。",
+          "checked_at": "2026-10-21",
+          "evidence_url": "https://api.crossref.org/works?query.container-title=ACM+Conference+on+Computer+and+Communications+Security&filter=from-pub-date%3A2025-01-01%2Cuntil-pub-date%3A2027-12-31&rows=100&select=DOI%2Ctitle%2Cauthor%2Ctype%2Cpublished%2Cpublished-print%2Cpublished-online%2Cevent%2Ccontainer-title%2Cvolume%2Cissue%2CISSN%2CISBN"
+        }
+      }
+    },
+    "CIKM": {
+      "year_checks": {
+        "2026": {
+          "status": "unverified",
+          "note": "已复核 CIKM 2026 的来源全名、简称与相邻出版年份元数据。有限查询尚不能证明本届研究论文已完整收录，需继续核对官方主会目录及逐篇身份；检索不到不代表会议未举办或论文未出版。",
+          "checked_at": "2026-10-21",
+          "evidence_url": "https://api.crossref.org/works?query.container-title=ACM+International+Conference+on+Information+and+Knowledge+Management&filter=from-pub-date%3A2025-01-01%2Cuntil-pub-date%3A2027-12-31&rows=100&select=DOI%2Ctitle%2Cauthor%2Ctype%2Cpublished%2Cpublished-print%2Cpublished-online%2Cevent%2Ccontainer-title%2Cvolume%2Cissue%2CISSN%2CISBN"
+        }
+      }
+    },
+    "CLUSTER": {
+      "year_checks": {}
+    },
+    "CODES+ISSS": {
+      "year_checks": {
+        "2023": {
+          "status": "unverified",
+          "note": "检出的 ACM 2023 卷在出版元数据中明确标为 Companion，包含 Work-in-Progress，不能当作主会研究论文补入。ESWEEK 官方出版规则将本届 Journal track 发表在 TECS，仍需逐篇主会名单核验。",
+          "evidence_url": "https://esweek.org/archive/",
+          "checked_at": "2026-10-21"
+        },
+        "2026": {
+          "status": "unverified",
+          "note": "已复核 CODES+ISSS 2026 的来源全名、简称与相邻出版年份元数据。有限查询尚不能证明本届研究论文已完整收录，需继续核对官方主会目录及逐篇身份；检索不到不代表会议未举办或论文未出版。",
+          "checked_at": "2026-10-21",
+          "evidence_url": "https://api.crossref.org/works?query.container-title=International+Conference+on+Hardware%2FSoftware+Co-design+and+System+Synthesis&filter=from-pub-date%3A2025-01-01%2Cuntil-pub-date%3A2027-12-31&rows=100&select=DOI%2Ctitle%2Cauthor%2Ctype%2Cpublished%2Cpublished-print%2Cpublished-online%2Cevent%2Ccontainer-title%2Cvolume%2Cissue%2CISSN%2CISBN"
+        }
+      }
+    },
+    "COLING": {
+      "year_checks": {
+        "2023": {
+          "status": "not_scheduled",
+          "note": "ACL Anthology 的 COLING 系列在该区间列出 2022、2024（LREC-COLING）及 2025，无 COLING 2023 独立主会卷。",
+          "evidence_url": "https://aclanthology.org/venues/coling/",
+          "checked_at": "2026-10-21"
+        },
+        "2026": {
+          "status": "edition_unverified",
+          "note": "本轮官方 Anthology 2026.coling 元数据尚不可用，未核实 2026 独立届次及主会出版卷；保留核验状态，不凭缺页判断停办。",
+          "evidence_url": "https://aclanthology.org/venues/coling/",
+          "checked_at": "2026-10-21"
+        }
+      }
+    },
+    "CoNEXT": {
+      "year_checks": {
+        "2026": {
+          "status": "unverified",
+          "note": "已复核 CoNEXT 2026 的来源全名、简称与相邻出版年份元数据。有限查询尚不能证明本届研究论文已完整收录，需继续核对官方主会目录及逐篇身份；检索不到不代表会议未举办或论文未出版。",
+          "checked_at": "2026-10-21",
+          "evidence_url": "https://api.crossref.org/works?query.container-title=ACM+International+Conference+on+Emerging+Networking+Experiments+and+Technologies&filter=from-pub-date%3A2025-01-01%2Cuntil-pub-date%3A2027-12-31&rows=100&select=DOI%2Ctitle%2Cauthor%2Ctype%2Cpublished%2Cpublished-print%2Cpublished-online%2Cevent%2Ccontainer-title%2Cvolume%2Cissue%2CISSN%2CISBN"
+        }
+      }
+    },
+    "DAC": {
+      "year_checks": {
+        "2026": {
+          "status": "unverified",
+          "note": "已复核 DAC 2026 的来源全名、简称与相邻出版年份元数据。有限查询尚不能证明本届研究论文已完整收录，需继续核对官方主会目录及逐篇身份；检索不到不代表会议未举办或论文未出版。",
+          "checked_at": "2026-10-21",
+          "evidence_url": "https://api.crossref.org/works?query.container-title=Design+Automation+Conference&filter=from-pub-date%3A2025-01-01%2Cuntil-pub-date%3A2027-12-31&rows=100&select=DOI%2Ctitle%2Cauthor%2Ctype%2Cpublished%2Cpublished-print%2Cpublished-online%2Cevent%2Ccontainer-title%2Cvolume%2Cissue%2CISSN%2CISBN"
+        }
+      }
+    },
+    "ECAI": {
+      "year_checks": {
+        "2026": {
+          "status": "joint_edition",
+          "note": "官方确认为 IJCAI–ECAI 2026 联合届次，出版身份保留在 IJCAI；请查询对应届次，避免把同一论文再次计入 ECAI。",
+          "evidence_url": "https://2026.ijcai.org/",
+          "checked_at": "2026-10-21",
+          "canonical_venue": "IJCAI"
+        }
+      }
+    },
+    "ECCV": {
+      "year_checks": {
+        "2023": {
+          "status": "not_scheduled",
+          "note": "ECVA 官方说明 ECCV 在偶数年举办；2023、2025 无独立 ECCV 主会。保留真实零计数，不代入 ICCV 或其他会议论文。",
+          "evidence_url": "https://eccv.ecva.net/Conferences/2024",
+          "checked_at": "2026-10-21"
+        },
+        "2025": {
+          "status": "not_scheduled",
+          "note": "ECVA 官方说明 ECCV 在偶数年举办；2023、2025 无独立 ECCV 主会。保留真实零计数，不代入 ICCV 或其他会议论文。",
+          "evidence_url": "https://eccv.ecva.net/Conferences/2024",
+          "checked_at": "2026-10-21"
+        }
+      }
+    },
+    "ECSCW": {
+      "year_checks": {
+        "2026": {
+          "status": "unverified",
+          "note": "已复核 ECSCW 2026 的来源全名、简称与相邻出版年份元数据。有限查询尚不能证明本届研究论文已完整收录，需继续核对官方主会目录及逐篇身份；检索不到不代表会议未举办或论文未出版。",
+          "checked_at": "2026-10-21",
+          "evidence_url": "https://api.crossref.org/works?query.container-title=European+Conference+on+Computer+Supported+Cooperative+Work&filter=from-pub-date%3A2025-01-01%2Cuntil-pub-date%3A2027-12-31&rows=100&select=DOI%2Ctitle%2Cauthor%2Ctype%2Cpublished%2Cpublished-print%2Cpublished-online%2Cevent%2Ccontainer-title%2Cvolume%2Cissue%2CISSN%2CISBN"
+        }
+      }
+    },
+    "EMNLP": {
+      "year_checks": {
+        "2026": {
+          "status": "unverified",
+          "note": "已复核 EMNLP 2026 的来源全名、简称与相邻出版年份元数据。有限查询尚不能证明本届研究论文已完整收录，需继续核对官方主会目录及逐篇身份；检索不到不代表会议未举办或论文未出版。",
+          "checked_at": "2026-10-21",
+          "evidence_url": "https://api.crossref.org/works?query.container-title=Empirical+Methods+in+Natural+Language+Processing&filter=from-pub-date%3A2025-01-01%2Cuntil-pub-date%3A2027-12-31&rows=100&select=DOI%2Ctitle%2Cauthor%2Ctype%2Cpublished%2Cpublished-print%2Cpublished-online%2Cevent%2Ccontainer-title%2Cvolume%2Cissue%2CISSN%2CISBN"
+        }
+      }
+    },
+    "EMSOFT": {
+      "year_checks": {
+        "2026": {
+          "status": "unverified",
+          "note": "已复核 EMSOFT 2026 的来源全名、简称与相邻出版年份元数据。有限查询尚不能证明本届研究论文已完整收录，需继续核对官方主会目录及逐篇身份；检索不到不代表会议未举办或论文未出版。",
+          "checked_at": "2026-10-21",
+          "evidence_url": "https://api.crossref.org/works?query.container-title=International+Conference+on+Embedded+Software&filter=from-pub-date%3A2025-01-01%2Cuntil-pub-date%3A2027-12-31&rows=100&select=DOI%2Ctitle%2Cauthor%2Ctype%2Cpublished%2Cpublished-print%2Cpublished-online%2Cevent%2Ccontainer-title%2Cvolume%2Cissue%2CISSN%2CISBN"
+        }
+      }
+    },
+    "ESEM": {
+      "year_checks": {
+        "2026": {
+          "status": "unverified",
+          "note": "已复核 ESEM 2026 的来源全名、简称与相邻出版年份元数据。有限查询尚不能证明本届研究论文已完整收录，需继续核对官方主会目录及逐篇身份；检索不到不代表会议未举办或论文未出版。",
+          "checked_at": "2026-10-21",
+          "evidence_url": "https://api.crossref.org/works?query.container-title=International+Symposium+on+Empirical+Software+Engineering+and+Measurement+2026&filter=from-pub-date%3A2025-01-01%2Cuntil-pub-date%3A2027-12-31&rows=100&select=DOI%2Ctitle%2Cauthor%2Ctype%2Cpublished%2Cpublished-print%2Cpublished-online%2Cevent%2Ccontainer-title%2Cvolume%2Cissue%2CISSN%2CISBN"
+        }
+      }
+    },
+    "FM": {
+      "year_checks": {
+        "2025": {
+          "status": "not_scheduled",
+          "note": "Formal Methods Europe 官方完整系列列出 FM 2024 第 26 届及 FM 2026 第 27 届，2025 无独立 FM 届次。",
+          "evidence_url": "https://www.fmeurope.org/symposia/",
+          "checked_at": "2026-10-21"
+        }
+      }
+    },
+    "FOCS": {
+      "year_checks": {
+        "2026": {
+          "status": "unverified",
+          "note": "已复核 FOCS 2026 的来源全名、简称与相邻出版年份元数据。有限查询尚不能证明本届研究论文已完整收录，需继续核对官方主会目录及逐篇身份；检索不到不代表会议未举办或论文未出版。",
+          "checked_at": "2026-10-21",
+          "evidence_url": "https://api.crossref.org/works?query.container-title=IEEE+Annual+Symposium+on+Foundations+of+Computer+Science&filter=from-pub-date%3A2025-01-01%2Cuntil-pub-date%3A2027-12-31&rows=100&select=DOI%2Ctitle%2Cauthor%2Ctype%2Cpublished%2Cpublished-print%2Cpublished-online%2Cevent%2Ccontainer-title%2Cvolume%2Cissue%2CISSN%2CISBN"
+        }
+      }
+    },
+    "GROUP": {
+      "year_checks": {
+        "2026": {
+          "status": "unverified",
+          "note": "已复核 GROUP 2026 的来源全名、简称与相邻出版年份元数据。有限查询尚不能证明本届研究论文已完整收录，需继续核对官方主会目录及逐篇身份；检索不到不代表会议未举办或论文未出版。",
+          "checked_at": "2026-10-21",
+          "evidence_url": "https://api.crossref.org/works?query.container-title=ACM+International+Conference+on+Supporting+Group+Work&filter=from-pub-date%3A2025-01-01%2Cuntil-pub-date%3A2027-12-31&rows=100&select=DOI%2Ctitle%2Cauthor%2Ctype%2Cpublished%2Cpublished-print%2Cpublished-online%2Cevent%2Ccontainer-title%2Cvolume%2Cissue%2CISSN%2CISBN"
+        }
+      }
+    },
+    "HOT CHIPS": {
+      "year_checks": {
+        "2026": {
+          "status": "unverified",
+          "note": "已复核 HOT CHIPS 2026 的来源全名、简称与相邻出版年份元数据。有限查询尚不能证明本届研究论文已完整收录，需继续核对官方主会目录及逐篇身份；检索不到不代表会议未举办或论文未出版。",
+          "checked_at": "2026-10-21",
+          "evidence_url": "https://api.crossref.org/works?query.container-title=Hot+Chips%3A+A+Symposium+on+High+Performance+Chips&filter=from-pub-date%3A2025-01-01%2Cuntil-pub-date%3A2027-12-31&rows=100&select=DOI%2Ctitle%2Cauthor%2Ctype%2Cpublished%2Cpublished-print%2Cpublished-online%2Cevent%2Ccontainer-title%2Cvolume%2Cissue%2CISSN%2CISBN"
+        }
+      }
+    },
+    "HSCC": {
+      "year_checks": {
+        "2026": {
+          "status": "unverified",
+          "note": "已复核 HSCC 2026 的来源全名、简称与相邻出版年份元数据。有限查询尚不能证明本届研究论文已完整收录，需继续核对官方主会目录及逐篇身份；检索不到不代表会议未举办或论文未出版。",
+          "checked_at": "2026-10-21",
+          "evidence_url": "https://api.crossref.org/works?query.container-title=International+Conference+on+Hybrid+Systems%3A+Computation+and+Control&filter=from-pub-date%3A2025-01-01%2Cuntil-pub-date%3A2027-12-31&rows=100&select=DOI%2Ctitle%2Cauthor%2Ctype%2Cpublished%2Cpublished-print%2Cpublished-online%2Cevent%2Ccontainer-title%2Cvolume%2Cissue%2CISSN%2CISBN"
+        }
+      }
+    },
+    "HiPEAC": {
+      "year_checks": {
+        "2025": {
+          "status": "unverified",
+          "note": "已复核 HiPEAC 2025 的来源全名、简称与相邻出版年份元数据。有限查询尚不能证明本届研究论文已完整收录，需继续核对官方主会目录及逐篇身份；检索不到不代表会议未举办或论文未出版。",
+          "checked_at": "2026-10-21",
+          "evidence_url": "https://api.crossref.org/works?query.container-title=International+Conference+on+High+Performance+and+Embedded+Architectures+and+Compilers&filter=from-pub-date%3A2024-01-01%2Cuntil-pub-date%3A2026-12-31&rows=100&select=DOI%2Ctitle%2Cauthor%2Ctype%2Cpublished%2Cpublished-print%2Cpublished-online%2Cevent%2Ccontainer-title%2Cvolume%2Cissue%2CISSN%2CISBN"
+        },
+        "2026": {
+          "status": "unverified",
+          "note": "已复核 HiPEAC 2026 的来源全名、简称与相邻出版年份元数据。有限查询尚不能证明本届研究论文已完整收录，需继续核对官方主会目录及逐篇身份；检索不到不代表会议未举办或论文未出版。",
+          "checked_at": "2026-10-21",
+          "evidence_url": "https://api.crossref.org/works?query.container-title=International+Conference+on+High+Performance+and+Embedded+Architectures+and+Compilers&filter=from-pub-date%3A2025-01-01%2Cuntil-pub-date%3A2027-12-31&rows=100&select=DOI%2Ctitle%2Cauthor%2Ctype%2Cpublished%2Cpublished-print%2Cpublished-online%2Cevent%2Ccontainer-title%2Cvolume%2Cissue%2CISSN%2CISBN"
+        }
+      }
+    },
+    "HotOS": {
+      "year_checks": {
+        "2024": {
+          "status": "not_scheduled",
+          "note": "ACM SIGOPS 官方系列列出 2023 第 19 届、2025 第 20 届和 2027 第 21 届；2024、2026 不另设独立届次。",
+          "evidence_url": "https://sigops.org/s/conferences/hotos/2027/",
+          "checked_at": "2026-10-21"
+        },
+        "2026": {
+          "status": "not_scheduled",
+          "note": "ACM SIGOPS 官方系列列出 2023 第 19 届、2025 第 20 届和 2027 第 21 届；2024、2026 不另设独立届次。",
+          "evidence_url": "https://sigops.org/s/conferences/hotos/2027/",
+          "checked_at": "2026-10-21"
+        }
+      }
+    },
+    "ICCAD": {
+      "year_checks": {
+        "2026": {
+          "status": "unverified",
+          "note": "已复核 ICCAD 2026 的来源全名、简称与相邻出版年份元数据。有限查询尚不能证明本届研究论文已完整收录，需继续核对官方主会目录及逐篇身份；检索不到不代表会议未举办或论文未出版。",
+          "checked_at": "2026-10-21",
+          "evidence_url": "https://api.crossref.org/works?query.container-title=International+Conference+on+Computer-Aided+Design+2026&filter=from-pub-date%3A2025-01-01%2Cuntil-pub-date%3A2027-12-31&rows=100&select=DOI%2Ctitle%2Cauthor%2Ctype%2Cpublished%2Cpublished-print%2Cpublished-online%2Cevent%2Ccontainer-title%2Cvolume%2Cissue%2CISSN%2CISBN"
+        }
+      }
+    },
+    "ICCD": {
+      "year_checks": {
+        "2026": {
+          "status": "unverified",
+          "note": "已复核 ICCD 2026 的来源全名、简称与相邻出版年份元数据。有限查询尚不能证明本届研究论文已完整收录，需继续核对官方主会目录及逐篇身份；检索不到不代表会议未举办或论文未出版。",
+          "checked_at": "2026-10-21",
+          "evidence_url": "https://api.crossref.org/works?query.container-title=International+Conference+on+Computer+Design&filter=from-pub-date%3A2025-01-01%2Cuntil-pub-date%3A2027-12-31&rows=100&select=DOI%2Ctitle%2Cauthor%2Ctype%2Cpublished%2Cpublished-print%2Cpublished-online%2Cevent%2Ccontainer-title%2Cvolume%2Cissue%2CISSN%2CISBN"
+        }
+      }
+    },
+    "ICCV": {
+      "year_checks": {
+        "2024": {
+          "status": "not_scheduled",
+          "note": "CVF 官方会议系列为两年一届，列出 ICCV 2023、2025、2027；2024、2026 无独立 ICCV 主会。",
+          "evidence_url": "https://iccv.thecvf.com/",
+          "checked_at": "2026-10-21"
+        },
+        "2026": {
+          "status": "not_scheduled",
+          "note": "CVF 官方会议系列为两年一届，列出 ICCV 2023、2025、2027；2024、2026 无独立 ICCV 主会。",
+          "evidence_url": "https://iccv.thecvf.com/",
+          "checked_at": "2026-10-21"
+        }
+      }
+    },
+    "ICDM": {
+      "year_checks": {
+        "2026": {
+          "status": "unverified",
+          "note": "已复核 ICDM 2026 的来源全名、简称与相邻出版年份元数据。有限查询尚不能证明本届研究论文已完整收录，需继续核对官方主会目录及逐篇身份；检索不到不代表会议未举办或论文未出版。",
+          "checked_at": "2026-10-21",
+          "evidence_url": "https://api.crossref.org/works?query.container-title=IEEE+International+Conference+on+Data+Mining&filter=from-pub-date%3A2025-01-01%2Cuntil-pub-date%3A2027-12-31&rows=100&select=DOI%2Ctitle%2Cauthor%2Ctype%2Cpublished%2Cpublished-print%2Cpublished-online%2Cevent%2Ccontainer-title%2Cvolume%2Cissue%2CISSN%2CISBN"
+        }
+      }
+    },
+    "ICME": {
+      "year_checks": {
+        "2026": {
+          "status": "unverified",
+          "note": "已复核 ICME 2026 的来源全名、简称与相邻出版年份元数据。有限查询尚不能证明本届研究论文已完整收录，需继续核对官方主会目录及逐篇身份；检索不到不代表会议未举办或论文未出版。",
+          "checked_at": "2026-10-21",
+          "evidence_url": "https://api.crossref.org/works?query.container-title=IEEE+International+Conference+on+Multimedia+%26+Expo&filter=from-pub-date%3A2025-01-01%2Cuntil-pub-date%3A2027-12-31&rows=100&select=DOI%2Ctitle%2Cauthor%2Ctype%2Cpublished%2Cpublished-print%2Cpublished-online%2Cevent%2Ccontainer-title%2Cvolume%2Cissue%2CISSN%2CISBN"
+        }
+      }
+    },
+    "ICNP": {
+      "year_checks": {
+        "2026": {
+          "status": "unverified",
+          "note": "已复核 ICNP 2026 的来源全名、简称与相邻出版年份元数据。有限查询尚不能证明本届研究论文已完整收录，需继续核对官方主会目录及逐篇身份；检索不到不代表会议未举办或论文未出版。",
+          "checked_at": "2026-10-21",
+          "evidence_url": "https://api.crossref.org/works?query.container-title=IEEE+International+Conference+on+Network+Protocols+2026&filter=from-pub-date%3A2025-01-01%2Cuntil-pub-date%3A2027-12-31&rows=100&select=DOI%2Ctitle%2Cauthor%2Ctype%2Cpublished%2Cpublished-print%2Cpublished-online%2Cevent%2Ccontainer-title%2Cvolume%2Cissue%2CISSN%2CISBN"
+        }
+      }
+    },
+    "ICSME": {
+      "year_checks": {
+        "2026": {
+          "status": "unverified",
+          "note": "已复核 ICSME 2026 的来源全名、简称与相邻出版年份元数据。有限查询尚不能证明本届研究论文已完整收录，需继续核对官方主会目录及逐篇身份；检索不到不代表会议未举办或论文未出版。",
+          "checked_at": "2026-10-21",
+          "evidence_url": "https://api.crossref.org/works?query.container-title=International+Conference+on+Software+Maintenance+and+Evolution&filter=from-pub-date%3A2025-01-01%2Cuntil-pub-date%3A2027-12-31&rows=100&select=DOI%2Ctitle%2Cauthor%2Ctype%2Cpublished%2Cpublished-print%2Cpublished-online%2Cevent%2Ccontainer-title%2Cvolume%2Cissue%2CISSN%2CISBN"
+        }
+      }
+    },
+    "ICSOC": {
+      "year_checks": {
+        "2026": {
+          "status": "unverified",
+          "note": "已复核 ICSOC 2026 的来源全名、简称与相邻出版年份元数据。有限查询尚不能证明本届研究论文已完整收录，需继续核对官方主会目录及逐篇身份；检索不到不代表会议未举办或论文未出版。",
+          "checked_at": "2026-10-21",
+          "evidence_url": "https://api.crossref.org/works?query.container-title=International+Conference+on+Service+Oriented+Computing&filter=from-pub-date%3A2025-01-01%2Cuntil-pub-date%3A2027-12-31&rows=100&select=DOI%2Ctitle%2Cauthor%2Ctype%2Cpublished%2Cpublished-print%2Cpublished-online%2Cevent%2Ccontainer-title%2Cvolume%2Cissue%2CISSN%2CISBN"
+        }
+      }
+    },
+    "IEEE VIS": {
+      "year_checks": {
+        "2026": {
+          "status": "unverified",
+          "note": "已复核 IEEE VIS 2026 的来源全名、简称与相邻出版年份元数据。有限查询尚不能证明本届研究论文已完整收录，需继续核对官方主会目录及逐篇身份；检索不到不代表会议未举办或论文未出版。",
+          "checked_at": "2026-10-21",
+          "evidence_url": "https://api.crossref.org/works?query.container-title=IEEE+Visualization+Conference&filter=from-pub-date%3A2025-01-01%2Cuntil-pub-date%3A2027-12-31&rows=100&select=DOI%2Ctitle%2Cauthor%2Ctype%2Cpublished%2Cpublished-print%2Cpublished-online%2Cevent%2Ccontainer-title%2Cvolume%2Cissue%2CISSN%2CISBN"
+        }
+      }
+    },
+    "IPSN": {
+      "year_checks": {
+        "2025": {
+          "status": "unverified",
+          "note": "已复核 IPSN 2025 的来源全名、简称与相邻出版年份元数据。有限查询尚不能证明本届研究论文已完整收录，需继续核对官方主会目录及逐篇身份；检索不到不代表会议未举办或论文未出版。",
+          "checked_at": "2026-10-21",
+          "evidence_url": "https://api.crossref.org/works?query.container-title=International+Conference+on+Information+Processing+in+Sensor+Networks&filter=from-pub-date%3A2024-01-01%2Cuntil-pub-date%3A2026-12-31&rows=100&select=DOI%2Ctitle%2Cauthor%2Ctype%2Cpublished%2Cpublished-print%2Cpublished-online%2Cevent%2Ccontainer-title%2Cvolume%2Cissue%2CISSN%2CISBN"
+        },
+        "2026": {
+          "status": "joint_edition",
+          "note": "官方说明 SenSys、IPSN 与 IoTDI 自 2026 年合并为新的 SenSys 会议。已按更名后的 SenSys 正式主会论文集收录，保留 IPSN 年份的真实零计数。",
+          "evidence_url": "https://sensys.acm.org/2026/index.html",
+          "checked_at": "2026-10-21",
+          "canonical_venue": "SenSys"
+        }
+      }
+    },
+    "ISMAR": {
+      "year_checks": {
+        "2026": {
+          "status": "unverified",
+          "note": "已复核 ISMAR 2026 的来源全名、简称与相邻出版年份元数据。有限查询尚不能证明本届研究论文已完整收录，需继续核对官方主会目录及逐篇身份；检索不到不代表会议未举办或论文未出版。",
+          "checked_at": "2026-10-21",
+          "evidence_url": "https://api.crossref.org/works?query.container-title=International+Symposium+on+Mixed+and+Augmented+Reality&filter=from-pub-date%3A2025-01-01%2Cuntil-pub-date%3A2027-12-31&rows=100&select=DOI%2Ctitle%2Cauthor%2Ctype%2Cpublished%2Cpublished-print%2Cpublished-online%2Cevent%2Ccontainer-title%2Cvolume%2Cissue%2CISSN%2CISBN"
+        }
+      }
+    },
+    "ISS": {
+      "year_checks": {
+        "2025": {
+          "status": "retrieval_failed",
+          "note": "本轮 ISS 2025 官方页面返回访问验证页，未取得可验证的论文目录。HTTP 成功响应未被当作出版证据，需后续正常访问重试并核对 PACMHCI 正式出版记录。",
+          "evidence_url": "https://iss.acm.org/2025/",
+          "checked_at": "2026-10-21"
+        },
+        "2026": {
+          "status": "publication_pending",
+          "note": "官方日程为 2026 年 11 月 23–26 日；截至本次核验尚未取得可逐篇核对的正式主会出版清单。会议日程不等于论文已发表。",
+          "evidence_url": "https://www.iss.acm.org/2026/",
+          "checked_at": "2026-10-21"
+        }
+      }
+    },
+    "ISSRE": {
+      "year_checks": {
+        "2026": {
+          "status": "unverified",
+          "note": "已复核 ISSRE 2026 的来源全名、简称与相邻出版年份元数据。有限查询尚不能证明本届研究论文已完整收录，需继续核对官方主会目录及逐篇身份；检索不到不代表会议未举办或论文未出版。",
+          "checked_at": "2026-10-21",
+          "evidence_url": "https://api.crossref.org/works?query.container-title=IEEE+International+Symposium+on+Software+Reliability+Engineering&filter=from-pub-date%3A2025-01-01%2Cuntil-pub-date%3A2027-12-31&rows=100&select=DOI%2Ctitle%2Cauthor%2Ctype%2Cpublished%2Cpublished-print%2Cpublished-online%2Cevent%2Ccontainer-title%2Cvolume%2Cissue%2CISSN%2CISBN"
+        }
+      }
+    },
+    "ISWC": {
+      "year_checks": {
+        "2026": {
+          "status": "unverified",
+          "note": "已复核 ISWC 2026 的来源全名、简称与相邻出版年份元数据。有限查询尚不能证明本届研究论文已完整收录，需继续核对官方主会目录及逐篇身份；检索不到不代表会议未举办或论文未出版。",
+          "checked_at": "2026-10-21",
+          "evidence_url": "https://api.crossref.org/works?query.container-title=IEEE+International+Semantic+Web+Conference&filter=from-pub-date%3A2025-01-01%2Cuntil-pub-date%3A2027-12-31&rows=100&select=DOI%2Ctitle%2Cauthor%2Ctype%2Cpublished%2Cpublished-print%2Cpublished-online%2Cevent%2Ccontainer-title%2Cvolume%2Cissue%2CISSN%2CISBN"
+        }
+      }
+    },
+    "ITC": {
+      "year_checks": {
+        "2026": {
+          "status": "unverified",
+          "note": "已复核 ITC 2026 的来源全名、简称与相邻出版年份元数据。有限查询尚不能证明本届研究论文已完整收录，需继续核对官方主会目录及逐篇身份；检索不到不代表会议未举办或论文未出版。",
+          "checked_at": "2026-10-21",
+          "evidence_url": "https://api.crossref.org/works?query.container-title=International+Test+Conference&filter=from-pub-date%3A2025-01-01%2Cuntil-pub-date%3A2027-12-31&rows=100&select=DOI%2Ctitle%2Cauthor%2Ctype%2Cpublished%2Cpublished-print%2Cpublished-online%2Cevent%2Ccontainer-title%2Cvolume%2Cissue%2CISSN%2CISBN"
+        }
+      }
+    },
+    "LICS": {
+      "year_checks": {
+        "2026": {
+          "status": "unverified",
+          "note": "已复核 LICS 2026 的来源全名、简称与相邻出版年份元数据。有限查询尚不能证明本届研究论文已完整收录，需继续核对官方主会目录及逐篇身份；检索不到不代表会议未举办或论文未出版。",
+          "checked_at": "2026-10-21",
+          "evidence_url": "https://api.crossref.org/works?query.container-title=ACM%2FIEEE+Symposium+on+Logic+in+Computer+Science&filter=from-pub-date%3A2025-01-01%2Cuntil-pub-date%3A2027-12-31&rows=100&select=DOI%2Ctitle%2Cauthor%2Ctype%2Cpublished%2Cpublished-print%2Cpublished-online%2Cevent%2Ccontainer-title%2Cvolume%2Cissue%2CISSN%2CISBN"
+        }
+      }
+    },
+    "MICRO": {
+      "year_checks": {
+        "2026": {
+          "status": "unverified",
+          "note": "已复核 MICRO 2026 的来源全名、简称与相邻出版年份元数据。有限查询尚不能证明本届研究论文已完整收录，需继续核对官方主会目录及逐篇身份；检索不到不代表会议未举办或论文未出版。",
+          "checked_at": "2026-10-21",
+          "evidence_url": "https://api.crossref.org/works?query.container-title=IEEE%2FACM+International+Symposium+on+Microarchitecture&filter=from-pub-date%3A2025-01-01%2Cuntil-pub-date%3A2027-12-31&rows=100&select=DOI%2Ctitle%2Cauthor%2Ctype%2Cpublished%2Cpublished-print%2Cpublished-online%2Cevent%2Ccontainer-title%2Cvolume%2Cissue%2CISSN%2CISBN"
+        }
+      }
+    },
+    "MSST": {
+      "year_checks": {
+        "2023": {
+          "status": "unverified",
+          "note": "MSST 官方历史页列有该年会议，但本轮尚未核实可入库的研究论文出版清单。会议、演讲或纪念活动存在，不能直接证明有正式研究论文集。",
+          "evidence_url": "https://msstconference.org/MSST-history/",
+          "checked_at": "2026-10-21"
+        },
+        "2025": {
+          "status": "unverified",
+          "note": "MSST 官方历史页列有该年会议，但本轮尚未核实可入库的研究论文出版清单。会议、演讲或纪念活动存在，不能直接证明有正式研究论文集。",
+          "evidence_url": "https://msstconference.org/MSST-history/",
+          "checked_at": "2026-10-21"
+        },
+        "2026": {
+          "status": "unverified",
+          "note": "MSST 官方历史页列有该年会议，但本轮尚未核实可入库的研究论文出版清单。会议、演讲或纪念活动存在，不能直接证明有正式研究论文集。",
+          "evidence_url": "https://msstconference.org/MSST-history/",
+          "checked_at": "2026-10-21"
+        }
+      }
+    },
+    "Middleware": {
+      "year_checks": {
+        "2026": {
+          "status": "unverified",
+          "note": "已复核 Middleware 2026 的来源全名、简称与相邻出版年份元数据。有限查询尚不能证明本届研究论文已完整收录，需继续核对官方主会目录及逐篇身份；检索不到不代表会议未举办或论文未出版。",
+          "checked_at": "2026-10-21",
+          "evidence_url": "https://api.crossref.org/works?query.container-title=International+Middleware+Conference&filter=from-pub-date%3A2025-01-01%2Cuntil-pub-date%3A2027-12-31&rows=100&select=DOI%2Ctitle%2Cauthor%2Ctype%2Cpublished%2Cpublished-print%2Cpublished-online%2Cevent%2Ccontainer-title%2Cvolume%2Cissue%2CISSN%2CISBN"
+        }
+      }
+    },
+    "MobiCom": {
+      "year_checks": {
+        "2026": {
+          "status": "unverified",
+          "note": "已复核 MobiCom 2026 的来源全名、简称与相邻出版年份元数据。有限查询尚不能证明本届研究论文已完整收录，需继续核对官方主会目录及逐篇身份；检索不到不代表会议未举办或论文未出版。",
+          "checked_at": "2026-10-21",
+          "evidence_url": "https://api.crossref.org/works?query.container-title=ACM+International+Conference+on+Mobile+Computing+and+Networking&filter=from-pub-date%3A2025-01-01%2Cuntil-pub-date%3A2027-12-31&rows=100&select=DOI%2Ctitle%2Cauthor%2Ctype%2Cpublished%2Cpublished-print%2Cpublished-online%2Cevent%2Ccontainer-title%2Cvolume%2Cissue%2CISSN%2CISBN"
+        }
+      }
+    },
+    "MobiHoc": {
+      "year_checks": {
+        "2026": {
+          "status": "unverified",
+          "note": "已复核 MobiHoc 2026 的来源全名、简称与相邻出版年份元数据。有限查询尚不能证明本届研究论文已完整收录，需继续核对官方主会目录及逐篇身份；检索不到不代表会议未举办或论文未出版。",
+          "checked_at": "2026-10-21",
+          "evidence_url": "https://api.crossref.org/works?query.container-title=International+Symposium+on+Theory%2C+Algorithmic+Foundations%2C+and+Protocol+Design+for+Mobile+Networks+and+Mobile+Computing&filter=from-pub-date%3A2025-01-01%2Cuntil-pub-date%3A2027-12-31&rows=100&select=DOI%2Ctitle%2Cauthor%2Ctype%2Cpublished%2Cpublished-print%2Cpublished-online%2Cevent%2Ccontainer-title%2Cvolume%2Cissue%2CISSN%2CISBN"
+        }
+      }
+    },
+    "MobileHCI": {
+      "year_checks": {
+        "2026": {
+          "status": "unverified",
+          "note": "已复核 MobileHCI 2026 的来源全名、简称与相邻出版年份元数据。有限查询尚不能证明本届研究论文已完整收录，需继续核对官方主会目录及逐篇身份；检索不到不代表会议未举办或论文未出版。",
+          "checked_at": "2026-10-21",
+          "evidence_url": "https://api.crossref.org/works?query.container-title=ACM+International+Conference+on+Mobile+Human-+Computer+Interaction&filter=from-pub-date%3A2025-01-01%2Cuntil-pub-date%3A2027-12-31&rows=100&select=DOI%2Ctitle%2Cauthor%2Ctype%2Cpublished%2Cpublished-print%2Cpublished-online%2Cevent%2Ccontainer-title%2Cvolume%2Cissue%2CISSN%2CISBN"
+        }
+      }
+    },
+    "NAACL": {
+      "year_checks": {
+        "2023": {
+          "status": "edition_unverified",
+          "note": "NAACL 官方系列页列出 2022、2024、2025 等届次，未列出这里的独立年份；没有把 ACL/EACL 论文改标为 NAACL。仍保留逐年届次核验。",
+          "evidence_url": "https://naacl.org/conferences/",
+          "checked_at": "2026-10-21"
+        },
+        "2026": {
+          "status": "edition_unverified",
+          "note": "NAACL 官方系列页列出 2022、2024、2025 等届次，未列出这里的独立年份；没有把 ACL/EACL 论文改标为 NAACL。仍保留逐年届次核验。",
+          "evidence_url": "https://naacl.org/conferences/",
+          "checked_at": "2026-10-21"
+        }
+      }
+    },
+    "NOSSDAV": {
+      "year_checks": {}
+    },
+    "PACT": {
+      "year_checks": {
+        "2026": {
+          "status": "unverified",
+          "note": "已复核 PACT 2026 的来源全名、简称与相邻出版年份元数据。有限查询尚不能证明本届研究论文已完整收录，需继续核对官方主会目录及逐篇身份；检索不到不代表会议未举办或论文未出版。",
+          "checked_at": "2026-10-21",
+          "evidence_url": "https://api.crossref.org/works?query.container-title=International+Conference+on+Parallel+Architectures+and+Compilation+Techniques&filter=from-pub-date%3A2025-01-01%2Cuntil-pub-date%3A2027-12-31&rows=100&select=DOI%2Ctitle%2Cauthor%2Ctype%2Cpublished%2Cpublished-print%2Cpublished-online%2Cevent%2Ccontainer-title%2Cvolume%2Cissue%2CISSN%2CISBN"
+        }
+      }
+    },
+    "PPSN": {
+      "year_checks": {
+        "2023": {
+          "status": "not_scheduled",
+          "note": "PPSN 官方系列按两年一届举办，2026 为第 19 届，2024 为第 18 届；2023、2025 无独立届次。",
+          "evidence_url": "https://ppsn2026.disi.unitn.it/",
+          "checked_at": "2026-10-21"
+        },
+        "2025": {
+          "status": "not_scheduled",
+          "note": "PPSN 官方系列按两年一届举办，2026 为第 19 届，2024 为第 18 届；2023、2025 无独立届次。",
+          "evidence_url": "https://ppsn2026.disi.unitn.it/",
+          "checked_at": "2026-10-21"
+        }
+      }
+    },
+    "RAID": {
+      "year_checks": {
+        "2026": {
+          "status": "unverified",
+          "note": "已复核 RAID 2026 的来源全名、简称与相邻出版年份元数据。有限查询尚不能证明本届研究论文已完整收录，需继续核对官方主会目录及逐篇身份；检索不到不代表会议未举办或论文未出版。",
+          "checked_at": "2026-10-21",
+          "evidence_url": "https://api.crossref.org/works?query.container-title=International+Symposium+on+Recent+Advances+in+Intrusion+Detection&filter=from-pub-date%3A2025-01-01%2Cuntil-pub-date%3A2027-12-31&rows=100&select=DOI%2Ctitle%2Cauthor%2Ctype%2Cpublished%2Cpublished-print%2Cpublished-online%2Cevent%2Ccontainer-title%2Cvolume%2Cissue%2CISSN%2CISBN"
+        }
+      }
+    },
+    "RECOMB": {
+      "year_checks": {
+        "2026": {
+          "status": "publication_pending",
+          "note": "官方 2026 列表已取得，其中列有预印本及另行注明的期刊版本。未把预印本导入为正式会议论文；期刊与会议关系仍须逐篇核对。",
+          "evidence_url": "https://recomb.org/proceedings/proceedings/2030-2026/2026/",
+          "checked_at": "2026-10-21"
+        }
+      }
+    },
+    "RTSS": {
+      "year_checks": {
+        "2026": {
+          "status": "unverified",
+          "note": "已复核 RTSS 2026 的来源全名、简称与相邻出版年份元数据。有限查询尚不能证明本届研究论文已完整收录，需继续核对官方主会目录及逐篇身份；检索不到不代表会议未举办或论文未出版。",
+          "checked_at": "2026-10-21",
+          "evidence_url": "https://api.crossref.org/works?query.container-title=IEEE+Real-Time+Systems+Symposium&filter=from-pub-date%3A2025-01-01%2Cuntil-pub-date%3A2027-12-31&rows=100&select=DOI%2Ctitle%2Cauthor%2Ctype%2Cpublished%2Cpublished-print%2Cpublished-online%2Cevent%2Ccontainer-title%2Cvolume%2Cissue%2CISSN%2CISBN"
+        }
+      }
+    },
+    "SC": {
+      "year_checks": {
+        "2026": {
+          "status": "unverified",
+          "note": "已复核 SC 2026 的来源全名、简称与相邻出版年份元数据。有限查询尚不能证明本届研究论文已完整收录，需继续核对官方主会目录及逐篇身份；检索不到不代表会议未举办或论文未出版。",
+          "checked_at": "2026-10-21",
+          "evidence_url": "https://api.crossref.org/works?query.container-title=International+Conference+for+High+Performance+Computing%2C+Networking%2C+Storage%2C+and+Analysis&filter=from-pub-date%3A2025-01-01%2Cuntil-pub-date%3A2027-12-31&rows=100&select=DOI%2Ctitle%2Cauthor%2Ctype%2Cpublished%2Cpublished-print%2Cpublished-online%2Cevent%2Ccontainer-title%2Cvolume%2Cissue%2CISSN%2CISBN"
+        }
+      }
+    },
+    "SDM": {
+      "year_checks": {
+        "2026": {
+          "status": "unverified",
+          "note": "已复核 SDM 2026 的来源全名、简称与相邻出版年份元数据。有限查询尚不能证明本届研究论文已完整收录，需继续核对官方主会目录及逐篇身份；检索不到不代表会议未举办或论文未出版。",
+          "checked_at": "2026-10-21",
+          "evidence_url": "https://api.crossref.org/works?query.container-title=SIAM+International+Conference+on+Data+Mining&filter=from-pub-date%3A2025-01-01%2Cuntil-pub-date%3A2027-12-31&rows=100&select=DOI%2Ctitle%2Cauthor%2Ctype%2Cpublished%2Cpublished-print%2Cpublished-online%2Cevent%2Ccontainer-title%2Cvolume%2Cissue%2CISSN%2CISBN"
+        }
+      }
+    },
+    "SECON": {
+      "year_checks": {
+        "2025": {
+          "status": "unverified",
+          "note": "已复核 SECON 2025 的来源全名、简称与相邻出版年份元数据。有限查询尚不能证明本届研究论文已完整收录，需继续核对官方主会目录及逐篇身份；检索不到不代表会议未举办或论文未出版。",
+          "checked_at": "2026-10-21",
+          "evidence_url": "https://api.crossref.org/works?query.container-title=IEEE+International+Conference+on+Sensing%2C+Communication%2C+and+Networking&filter=from-pub-date%3A2024-01-01%2Cuntil-pub-date%3A2026-12-31&rows=100&select=DOI%2Ctitle%2Cauthor%2Ctype%2Cpublished%2Cpublished-print%2Cpublished-online%2Cevent%2Ccontainer-title%2Cvolume%2Cissue%2CISSN%2CISBN"
+        }
+      }
+    },
+    "SIGGRAPH": {
+      "year_checks": {
+        "2026": {
+          "status": "unverified",
+          "note": "已复核 SIGGRAPH 2026 的来源全名、简称与相邻出版年份元数据。有限查询尚不能证明本届研究论文已完整收录，需继续核对官方主会目录及逐篇身份；检索不到不代表会议未举办或论文未出版。",
+          "checked_at": "2026-10-21",
+          "evidence_url": "https://api.crossref.org/works?query.container-title=ACM+Special+Interest+Group+on+Computer+Graphics&filter=from-pub-date%3A2025-01-01%2Cuntil-pub-date%3A2027-12-31&rows=100&select=DOI%2Ctitle%2Cauthor%2Ctype%2Cpublished%2Cpublished-print%2Cpublished-online%2Cevent%2Ccontainer-title%2Cvolume%2Cissue%2CISSN%2CISBN"
+        }
+      }
+    },
+    "SRDS": {
+      "year_checks": {
+        "2026": {
+          "status": "unverified",
+          "note": "已复核 SRDS 2026 的来源全名、简称与相邻出版年份元数据。有限查询尚不能证明本届研究论文已完整收录，需继续核对官方主会目录及逐篇身份；检索不到不代表会议未举办或论文未出版。",
+          "checked_at": "2026-10-21",
+          "evidence_url": "https://api.crossref.org/works?query.container-title=IEEE+International+Symposium+on+Reliable+Distributed+Systems&filter=from-pub-date%3A2025-01-01%2Cuntil-pub-date%3A2027-12-31&rows=100&select=DOI%2Ctitle%2Cauthor%2Ctype%2Cpublished%2Cpublished-print%2Cpublished-online%2Cevent%2Ccontainer-title%2Cvolume%2Cissue%2CISSN%2CISBN"
+        }
+      }
+    },
+    "SenSys": {
+      "year_checks": {}
+    },
+    "SoCC": {
+      "year_checks": {
+        "2026": {
+          "status": "unverified",
+          "note": "已复核 SoCC 2026 的来源全名、简称与相邻出版年份元数据。有限查询尚不能证明本届研究论文已完整收录，需继续核对官方主会目录及逐篇身份；检索不到不代表会议未举办或论文未出版。",
+          "checked_at": "2026-10-21",
+          "evidence_url": "https://api.crossref.org/works?query.container-title=ACM+Symposium+on+Cloud+Computing&filter=from-pub-date%3A2025-01-01%2Cuntil-pub-date%3A2027-12-31&rows=100&select=DOI%2Ctitle%2Cauthor%2Ctype%2Cpublished%2Cpublished-print%2Cpublished-online%2Cevent%2Ccontainer-title%2Cvolume%2Cissue%2CISSN%2CISBN"
+        }
+      }
+    },
+    "TCC": {
+      "year_checks": {
+        "2026": {
+          "status": "unverified",
+          "note": "已复核 TCC 2026 的来源全名、简称与相邻出版年份元数据。有限查询尚不能证明本届研究论文已完整收录，需继续核对官方主会目录及逐篇身份；检索不到不代表会议未举办或论文未出版。",
+          "checked_at": "2026-10-21",
+          "evidence_url": "https://api.crossref.org/works?query.container-title=Theory+of+Cryptography+Conference&filter=from-pub-date%3A2025-01-01%2Cuntil-pub-date%3A2027-12-31&rows=100&select=DOI%2Ctitle%2Cauthor%2Ctype%2Cpublished%2Cpublished-print%2Cpublished-online%2Cevent%2Ccontainer-title%2Cvolume%2Cissue%2CISSN%2CISBN"
+        }
+      }
+    },
+    "UIST": {
+      "year_checks": {
+        "2026": {
+          "status": "unverified",
+          "note": "已复核 UIST 2026 的来源全名、简称与相邻出版年份元数据。有限查询尚不能证明本届研究论文已完整收录，需继续核对官方主会目录及逐篇身份；检索不到不代表会议未举办或论文未出版。",
+          "checked_at": "2026-10-21",
+          "evidence_url": "https://api.crossref.org/works?query.container-title=ACM+Symposium+on+User+Interface+Software+and+Technology&filter=from-pub-date%3A2025-01-01%2Cuntil-pub-date%3A2027-12-31&rows=100&select=DOI%2Ctitle%2Cauthor%2Ctype%2Cpublished%2Cpublished-print%2Cpublished-online%2Cevent%2Ccontainer-title%2Cvolume%2Cissue%2CISSN%2CISBN"
+        }
+      }
+    },
+    "WINE": {
+      "year_checks": {
+        "2026": {
+          "status": "unverified",
+          "note": "已复核 WINE 2026 的来源全名、简称与相邻出版年份元数据。有限查询尚不能证明本届研究论文已完整收录，需继续核对官方主会目录及逐篇身份；检索不到不代表会议未举办或论文未出版。",
+          "checked_at": "2026-10-21",
+          "evidence_url": "https://api.crossref.org/works?query.container-title=Conference+on+Web+and+Internet+Economics&filter=from-pub-date%3A2025-01-01%2Cuntil-pub-date%3A2027-12-31&rows=100&select=DOI%2Ctitle%2Cauthor%2Ctype%2Cpublished%2Cpublished-print%2Cpublished-online%2Cevent%2Ccontainer-title%2Cvolume%2Cissue%2CISSN%2CISBN"
+        }
+      }
+    },
+    "WISE": {
+      "year_checks": {
+        "2026": {
+          "status": "unverified",
+          "note": "已复核 WISE 2026 的来源全名、简称与相邻出版年份元数据。有限查询尚不能证明本届研究论文已完整收录，需继续核对官方主会目录及逐篇身份；检索不到不代表会议未举办或论文未出版。",
+          "checked_at": "2026-10-21",
+          "evidence_url": "https://api.crossref.org/works?query.container-title=Web+Information+Systems+Engineering+Conference&filter=from-pub-date%3A2025-01-01%2Cuntil-pub-date%3A2027-12-31&rows=100&select=DOI%2Ctitle%2Cauthor%2Ctype%2Cpublished%2Cpublished-print%2Cpublished-online%2Cevent%2Ccontainer-title%2Cvolume%2Cissue%2CISSN%2CISBN"
+        }
+      }
     }
   }
 }

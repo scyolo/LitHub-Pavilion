@@ -14,15 +14,47 @@ from pathlib import Path
 import httpx
 from sqlalchemy.orm import Session
 
-from app.collectors.publisher_toc import parse_aamas, parse_eccv, parse_eccv_catalogue, parse_anthology, parse_cvf, parse_jmlr, parse_iclr, parse_icml, parse_ijcai, parse_kr, parse_neurips, neurips_main_volumes, parse_pmlr, pmlr_volumes
+from app.collectors.csdl import fetch_csdl_inventory, index_url
+from app.collectors.editions import publication_schedule
 from app.collectors.ojs import BASES, fetch_ojs_inventory
-from app.collectors.csdl import index_url, fetch_csdl_inventory
+from app.collectors.publisher_toc import (
+    neurips_main_volumes,
+    parse_aamas,
+    parse_anthology,
+    parse_cvf,
+    parse_eccv,
+    parse_eccv_catalogue,
+    parse_iclr,
+    parse_icml,
+    parse_ijcai,
+    parse_jmlr,
+    parse_kr,
+    parse_neurips,
+    parse_pmlr,
+    pmlr_volumes,
+)
 from app.config import settings
 from app.db import _make_engine, db_file_path
 from app.models import Paper, Venue, utcnow_iso
-from app.collectors.editions import publication_schedule
-from scripts.reconcile_papers import _backup
 from app.services.publisher_import import apply_records, fill_missing_oa_links
+from app.services.tagging import apply_tagging, load_rules, load_thresholds
+from scripts.reconcile_papers import _backup
+
+
+def tag_inventory_records(session, records):
+    """Keep batch imports visible in directions, preserving manual labels."""
+    keys = list(dict.fromkeys(key for raw in records
+                             for key in [raw.extra['publisher_key'], *raw.extra.get('publisher_aliases', [])]))
+    if not keys:
+        return 0
+    rules, thresholds = load_rules(session), load_thresholds(session)
+    tagged = 0
+    for offset in range(0, len(keys), 500):
+        for paper in session.query(Paper).filter(Paper.publisher_key.in_(keys[offset:offset + 500])):
+            apply_tagging(session, paper.id, paper.title, paper.abstract, rules, thresholds)
+            tagged += 1
+    session.commit()
+    return tagged
 
 
 # The report records non-runnable years explicitly so a missing page is not
@@ -61,7 +93,7 @@ def _official_units(years):
         _schedule_unit('JMLR', year, f'https://jmlr.org/papers/v{year - 1999}/', 'jmlr', units, deferred)
         for abbr in ('CVPR', 'ICCV'):
             _schedule_unit(abbr, year, f'https://openaccess.thecvf.com/{abbr}{year}?day=all', 'cvf', units, deferred)
-        for abbr in ('ACL', 'EMNLP', 'COLING', 'TACL', 'CL'):
+        for abbr in ('ACL', 'NAACL', 'EMNLP', 'COLING', 'TACL', 'CL'):
             collection = f'{year}.{abbr.lower()}' if not (abbr == 'COLING' and year == 2024) else '2024.lrec'
             _schedule_unit(abbr, year, f'https://raw.githubusercontent.com/acl-org/acl-anthology/master/data/xml/{collection}.xml', 'anthology', units, deferred)
     return units, deferred
@@ -166,6 +198,8 @@ async def run(args):
                             records = pending
                         importer = fill_missing_oa_links if getattr(args, 'oa_links_only', False) else apply_records
                         entry.update(records=total_records, already_linked=already_linked, inventory_complete=not scopes, **importer(session, records, venues[abbr]))
+                        if not getattr(args, 'oa_links_only', False):
+                            entry['direction_tagging_checked'] = tag_inventory_records(session, records)
                         if scopes:
                             entry.update(status='partial', verified_scopes=scopes, scope_inventory_complete=True,
                                          reason='Only the stated official track was enumerated; other main-proceedings tracks remain unverified')

@@ -8,6 +8,11 @@ const venues = [
   { abbr: "SIGIR", name: "International ACM SIGIR Conference on Research and Development in Information Retrieval", ccf_area: "数据库/数据挖掘/内容检索", paper_count: 0 },
 ];
 
+it('finds the configured UbiComp source by its IMWUT publication series', () => {
+  const source = {abbr: 'UbiComp', name: 'Ubiquitous Computing', paper_count: 12};
+  expect(searchVenues([...venues, source], 'imwut')).toEqual([source]);
+});
+
 describe("case-insensitive fuzzy source search", () => {
   it("normalizes case, accents, full-width letters and punctuation without dropping Chinese", () => {
     expect(normalizeSearchText("  ＮＥＵＲ－ＩＰＳ / Café  人工智能  ")).toBe("neur ips cafe 人工智能");

@@ -2,7 +2,7 @@
 import re
 
 from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy import func
+from sqlalchemy import func, or_
 from sqlalchemy.orm import Session
 
 from app.api.deps import get_db
@@ -32,11 +32,14 @@ def list_directions(db: Session = Depends(get_db)):
 
 @router.get("/venues")
 def list_venues(level: str | None = None, direction: str | None = None, db: Session = Depends(get_db)):
+    from app.services.conference_scope import associated_counts
+
     filters = paper_filters(level=level, direction=direction)
+    linked_counts = associated_counts(db, filters)
     query = db.query(Venue).filter(*venue_scope(filters))
     if filters.directions:
         sub = paper_query(db, filters).with_entities(Paper.venue_id)
-        query = query.filter(Venue.id.in_(sub))
+        query = query.filter(or_(Venue.id.in_(sub), Venue.abbr.in_(linked_counts)))
     venues = query.order_by(Venue.type, Venue.ccf_level, Venue.abbr).all()
     counts = dict(
         paper_query(db, PaperFilters())
@@ -50,6 +53,7 @@ def list_venues(level: str | None = None, direction: str | None = None, db: Sess
                 "type": v.type,
                 "level": v.ccf_level,
                 "paper_count": counts.get(v.id, 0),
+                **({'associated_paper_count': linked_counts[v.abbr]} if linked_counts.get(v.abbr) else {}),
                 "active": v.active,
             }
             for v in venues

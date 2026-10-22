@@ -1,4 +1,12 @@
 // Discovery only: fuzzy matches must never be used to merge publication identities.
+const sourceNames = {
+  UbiComp: ['IMWUT', 'Proceedings of the ACM on Interactive Mobile Wearable and Ubiquitous Technologies'],
+};
+
+export function venueSearchFields(venue) {
+  return [venue.abbr, venue.name, venue.ccf_area, ...(sourceNames[venue.abbr] || [])];
+}
+
 export function normalizeSearchText(value) {
   return String(value ?? "").normalize("NFKD").replace(/\p{M}/gu, "").toLowerCase()
     .replace(/[^\p{L}\p{N}]+/gu, " ").trim();
@@ -47,11 +55,11 @@ export function matchesText(query, fields) {
 
 export function searchVenues(venues, query = "", sort = "count") {
   const score = textMatcher(query);
-  return venues.map(venue => ({ venue, score: score([venue.abbr, venue.name, venue.ccf_area]) }))
+  return venues.map(venue => ({ venue, score: score(venueSearchFields(venue)) }))
     .filter(result => result.score !== null)
     .sort((a, b) => a.score - b.score
       || (sort === "area" ? (a.venue.ccf_area || "").localeCompare(b.venue.ccf_area || "", "zh-CN") : 0)
-      || (sort === "name" ? 0 : (b.venue.paper_count || 0) - (a.venue.paper_count || 0))
+      || (sort === "name" ? 0 : (b.venue.paper_count || 0) + (b.venue.associated_paper_count || 0) - (a.venue.paper_count || 0) - (a.venue.associated_paper_count || 0))
       || a.venue.abbr.localeCompare(b.venue.abbr, "en", { sensitivity: "base" }))
     .map(result => result.venue);
 }

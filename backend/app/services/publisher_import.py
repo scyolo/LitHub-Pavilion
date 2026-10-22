@@ -1,18 +1,38 @@
 """Conservative publication matching shared by scheduled and repair imports."""
+import re
 from collections import Counter
 from dataclasses import replace
 from difflib import SequenceMatcher
+
 from sqlalchemy import or_
+
 from app.api.serializers import safe_http_url
-from app.cleaning import normalize_title, author_name_norm
+from app.cleaning import author_name_norm, normalize_title
 from app.models import Paper
-from app.services.paper_store import ccf_track_eligible, is_repository_doi, same_authors, title_identity_compatible, upsert_paper
+from app.services.paper_store import (
+    ccf_track_eligible,
+    is_repository_doi,
+    same_authors,
+    title_identity_compatible,
+    upsert_paper,
+)
 
 
 def compatible_title(paper, raw):
     old, new = paper.title_norm, normalize_title(raw.title)
     return (old == new or SequenceMatcher(None, old, new).ratio() >= 0.85
             or (min(len(old), len(new)) >= 60 and (old.startswith(new + ' ') or new.startswith(old + ' '))))
+
+
+def verified_publisher_aliases(raw, venue):
+    """Only PMLR's explicit same-paper OpenReview links establish this bridge."""
+    if (venue.abbr not in ('ICML', 'UAI', 'COLT')
+            or raw.extra.get('provenance') != 'publisher_toc'
+            or not re.fullmatch(r'https://proceedings\.mlr\.press/v[0-9]+/[A-Za-z0-9][A-Za-z0-9_-]*\.html',
+                                raw.extra.get('publisher_key') or '')):
+        return []
+    return [key for key in raw.extra.get('publisher_aliases', [])
+            if isinstance(key, str) and re.fullmatch(r'https://openreview\.net/forum\?id=[A-Za-z0-9_-]+', key)]
 
 
 def fill_missing_oa_links(session, records, venue):
@@ -99,6 +119,9 @@ def apply_records(session, records, venue):
                 stats['association_conflicts'] += 1
                 raw.doi = None
         strong = [Paper.publisher_key == raw.extra['publisher_key']]
+        aliases = verified_publisher_aliases(raw, venue)
+        if aliases:
+            strong.append(Paper.publisher_key.in_(aliases))
         if raw.doi:
             strong.append(Paper.doi == raw.doi)
         if raw.arxiv_id:
@@ -114,6 +137,22 @@ def apply_records(session, records, venue):
                 stats['identity_conflicts'] += 1
                 conflicts.append({'url': raw.official_url, 'id': selected.id, 'reason': 'strong ID title/venue mismatch'})
                 continue
+            if selected.publisher_key in aliases:
+                bridged = replace(raw, extra={**raw.extra, 'publisher_key': selected.publisher_key})
+                if (selected.year != raw.year or selected.title_norm != normalize_title(raw.title)
+                        or not title_identity_compatible(selected, bridged)
+                        or not same_authors(session, selected, raw, publisher_verified=True)):
+                    stats['identity_conflicts'] += 1
+                    conflicts.append({'url': raw.official_url, 'id': selected.id,
+                                      'reason': 'publisher alias title/authors/year mismatch'})
+                    continue
+                # Keep the accepted-paper key stable, so either catalogue can
+                # be replayed without losing the user's ID, notes or labels.
+                raw = bridged
+                association_notes.append('Verified PMLR publication link: ' + raw.official_url)
+                associations.append({'id': selected.id, 'publisher_key': selected.publisher_key,
+                                     'url': raw.official_url, 'reason': 'explicit same-paper OpenReview link'})
+                stats['publisher_aliases_verified'] += 1
         else:
             candidates = session.query(Paper).filter(Paper.venue_id == venue.id, Paper.title_norm == normalize_title(raw.title)).all()
             verified = [p for p in candidates if title_identity_compatible(p, raw) and same_authors(session, p, raw, publisher_verified=True) and (
@@ -132,6 +171,8 @@ def apply_records(session, records, venue):
                     session.flush()
                 raw.extra['disable_title_match'] = True
                 paper, new = upsert_paper(session, raw, venue)
+                if selected and selected.publisher_key in aliases and paper.official_url == selected.publisher_key:
+                    paper.official_url = raw.official_url
                 if paper.title != raw.title:
                     paper.note = ((paper.note + '\n') if paper.note else '') + 'Previous indexed title: ' + paper.title
                     paper.title, paper.title_norm = raw.title, normalize_title(raw.title)

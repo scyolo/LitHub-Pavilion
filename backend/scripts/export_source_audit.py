@@ -12,6 +12,7 @@ from sqlalchemy import create_engine, inspect
 from sqlalchemy.orm import Session
 
 from app.models import PaperConference, Venue
+from app.services.source_coverage import source_year_checks, zero_year_summary
 from app.services.snapshot import (
     _atomic_write,
     _json_bytes,
@@ -112,7 +113,11 @@ def export_audit(db, snapshot, target):
                 else "unresolved",
             }
         )
+    configured = {source["abbr"] for source in sources}
     for source in sources:
+        source["year_checks"] = source_year_checks(
+            source, notes.get(source["abbr"], {}), configured
+        )
         if source["status"] == "unresolved":
             source.update(
                 {
@@ -133,6 +138,7 @@ def export_audit(db, snapshot, target):
             s["primary_count"] + s["associated_count"] > 0 for s in sources
         ),
         "full_coverage_verified": False,
+        **zero_year_summary(sources),
         "sources": sources,
     }
     if (snapshot / "manifest.json").read_bytes() != original:

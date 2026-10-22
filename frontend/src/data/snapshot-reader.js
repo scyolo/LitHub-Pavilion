@@ -2,6 +2,9 @@ import { createSharedTasks, throwIfAborted } from "./shared-tasks.js";
 import { createRankedReader } from "./snapshot-ranked.js";
 import { createReaderCache } from "./reader-cache.js";
 import { expandTokens } from "./fuzzy-terms.js";
+import { keywordQuery, queryTopic } from "./query-aliases.js";
+import { createConferenceScope } from './conference-scope.js';
+import { acceptedTitleParams, validateAcceptedReferences } from './accepted-publications.js';
 import { createSnapshotEngine, normalizedTitle, queryTokens, parseParams, readerError } from "./snapshot-engine.js";
 
 const fields = ["id", "title", "venue", "year", "publication_date", "created_at", "citation_count", "directions", "venue_confirmed", "doi", "official_url", "oa_url", "first_author", "authors_count", "pdf_status", "pdf_source"];
@@ -54,6 +57,8 @@ export function createLazyReader({ manifest, catalog, download, onProgress = () 
       || descriptor.browse_chunk_size < 1 || descriptor.browse_chunk_size > 4096
       || descriptor.browse.some(entry => entry.count > descriptor.browse_chunk_size))) throw invalid();
   const venues = new Map(catalog.venues.map((venue) => [venue.abbr, venue]));
+  const conferenceScope = createConferenceScope(catalog);
+  validateAcceptedReferences(catalog.accepted_papers || [], catalog.venues);
   const cached = createReaderCache(), inflight = createSharedTasks({ concurrency: 6 });
   const vocabulary = createSharedTasks({ maxCached: 1 });
   const searches = createSharedTasks({ maxCached: 4 });
@@ -171,15 +176,25 @@ export function createLazyReader({ manifest, catalog, download, onProgress = () 
   }
   function selectedEntries(filters) {
     return descriptor.details.filter((entry) =>
-      (!filters.venue || entry.venues.includes(filters.venue))
+      conferenceScope.shardMatches(entry, filters)
       && (!filters.year || entry.years.includes(Number(filters.year)))
-      && (!filters.directions.length || filters.directions.some((code) => entry.directions.includes(code)))
-      && entry.venues.some((name) => (!filters.level || venues.get(name)?.level === filters.level) && (!filters.type || venues.get(name)?.type === filters.type)));
+      && (!filters.directions.length || filters.directions.some((code) => entry.directions.includes(code))));
   }
   const ranked = descriptor.version >= 5 ? createRankedReader({ descriptor, manifest, catalog, batches, cards, chunk, bucket, selectedEntries }) : null;
-  return {
+  const api = {
     async call(method, params = {}, context = {}) {
       throwIfAborted(context.signal);
+      if (method === 'search') params = acceptedTitleParams(catalog, params);
+      const rewritten=method==='search'?keywordQuery(params?.q):undefined;
+      if(method==='search'&&(params.match||'auto')==='auto'&&rewritten!==params.q){
+        const canonical=await api.call('search',{...params,q:rewritten,match:'keywords'},context);
+        if(canonical.total)return {...canonical,query_rewrite:rewritten};
+        let original;
+        try{original=await api.call('search',{...params,match:'keywords'},context);}
+        catch(error){if(error.status!==400||error.code!=='EMPTY_QUERY')throw error;}
+        if(original?.total)return original;
+        return {...await api.call('search',{...params,q:rewritten,match:'auto'},context),query_rewrite:rewritten};
+      }
       if (ranked && ["papers", "search"].includes(method)) return ranked.call(method, params, context);
       if (method === "papers") {
         const filters = parseParams(params);
@@ -192,6 +207,8 @@ export function createLazyReader({ manifest, catalog, download, onProgress = () 
         return engine(await batches(entries, context)).paper(id);
       }
       const filters = parseParams(params, true);
+      const selectedTopic=queryTopic(params.q,params.match||'auto',catalog.directions);
+      if(selectedTopic)return (await browse({...filters,directions:[selectedTopic.code]},context)).search(params);
       if (descriptor.version >= 2) {
         const mode = params.match || "auto";
         async function runIndexed(fuzzy) {
@@ -211,4 +228,5 @@ export function createLazyReader({ manifest, catalog, download, onProgress = () 
       return prepared.search(params);
     },
   };
+  return api;
 }

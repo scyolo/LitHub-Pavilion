@@ -32,6 +32,30 @@ def test_i3d_official_doi_list_excludes_invited_ieee_presentations():
     assert len(rows)==1 and rows[0].doi=='10.1145/3651298'
 
 
+def test_i3d_2026_doi_host_migration_retains_abstract_and_reports_selected_count():
+    from app.collectors.publisher_html_catalogs import parse_i3d
+
+    page = '''<title>Papers Program | I3D 2026</title>
+    <p>This year, we continue with 1 high-quality papers selected for publication.</p>
+    <dl class="papers-list"><dt>Interactive rendering</dt>
+    <dd>Ada Lee and Bob Smith</dd><dd><a href="https://doi.org/10.1145/3804491">DOI link</a></dd>
+    <dd><details><summary>Abstract</summary><p>Verified rendering abstract.</p></details></dd>
+    <dt>Invited journal paper</dt><dd>Another Author</dd>
+    <dd>(invited IEEE paper) <a href="https://doi.org/10.1109/TG.2025.1">DOI link</a></dd>
+    </dl>'''
+    records = parse_i3d(page, 2026)
+    assert len(records) == 1
+    assert records[0].doi == '10.1145/3804491'
+    assert records[0].authors == ['Lee, Ada', 'Smith, Bob']
+    assert records[0].extra['abstract'] == 'Verified rendering abstract.'
+    partial = parse_i3d(page.replace('1 high-quality', '2 high-quality'), 2026)
+    assert len(partial) == 1 and partial[0].extra['official_selected_count'] == 2
+    with pytest.raises(ValueError, match='count'):
+        parse_i3d(page.replace('1 high-quality', '0 high-quality'), 2026)
+    with pytest.raises(ValueError):
+        parse_i3d(page.replace('https://doi.org/10.1145/', 'https://evil.example/10.1145/'), 2026)
+
+
 def test_msst_published_research_rows_only():
     from app.collectors.publisher_html_catalogs import parse_msst
     text='<title>MSST 2024</title><ul class="papers"><li><span class="ptitle">Reliable storage</span><a href="../MSST-history/2024/Papers/msst24-1.1.pdf">PDF</a><span class="authors">Ada Lee (MIT); Bob Smith (Lab)</span></li></ul><div class="slot">Keynote talk</div>'

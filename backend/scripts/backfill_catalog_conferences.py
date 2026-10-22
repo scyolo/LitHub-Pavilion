@@ -7,7 +7,6 @@ import argparse
 import asyncio
 import csv
 import json
-import re
 from collections import Counter
 from datetime import datetime, timezone
 from pathlib import Path
@@ -17,7 +16,9 @@ from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 
 from app.collectors.catalog_conferences import conference_year
-from app.collectors.crossref import API, SELECT, _fetch_inventory, request_with_retry
+from app.collectors.conference_registry import container_filter as container_filter
+from app.collectors.conference_registry import discover_containers
+from app.collectors.crossref import API, _fetch_inventory
 from app.collectors.http_client import make_client
 from app.db import _make_engine
 from app.models import Paper, Venue
@@ -27,48 +28,6 @@ from app.services.tagging import load_rules, load_thresholds
 from scripts.reconcile_papers import _backup
 
 ROOT=Path(__file__).resolve().parents[2]
-
-
-def container_filter(item):
-    # ISBN is an exact proceedings identity and avoids Crossref's comma-delimited
-    # filter grammar for titles such as SC's Networking, Storage and Analysis.
-    isbn=next((s for s in item.get('ISBN',[]) if re.fullmatch(r'[0-9X-]{10,17}',s)),None)
-    if isbn:
-        return 'isbn:'+isbn
-    titles=item.get('container-title') or []
-    if len(titles)==1 and not any(c in titles[0] for c in (',',':')):
-        return 'container-title:'+titles[0]
-    return None
-
-
-async def discover_containers(client, venue, year, limiter):
-    """Search aliases independently; unrelated hits must not suppress discovery.
-
-    Include adjacent imprint years, then require each candidate's explicit event
-    year. Exhausting these bounded queries is not a complete publisher inventory.
-    """
-    queries = list(dict.fromkeys(filter(None, (
-        venue.name, venue.abbr, (venue.dblp_stream or '').rsplit('/', 1)[-1],
-    ))))
-    candidates, count = {}, 0
-    for query in queries:
-        await limiter.acquire()
-        response = await request_with_retry(client, API + '/works', params={
-            'query.container-title': query,
-            'filter': (f'from-pub-date:{max(2000, year - 1)}-01-01,'
-                       f'until-pub-date:{year + 1}-12-31,type:proceedings-article'),
-            'rows': 100, 'select': SELECT + ',ISBN',
-        })
-        response.raise_for_status()
-        items = response.json()['message']['items']
-        count += len(items)
-        for item in items:
-            if conference_year(item, venue) != year:
-                continue
-            exact_filter = container_filter(item)
-            if exact_filter:
-                candidates[exact_filter] = item['container-title'][0]
-    return candidates, count
 
 
 async def run(args):

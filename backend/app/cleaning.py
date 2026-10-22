@@ -20,6 +20,13 @@ NOISE_TITLES = {
     "aims and scope",
     "index to advertisers",
     "blank page",
+    "issue information",
+    "note from the editor",
+    "author index",
+    "subject index",
+    "program committee",
+    "steering committee",
+    "organizing committee",
 }
 # OpenAlex 实测形态常为 "期刊全称 + 卷首栏目名"（如 "IEEE TNNLS Information for Authors"）
 _NOISE_SUFFIXES = (
@@ -38,6 +45,27 @@ def is_noise_title(title_norm: str) -> bool:
     if not norm:
         return False
     if norm in NOISE_TITLES or norm.startswith("editorial board"):
+        return True
+    # IEEE deposits these conference front-matter records as proceedings
+    # articles. Exact edition headings are not research-paper titles.
+    if re.fullmatch(r"icra 20\d{2} commentary", norm):
+        return True
+    # IEEE also registers committee lists and chair messages as articles.
+    # Limit suffixes to an explicit short conference acronym and year; papers
+    # about committee selection or message protocols retain normal admission.
+    if re.fullmatch(
+        r"(?:program committee|steering committee|organizing committee|"
+        r"message from (?:the )?(?:general|program|conference|technical program) chairs?)"
+        r"(?: [a-z][a-z0-9]{0,19} 20\d{2})?",
+        norm,
+    ):
+        return True
+    # Journal issue introductions are deposited with article DOIs as well.
+    # Keep papers studying editorial work; match only the observed headings.
+    if re.fullmatch(r'pacmhci .+\b20\d{2} editorial', norm) or re.match(
+        r'^(?:guest )?editorial introduction(?: (?:to|for)\b| supporting group work$|$)',
+        norm,
+    ):
         return True
     return any(norm.endswith(" " + suffix) or norm == suffix for suffix in _NOISE_SUFFIXES)
 

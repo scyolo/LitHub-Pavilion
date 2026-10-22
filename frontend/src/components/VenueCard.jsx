@@ -5,7 +5,9 @@ import Icon from "./Icon.jsx";
 
 export default function VenueCard({ venue, topics = [], directions = [] }) {
   const years = venue.years || [];
-  return <Link to={paperHref(null, { venue: venue.abbr, level: venue.level, type: venue.type })}
+  const associated = venue.associated_paper_count || 0;
+  const available = (venue.paper_count || 0) + associated;
+  return <Link to={paperHref(null, { venue: venue.abbr, level: venue.level, type: venue.type, ...(associated ? {include_associated: '1'} : {}) })}
     className="venue-card panel" aria-label={`浏览 ${venue.abbr} 论文`}>
     <div className="venue-card-head">
       <span className={`level-badge level-${venue.level?.toLowerCase()}`}>CCF {venue.level}</span>
@@ -22,13 +24,13 @@ export default function VenueCard({ venue, topics = [], directions = [] }) {
       })}
     </div>
     <div className="venue-card-data">
-      <div><strong>{number(venue.paper_count)}</strong><small>篇已收录论文</small></div>
+      <div><strong>{number(available)}</strong><small>{associated ? `篇可查论文 · ${number(associated)} 篇期刊关联` : '篇已收录论文'}</small></div>
       {years.length > 0 && <div className="venue-year-trend" role="img" aria-label={`年份分布：${years.map(year => `${year.year} 年 ${number(year.count)} 篇`).join("，")}`}>
-        <MiniBars years={years} /><small>{years[0].year}{years.length > 1 ? `—${years.at(-1).year}` : ""}</small>
+        <MiniBars years={years} /><small>{associated ? '直接收录 ' : ''}{years[0].year}{years.length > 1 ? `—${years.at(-1).year}` : ""}</small>
       </div>}
     </div>
     <div className="venue-card-footer">
-      <span className={venue.paper_count ? "venue-ready" : "venue-empty"}><i />{venue.paper_count ? "浏览已收录论文" : "等待回填 · 暂无已收录论文"}</span>
+      <span className={available ? "venue-ready" : "venue-empty"}><i />{available ? "浏览已收录论文" : "等待回填 · 暂无已收录论文"}</span>
       <Icon name="chevron" size={14} />
     </div>
   </Link>;

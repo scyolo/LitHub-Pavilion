@@ -11,6 +11,7 @@ from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 from app.collectors.publisher_html_catalogs import SOURCES
 from app.collectors.crossref import request_with_retry
+from app.collectors.http_client import make_client
 from app.db import _make_engine
 from app.models import Venue
 from scripts.backfill_usenix import apply_records
@@ -25,10 +26,10 @@ async def run(args):
         temp=path.with_suffix('.tmp');temp.write_text(json.dumps(report,ensure_ascii=False,indent=2),encoding='utf-8');temp.replace(path)
     engine=_make_engine('sqlite:///'+args.database.resolve().as_posix())
     try:
-        async with httpx.AsyncClient(timeout=60,follow_redirects=False) as client:
+        async with make_client() as client:
             for name in args.venue or SOURCES:
                 template,parse=SOURCES[name]
-                for year in range(2023,2027):
+                for year in range(args.year_from, args.year_to + 1):
                     unit={'venue':name,'year':year,'status':'running','complete':False};report['units'].append(unit);save()
                     try:
                         url=template.format(year=year);file=args.output/(re.sub(r'[^A-Za-z0-9_-]','',name)+f'-{year}.html')
@@ -39,6 +40,9 @@ async def run(args):
                             html=response.text;file.write_text(html,encoding='utf-8')
                         records=parse(html,year)
                         unit.update(source=url,html_sha256=hashlib.sha256(html.encode()).hexdigest(),records=len(records))
+                        selected = records[0].extra.get('official_selected_count') if records else None
+                        if selected is not None:
+                            unit.update(selected_papers=selected, unresolved_selected_papers=selected-len(records))
                         if args.apply:
                             with Session(engine) as session:
                                 venue=session.query(Venue).filter_by(abbr=name,type='conf').one()
@@ -51,5 +55,11 @@ async def run(args):
     return report
 
 def main():
-    p=argparse.ArgumentParser(description=__doc__);p.add_argument('--database',type=Path,required=True);p.add_argument('--output',type=Path,required=True);p.add_argument('--venue',action='append',choices=list(SOURCES));p.add_argument('--apply',action='store_true');asyncio.run(run(p.parse_args()))
+    p=argparse.ArgumentParser(description=__doc__);p.add_argument('--database',type=Path,required=True);p.add_argument('--output',type=Path,required=True);p.add_argument('--venue',action='append',choices=list(SOURCES));p.add_argument('--apply',action='store_true')
+    p.add_argument('--year-from', type=int, default=2023)
+    p.add_argument('--year-to', type=int, default=2026)
+    args = p.parse_args()
+    if not 2023 <= args.year_from <= args.year_to <= 2026:
+        p.error('Use the agreed 2023–2026 range')
+    asyncio.run(run(args))
 if __name__=='__main__':main()

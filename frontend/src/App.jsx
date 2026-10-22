@@ -3,7 +3,7 @@ import { NavLink, Route, Routes, useLocation, useNavigate } from "react-router-d
 import { useQuery } from "@tanstack/react-query";
 import { api } from "./api.js";
 import { useCrawlStatus } from "./hooks/useResearchData.js";
-import { formatDate, paperHref, topic } from "./lib/presentation.js";
+import { formatDate, paperHref, prioritizeDirections, topic } from "./lib/presentation.js";
 import { APP_NAME, APP_DESCRIPTION } from "./lib/brand.js";
 import Icon from "./components/Icon.jsx";
 import SearchInput from "./components/SearchInput.jsx";
@@ -82,7 +82,7 @@ export default function App() {
         <div className="nav-section-title">工作台 <span>WORKSPACE</span></div>
         <nav className="main-nav">{NAVIGATION.map((item) => <NavLink key={item.to} onPointerEnter={() => preloadPage(item.page)} onFocus={() => preloadPage(item.page)} to={item.to} end={item.end} className={({ isActive }) => `nav-item ${isActive ? "active" : ""}`}><Icon name={item.icon} size={19} /><span>{item.name}</span><Icon name="chevron" size={13} /></NavLink>)}</nav>
         <div className="nav-section-title topic-nav-heading">研究方向 <span>TOPICS</span></div>
-        <nav className="topic-nav" aria-label="按研究方向浏览">{(directions?.items || []).map((d) => {
+        <nav className="topic-nav" aria-label="按研究方向浏览">{prioritizeDirections(directions?.items || []).map((d) => {
           const t = topic(d.code, d.name);
           const selected = new URLSearchParams(location.search).get("direction")?.split(",").includes(d.code);
           return <NavLink key={d.code} onPointerEnter={() => preloadPage(pages.papers)} onFocus={() => preloadPage(pages.papers)} to={paperHref(null, { direction: d.code })} className={`topic-nav-link ${selected && location.pathname === "/papers" ? "selected" : ""}`}><span className="topic-dot" style={{ background: t.color }} />{d.name}</NavLink>;

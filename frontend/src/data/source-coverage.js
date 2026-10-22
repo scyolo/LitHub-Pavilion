@@ -2,6 +2,38 @@ const HASH = /^[a-f0-9]{64}$/;
 const count = value => Number.isSafeInteger(value) && value >= 0;
 const fail = () => { throw new Error('覆盖清单未通过校验，请重新导出来源证据。'); };
 const http = value => { try { const url = new URL(value); return url.protocol === 'https:' && !url.username && !url.password; } catch { return false; } };
+export const COVERAGE_YEARS = [2023, 2024, 2025, 2026];
+export const ZERO_YEAR_LABELS = {
+  unverified: '待补采核验',
+  not_scheduled: '无独立届次',
+  joint_edition: '联合或合并届次',
+  publication_pending: '出版待核验',
+  no_proceedings: '未发布研究论文集',
+  edition_unverified: '届次待核验',
+  retrieval_failed: '采集待重试',
+};
+export function zeroYearChecks(source) {
+  return Object.fromEntries(COVERAGE_YEARS
+    .filter(year => !(source.primary_years[year] || source.associated_years[year]))
+    .map(year => [String(year), source.year_checks?.[year] || {
+      status: 'unverified', note: '本年度尚无记录，需核对官方出版目录。',
+    }]));
+}
+function validateYearChecks(row, names) {
+  if (row.year_checks == null) return;
+  if (typeof row.year_checks !== 'object' || Array.isArray(row.year_checks)) fail();
+  const zeros = Object.keys(zeroYearChecks(row));
+  if (Object.keys(row.year_checks).length !== zeros.length || zeros.some(year => !Object.hasOwn(row.year_checks, year))) fail();
+  for (const check of Object.values(row.year_checks)) {
+    if (!check || !Object.hasOwn(ZERO_YEAR_LABELS, check.status) || typeof check.note !== 'string' || !check.note.trim() || check.note.length > 1000) fail();
+    if (check.status !== 'unverified' || check.evidence_url != null || check.checked_at != null) {
+      if (!http(check.evidence_url) || !/^\d{4}-\d{2}-\d{2}$/.test(check.checked_at)) fail();
+      const parsed = new Date(check.checked_at + 'T00:00:00Z');
+      if (!Number.isFinite(parsed.getTime()) || parsed.toISOString().slice(0, 10) !== check.checked_at) fail();
+    }
+    if (check.canonical_venue != null && (check.status !== 'joint_edition' || check.canonical_venue === row.abbr || !names.has(check.canonical_venue))) fail();
+  }
+}
 function descriptor(entry) { return entry && HASH.test(entry.sha256) && entry.path === 'coverage/associations-' + entry.sha256 + '.json' && count(entry.count) && entry.count > 0; }
 function years(value) { return value && typeof value === 'object' && Object.entries(value).every(([y,n]) => /^202[3-6]$/.test(y) && count(n)); }
 export function validateCoverage(data) {
@@ -16,6 +48,13 @@ export function validateCoverage(data) {
     names.add(row.abbr);
   }
   if (data.direct_sources !== data.sources.filter(s=>s.primary_count>0).length || data.represented_sources !== data.sources.filter(s=>s.primary_count+s.associated_count>0).length) fail();
+  for (const row of data.sources) validateYearChecks(row, names);
+  if (data.zero_source_year_units != null || data.zero_year_status_counts != null) {
+    const expected = {};
+    for (const row of data.sources) for (const check of Object.values(zeroYearChecks(row))) expected[check.status] = (expected[check.status] || 0) + 1;
+    if (!count(data.zero_source_year_units) || data.zero_source_year_units !== Object.values(expected).reduce((a,b)=>a+b,0) || !data.zero_year_status_counts || typeof data.zero_year_status_counts !== 'object' || Array.isArray(data.zero_year_status_counts)) fail();
+    if (Object.keys(expected).length !== Object.keys(data.zero_year_status_counts).length || Object.entries(expected).some(([status,total]) => data.zero_year_status_counts[status] !== total)) fail();
+  }
   return data;
 }
 export function validateAssociations(data,source,revision) {

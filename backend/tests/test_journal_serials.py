@@ -30,6 +30,13 @@ def venue(abbr, name, issn):
             "1530-9304",
             "Evolutionary Computation",
         ),
+        (
+            venue(
+                "JASA", "The Journal of the Acoustical Society of America", "0001-4966"
+            ),
+            "1520-8524",
+            "The Journal of the Acoustical Society of America",
+        ),
     ],
 )
 def test_exact_registry_serials_recover_older_records_without_fuzzy_identity(
@@ -80,3 +87,10 @@ def test_serial_items_reject_wrong_identity_year_and_nonarticle_types():
     )
     assert not valid_serial_item({**row, "ISSN": ["9999-9999"]}, spec)
     assert not valid_serial_item({**row, "container-title": ["Unrelated source"]}, spec)
+
+
+def test_crossref_ambiguous_tdsc_registry_does_not_add_unrelated_issn():
+    v = venue("TDSC", "IEEE Transactions on Dependable and Secure Computing", "1545-5971")
+    row = {"DOI": "10.1109/test.2026.1", "type": "journal-article",
+           "ISSN": ["0361-1434"], "container-title": [v.name]}
+    assert identify_venue(row, {v.abbr: v}) is None

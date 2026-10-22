@@ -76,3 +76,14 @@ it("sorts by name and only shows topic labels supported by per-source statistics
   expect(within(neurips).getByText("大语言模型")).toHaveAttribute("title", "大语言模型：3 篇");
   expect(within(screen.getByRole("link", { name: "浏览 ICML 论文" })).queryByText("大语言模型")).not.toBeInTheDocument();
 });
+
+it('makes a journal-linked conference browsable without describing it as empty', () => {
+  const conference = {abbr: 'VIS', name: 'Visualization', level: 'A', type: 'conf',
+    paper_count: 0, associated_paper_count: 12, years: []};
+  renderDirectory({venues: [conference]});
+  const card = screen.getByRole('link', {name: '浏览 VIS 论文'});
+  expect(card).toHaveAttribute('href', '/papers?venue=VIS&level=A&type=conf&include_associated=1');
+  expect(card).toHaveTextContent('12 篇期刊关联');
+  expect(card).not.toHaveTextContent('等待回填');
+  expect(screen.getByRole('status')).toHaveTextContent('1 个已有论文');
+});

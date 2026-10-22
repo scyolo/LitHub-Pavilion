@@ -23,6 +23,15 @@ def seed_venue_abbrs():
 
 
 @pytest.fixture()
+def seed_direction_codes():
+    with (PROJECT_ROOT / "seeds" / "directions.csv").open(encoding="utf-8-sig", newline="") as source:
+        rows = list(csv.DictReader(source))
+    codes = {row["code"] for row in rows}
+    assert len(codes) == len(rows)
+    return codes
+
+
+@pytest.fixture()
 def engine(tmp_path):
     return _make_engine("sqlite:///" + str(tmp_path / "test.db").replace("\\", "/"))
 

@@ -50,3 +50,38 @@ def test_missing_issue_fields_require_separately_verified_owning_collection():
     )
     m["dc.description.number"] = [{"value": "2"}]
     assert parse_item(item, 2025, "44", "3", verified_membership=True) is None
+
+
+def test_eurovis_body_heading_can_identify_an_issue_with_empty_description():
+    collection = {
+        'name': '45-Issue 3',
+        'metadata': {
+            'dc.description.abstract': [{'value': ''}],
+            'dc.description': [{'value': '<html><head><title></title></head><body>\n'
+                                'EuroVis 2026 - 28th EG Conference on Visualization<br />'
+                                'Nottingham, UK | June 8 - 12, 2026<hr /></body></html>'}],
+        },
+    }
+    assert collection_identity(collection) == ('EuroVis', 2026, '45', '3')
+    collection['name'] = '44-Issue 3'
+    assert collection_identity(collection) is None
+    collection['name'] = '45-Issue 3'
+    collection['metadata']['dc.description.abstract'][0]['value'] = 'Regular Issue'
+    assert collection_identity(collection) is None
+
+
+def test_sca_2026_eurographics_imprint_requires_explicit_cgf_series():
+    meta = {
+        'dc.title': [{'value': 'Controllable Hand Motion Completion'}],
+        'dc.date.issued': [{'value': '2026'}],
+        'dc.description.volume': [{'value': '45'}],
+        'dc.description.number': [{'value': '8'}],
+        'dc.identifier.doi': [{'value': '10.1111/cgf.70568'}],
+        'dc.identifier.issn': [{'value': '1467-8659'}],
+        'dc.publisher': [{'value': 'The Eurographics Association'}],
+        'dc.description.seriesinformation': [{'value': 'Computer Graphics Forum'}],
+        'dc.contributor.author': [{'value': 'Lee, Ada', 'place': 0}],
+    }
+    assert parse_item({'metadata': meta}, 2026, '45', '8').doi == '10.1111/cgf.70568'
+    meta['dc.description.seriesinformation'][0]['value'] = 'Workshop abstracts'
+    assert parse_item({'metadata': meta}, 2026, '45', '8') is None

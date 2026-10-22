@@ -29,6 +29,32 @@ def test_vis_official_list_excludes_workshops_and_invited_partnerships():
     assert rows[0].extra["provenance"] == "official_conference_list"
 
 
+def test_vis_2023_uses_string_authors_and_the_official_virtual_archive():
+    source = row(authors=['Ada Lee', 'Bob Smith'],
+                 time_stamp='2023-10-24T03:00:00Z',
+                 abstract='An official visualization abstract.')
+    record, = parse_vis([source], 2023)
+    assert record.authors == ['Lee, Ada', 'Smith, Bob']
+    assert record.official_url == 'https://virtual.ieeevis.org/year/2023/paper_v-full-1.html'
+    assert record.extra['abstract'] == 'An official visualization abstract.'
+
+
+def test_hipeac_2023_markdown_doi_links_require_complete_authors_not_drafts():
+    from app.collectors.official_conference_lists import parse_hipeac_session
+
+    source = {
+        'id': 8050, 'type': {'value': 'Paper Track'},
+        'event': {'name': 'HiPEAC 2023'}, 'start_at': '2023-01-16T11:00:00+01:00',
+        'description': '- _Efficient architectures_, Ada Lee and Bob Smith '
+                       '[[TACO-2022-11](https://dl.acm.org/doi/pdf/10.1145/3566053)]\n'
+                       '- _Unpublished draft_, [[TACO draft](https://www.hipeac.net/media/draft.pdf)]',
+    }
+    records = parse_hipeac_session(source, 2023)
+    assert len(records) == 1 and records[0].doi == '10.1145/3566053'
+    assert records[0].authors == ['Lee, Ada', 'Smith, Bob']
+    assert parse_hipeac_session(source, 2024) == []
+
+
 def test_ismb_published_proceedings_list_preserves_author_names_only():
     from app.collectors.official_conference_lists import parse_ismb
 

@@ -38,7 +38,7 @@ def test_retired_pdf_environment_cannot_enable_downloads(monkeypatch):
     assert not hasattr(CrawlPipeline, "submit_pdf_backlog")
 
 
-def test_bootstrap_needs_only_current_seed_files_and_preserves_legacy_tables(engine, tmp_path, seed_venue_abbrs):
+def test_bootstrap_needs_only_current_seed_files_and_preserves_legacy_tables(engine, tmp_path, seed_venue_abbrs, seed_direction_codes):
     directory = tmp_path / "seeds"
     directory.mkdir()
     for name in ("venues.csv", "directions.csv", "direction_rules.csv"):
@@ -49,7 +49,7 @@ def test_bootstrap_needs_only_current_seed_files_and_preserves_legacy_tables(eng
     initialize_database(engine, directory)
     with Session(engine) as session:
         assert {abbr for abbr, in session.query(Venue.abbr)} == seed_venue_abbrs
-        assert session.query(Direction).count() == 16
+        assert {code for code, in session.query(Direction.code)} == seed_direction_codes
         seed_missing(session, directory)
         assert {abbr for abbr, in session.query(Venue.abbr)} == seed_venue_abbrs
     with engine.connect() as connection:

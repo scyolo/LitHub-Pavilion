@@ -4,7 +4,7 @@ import {MemoryRouter,Link} from 'react-router-dom';
 import {it,expect,vi,beforeEach} from 'vitest';
 import SourceCoverage from './SourceCoverage.jsx';
 import {loadCoverage,loadAssociations} from '../data/source-coverage.js';
-vi.mock('../data/source-coverage.js',()=>({loadCoverage:vi.fn(),loadAssociations:vi.fn()}));
+vi.mock('../data/source-coverage.js',async importOriginal=>({...await importOriginal(),loadCoverage:vi.fn(),loadAssociations:vi.fn()}));
 beforeEach(()=>{loadCoverage.mockResolvedValue({snapshot_revision:'a'.repeat(64),snapshot_papers:100,snapshot_generated_at:'2026-10-01T00:00:00Z',configured_sources:2,direct_sources:0,represented_sources:1,sources:[{abbr:'Eurographics',name:'Eurographics Conference',type:'conf',level:'B',primary_count:0,associated_count:1,primary_years:{},associated_years:{'2024':1},status:'journal_linked',associations:{path:'sample',count:1}},{abbr:'Pending',name:'Pending Conference',type:'conf',level:'A',primary_count:0,associated_count:0,primary_years:{},associated_years:{},status:'unresolved'}]});loadAssociations.mockResolvedValue({papers:[{id:10,title:'Verified geometry paper',canonical_venue:'CGF',publication_year:2024,event_year:2024,official_url:'https://doi.org/10.1111/cgf.1',evidence_url:'https://publisher.example/toc'}]});});
 function mount(){const client=new QueryClient({defaultOptions:{queries:{retry:false,gcTime:0}}});return render(<QueryClientProvider client={client}><MemoryRouter><Link to="/coverage?source=Pending">切换来源书签</Link><SourceCoverage/></MemoryRouter></QueryClientProvider>);}
 it('separates pending and journal-linked sources and opens the evidence list on demand',async()=>{mount();expect(await screen.findByRole('heading',{name:'Eurographics'})).toBeInTheDocument();expect(loadAssociations).not.toHaveBeenCalled();fireEvent.click(screen.getByRole('button',{name:'查看 Eurographics 的期刊发表关联'}));expect(await screen.findByText('Verified geometry paper')).toBeInTheDocument();expect(screen.getByText(/原始发表来源：CGF/)).toBeInTheDocument();expect(screen.getByRole('link',{name:'官网目录证据'})).toHaveAttribute('href','https://publisher.example/toc');fireEvent.change(screen.getByLabelText('覆盖状态'),{target:{value:'unresolved'}});expect(screen.getByRole('heading',{name:'Pending'})).toBeInTheDocument();expect(screen.queryByRole('heading',{name:'Eurographics'})).not.toBeInTheDocument();});
@@ -33,5 +33,29 @@ it('fuzzy-filters source names without changing the source identity or evidence'
   expect(screen.getByRole('heading',{name:'Eurographics'})).toBeInTheDocument();
   expect(screen.queryByRole('heading',{name:'Pending'})).not.toBeInTheDocument();
  }
+ expect(loadAssociations).not.toHaveBeenCalled();
+});
+
+it('filters zero years by verified reason and CCF level without inventing papers',async()=>{
+ const current=await loadCoverage();
+ current.sources[0].year_checks={
+  '2023':{status:'not_scheduled',note:'Official calendar has no independent edition.',checked_at:'2026-10-21',evidence_url:'https://publisher.example/calendar'},
+  '2025':{status:'unverified',note:'Unresolved publication identity.'},
+  '2026':{status:'publication_pending',note:'Publication is not yet verified.',checked_at:'2026-10-21',evidence_url:'https://publisher.example/2026'},
+ };
+ loadCoverage.mockResolvedValue(current);
+ mount();await screen.findByRole('heading',{name:'Eurographics'});
+ fireEvent.change(screen.getByLabelText('核验年份'),{target:{value:'2023'}});
+ fireEvent.change(screen.getByLabelText('零记录原因'),{target:{value:'not_scheduled'}});
+ expect(screen.getByRole('heading',{name:'Eurographics'})).toBeInTheDocument();
+ expect(screen.queryByRole('heading',{name:'Pending'})).not.toBeInTheDocument();
+ expect(screen.getByRole('link',{name:'官方依据'})).toHaveAttribute('href','https://publisher.example/calendar');
+ expect(screen.getByText(/1 个匹配零记录年份 \/ 共 7 个/)).toBeInTheDocument();
+ fireEvent.change(screen.getByLabelText('核验年份'),{target:{value:'2026'}});
+ expect(screen.getByText('没有匹配的来源')).toBeInTheDocument();
+ fireEvent.change(screen.getByLabelText('零记录原因'),{target:{value:'publication_pending'}});
+ expect(screen.getByRole('heading',{name:'Eurographics'})).toBeInTheDocument();
+ fireEvent.change(screen.getByLabelText('覆盖等级'),{target:{value:'A'}});
+ expect(screen.getByText('没有匹配的来源')).toBeInTheDocument();
  expect(loadAssociations).not.toHaveBeenCalled();
 });

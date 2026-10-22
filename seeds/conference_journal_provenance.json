@@ -3,6 +3,13 @@
   "year_basis": "Journal publication or volume year; presentation year is not inferred.",
   "sources": [
     {
+      "venue": "GROUP",
+      "issn": "2573-0142",
+      "verified_on": "2026-10-18",
+      "url": "https://api.crossref.org/works/10.1145/3633067",
+      "evidence": "Publisher-deposited PACMHCI records with the exact issue label GROUP identify this conference track. Use the journal publication year; do not infer the presentation year or include CSCW, MHCI, unnamed numeric issues, or editorial introductions."
+    },
+    {
       "venue": "SIGMOD",
       "issn": "2836-6573",
       "url": "https://2024.sigmod.org/calls_papers_sigmod_research.shtml",

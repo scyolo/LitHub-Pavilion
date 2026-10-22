@@ -18,16 +18,19 @@ def parse_vis(items, year):
         if not str(item.get("time_stamp", "")).startswith(str(year) + "-"):
             continue
         title = item.get("title")
-        authors = [a["name"] for a in item.get("authors", []) if a.get("name")]
+        authors = [a if isinstance(a, str) else a.get('name')
+                   for a in item.get('authors', [])]
         uid = item.get("id", "")
-        if not title or not authors or not re.fullmatch(r"[A-Za-z0-9_-]+", uid):
+        if not title or not authors or not all(authors) or not re.fullmatch(r"[A-Za-z0-9_-]+", uid):
             raise ValueError("VIS main paper identity incomplete")
         raw = _raw(
-            f"https://ieeevis.org/year/{year}/program/paper_{uid}.html",
+            (f'https://virtual.ieeevis.org/year/{year}/paper_{uid}.html'
+             if year == 2023 else f"https://ieeevis.org/year/{year}/program/paper_{uid}.html"),
             title,
             authors,
             year,
             doi=item.get("doi"),
+            abstract=item.get('abstract'),
         )
         raw.extra["provenance"] = "official_conference_list"
         records.append(raw)
@@ -82,11 +85,21 @@ def parse_hipeac_session(data, year):
     if not data.get("start_at", "").startswith(str(year) + "-"):
         return []
     records = []
-    for title, authors, doi in re.findall(
+    matches = re.findall(
         r"^- _(.+?)_\s+(.+?)\s+<?https://(?:dl\.acm\.org/doi/|doi\.org/)(10\.1145/[0-9]+)>?",
         data.get("description", ""),
         re.MULTILINE,
-    ):
+    )
+    if year == 2023:
+        # This archive links formal TACO DOIs as Markdown. Draft-only links
+        # and entries lacking a complete author list are deliberately absent.
+        matches.extend(re.findall(
+            r'^-\s*_([^_\n]+)_\s*,\s*([^\[\n]+?)\s*'
+            r'\[\[[^\]\n]+\]\(https://dl\.acm\.org/doi/(?:pdf/)?'
+            r'(10\.1145/[0-9]+)\)\]',
+            data.get('description', ''), re.MULTILINE,
+        ))
+    for title, authors, doi in matches:
         names = [
             n.strip(" .") for n in re.split(r",|\band\b", authors) if n.strip(" .")
         ]

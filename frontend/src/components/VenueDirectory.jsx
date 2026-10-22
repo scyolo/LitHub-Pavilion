@@ -48,7 +48,7 @@ export default function VenueDirectory({ venues = EMPTY, directions = EMPTY, sig
         className={activeArea === value ? "active" : ""} onClick={() => updateFilters({ area: value })}>{AREA_LABELS[value] || value}<span>{count}</span></button>)}
     </div>}
     <div className="venue-directory-status">
-      <p className="venue-result-count" role="status" aria-live="polite"><strong>{number(matches.length)}</strong> 个来源{search ? "匹配查询" : "可浏览"}<span> · {number(matches.filter(venue => venue.paper_count > 0).length)} 个已有论文</span></p>
+      <p className="venue-result-count" role="status" aria-live="polite"><strong>{number(matches.length)}</strong> 个来源{search ? "匹配查询" : "可浏览"}<span> · {number(matches.filter(venue => venue.paper_count > 0 || venue.associated_paper_count > 0).length)} 个已有论文</span></p>
       <span className="venue-directory-note">{search ? "精确命中优先，近似匹配随后" : "收录量排序，不代表学术排名"}</span>
     </div>
     {matches.length ? <>

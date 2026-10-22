@@ -61,6 +61,12 @@ def test_cross_direction_tags_do_not_override_publication_evidence(
         "Editorial Board",
         "Preface",
         "Front Matter",
+        "PACMHCI V8, GROUP, January 2024 Editorial",
+        "PACMHCI, VI, MHCI, September 2024 Editorial",
+        "Editorial Introduction - Supporting Group Work",
+        "Editorial Introduction to the ICCV 2021 Special Section",
+        "Guest Editorial Introduction to the Special Issue on Video Transformers",
+        "Editorial introduction for special issue on research challenges",
     ],
 )
 def test_nonresearch_publication_records_do_not_enter_reader_stats(
@@ -70,6 +76,17 @@ def test_nonresearch_publication_records_do_not_enter_reader_stats(
     db.commit()
     assert paper_query(db, PaperFilters()).count() == 0
     assert db.query(Paper).count() == 1
+
+
+@pytest.mark.parametrize('title', [
+    'A Framework for Editorial Introduction Generation',
+    'Editorial Decisions in Scientific Peer Review',
+    'PACMHCI Editorial Workflows: A User Study',
+])
+def test_research_about_editorial_work_is_not_excluded(db, sample_paper, title):
+    sample_paper.title = title
+    db.commit()
+    assert paper_query(db, PaperFilters()).count() == 1
 
 
 @pytest.mark.parametrize(
@@ -88,6 +105,32 @@ def test_official_doi_optional_article_can_be_admitted(db, sample_paper):
     db.commit()
     assert paper_query(db, PaperFilters()).count() == 1
     assert admission_reason(sample_paper, sample_paper.venue) is None
+
+
+@pytest.mark.parametrize('title', [
+    'Program Committee: CLUSTER 2026',
+    'Steering Committee: CLUSTER 2026',
+    'Message from the General Chair: CLUSTER 2026',
+    'Message From the Program Chairs CLUSTER 2026',
+    'Organizing Committee',
+    'Author Index',
+])
+def test_conference_front_matter_is_retained_privately_not_counted_as_research(db, sample_paper, title):
+    sample_paper.title = title
+    db.commit()
+    assert paper_query(db, PaperFilters()).count() == 0
+    assert db.query(Paper).count() == 1
+
+
+@pytest.mark.parametrize('title', [
+    'Program Committee Selection Using Graph Learning',
+    'A Message from the General Chair Detection Model',
+    'Author Index Construction for Digital Libraries',
+])
+def test_research_titles_about_committees_or_indexes_remain_eligible(db, sample_paper, title):
+    sample_paper.title = title
+    db.commit()
+    assert paper_query(db, PaperFilters()).count() == 1
 
 
 def test_missing_or_wrong_source_and_preprints_are_rejected():

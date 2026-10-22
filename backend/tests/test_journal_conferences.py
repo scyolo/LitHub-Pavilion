@@ -29,6 +29,18 @@ def test_pacm_issue_identifies_one_conference_and_uses_publication_year():
     )
 
 
+def test_group_named_issue_keeps_journal_year_and_excludes_other_hci_tracks():
+    venue = SimpleNamespace(abbr="GROUP", type="conf", ccf_level="B")
+    item = row("GROUP") | {
+        "container-title": ["Proceedings of the ACM on Human-Computer Interaction"],
+        "ISSN": ["2573-0142"],
+    }
+    assert publication_year(item, venue) == 2024
+    assert publication_year(item | {"issue": "CSCW1"}, venue) is None
+    assert publication_year(item | {"issue": "GROUP Companion"}, venue) is None
+    assert publication_year(item | {"issue": "1"}, venue) is None
+
+
 @pytest.mark.parametrize(
     "change",
     [

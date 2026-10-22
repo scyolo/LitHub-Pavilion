@@ -61,6 +61,9 @@ def test_new_directions_do_not_use_ambiguous_single_word_rules(code, title):
 
 def test_multimodal_identity_is_retained_while_label_is_expanded():
     directions = {d["code"]: d for d in rows("directions.csv")}
-    assert len(directions) == 16
+    assert set(directions) == {
+        "llm", "inference", "specdec", "agent", "cv", "multimodal", "rl", "nlp",
+        "retrieval", "alignment", "ml", "dl", "ai", "hci", "generative", "systems", "graph",
+    }
     assert directions["multimodal"]["name"] == "多模态与视觉语言"
     assert directions["hci"]["name"] == "人机交互与可视化"

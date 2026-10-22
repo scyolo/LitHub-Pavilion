@@ -10,3 +10,21 @@ def test_naacl_main_volume_excludes_short_findings_and_workshops():
     assert rows[0].official_url == "https://aclanthology.org/2024.naacl-long.1/"
     with pytest.raises(ValueError):
         parse_anthology(xml, 2025, "NAACL", "2025.naacl")
+
+
+def test_official_batch_includes_naacl_main_editions():
+    from scripts.collect_official_inventories import _official_units
+
+    units, _ = _official_units([2024, 2025, 2026])
+    actual = {
+        (abbr, year, url, kind) for abbr, year, url, kind in units if abbr == "NAACL"
+    }
+    assert actual == {
+        (
+            "NAACL",
+            year,
+            f"https://raw.githubusercontent.com/acl-org/acl-anthology/master/data/xml/{year}.naacl.xml",
+            "anthology",
+        )
+        for year in (2024, 2025, 2026)
+    }
