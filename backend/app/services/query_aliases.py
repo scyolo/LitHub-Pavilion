@@ -3,10 +3,11 @@
 import json
 import re
 import unicodedata
-from pathlib import Path
+
+from app.config import settings
 
 ALIASES = json.loads(
-    (Path(__file__).resolve().parents[3] / "seeds/query_aliases.json").read_text("utf8")
+    (settings.seeds_dir / "query_aliases.json").read_text("utf8")
 )
 CJK = re.compile(r"[\u3400-\u4dbf\u4e00-\u9fff]")
 

@@ -2,14 +2,14 @@
 
 import json
 import re
-from pathlib import Path
 
 from app.api.filtering import PaperFilters, paper_query
 from app.api.serializers import safe_http_url
 from app.cleaning import normalize_title
+from app.config import settings
 from app.models import Paper, Venue
 
-REFERENCE_ROWS = json.loads((Path(__file__).resolve().parents[3] / 'seeds/accepted_publications.json').read_text('utf8'))['papers']
+REFERENCE_ROWS = json.loads((settings.seeds_dir / 'accepted_publications.json').read_text('utf8'))['papers']
 REFERENCE_KEYS = {'reference_id', 'title', 'authors', 'venue', 'year', 'level', 'status', 'official_url',
                   'preprint_url', 'aliases', 'directions', 'evidence_sha256', 'verified_on'}
 
