@@ -1,3 +1,15 @@
+# Repository push and website publication (2026-10-22; verified 2026-10-23)
+
+User authorization: push the current project to the repository and publish it to the website; later requests continue the same task.
+
+1. [complete] Source `6491669d596ee3a57ca8cfabd14a076afb2c9dac` pushed to the feature branch and `main`; public snapshot `dbc472f67bf66847eff2df413ac6ae96a7bef7ed` pushed to `site-data` with its previous commit retained.
+2. [complete] Remote Verify 39896713747 passes backend 1137/frontend 298 tests, Ruff and empty-install container smoke. Pages 39896713774 builds and deploys successfully at 2026-10-23 12:23:52 Asia/Shanghai; 778472588 bytes remains within the unchanged site limit.
+3. [complete] Deployed manifest/catalog/sample reader assets pass hashes; all 10 frontend assets match the production build. Real browser passes 14 release queries, 3 details, combined coverage filters, joint-edition navigation, dated evidence and 390px layouts.
+4. [complete] Reconstructed previous-cache and previous-module browser scenarios recover through actual deployed 404s, with one manifest refresh or one document reload and preserved query. Fresh homepage fetches only two metadata files and renders all 17 directions.
+5. [complete] Final delivery receipt and dated publication report saved. Final documentation commit/push/CI state is recorded in release-artifacts/release-20261022/delivery.json; no paper-collection or website-publication work remains for this release.
+
+Paper evidence remains dated 2026-10-21. Public count395935; represented sources336/338; 90 zero source/year units remain documented, without an unsupported full-coverage claim. Historical checkpoints below describe their respective dates, not the current publication state.
+
 # Zero-record source audit and comprehensive existing-direction coverage (2026-10-21)
 
 Scope: all 338 configured CCF A/B sources, all 17 existing directions, and the established 2023–2026 range. Preserve existing publication IDs, manual work and all prior uncommitted changes. Collect metadata, abstracts and original links; deliver and verify the local database, source audit and website together.

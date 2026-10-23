@@ -1,5 +1,12 @@
 # Findings — current continuation
 
+## 2026-10-23 publication completion
+
+- Release status left by the previous chat was stale: it still awaited Pages39896713774. Live GitHub checks confirm main6491669, site-data dbc472f, successful Verify39896713747 and successful Pages deployment at12:23:52 Asia/Shanghai. User authorization to push and publish was recovered from the project chat; native chat-reading tools were unavailable.
+- The deployed snapshot is395935papers/17directions/338sources/revision8238b3db8709, generated2026-10-21. Manifest, catalog and sampled reader shards pass hashes; all10frontend artifacts match the local production build. Pages built8399files/778472588bytes, with no raised site budget. The prior snapshot is preserved in data parent991884d; only current complete public metadata is in the deployed tree.
+- Browser14queries/3details, combined coverage filters, joint-edition navigation and390pxlayouts pass. A fresh homepage has exactly2metadata requests. Previous-cache and prior-module recovery scenarios use verified historical assets, real deployed404s, and confirm single refresh/reload with correct current results; they are reconstructed scenarios because the prior QA browser no longer existed. Screenshots inspected.
+- Delivery evidence is release-artifacts/release-20261022/delivery.json. The release task is complete;90zero source/year scopes remain explicit coverage boundaries. Historical no-publication entries below refer to earlier dates.
+
 ## 2026-10-20 recovery and completed delivery
 
 - The explicitly linked chat ended with a provider error on October 19; its export continued and exited successfully. No collector remained running. Existing data, source changes, backup and staged snapshot were reused.
