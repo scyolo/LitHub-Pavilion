@@ -9,7 +9,10 @@
     "大模型推理优化": "inference",
     "大模型推理加速": "inference",
     "投机解码": "specdec",
-    "推测解码": "specdec"
+    "推测解码": "specdec",
+    "联邦学习": "federated",
+    "联邦训练": "federated",
+    "联邦机器学习": "federated"
   },
   "keywords": {
     "eagle2": "EAGLE 2",

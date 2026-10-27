@@ -64,6 +64,29 @@ def test_multimodal_identity_is_retained_while_label_is_expanded():
     assert set(directions) == {
         "llm", "inference", "specdec", "agent", "cv", "multimodal", "rl", "nlp",
         "retrieval", "alignment", "ml", "dl", "ai", "hci", "generative", "systems", "graph",
+        "federated",
     }
     assert directions["multimodal"]["name"] == "多模态与视觉语言"
     assert directions["hci"]["name"] == "人机交互与可视化"
+    assert directions["federated"]["name"] == "联邦学习"
+
+
+@pytest.mark.parametrize("code,title", [
+    ("federated", "Communication-Efficient Federated Learning with Non-IID Data"),
+    ("federated", "FedAvg Convergence Analysis in Cross-Silo Federated Training"),
+    ("federated", "Personalized Federated Fine-Tuning of Language Models"),
+])
+def test_federated_direction_has_real_matching_rules(code, title):
+    rules = [(1, r["keyword"], float(r["weight"]), r["field"])
+             for r in rows("direction_rules.csv") if r["direction_code"] == code]
+    assert score_text(rules, title, None).get(1, 0) >= 2
+
+
+@pytest.mark.parametrize("code,title", [
+    ("federated", "Federal Spending Records and Federally Mandated Programs"),
+    ("federated", "Scaffold Proteins and Molecular Assemblies"),
+])
+def test_federated_direction_does_not_match_ambiguous_terms(code, title):
+    rules = [(1, r["keyword"], float(r["weight"]), r["field"])
+             for r in rows("direction_rules.csv") if r["direction_code"] == code]
+    assert score_text(rules, title, None).get(1, 0) < 2
