@@ -138,5 +138,10 @@ federated,\bfederated[- ](?:learning|neural[- ]networks?|fine[- ]tuning)\b,both,
 federated,\b(?:cross[- ](?:silo|device)|horizontal[- ]federated|vertical[- ]federated|split[- ]federated|personalized[- ]federated)\b,both,1.0,1
 federated,\b(?:fedavg|fedprox|fedbundle|fednorm|fedsam|fedadam|feddyn)\b,both,1.0,1
 federated,\b(?:communication[- ]efficient|client[- ]heterogene\w*|non[- ]iid)[- ](?:federated|data[- ]heterogene\w*)\b,both,1.0,1
+federated,\bfederated\b[^.\n]*?\b(?:learning|training|clustering|recommendation|distillation|unlearning|tuning|aggregation|averaging|optimization|optimisation|inference|adaptation|selection)\b,both,1.0,1
+federated,(?s)\A(?=.*\bfederated\b)(?=.*\b(?:client|clients|privacy|personaliz\w*|aggregat\w*|non-iid|heterogene\w*|cross-silo|cross-device|server|servers|local model|global model|communication-efficient|model poisoning|byzantine)\b).+,both,1.0,1
+federated,(?s)\A(?=.*\bfederated\b)(?=.*\b(?:domain generalization|graph learning|graph neural|multi-view|semi-supervised|self-supervised|reinforcement learning|bandit\w*|recommend\w*|retrieval|prompt|low-rank|lora|conformal|anomaly detection|active learning|split learning|knowledge transfer|continual|incremental|category discovery|out-of-distribution|generalized category|active data|model compression|differential privacy|secure aggregation|incentive)\b).+,both,1.0,1
+federated,\bfed(?!era|back|ex\b)(?:[a-z0-9]{3})[a-z0-9]*\b,title,1.0,1
+federated,(?s)\A(?=.*\bfederated\b)(?=.*\b(?:recognition|classification|detection|estimation|regression|clustering|segmentation|identification|matching|differentiation|backdoor|attacks?|defen[cs]e|privacy|security|compression|communication|algorithms?|svm|transformer|networks?|models?|learning|training|inference|aggregat\w*|averaging|adaptive|personaliz\w*|supervised|unsupervised|statistics?|frequency|treatment effects?|langevin|distillation)\b).+,both,1.0,1
 multimodal,\bvision[- ]language[- ](?:action|models?|pretraining|understanding)\b,both,1.0,1
 multimodal,\b(?:visual question answering|image[- ]text alignment|visual grounding)\b,both,1.0,1
