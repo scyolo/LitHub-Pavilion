@@ -131,7 +131,12 @@ def conference_year(item, venue):
         "_official_siggraph_parent"
     ):
         parent = item["_official_siggraph_parent"]
-        year = {"10.1145/3588432": 2023, "10.1145/3641519": 2024, "10.1145/3721238": 2025}.get(parent.get("DOI"))
+        year = {
+            "10.1145/3588432": 2023,
+            "10.1145/3641519": 2024,
+            "10.1145/3721238": 2025,
+            "10.1145/3799902": 2026,
+        }.get(parent.get("DOI"))
         doi = normalize_doi(item.get("DOI")) or ""
         if (
             year

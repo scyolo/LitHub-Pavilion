@@ -8,7 +8,9 @@ from app.services.publication_admission import nonresearch_title
 
 SERIES = {
     name: "LIPIcs." + name
-    for name in ("SoCG", "ECOOP", "CCC", "ESA", "ICALP", "CONCUR", "ICDT", "SAT", "CP")
+    for name in (
+        "SoCG", "ECOOP", "CCC", "ESA", "ICALP", "CONCUR", "ICDT", "SAT", "CP", "LICS",
+    )
 }
 
 
