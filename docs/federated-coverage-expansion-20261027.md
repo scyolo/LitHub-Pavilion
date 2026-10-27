@@ -53,4 +53,16 @@
 ## 四、边界
 
 - 2019–2022 年份仅为**方向定向补采**（只含 FL 论文），不表示这些年份的其他方向已覆盖；页面年度图表仍按 2023–2026 惯例展示，总量包含补采论文。
-- 本轮仅本地数据库与快照；未提交、未推送、未发布。
+## 五、发布
+
+已于 2026-10-28 03:10（北京时间）完成推送与网站上线：
+
+- 源码提交 `8d7ccb76`（规则、两个补采脚本、覆盖文档）、`0d32b4ec`（首页 catalog 预算修复）。
+- 数据提交 `6484a38a`，快照 revision `4eefc858`；`Pages` 构建 [40563349161](https://github.com/scyolo/LitHub-Pavilion/actions/runs/40563349161) 成功。
+- 线上验收：manifest revision `4eefc858`、400,099 篇；catalog 哈希校验通过、体积 366,006 字节；联邦学习方向 **7,371** 篇；末分片检出 2022 年 NeurIPS 的 FL 论文（如 SemiFL）。
+
+### 首页预算修复
+
+首次构建失败：`Pages homepage must have a verified summary below 512 KiB`。原因是 catalog 中的 `venue_topics` 为每个来源发送全部方向（平均 11.7 个），而来源卡片只渲染前 3 个；随 FL 标签扩充后 catalog 变大使 catalog+manifest 达 539,221 字节。
+
+修复：导出时按 `VENUE_TOPIC_LIMIT = 3` 截断已发布目录（`snapshot.py`），校验器改为**前缀容差**（要求保留项与重算结果的最频繁前缀完全一致，同时兼容此前写入完整列表的旧快照）。修复后 catalog+manifest 为 437,336 字节，符合同一 512 KiB 契约，未提高任何体积上限。
