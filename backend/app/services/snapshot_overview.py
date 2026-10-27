@@ -10,6 +10,9 @@ CARD_KEYS = {
     "first_author", "authors_count", "citation_count", "pdf_status", "pdf_source", "doi",
     "official_url", "oa_url",
 }
+# The venue card renders three topic tags; sending every matching direction only
+# inflates the lightweight homepage catalog (which must stay under 512 KiB).
+VENUE_TOPIC_LIMIT = 3
 
 
 class OverviewBuilder:

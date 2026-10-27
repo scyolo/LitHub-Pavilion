@@ -11,7 +11,7 @@ from pathlib import Path
 from app.api.filtering import PaperFilters, paper_query, venue_scope
 from app.api.serializers import abstract_text, paper_card, safe_http_url
 from app.models import Author, CrawlLog, Direction, Paper, PaperAuthor, PaperDirection, Venue
-from app.services.snapshot_overview import OverviewBuilder
+from app.services.snapshot_overview import OverviewBuilder, VENUE_TOPIC_LIMIT
 
 SCHEMA_VERSION = 1
 MAX_FILE_BYTES = 8 * 1024 * 1024
@@ -204,6 +204,14 @@ def export_snapshot(session_factory, directory: Path, *, chunk_size: int = 1000,
         rows, _ = _load_entry(directory, entry, "papers")
         overview.add(rows)
     catalog_value["overview"] = overview.result()
+    # Keep the homepage catalog inside its 512 KiB budget: the venue card renders
+    # three tags, so only the leading entries are published. Validation accepts
+    # both this shortened form and catalogs written before the shortening.
+    topics = catalog_value["overview"].get("venue_topics")
+    if isinstance(topics, dict):
+        catalog_value["overview"]["venue_topics"] = {
+            venue: entries[:VENUE_TOPIC_LIMIT] for venue, entries in topics.items()
+        }
     from app.services.snapshot_reader import build_reader_assets
     catalog_value["reader"] = build_reader_assets(directory, {"chunks": chunks, "paper_count": count}, version=6)
     catalog_data = _json_bytes(catalog_value)
@@ -392,8 +400,23 @@ def _validate_contents(directory: Path, manifest: dict) -> None:
                 raise ValueError("Paper direction details do not match")
         if overview is not None:
             overview.add(rows)
-    if overview is not None and _json_bytes(catalog["overview"]) != _json_bytes(overview.result()):
-        raise ValueError("Public overview does not match the complete snapshot")
+    if overview is not None:
+        expected = overview.result()
+        actual = catalog["overview"]
+        # A published catalog may shorten each venue's topic list to the number of
+        # tags its card renders. The retained entries must still be the exact
+        # leading (most frequent, code-sorted) prefix of the recomputed list.
+        if isinstance(actual.get("venue_topics"), dict) and isinstance(expected.get("venue_topics"), dict):
+            for venue, entries in actual["venue_topics"].items():
+                computed = expected["venue_topics"].get(venue)
+                if not isinstance(entries, list) or computed is None or entries != computed[:len(entries)]:
+                    raise ValueError("Public venue topics do not match the complete snapshot")
+            comparison = {key: value for key, value in actual.items() if key != "venue_topics"}
+            target = {key: value for key, value in expected.items() if key != "venue_topics"}
+        else:
+            comparison, target = actual, expected
+        if _json_bytes(comparison) != _json_bytes(target):
+            raise ValueError("Public overview does not match the complete snapshot")
     if len(ids) != manifest["paper_count"]:
         raise ValueError("Snapshot paper count does not match")
     if 'conference_associations' in catalog:
