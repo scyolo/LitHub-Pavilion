@@ -43,14 +43,15 @@
 
 采集脚本：`backend/scripts/backfill_ai_classics.py`。
 
-## 三、大厂技术报告：独立静态板块（97 份 / 24 家机构）
+## 三、大厂技术报告：独立静态板块（112 份 / 24 家机构）
 
 新增“大厂技术报告”页面（`#/industry`），把 DeepSeek 及国内外主要大厂的模型技术报告、系统卡、模型卡、官方博客与代码发布集中为**一个大的方向**，机构作为子目录：
 
-- 数据是独立的 `frontend/static/industry.json`（schema_version 1，40 KB），由 `backend/scripts/build_industry_data.py` 从 `seeds/industry_orgs.csv` 与 `seeds/industry_reports.csv` 生成；不写入 SQLite、不进入论文快照、不计入 CCF A/B 统计。
-- 当前收录 97 份 / 24 家机构：DeepSeek 15、Google DeepMind 11、Meta AI 8、OpenAI 8、阿里巴巴通义实验室 7、智谱 AI 6、艾伦人工智能研究所 4、微软研究院 4、月之暗面 4、NVIDIA 4、上海人工智能实验室 4、Anthropic 3、Apple 2、字节跳动 Seed 2、华为 2、MiniMax 2、Mistral AI 2、阶跃星辰 2、腾讯混元 2、零一万物 1、百川智能 1、百度 1、xAI 1、小米 1。
-- 构成：技术报告 63、研究论文 26、系统卡 2、模型卡 1、期刊论文 2、官方博客 1、代码与权重 2；覆盖 2019–2025 年，最新为 2025-10-21 的 DeepSeek-OCR。
-- 90 份带 arXiv ID，入库前通过 arXiv API 逐篇核对规范化题名；另 7 份为非 arXiv 官方来源（DeepSeek-V3.2-Exp 与 Grok-1 代码库、DeepSeek-R1 的 Nature 论文、Llama 4 官方博客、Claude 3 模型卡、Pangu-Weather 的 Nature 论文、GPT-2 论文 PDF），逐条核对官方域名与 HTTPS。
+- 数据是独立的 `frontend/static/industry.json`（schema_version 1，47 KB），由 `backend/scripts/build_industry_data.py` 从 `seeds/industry_orgs.csv` 与 `seeds/industry_reports.csv` 生成；不写入 SQLite、不进入论文快照、不计入 CCF A/B 统计。
+- 当前收录 112 份 / 24 家机构：DeepSeek 26、Google DeepMind 11、Meta AI 8、OpenAI 8、阿里巴巴通义实验室 8、智谱 AI 7、月之暗面 5、艾伦人工智能研究所 4、微软研究院 4、NVIDIA 4、上海人工智能实验室 4、Anthropic 3、腾讯混元 3、Apple 2、字节跳动 Seed 2、华为 2、MiniMax 2、Mistral AI 2、阶跃星辰 2、零一万物 1、百川智能 1、百度 1、xAI 1、小米 1。
+- 构成：技术报告 72、研究论文 27、系统卡 2、模型卡 3、期刊论文 2、官方博客 1、代码与权重 5；覆盖 2019–2026 年，最新为 2026-10-16 的 DeepInfer。
+- 2026 年补录：新增 15 份 2025-11 至 2026-10 的发布，其中 DeepSeek 11 份（V3.2、Math-V2、Engram、OCR 2、V4 / V4-Pro、DeepSpec、Harness、V4.1-Flash、DSec、DeepInfer），另补阿里巴巴 Qwen3.5-Omni、智谱 GLM-5、月之暗面 Kimi K3、腾讯 Hunyuan-A13B 各 1 份。
+- 99 份带 arXiv ID，入库前通过 arXiv API 逐篇核对规范化题名；另 13 份为非 arXiv 官方来源（DeepSeek 的 Math-V2 / V4-Pro 权重、V3.2-Exp / Engram / DeepSpec / Harness / DeepInfer 代码库与 DeepSeek-R1 的 Nature 论文，Grok-1 代码库、Llama 4 官方博客、Claude 3 模型卡、Pangu-Weather 的 Nature 论文、GPT-2 论文 PDF），逐条核对官方账号／域名与 HTTPS。
 - 生成器强制：机构与报告 ID 唯一、题名唯一、类型合法、年份与发布日期一致、公开 HTTPS 链接、arXiv ID 与 URL 互相一致、摘要 10–180 字、1–6 个标签、拒绝私有地址与未知机构。输出确定性排序，便于 diff 与缓存校验。
 - 前端 `frontend/src/lib/industry.js` 再次校验静态数据；页面支持机构、类型、模糊搜索，URL 参数可分享，机构分组按当前结果数排序，DeepSeek 置顶突出。页面与论文库完全解耦，论文库不可用时仍可浏览（只依赖静态 JSON）。
 - 重建命令：`python backend/scripts/build_industry_data.py --verify-arxiv`（可加 `--generated-at` 固定时间戳）。

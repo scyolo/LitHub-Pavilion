@@ -39,8 +39,8 @@ def raw_report(**overrides):
 def test_seed_catalog_has_expected_shape_and_unique_identities():
     orgs, reports = seeds()
     assert len(orgs) == 24
-    assert len(reports) == 97
-    assert sum(report["org"] == "deepseek" for report in reports) == 15
+    assert len(reports) == 112
+    assert sum(report["org"] == "deepseek" for report in reports) == 26
     assert len({report["id"] for report in reports}) == len(reports)
     assert all(report["url"].startswith("https://") for report in reports)
     assert all((report["arxiv_id"] is not None) == ("arxiv.org" in report["url"]) for report in reports)
@@ -51,12 +51,12 @@ def test_feed_stats_ordering_and_org_counts():
     orgs, reports = seeds()
     feed = build_feed(orgs, reports, generated_at="2026-10-28T00:00:00Z")
     assert feed["generated_at"] == "2026-10-28T00:00:00Z"
-    assert feed["stats"]["reports"] == 97
+    assert feed["stats"]["reports"] == 112
     assert feed["stats"]["orgs"] == 24
-    assert feed["stats"]["latest"] == "2025-10-21"
+    assert feed["stats"]["latest"] == "2026-10-16"
     assert feed["orgs"][0]["code"] == "deepseek"
-    assert feed["orgs"][0]["count"] == 15
-    assert feed["reports"][0]["id"] == "deepseek-ocr"
+    assert feed["orgs"][0]["count"] == 26
+    assert feed["reports"][0]["id"] == "deepseek-deepinfer"
     published = [report["published"] for report in feed["reports"]]
     assert published == sorted(published, reverse=True)
     assert sum(org["count"] for org in feed["orgs"]) == len(feed["reports"])
