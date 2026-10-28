@@ -18,16 +18,19 @@ const pages = {
   detail: createPageModule(() => import("./pages/PaperDetail.jsx")),
   coverage: createPageModule(() => import("./pages/SourceCoverage.jsx")),
   venues: createPageModule(() => import("./pages/Venues.jsx")),
+  industry: createPageModule(() => import("./pages/Industry.jsx")),
   admin: createPageModule(() => import("./pages/Admin.jsx")),
 };
 const { Component: Deadlines } = pages.deadlines, { Component: PaperList } = pages.papers;
 const { Component: PaperDetail } = pages.detail, { Component: SourceCoverage } = pages.coverage;
-const { Component: Venues } = pages.venues, { Component: Admin } = pages.admin;
+const { Component: Venues } = pages.venues, { Component: Industry } = pages.industry;
+const { Component: Admin } = pages.admin;
 const preloadPage = page => { page?.preload().catch(() => {}); };
 
 const NAVIGATION = [
   { to: "/", name: "研究总览", icon: "grid", end: true },
   { to: "/papers", name: "论文探索", icon: "book", page: pages.papers },
+  { to: "/industry", name: "大厂技术报告", icon: "sparkles", page: pages.industry },
   { to: "/venues", name: "会议与期刊", icon: "building", page: pages.venues },
   { to: "/deadlines", name: "截稿日历", icon: "calendar", page: pages.deadlines },
 ];
@@ -52,7 +55,7 @@ export default function App() {
   const [menuOpen, setMenuOpen] = useState(false);
   const { data: crawl } = useCrawlStatus();
   const { data: directions } = useQuery({ queryKey: ["directions"], queryFn: ({ signal }) => api.directions(signal) });
-  const pageName = location.pathname.startsWith("/coverage") ? "来源覆盖核验" : location.pathname.startsWith("/deadlines") ? "截稿日历" : location.pathname.startsWith("/admin") ? (api.isSnapshot ? "快照与更新" : "采集管理") : location.pathname.startsWith("/venues") ? "会议与期刊" : location.pathname.startsWith("/papers/") ? "论文详情" : location.pathname.startsWith("/papers") ? "论文探索" : "研究总览";
+  const pageName = location.pathname.startsWith("/coverage") ? "来源覆盖核验" : location.pathname.startsWith("/deadlines") ? "截稿日历" : location.pathname.startsWith("/admin") ? (api.isSnapshot ? "快照与更新" : "采集管理") : location.pathname.startsWith("/venues") ? "会议与期刊" : location.pathname.startsWith("/industry") ? "大厂技术报告" : location.pathname.startsWith("/papers/") ? "论文详情" : location.pathname.startsWith("/papers") ? "论文探索" : "研究总览";
 
   useEffect(() => {
     document.documentElement.dataset.theme = theme;
@@ -104,7 +107,7 @@ export default function App() {
         <main id="main-content" className="page-content" tabIndex={-1}>
           <PageBoundary key={location.pathname}><Suspense fallback={<LoadingState />}><Routes>
             <Route path="/" element={<Home theme={theme} onThemeChange={setTheme} />} /><Route path="/papers" element={<PaperList />} /><Route path="/papers/:id" element={<PaperDetail />} />
-            <Route path="/venues" element={<Venues />} /><Route path="/coverage" element={<SourceCoverage />} /><Route path="/deadlines" element={<Deadlines />} /><Route path="/admin" element={<Admin />} />
+            <Route path="/venues" element={<Venues />} /><Route path="/coverage" element={<SourceCoverage />} /><Route path="/deadlines" element={<Deadlines />} /><Route path="/industry" element={<Industry />} /><Route path="/admin" element={<Admin />} />
             <Route path="*" element={<div className="state-box"><h1>这个页面不存在</h1><NavLink to="/" className="button primary">返回研究总览</NavLink></div>} />
           </Routes></Suspense></PageBoundary>
         </main>

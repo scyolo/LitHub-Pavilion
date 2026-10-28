@@ -1,0 +1,25 @@
+code,name,name_en,country,note
+deepseek,深度求索,DeepSeek,中国,通用大模型与开源推理模型
+openai,OpenAI,OpenAI,美国,通用大模型与多模态系统
+anthropic,Anthropic,Anthropic,美国,安全对齐与 Claude 模型
+google,Google DeepMind,Google DeepMind,美国,Gemini 与基础研究
+meta,Meta AI,Meta AI,美国,Llama 与视觉基础模型
+alibaba,阿里巴巴通义实验室,Alibaba Qwen,中国,Qwen 开源模型族
+bytedance,字节跳动 Seed,ByteDance Seed,中国,Seed 多模态与 GUI 智能体
+baidu,百度,BAIDU ERNIE,中国,知识增强预训练
+tencent,腾讯混元,Tencent Hunyuan,中国,开源语言与视频模型
+moonshot,月之暗面,Moonshot AI,中国,Kimi 长上下文与推理模型
+zhipu,智谱 AI,Zhipu AI,中国,GLM 与 CogVLM 系列
+minimax,MiniMax,MiniMax,中国,线性注意力与长上下文模型
+mistral,Mistral AI,Mistral AI,法国,高效开源语言模型
+microsoft,微软研究院,Microsoft Research,美国,小模型与多模态研究
+nvidia,NVIDIA,NVIDIA,美国,GPU 加速与开源模型
+apple,Apple,Apple,美国,端侧与隐私保护模型
+allenai,艾伦人工智能研究所,Allen Institute for AI (Ai2),美国,完全开放的语言模型
+shanghaiai,上海人工智能实验室,Shanghai AI Laboratory,中国,InternLM 与 InternVL
+01ai,零一万物,01.AI,中国,Yi 双语基础模型
+baichuan,百川智能,Baichuan AI,中国,开源双语大模型
+huawei,华为,Huawei,中国,盘古大模型与科学计算
+stepfun,阶跃星辰,StepFun,中国,多模态与语音视频生成
+xiaomi,小米,Xiaomi,中国,端侧推理模型
+xai,xAI,xAI,美国,Grok 开放权重模型
