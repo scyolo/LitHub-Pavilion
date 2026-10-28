@@ -38,10 +38,10 @@ def _raw(url, title, authors, year, *, arxiv_id=None, doi=None, abstract=None):
                     extra={"provenance": "publisher_toc", "publisher_key": url, "abstract": abstract})
 
 
-def _validate(records, expected):
+def _validate(records, expected, *, require_authors=True):
     if not expected or len(records) != expected or len({r.venue_key for r in records}) != expected:
         raise ValueError(f"Official inventory incomplete or duplicate: parsed {len(records)}, expected {expected}")
-    if any(not r.title or not r.authors for r in records):
+    if require_authors and any(not r.title or not r.authors for r in records):
         raise ValueError("Official inventory has missing titles/authors")
     return records
 
@@ -52,7 +52,7 @@ def neurips_main_volumes(text, year):
     return list(dict.fromkeys('https://papers.nips.cc' + path for path in paths))
 
 
-def parse_neurips(text, year):
+def parse_neurips(text, year, *, allow_missing_authors=False):
     base = "https://papers.nips.cc"
     pattern = rf'/paper_files/paper/{year}/hash/[^"\s]+-Abstract(?:-Conference|-Datasets_and_Benchmarks)?\.html'
     expected = len(re.findall(r'href="(' + pattern + ')"', text))
@@ -62,7 +62,7 @@ def parse_neurips(text, year):
         authors = re.search(r'<span\b[^>]*class="paper-authors"[^>]*>(.*?)</span>', block, re.S)
         if link and authors:
             records.append(_raw(base + link[1], plain(link[2]), plain(authors[1]).split(','), year))
-    return _validate(records, expected)
+    return _validate(records, expected, require_authors=not allow_missing_authors)
 
 
 def pmlr_volumes(text, years):
@@ -334,7 +334,7 @@ def parse_anthology(text, year, venue, collection):
                                 doi=paper.findtext('doi'), abstract=''.join(abstract.itertext()) if abstract is not None else None))
     return _validate(records, expected)
 
-async def fetch_official_inventory(client, limiter, venue, year):
+async def fetch_official_inventory(client, limiter, venue, year, *, allow_missing_authors=False):
     """Read a supported publisher's complete volume, or return None if unsupported."""
     async def read(url):
         await limiter.acquire()
@@ -358,6 +358,10 @@ async def fetch_official_inventory(client, limiter, venue, year):
         from app.collectors.ojs import fetch_ojs_inventory
         return await fetch_ojs_inventory(read, abbr, year)
     if abbr == 'ICLR':
+        from app.collectors.iclr import fetch_iclr_inventory
+        inventory = await fetch_iclr_inventory(read, year)
+        if inventory is not None:
+            return inventory
         return parse_iclr(await read(f'https://iclr.cc/static/virtual/data/iclr-{year}-orals-posters.json'), year)
     if abbr == 'ECCV':
         body = await read('https://www.ecva.net/papers.php')
@@ -376,9 +380,9 @@ async def fetch_official_inventory(client, limiter, venue, year):
         if volumes:
             records = []
             for url in volumes:
-                records.extend(parse_neurips(await read(url), year))
+                records.extend(parse_neurips(await read(url), year, allow_missing_authors=allow_missing_authors))
             return _validate(records, len(records))
-        return parse_neurips(body, year)
+        return parse_neurips(body, year, allow_missing_authors=allow_missing_authors)
     if abbr == 'JMLR':
         return parse_jmlr(await read(f'https://jmlr.org/papers/v{year - 1999}/'), year)
     if abbr in ('CVPR', 'ICCV'):

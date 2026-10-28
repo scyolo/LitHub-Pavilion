@@ -64,11 +64,12 @@ def test_multimodal_identity_is_retained_while_label_is_expanded():
     assert set(directions) == {
         "llm", "inference", "specdec", "agent", "cv", "multimodal", "rl", "nlp",
         "retrieval", "alignment", "ml", "dl", "ai", "hci", "generative", "systems", "graph",
-        "federated",
+        "federated", "transformer",
     }
     assert directions["multimodal"]["name"] == "多模态与视觉语言"
     assert directions["hci"]["name"] == "人机交互与可视化"
     assert directions["federated"]["name"] == "联邦学习"
+    assert directions["transformer"]["name"] == "Transformer 架构"
 
 
 @pytest.mark.parametrize("code,title", [

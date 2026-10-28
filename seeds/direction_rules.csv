@@ -145,3 +145,18 @@ federated,\bfed(?!era|back|ex\b)(?:[a-z0-9]{3})[a-z0-9]*\b,title,1.0,1
 federated,(?s)\A(?=.*\bfederated\b)(?=.*\b(?:recognition|classification|detection|estimation|regression|clustering|segmentation|identification|matching|differentiation|backdoor|attacks?|defen[cs]e|privacy|security|compression|communication|algorithms?|svm|transformer|networks?|models?|learning|training|inference|aggregat\w*|averaging|adaptive|personaliz\w*|supervised|unsupervised|statistics?|frequency|treatment effects?|langevin|distillation)\b).+,both,1.0,1
 multimodal,\bvision[- ]language[- ](?:action|models?|pretraining|understanding)\b,both,1.0,1
 multimodal,\b(?:visual question answering|image[- ]text alignment|visual grounding)\b,both,1.0,1
+transformer,(?s)\A(?=.*\btransformers?\b)(?=.*\b(?:self[- ]attention|attention|encoder|decoder|language|vision|visual|image|text|document|sequence|token|pre[- ]?train\w*|fine[- ]?tun\w*|architecture|neural|models?|generative|reasoning|translation|speech|efficient)\b).+,both,1.0,1
+transformer,\b(?:self[- ]attention|multi[- ]head attention|scaled dot[- ]product attention|cross[- ]attention)\b,both,1.0,1
+transformer,\b(?:vision[- ]transformers?|swin[- ]transformer|data[- ]efficient image transformers?|deit)\b,both,1.0,1
+transformer,\b(?:linear|sparse|low[- ]rank|local|sliding[- ]window|efficient)[- ]attention\b,both,1.0,1
+transformer,\b(?:bert|roberta|albert|electra|xl-?net)\b,both,1.0,1
+transformer,\b(?:reformer|performer|linformer|longformer|bigbird|big bird)\b,both,1.0,1
+transformer,\btransformer[- ](?:models?|networks?|architectures?|layers?|encoders?|decoders?|blocks?)\b,both,1.0,1
+transformer,\battention is all you need\b,title,2.0,1
+llm,\b(?:autoregressive|bidirectional|masked)[- ](?:pre-?training|pretraining|language[- ]modeling)\b,both,1.0,1
+llm,\b(?:rlhf|reinforcement learning from human feedback)\b,both,1.0,1
+inference,(?s)\A(?=.*\b(?:quantiz\w*|prun\w*|sparsif\w*|distillation|compression)\b)(?=.*\b(?:llms?|language[- ]models?|transformers?|inference|serving|deploy\w*|accelerat\w*|efficien\w*|throughput|latency)\b).+,both,1.0,1
+inference,\b(?:mixed|low|half)[- ]precision\b,both,1.0,1
+inference,\b(?:post[- ]training|quantization[- ]aware|pruning[- ]aware|structured pruning|weight pruning|model compression|network compression)\b,both,1.0,1
+transformer,(?s)\A(?=.*\btransformers?\b)(?=.*\b(?:detection|segmentation|recognition|tracking)\b).+,both,1.0,1
+specdec,\bblockwise parallel decoding\b,title,1.0,1

@@ -122,5 +122,326 @@
     "title": "H2-LLM: Hardware-Dataflow Co-Exploration for Heterogeneous Hybrid-Bonding-based Low-Batch LLM Inference",
     "source": "https://api.crossref.org/works/10.1145/3695053.3731008",
     "verified_at": "2026-10-19"
+  },
+  {
+    "publisher_key": "https://openreview.net/forum?id=HkfPSh05K7",
+    "doi": null,
+    "year": 2019,
+    "catalogue_title": "How to Merge Multimodal Models Over Time?",
+    "catalogue_authors": [
+      "Das, Rajarshi",
+      "Dhuliawala, Shehzaad",
+      "Zaheer, Manzil",
+      "McCallum, Andrew"
+    ],
+    "title": "Multi-step Retriever-Reader Interaction for Scalable Open-domain Question Answering",
+    "source": "https://openreview.net/forum?id=HkfPSh05K7",
+    "verified_at": "2026-10-28"
+  },
+  {
+    "publisher_key": "https://openreview.net/forum?id=BkxWJnC9tX",
+    "doi": null,
+    "year": 2019,
+    "catalogue_title": "Keynote #1: Ahmet Üstün – Cohere For AI",
+    "catalogue_authors": [
+      "Ramachandran, Prajit",
+      "Le, Quoc V"
+    ],
+    "title": "Diversity and Depth in Per-Example Routing Models",
+    "source": "https://openreview.net/forum?id=BkxWJnC9tX",
+    "verified_at": "2026-10-28"
+  },
+  {
+    "publisher_key": "https://openreview.net/forum?id=HJlNpoA5YQ",
+    "doi": null,
+    "year": 2019,
+    "catalogue_title": "MoLEx: Mixture of Layer Experts for Finetuning with Sparse Upcycling",
+    "catalogue_authors": [
+      "Wu, Yifan",
+      "Tucker, George",
+      "Nachum, Ofir"
+    ],
+    "title": "The Laplacian in RL: Learning Representations with Efficient Approximations",
+    "source": "https://openreview.net/forum?id=HJlNpoA5YQ",
+    "verified_at": "2026-10-28"
+  },
+  {
+    "publisher_key": "https://openreview.net/forum?id=H1xQVn09FX",
+    "doi": null,
+    "year": 2019,
+    "catalogue_title": "Coffee Break ☕️",
+    "catalogue_authors": [
+      "Engel, Jesse",
+      "Agrawal, Kumar",
+      "Chen, Shuo",
+      "Gulrajani, Ishaan",
+      "Donahue, Chris",
+      "Roberts, Adam"
+    ],
+    "title": "GANSynth: Adversarial Neural Audio Synthesis",
+    "source": "https://openreview.net/forum?id=H1xQVn09FX",
+    "verified_at": "2026-10-28"
+  },
+  {
+    "publisher_key": "https://openreview.net/forum?id=SkGuG2R5tm",
+    "doi": null,
+    "year": 2019,
+    "catalogue_title": "Keynote #2: Sneha Kudugunta – Google DeepMind",
+    "catalogue_authors": [
+      "Sablayrolles, Alexandre",
+      "Douze, Matthijs",
+      "Schmid, Cordelia",
+      "Jegou, Herve"
+    ],
+    "title": "Spreading vectors for similarity search",
+    "source": "https://openreview.net/forum?id=SkGuG2R5tm",
+    "verified_at": "2026-10-28"
+  },
+  {
+    "publisher_key": "https://openreview.net/forum?id=SkE6PjC9KX",
+    "doi": null,
+    "year": 2019,
+    "catalogue_title": "Keynote #3: Olga Golevneva – Meta AI",
+    "catalogue_authors": [
+      "Kim, Hyunjik",
+      "Mnih, Andriy",
+      "Schwarz, Jonathan",
+      "Garnelo, Marta",
+      "Eslami, S. M. Ali",
+      "Rosenbaum, Dan",
+      "Vinyals, Oriol",
+      "Teh, Yee Whye"
+    ],
+    "title": "Attentive Neural Processes",
+    "source": "https://openreview.net/forum?id=SkE6PjC9KX",
+    "verified_at": "2026-10-28"
+  },
+  {
+    "publisher_key": "https://openreview.net/forum?id=BJgLg3R9KQ",
+    "doi": null,
+    "year": 2019,
+    "catalogue_title": "Exploring Asynchronism in SWARM Parallelism",
+    "catalogue_authors": [
+      "Linsley, Drew",
+      "Shiebler, Dan",
+      "Eberhardt, Sven",
+      "Serre, Thomas"
+    ],
+    "title": "Learning what and where to attend",
+    "source": "https://openreview.net/forum?id=BJgLg3R9KQ",
+    "verified_at": "2026-10-28"
+  },
+  {
+    "publisher_key": "https://openreview.net/forum?id=rJe4ShAcF7",
+    "doi": null,
+    "year": 2019,
+    "catalogue_title": "Soup-of-Experts: Pretraining Specialist Models via Parameters Averaging",
+    "catalogue_authors": [
+      "Huang, Anna",
+      "Vaswani, Ashish",
+      "Uszkoreit, Jakob",
+      "Simon, Ian",
+      "Hawthorne, Curtis",
+      "Shazeer, Noam",
+      "Dai, Andrew",
+      "Hoffman, Matthew D",
+      "Dinculescu, Monica",
+      "Eck, Douglas"
+    ],
+    "title": "Music Transformer: Generating Music with Long-Term Structure",
+    "source": "https://openreview.net/forum?id=rJe4ShAcF7",
+    "verified_at": "2026-10-28"
+  },
+  {
+    "publisher_key": "https://openreview.net/forum?id=SJzSgnRcKX",
+    "doi": null,
+    "year": 2019,
+    "catalogue_title": "Poster session #1",
+    "catalogue_authors": [
+      "Tenney, Ian",
+      "Xia, Patrick",
+      "Chen, Berlin",
+      "Wang, Alex",
+      "Poliak, Adam",
+      "McCoy, Tom",
+      "Kim, Najoung",
+      "Durme, Benjamin Van",
+      "Bowman, Sam",
+      "Das, Dipanjan",
+      "Pavlick, Ellie"
+    ],
+    "title": "What do you learn from context? Probing for sentence structure in contextualized word representations",
+    "source": "https://openreview.net/forum?id=SJzSgnRcKX",
+    "verified_at": "2026-10-28"
+  },
+  {
+    "publisher_key": "https://openreview.net/forum?id=H1xSNiRcF7",
+    "doi": null,
+    "year": 2019,
+    "catalogue_title": "Lunch Break ☕️",
+    "catalogue_authors": [
+      "Li, Xiang",
+      "Vilnis, Luke",
+      "Zhang, Dongxu",
+      "Boratko, Michael",
+      "McCallum, Andrew"
+    ],
+    "title": "Smoothing the Geometry of Probabilistic Box Embeddings",
+    "source": "https://openreview.net/forum?id=H1xSNiRcF7",
+    "verified_at": "2026-10-28"
+  },
+  {
+    "publisher_key": "https://openreview.net/forum?id=H1g2NhC5KQ",
+    "doi": null,
+    "year": 2019,
+    "catalogue_title": "Improving the Efficiency of Distributed Training using Sparse Parameter Averaging",
+    "catalogue_authors": [
+      "Lample, Guillaume",
+      "Subramanian, Sandeep",
+      "Smith, Eric",
+      "Denoyer, Ludovic",
+      "Ranzato, Marc'Aurelio",
+      "Boureau, Y-Lan"
+    ],
+    "title": "Multiple-Attribute Text Rewriting",
+    "source": "https://openreview.net/forum?id=H1g2NhC5KQ",
+    "verified_at": "2026-10-28"
+  },
+  {
+    "publisher_key": "https://openreview.net/forum?id=ByeZ5jC5YQ",
+    "doi": null,
+    "year": 2019,
+    "catalogue_title": "Keynote #4: Max Ryabinin – Together AI",
+    "catalogue_authors": [
+      "Jordon, James",
+      "Yoon, Jinsung",
+      "Schaar, Mihaela"
+    ],
+    "title": "KnockoffGAN: Generating Knockoffs for Feature Selection using Generative Adversarial Networks",
+    "source": "https://openreview.net/forum?id=ByeZ5jC5YQ",
+    "verified_at": "2026-10-28"
+  },
+  {
+    "publisher_key": "https://openreview.net/forum?id=SygD-hCcF7",
+    "doi": null,
+    "year": 2019,
+    "catalogue_title": "Mixture-of-Transformers: A Sparse and Scalable Architecture for Multi-Modal Foundation Models",
+    "catalogue_authors": [
+      "Law, Marc T",
+      "Snell, Jake",
+      "Farahmand, Amir-massoud",
+      "Urtasun, Raquel",
+      "Zemel, Richard"
+    ],
+    "title": "Dimensionality Reduction for Representing the Knowledge of Probabilistic Models",
+    "source": "https://openreview.net/forum?id=SygD-hCcF7",
+    "verified_at": "2026-10-28"
+  },
+  {
+    "publisher_key": "https://openreview.net/forum?id=ByeMB3Act7",
+    "doi": null,
+    "year": 2019,
+    "catalogue_title": "Coffee Break ☕️",
+    "catalogue_authors": [
+      "CHen, Patrick",
+      "Si, Si",
+      "Kumar, Sanjiv",
+      "Li, Yang",
+      "Hsieh, Cho-Jui"
+    ],
+    "title": "Learning to Screen for Fast Softmax Inference on Large Vocabulary Neural Networks",
+    "source": "https://openreview.net/forum?id=ByeMB3Act7",
+    "verified_at": "2026-10-28"
+  },
+  {
+    "publisher_key": "https://openreview.net/forum?id=H1xwNhCcYm",
+    "doi": null,
+    "year": 2019,
+    "catalogue_title": "Keynote #5: Jonas Pfeiffer – Google DeepMind",
+    "catalogue_authors": [
+      "Nalisnick, Eric",
+      "Matsukawa, Akihiro",
+      "Teh, Yee Whye",
+      "Gorur, Dilan",
+      "Lakshminarayanan, Balaji"
+    ],
+    "title": "Do Deep Generative Models Know What They Don't Know?",
+    "source": "https://openreview.net/forum?id=H1xwNhCcYm",
+    "verified_at": "2026-10-28"
+  },
+  {
+    "publisher_key": "https://openreview.net/forum?id=r1f0YiCctm",
+    "doi": null,
+    "year": 2019,
+    "catalogue_title": "Keynote #6: Sami Jaghouar – PrimeIntellect",
+    "catalogue_authors": [
+      "Havasi, Marton",
+      "Peharz, Robert",
+      "Lobato, Jose Miguel Hernandez"
+    ],
+    "title": "Minimal Random Code Learning: Getting Bits Back from Compressed Model Parameters",
+    "source": "https://openreview.net/forum?id=r1f0YiCctm",
+    "verified_at": "2026-10-28"
+  },
+  {
+    "publisher_key": "https://openreview.net/forum?id=S1zz2i0cY7",
+    "doi": null,
+    "year": 2019,
+    "catalogue_title": "Poster session #2",
+    "catalogue_authors": [
+      "Balle, Jona",
+      "Johnston, Nick",
+      "Minnen, David"
+    ],
+    "title": "Integer Networks for Data Compression with Latent-Variable Models",
+    "source": "https://openreview.net/forum?id=S1zz2i0cY7",
+    "verified_at": "2026-10-28"
+  },
+  {
+    "publisher_key": "https://openreview.net/forum?id=rJed6j0cKX",
+    "doi": null,
+    "year": 2019,
+    "catalogue_title": "Panel discussions",
+    "catalogue_authors": [
+      "Ardizzone, Lynton",
+      "Kruse, Jakob",
+      "Rother, Carsten",
+      "Koethe, Ullrich"
+    ],
+    "title": "Analyzing Inverse Problems with Invertible Neural Networks",
+    "source": "https://openreview.net/forum?id=rJed6j0cKX",
+    "verified_at": "2026-10-28"
+  },
+  {
+    "publisher_key": "https://openreview.net/forum?id=B1l08oAct7",
+    "doi": null,
+    "year": 2019,
+    "catalogue_title": "Closing remarks",
+    "catalogue_authors": [
+      "Wu, Anqi",
+      "Nowozin, Sebastian",
+      "Meeds, Ted",
+      "Turner, Richard E",
+      "Lobato, Jose Miguel Hernandez",
+      "Gaunt, Alexander"
+    ],
+    "title": "Deterministic Variational Inference for Robust Bayesian Neural Networks",
+    "source": "https://openreview.net/forum?id=B1l08oAct7",
+    "verified_at": "2026-10-28"
+  },
+  {
+    "publisher_key": "https://openreview.net/forum?id=Bke4KsA5FX",
+    "doi": null,
+    "year": 2019,
+    "catalogue_title": "Opening Remarks",
+    "catalogue_authors": [
+      "Brockschmidt, Marc",
+      "Allamanis, Miltiadis",
+      "Gaunt, Alexander",
+      "Polozov, Oleksandr"
+    ],
+    "title": "Generative Code Modeling with Graphs",
+    "source": "https://openreview.net/forum?id=Bke4KsA5FX",
+    "verified_at": "2026-10-28"
   }
 ]
