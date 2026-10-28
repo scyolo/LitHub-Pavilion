@@ -62,3 +62,8 @@ output/links-search-20261015/
 
 # Local cold-search baselines, profiling, and immutable metadata backups.
 output/cold-search-20261015/
+
+# Local ICLR/classics backfill reports and industry-page QA screenshots (2026-10-28).
+output/iclr-history-20261028/
+output/ai-classics-20261028/
+output/industry-20261028/

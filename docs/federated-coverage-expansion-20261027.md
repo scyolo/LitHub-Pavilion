@@ -37,7 +37,7 @@
 
 ### 仍无法补采的来源
 
-- **ICLR 2019–2022**：官方 virtual-site JSON 不含任何论文级可核验标识（无 `paper_url`/OpenReview forum id），OpenReview API 与 DBLP 在本机网络均被 403/Anubis 拦截。按项目"不伪造身份"规则不导入；FedBN/FedDyn/HeteroFL/FedMA 等 ICLR 论文待网络可达后补齐。
+- **ICLR 2019–2022**：官方 virtual-site JSON 不含任何论文级可核验标识（无 `paper_url`/OpenReview forum id），OpenReview API 与 DBLP 在本机网络均被 403/Anubis 拦截，本轮未能导入。**2026-10-28 已解决**：改用官方 Schedule 卡片（2019）与 PaperCopilot OpenReview ID 对齐（2020）等保留论文身份的官方材料，补入 2019–2022 全部主会接收论文 3,143 篇（另补 2018 年 336 篇），FedBN/FedDyn/HeteroFL/FedMA 均已入库；见 [ICLR／AI 经典／大厂报告扩充记录](coverage-expansion-20261028.md)。
 - **IJCAI 2019–2022 官方卷**：`www.ijcai.org` 301 跳转与客户端禁止跟随重定向冲突；该年份区间已通过 Crossref 收录 54 篇 FL 论文，覆盖尚可。
 - FedProx（MLSys 2020）、Advances and Open Problems（Foundations and Trends in ML）等**不在 CCF A/B 目录内**，按范围规则不入库。
 

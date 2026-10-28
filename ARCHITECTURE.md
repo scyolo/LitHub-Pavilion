@@ -100,6 +100,8 @@ LitHub Pavilion 只维护一套 React 网站。公开阅读端使用静态快照
 - 浏览器 Cache Storage 仅保存最近一次已校验的公开 manifest/catalog，重访再次校验后立即展示并后台检查版本。没有 service worker，不拦截 API，也不保证未加载论文可离线检索。缓存读取有 250ms 上限，不让禁用存储拖慢首屏。
 - `backend/scripts/sync_deadlines.py` 把 CCFDDL YAML 转为独立静态 JSON；只按精确名称及显式别名匹配 A/B 会议，保留各轮次、摘要时间、原始时区、官网及社区来源。AoE 固定为 UTC−12；IANA 时区使用相应日期的夏令时。待定、不完整或歧义日期不会生成虚假倒计时。
 - 日历在 Pages 构建时更新，失败保留上次有日期的数据；前端显示同步时间及过期警告，不承诺实时官网核验。无当年/未来届次的会议单独列出，不外推下一届日期。期刊不会混入会议截稿日历。
+- ICLR 2018–2022 的 virtual-site JSON 缺少 OpenReview forum 标识，`backend/app/collectors/iclr.py` 按年份读取保留论文身份的官方材料：2018／2019 官方 Schedule 卡片、2020 官方 poster 目录与 PaperCopilot ID 对齐、2021／2022 JSON 自带链接。只接受主会接收论文，数量必须与官方目录一致；题名被活动模板覆盖的卡片按 OpenReview forum 使用有出处的校正表。
+- 大厂技术报告是独立于论文库的静态目录：`backend/scripts/build_industry_data.py` 从 `seeds/industry_orgs.csv` 与 `seeds/industry_reports.csv` 生成 `frontend/static/industry.json`，前端 `#/industry` 只依赖该文件。报告不进数据库、不进快照、不计入任何 CCF 统计；生成与前端加载各做一次结构、URL、日期与 arXiv 一致性校验。
 - 部分正式 CCF 期刊没有 DBLP 流，允许 `dblp_stream = NULL`，通过真实 ISSN / 出版来源采集，不伪造 DBLP 路径；迁移前备份，保留原主键、索引、外键及自定义字段。
 
 ## 分页前排序（reader v6）
