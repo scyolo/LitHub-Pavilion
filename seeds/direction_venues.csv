@@ -1,0 +1,106 @@
+direction_code,venue_abbr,weight,enabled
+network,JSAC,1.0,1
+network,TMC,1.0,1
+network,TON,1.0,1
+network,TOIT,1.0,1
+network,TOSN,1.0,1
+network,CN,1.0,1
+network,TCOM,1.0,1
+network,TWC,1.0,1
+network,SIGCOMM,1.0,1
+network,MobiCom,1.0,1
+network,INFOCOM,1.0,1
+network,NSDI,1.0,1
+network,SenSys,1.0,1
+network,CoNEXT,1.0,1
+network,SECON,1.0,1
+network,IPSN,1.0,1
+network,MobiSys,1.0,1
+network,ICNP,1.0,1
+network,MobiHoc,1.0,1
+network,NOSSDAV,1.0,1
+network,IWQoS,1.0,1
+network,IMC,1.0,1
+security,TDSC,1.0,1
+security,TIFS,1.0,1
+security,Journal of Cryptology,1.0,1
+security,TOPS,1.0,1
+security,Computers & Security,1.0,1
+security,"Designs, Codes and Cryptography",1.0,1
+security,JCS,1.0,1
+security,Cybersecurity,1.0,1
+security,CCS,1.0,1
+security,EUROCRYPT,1.0,1
+security,S&P,1.0,1
+security,CRYPTO,1.0,1
+security,USENIX Security,1.0,1
+security,NDSS,1.0,1
+security,ACSAC,1.0,1
+security,ASIACRYPT,1.0,1
+security,ESORICS,1.0,1
+security,FSE (Crypto),1.0,1
+security,CSFW,1.0,1
+security,SRDS,1.0,1
+security,CHES,1.0,1
+security,DSN,1.0,1
+security,RAID,1.0,1
+security,PKC,1.0,1
+security,TCC,1.0,1
+architecture,TCAD,1.0,1
+architecture,TC,1.0,1
+architecture,TACO,1.0,1
+architecture,TODAES,1.0,1
+architecture,TECS,1.0,1
+architecture,TRETS,1.0,1
+architecture,TVLSI,1.0,1
+architecture,JSA,1.0,1
+architecture,DAC,1.0,1
+architecture,HPCA,1.0,1
+architecture,MICRO,1.0,1
+architecture,ASPLOS,1.0,1
+architecture,ISCA,1.0,1
+architecture,FPGA,1.0,1
+architecture,DATE,1.0,1
+architecture,HOT CHIPS,1.0,1
+architecture,ICCD,1.0,1
+architecture,ICCAD,1.0,1
+architecture,CODES+ISSS,1.0,1
+architecture,PACT,1.0,1
+architecture,ITC,1.0,1
+architecture,ISCAS,1.0,1
+architecture,HiPEAC,1.0,1
+systems,TOCS,1.0,1
+systems,TOS,1.0,1
+systems,TPDS,1.0,1
+systems,JPDC,1.0,1
+systems,TCC Journal,1.0,1
+systems,PPoPP,1.0,1
+systems,FAST,1.0,1
+systems,SC,1.0,1
+systems,ACM SIGOPS ATC,1.0,1
+systems,EuroSys,1.0,1
+systems,HPDC,1.0,1
+systems,SoCC,1.0,1
+systems,SPAA,1.0,1
+systems,PODC,1.0,1
+systems,CLUSTER,1.0,1
+systems,SIG- METRICS,1.0,1
+systems,ICPP,1.0,1
+systems,ICS,1.0,1
+systems,VEE,1.0,1
+systems,IPDPS,1.0,1
+systems,Performance,1.0,1
+systems,LISA,1.0,1
+systems,MSST,1.0,1
+systems,RTAS,1.0,1
+systems,Euro-Par,1.0,1
+systems,Parallel Computing,1.0,1
+systems,Performance Evaluation: An International Journal,1.0,1
+systems,ICDCS,1.0,1
+systems,TAAS,1.0,1
+systems,CGO,1.0,1
+systems,OSDI,1.0,1
+systems,SOSP,1.0,1
+systems,Middleware,1.0,1
+systems,HotOS,1.0,1
+systems,LCTES,1.0,1

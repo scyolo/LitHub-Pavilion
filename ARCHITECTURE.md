@@ -36,7 +36,7 @@ LitHub Pavilion 只维护一套 React 网站。公开阅读端使用静态快照
 | `backend/app/migrations.py` | 备份后迁移 publisher_key，保留主键、关系、人工标签并重建校验 FTS |
 | `backend/scripts/audit_publications.py` | 只读重放目录缓存、核对逐篇覆盖、版本/年份疑点及基线变化 |
 | `backend/app/services/pipeline.py` | 单实例串行采集、完整性记账、历史回填断点及任务退出 |
-| `backend/app/services/topic_index.py` | 17 方向规则维护和重算，含推理优化，保留人工标签与本地自定义设置 |
+| `backend/app/services/topic_index.py` | 22 方向规则与来源映射维护和重算，保留人工标签与本地自定义设置 |
 | `backend/app/services/snapshot*.py` | 快照导出、公开 schema 验证、首页摘要、数据分支上传与部署确认 |
 | `backend/app/services/site_sync.py` | 采集完成后的导出与发布编排、私有回执和失败重试 |
 | `frontend/src/data/` | 快照校验、按需加载、Worker 索引和版本切换 |
@@ -75,7 +75,7 @@ LitHub Pavilion 只维护一套 React 网站。公开阅读端使用静态快照
 
 定时调度保持元数据每周一 04:00、链接维护每周二 06:30、引用维护每月 1 日 06:00，时区为 `Asia/Shanghai`。启动采集与定时开关分别控制，测试必须关闭真实采集和发布副作用。
 
-规则维护统一使用 `python -m scripts.reindex_topics`。该命令先校验备份，再应用当前九方向规则，并验证论文主表、人工标签及全文索引。它会移除不再匹配的自动规则标签，不是旧六方向增补脚本的“只增加标签”操作；不会自动在用户原始库上运行。
+规则维护统一使用 `python -m scripts.reindex_topics`。该命令先校验备份，再应用当前方向规则与来源映射，并验证论文主表、人工标签及全文索引。它会移除不再匹配的自动规则标签，不是旧六方向增补脚本的“只增加标签”操作；不会自动在用户原始库上运行。
 
 运行和配置命令见 [README](README.md)，贡献检查见 [CONTRIBUTING](CONTRIBUTING.md)，公网与数据边界见 [SECURITY](SECURITY.md)。
 

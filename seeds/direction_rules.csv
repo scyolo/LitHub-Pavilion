@@ -121,7 +121,7 @@ generative,\b(?:text|image)[- ]to[- ](?:image|video|3d|audio)\b,both,1.0,1
 generative,\b(?:image|video|motion|audio|3d) (?:generation|synthesis)\b,both,1.0,1
 generative,\bgenerative adversarial networks?\b,both,1.0,1
 generative,\b(?:stable diffusion|DDPM|DDIM)\b,both,1.0,1
-systems,\b(?:operating|distributed|storage|file|cloud|database)[- ]systems?\b,both,1.0,1
+systems,\b(?:operating|distributed|(?<!battery )(?<!energy )(?<!power )storage|file|cloud|database)[- ]systems?\b,both,1.0,1
 systems,\b(?:distributed|fault[- ]tolerant) (?:computing|consensus|transactions?|storage)\b,both,1.0,1
 systems,\b(?:memory management|kernel schedul\w*|linux kernel|system software)\b,both,1.0,1
 systems,\b(?:serverless|cloud computing|edge computing|microservices?)\b,both,1.0,1
@@ -160,3 +160,47 @@ inference,\b(?:mixed|low|half)[- ]precision\b,both,1.0,1
 inference,\b(?:post[- ]training|quantization[- ]aware|pruning[- ]aware|structured pruning|weight pruning|model compression|network compression)\b,both,1.0,1
 transformer,(?s)\A(?=.*\btransformers?\b)(?=.*\b(?:detection|segmentation|recognition|tracking)\b).+,both,1.0,1
 specdec,\bblockwise parallel decoding\b,title,1.0,1
+network,\b(?:computer|data[- ]?cent(?:er|re)|wireless|cellular|satellite|optical|underwater|sensor|vehicular|mesh|overlay|content[- ]delivery)[- ]networks?\b,title,1.0,1
+network,\b(?:network|networking)[- ](?:protocols?|measurement|management|slicing|traffic|virtualization|functions?|congestion)\b,title,1.0,1
+network,\b(?:software[- ]defined networking|sdn|network function virtualization|nfv|openflow|p4[- ](?:programmable|based|language|switch(?:es)?|data[- ]plane)|programmable switches?|smart[- ]?nics?|dpdk)\b,title,1.0,1
+network,\b(?:routing protocols?|routing algorithms?|inter[- ]domain routing|intra[- ]domain routing|segment routing|traffic engineering|congestion control|packet scheduling|packet classification|quality of service|bgp|anycast|multicast)\b,title,1.0,1
+network,\b(?:quic|ipv6|dns|rdma|roce|infiniband)\b,title,1.0,1
+network,\b(?:(?:5g|6g)[- ](?:networks?|nr|new radio|core|ran|wireless|systems?|enabled|iot|mec)|lte[- ](?:networks?|systems?|advanced)|wifi|wi[- ]fi|802\.11|massive mimo|spectrum sharing|cognitive radio|radio access networks?)\b,title,1.0,1
+network,\b(?:internet of things|iot|wsns?|wireless sensor networks?|sensor networks?|mobile ad[- ]hoc|vanets?|vehicular networks?|uav networks?|drone networks?|satellite networks?)\b,title,1.0,1
+network,\b(?:edge computing|fog computing|mobile edge computing|mec)\b,title,1.0,1
+network,\b(?:data[- ]?cent(?:er|re) networks?|network interface cards?|in[- ]network computing|network telemetry|internet measurement|network measurement|traffic classification)\b,title,1.0,1
+network,\b(?:peer[- ]to[- ]peer|p2p|content delivery networks?|cdn|adaptive bitrate)\b,title,1.0,1
+network,\b(?:mac protocols?|medium access control|wireless channels?|channel state information|spectrum allocation)\b,title,1.0,1
+network,\b(?:networked systems?|kernel networking|ebpf|xdp)\b,title,1.0,1
+systems,\b(?:operating systems?|linux kernel|hypervisors?|virtual machines?|virtualization|unikernels?|system calls?|virtual memory|file systems?|(?<!battery )(?<!energy )(?<!power )storage systems?|distributed systems?|distributed computing|distributed storage|cloud computing|cloud systems?|serverless|microservices?|cluster management)\b,title,1.0,1
+systems,\b(?:distributed (?:systems?|computing|storage|databases?|transactions?|consensus|replication|training|inference|serving|ledgers?)|state machine replication|crash consistency|checkpointing|live migration)\b,title,1.0,1
+systems,\b(?:rdma|nvme|solid[- ]state drives?|cxl|disaggregated memory|memory disaggregation|storage disaggregation)\b,title,1.0,1
+systems,\b(?:high[- ]performance computing|hpc|supercomput\w*|parallel computing|parallel algorithms?|gpu clusters?|accelerator clusters?|collective communication|all[- ]reduce|all[- ]gather)\b,title,1.0,1
+systems,\b(?:key[- ]value stores?|kv[- ]?stores?|object storage|block storage|erasure coding|(?:storage|data|backup) deduplication|lsm[- ]trees?|b[- ]trees?|write amplification)\b,title,1.0,1
+systems,\b(?:system software|runtime systems?|memory allocators?|page cache|buffer cache|i/o stack|io stack|storage stack|network stack|kernel bypass|zero[- ]copy)\b,title,1.0,1
+systems,\b(?:vm migration|container migration|crash recovery|failure recovery|tail latency|stragglers?|overload control|admission control|autoscaling)\b,title,1.0,1
+systems,\b(?:ebpf|xdp|dpdk|io_uring|spdk|userspace i/o|user[- ]space networking)\b,title,1.0,1
+systems,\b(?:disaggregated|composable) (?:infrastructure|architectures?|systems?|memory|storage)\b,title,1.0,1
+systems,\b(?:cloud|edge|fog) (?:computing|native|systems?|infrastructure)\b,title,1.0,1
+systems,\b(?:big data|data processing|data analytics|stream processing|graph processing) (?:systems?|frameworks?|engines?|platforms?)\b,title,1.0,1
+systems,\b(?:function[- ]as[- ]a[- ]service|faas|batch processing|dataflow systems?)\b,title,1.0,1
+systems,\b(?:cache coherence|memory consistency|coherence protocols?)\b,title,1.0,1
+systems,\b(?:cluster|job|workload) scheduling\b,title,1.0,1
+architecture,\b(?:computer architecture|microarchitecture|instruction set architecture|isa)\b,title,1.0,1
+architecture,\b(?:multi[- ]core|many[- ]core|superscalar|out[- ]of[- ]order (?:execution|processors?|cores?|pipelines?|cpus?)|branch predictor|speculative execution|cache hierarchy|memory hierarchy)\b,title,1.0,1
+architecture,\b(?:computer|gpu|cpu|vector|quantum|network|graphics|stream|tensor|neural) processors?\b|\bprocessor (?:architecture|design|core|pipeline)\b,title,1.0,1
+architecture,\b(?:hardware accelerators?|domain[- ]specific accelerators?|accelerator design|chiplets?|3d stacking|heterogeneous integration)\b,title,1.0,1
+architecture,\b(?:gpu architecture|gpu microarchitecture|cpu architecture|tpu|npu|fpga|asic|system[- ]on[- ]chip|risc[- ]v|simd|tensor cores?)\b,title,1.0,1
+architecture,\b(?:sram|dram|hbm|memory controllers?|(?:computer|main|shared|virtual|on[- ]chip) memory systems?|main memory|rowhammer|near[- ]memory|processing[- ]in[- ]memory|compute[- ]in[- ]memory|in[- ]memory computing)\b,title,1.0,1
+architecture,\b(?:high[- ]level synthesis|logic synthesis|physical design|placement and routing|timing analysis|design automation|electronic design automation|rtl|register[- ]transfer|verilog|vhdl|scan chains?|clock tree)\b,title,1.0,1
+architecture,\b(?:reconfigurable computing|coarse[- ]grained reconfigurable|spatial accelerators?|dataflow architectures?|systolic arrays?|neuromorphic (?:computing|hardware|chips?|processors?|architectures?)|photonic computing|quantum processors?|quantum architectures?)\b,title,1.0,1
+architecture,\b(?:hardware[- ]software co[- ]design|microarchitectural)\b,title,1.0,1
+architecture,\b(?:translation lookaside buffer|tlb|mmu|page walk|address translation|scratchpad memory|register file)\b,title,1.0,1
+security,\b(?:vulnerabilit(?:y|ies)|malware|ransomware|phishing|backdoors?|trojans?|side[- ]channels?|fault attacks?|trusted execution environments?|enclaves?|confidential computing|remote attestation)\b,title,1.0,1
+security,\b(?:cryptograph\w*|encryption|decryption|cipher\w*|public[- ]key|private[- ]key|zero[- ]knowledge|zk-?snarks?|zk-?starks?|homomorphic|secure multi[- ]party|secret sharing|oblivious transfer|commitment schemes?|signature schemes?)\b,title,1.0,1
+security,\b(?:differential privacy|membership inference|model extraction|data poisoning|poisoning attacks?|evasion attacks?|adversarial examples?|adversarial robustness|prompt injection|jailbreak\w*)\b,title,1.0,1
+security,\b(?:authentication|authorization|access control|(?:browser|javascript|web|android|mobile|application|software) sandbox\w*|intrusion detection|fuzzing|software fault isolation|memory safety)\b,title,1.0,1
+security,\b(?:web security|network security|system security|software security|hardware security|cyber[- ]?security|privacy[- ]preserving|privacy protection|data privacy|user privacy)\b,title,1.0,1
+security,\b(?:ddos|denial[- ]of[- ]service|botnets?|intrusions?|penetration testing|binary analysis|reverse engineering)\b,title,1.0,1
+security,\b(?:secure computation|secure inference|secure aggregation|private information retrieval|private set intersection|searchable encryption)\b,title,1.0,1
+security,\b(?:blockchain|smart contracts?)\b,title,1.0,1

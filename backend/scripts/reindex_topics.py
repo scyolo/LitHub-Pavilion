@@ -10,6 +10,7 @@ from sqlalchemy.orm import sessionmaker
 
 from app.config import settings
 from app.db import _make_engine, db_file_path
+from app.models import DirectionVenue
 from app.services.topic_index import reindex_topics
 
 
@@ -40,6 +41,7 @@ def reindex_database(path: Path, seeds_dir: Path):
             raise ValueError("Database backup verification failed")
     engine = _make_engine("sqlite:///" + path.as_posix())
     try:
+        DirectionVenue.__table__.create(bind=engine, checkfirst=True)
         with sessionmaker(bind=engine, expire_on_commit=False)() as session:
             result = reindex_topics(session, seeds_dir)
             connection = session.connection().connection.driver_connection

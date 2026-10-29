@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from app.models import Direction, DirectionRule, PaperDirection
+from app.models import Direction, DirectionRule, Paper, PaperDirection, Venue
 
 
 SEEDS = Path(__file__).resolve().parents[2] / "seeds"
@@ -87,6 +87,45 @@ def test_refresh_handles_previous_startup_duplicate_without_reviving_disabled_ru
     db.add_all([old, newer]); db.commit()
     refresh_topic_rules(db, SEEDS)
     assert old.enabled == 0 and newer.enabled == 0
+
+
+def test_title_only_rule_refinement_replaces_unmodified_rule(db):
+    from app.services.topic_index import reindex_topics
+    direction = Direction(code="network", name="计算机网络", min_score=2.0, enabled=1)
+    db.add(direction)
+    db.flush()
+    old_keyword = r"\b(?:tcp|quic|ipv6|dns|rdma|roce|infiniband)\b"
+    old = DirectionRule(direction_id=direction.id, keyword=old_keyword, weight=1, field="title", enabled=1)
+    db.add(old)
+    db.commit()
+    result = reindex_topics(db, SEEDS)
+    assert result["rules_refined"] == 1
+    db.refresh(old)
+    assert old.keyword == r"\b(?:quic|ipv6|dns|rdma|roce|infiniband)\b"
+    assert db.query(DirectionRule).filter_by(direction_id=direction.id, keyword=old_keyword).count() == 0
+
+
+def test_reindex_tags_venue_mapped_papers_once(db, sample_paper, sample_direction):
+    from app.services.topic_index import reindex_topics
+    osdi = Venue(abbr="OSDI", name="Operating Systems Design and Implementation", dblp_stream="conf/osdi",
+                 type="conf", ccf_level="A", ccf_area="操作系统", active=1)
+    db.add(osdi)
+    db.flush()
+    paper = Paper(
+        source="dblp", dblp_key="conf/osdi/test2024sched", title="A Study of Scheduling",
+        title_norm="a study of scheduling", venue_id=osdi.id, year=2024, ccf_level="A",
+        ccf_area="操作系统", official_url="https://example.org/osdi/sched", pdf_status="closed",
+    )
+    db.add(paper)
+    db.commit()
+    result = reindex_topics(db, SEEDS)
+    systems = db.query(Direction).filter(Direction.code == "systems").one()
+    link = db.get(PaperDirection, (paper.id, systems.id))
+    assert result["venue_rules_added"] == 1
+    assert link is not None and link.score == 2.0 and link.source == "rule"
+    again = reindex_topics(db, SEEDS)
+    assert again["venue_rules_added"] == 0
+    assert db.get(PaperDirection, (paper.id, systems.id)).score == 2.0
 
 
 def test_incremental_tagging_preserves_disabled_direction_links(db, sample_paper, sample_direction):

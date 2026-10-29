@@ -57,6 +57,35 @@ def test_manual_tags_preserved(db, sample_paper, sample_direction, session_facto
     assert sources[llm.id] == "manual"
 
 
+def test_venue_prior_tags_paper_and_respects_disabled_mapping(db, sample_paper, sample_venue):
+    from app.models import Direction, DirectionVenue, PaperDirection
+
+    systems = Direction(code="systems", name="系统软件与分布式", min_score=2.0, enabled=1)
+    network = Direction(code="network", name="计算机网络", min_score=2.0, enabled=1)
+    db.add_all([systems, network])
+    db.flush()
+    db.add_all([
+        DirectionVenue(direction_id=systems.id, venue_id=sample_venue.id, weight=1.0, enabled=1),
+        DirectionVenue(direction_id=network.id, venue_id=sample_venue.id, weight=1.0, enabled=0),
+    ])
+    db.commit()
+    final = apply_tagging(db, sample_paper.id, "An efficient system study", None, [], {systems.id: 2.0, network.id: 2.0})
+    assert final == [systems.id]
+    row = db.get(PaperDirection, (sample_paper.id, systems.id))
+    assert row.score == 2.0 and row.source == "rule"
+
+
+def test_venue_prior_does_not_tag_disabled_direction(db, sample_paper, sample_venue):
+    from app.models import Direction, DirectionVenue
+
+    disabled = Direction(code="network", name="计算机网络", min_score=2.0, enabled=0)
+    db.add(disabled)
+    db.flush()
+    db.add(DirectionVenue(direction_id=disabled.id, venue_id=sample_venue.id, weight=1.0, enabled=1))
+    db.commit()
+    assert apply_tagging(db, sample_paper.id, "An efficient system study", None, [], {disabled.id: 2.0}) == []
+
+
 def test_upsert_idempotent_by_dblp_key(db, sample_venue, sample_direction):
     """重跑同一单元 total 不变（F-003 验收口径的最小复现）。"""
     from app.collectors.dblp import RawPaper

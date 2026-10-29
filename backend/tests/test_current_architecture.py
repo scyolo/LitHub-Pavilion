@@ -41,7 +41,7 @@ def test_retired_pdf_environment_cannot_enable_downloads(monkeypatch):
 def test_bootstrap_needs_only_current_seed_files_and_preserves_legacy_tables(engine, tmp_path, seed_venue_abbrs, seed_direction_codes):
     directory = tmp_path / "seeds"
     directory.mkdir()
-    for name in ("venues.csv", "directions.csv", "direction_rules.csv"):
+    for name in ("venues.csv", "directions.csv", "direction_rules.csv", "direction_venues.csv"):
         (directory / name).write_bytes((PROJECT_ROOT / "seeds" / name).read_bytes())
     with engine.begin() as connection:
         connection.exec_driver_sql("CREATE TABLE pdf_whitelist (host TEXT PRIMARY KEY, note TEXT)")

@@ -64,6 +64,8 @@ def seed_missing(session: Session, directory: Path) -> None:
         exists = session.query(DirectionRule.id).filter(DirectionRule.direction_id == direction_id, DirectionRule.keyword == row["keyword"]).first()
         if not exists:
             session.add(DirectionRule(direction_id=direction_id, keyword=row["keyword"], field=row["field"], weight=float(row["weight"]), enabled=int(row["enabled"])))
+    from app.services.topic_index import refresh_topic_venues
+    refresh_topic_venues(session, directory)
     session.commit()
 
 

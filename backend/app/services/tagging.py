@@ -9,7 +9,7 @@ import re
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from app.models import Direction, DirectionRule, PaperDirection
+from app.models import Direction, DirectionRule, DirectionVenue, Paper, PaperDirection
 
 
 def _compile_rules(
@@ -41,6 +41,31 @@ def load_thresholds(session: Session) -> dict[int, float]:
     return {d: float(m or 2.0) for d, m in rows}
 
 
+def load_venue_rules(session: Session) -> dict[int, dict[int, float]]:
+    """venue_id → {direction_id: weight}，仅启用方向与启用映射。"""
+    rows = session.execute(
+        select(DirectionVenue.venue_id, DirectionVenue.direction_id, DirectionVenue.weight)
+        .join(Direction, Direction.id == DirectionVenue.direction_id)
+        .where(DirectionVenue.enabled == 1, Direction.enabled == 1)
+    ).all()
+    venue_rules: dict[int, dict[int, float]] = {}
+    for venue_id, direction_id, weight in rows:
+        venue_rules.setdefault(venue_id, {})[direction_id] = float(weight)
+    return venue_rules
+
+
+def add_venue_scores(
+    scores: dict[int, float],
+    venue_id: int | None,
+    venue_rules: dict[int, dict[int, float]],
+) -> dict[int, float]:
+    """目录级方向先验：命中 venue 记 2.0×weight（与标题命中同权）。"""
+    if venue_id is not None:
+        for direction_id, weight in venue_rules.get(venue_id, {}).items():
+            scores[direction_id] = scores.get(direction_id, 0.0) + 2.0 * weight
+    return scores
+
+
 def score_text(
     rules: list[tuple[int, re.Pattern | str, float, str]],
     title: str,
@@ -70,9 +95,18 @@ def apply_tagging(
     abstract: str | None,
     rules: list[tuple[int, re.Pattern, float, str]],
     thresholds: dict[int, float],
+    venue_id: int | None = None,
+    venue_rules: dict[int, dict[int, float]] | None = None,
 ) -> list[int]:
     """重算该论文的 rule 标签（保留 manual），返回最终 direction_id 列表。"""
     scores = score_text(rules, title, abstract)
+    if venue_rules is None:
+        venue_rules = load_venue_rules(session)
+    if venue_id is None:
+        venue_id = session.execute(
+            select(Paper.venue_id).where(Paper.id == paper_id)
+        ).scalar_one_or_none()
+    add_venue_scores(scores, venue_id, venue_rules)
 
     manual_ids = {
         row[0]

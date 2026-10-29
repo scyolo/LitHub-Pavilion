@@ -4,11 +4,12 @@ from sqlalchemy import text
 from app.cleaning import normalize_doi
 from app.models import Paper
 from app.services.publisher_metadata import apply_items
-from app.services.tagging import apply_tagging
+from app.services.tagging import apply_tagging, load_venue_rules
 
 
 def apply_catalog_page(session, items, years, rules, thresholds):
     totals, conflicts = Counter(), []
+    venue_rules = load_venue_rules(session)
     for offset in range(0, len(items), 100):
         batch = items[offset:offset + 100]
         # Callers hold only read state. Acquire the writer before identity reads
@@ -23,7 +24,7 @@ def apply_catalog_page(session, items, years, rules, thresholds):
             # Re-tag existing identities too: an interrupted older maintenance
             # run may have committed a paper before adding its direction labels.
             for paper in session.query(Paper).filter(Paper.doi.in_(dois)).all():
-                apply_tagging(session, paper.id, paper.title, paper.abstract, rules, thresholds)
+                apply_tagging(session, paper.id, paper.title, paper.abstract, rules, thresholds, paper.venue_id, venue_rules)
             session.commit()
             totals.update(result['counts']); conflicts.extend(result['conflicts'])
         except Exception:

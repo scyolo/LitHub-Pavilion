@@ -118,6 +118,17 @@ class DirectionRule(Base):
     )
 
 
+class DirectionVenue(Base):
+    __tablename__ = "direction_venues"
+
+    direction_id: Mapped[int] = mapped_column(ForeignKey("directions.id", ondelete="CASCADE"), primary_key=True)
+    venue_id: Mapped[int] = mapped_column(ForeignKey("venues.id", ondelete="CASCADE"), primary_key=True)
+    weight: Mapped[float] = mapped_column(Float, default=1.0)
+    enabled: Mapped[int] = mapped_column(Integer, default=1)
+
+    __table_args__ = (Index("ix_direction_venues_venue", "venue_id"),)
+
+
 class PaperDirection(Base):
     __tablename__ = "paper_directions"
 

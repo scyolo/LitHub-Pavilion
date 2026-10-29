@@ -26,7 +26,7 @@ from app.models import CrawlLog, CrawlState, Paper, Venue, utcnow_iso
 from app.ratelimit import AsyncTokenBucket
 from app.services.enrichment import enrich_papers
 from app.services.paper_store import upsert_paper as upsert_paper
-from app.services.tagging import apply_tagging, load_rules, load_thresholds
+from app.services.tagging import apply_tagging, load_rules, load_thresholds, load_venue_rules
 
 log = logging.getLogger("lithub.pipeline")
 BATCH_SIZE = 100
@@ -335,8 +335,9 @@ class CrawlPipeline:
     def _tag_owned(self, paper_ids):
         with self.session_factory() as session:
             rules, thresholds = load_rules(session), load_thresholds(session)
+            venue_rules = load_venue_rules(session)
             for paper in session.query(Paper).filter(Paper.id.in_(paper_ids)).all():
-                apply_tagging(session, paper.id, paper.title, paper.abstract, rules, thresholds)
+                apply_tagging(session, paper.id, paper.title, paper.abstract, rules, thresholds, paper.venue_id, venue_rules)
             session.commit()
 
     async def _run(self, task_type, years=None, run_id=None):
