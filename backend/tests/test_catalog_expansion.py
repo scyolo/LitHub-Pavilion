@@ -97,9 +97,9 @@ def test_direction_venue_mappings_only_target_known_ab_papers():
     venues = {v["abbr"]: v for v in rows("venues.csv")}
     directions = {d["code"] for d in rows("directions.csv")}
     mappings = rows("direction_venues.csv")
-    assert len(mappings) == 105
+    assert len(mappings) == 125
     assert len({(m["direction_code"], m["venue_abbr"]) for m in mappings}) == len(mappings)
-    assert {m["direction_code"] for m in mappings} == {"network", "systems", "architecture", "security"}
+    assert {m["direction_code"] for m in mappings} == {"network", "systems", "architecture", "security", "hci"}
     for mapping in mappings:
         assert mapping["direction_code"] in directions
         assert mapping["venue_abbr"] in venues

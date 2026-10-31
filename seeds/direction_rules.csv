@@ -204,3 +204,57 @@ security,\b(?:web security|network security|system security|software security|ha
 security,\b(?:ddos|denial[- ]of[- ]service|botnets?|intrusions?|penetration testing|binary analysis|reverse engineering)\b,title,1.0,1
 security,\b(?:secure computation|secure inference|secure aggregation|private information retrieval|private set intersection|searchable encryption)\b,title,1.0,1
 security,\b(?:blockchain|smart contracts?)\b,title,1.0,1
+inference,\b(?:llm|large language model|language model|transformer|dnn|cnn|diffusion model|vision transformer|vlm|mllm)s?[ -](?:inference|serving)\b,title,1.0,1
+inference,\b(?:model|llm|dnn|deep learning|neural network|transformer) (?:serving|deployment)\b,title,1.0,1
+inference,(?s)\A(?=.*\b(?:inference|serving) (?:engine|system|systems|platform|infrastructure|pipeline|scheduler|scheduling|service|optimization|acceleration|latency|throughput|efficiency|cost)\b)(?=.*\b(?:llm|language model|dnn|cnn|neural|transformer|gpu|edge|mobile|diffusion|vision|vlm|mllm|serving|deployment)\b).+,title,1.0,1
+inference,\b(?:prefix|context|prompt)[ -]cach\w*,title,1.0,1
+inference,\b(?:continuous batching|chunked prefill|prefill[ -]decode|pd[ -]disaggregat\w*|disaggregated (?:prefill|decoding|inference|serving))\b,title,1.0,1
+inference,\bearly exit\b,title,1.0,1
+inference,\b(?:on[ -]device|edge|mobile|embedded) (?:llm|large language model|language model|inference|serving|deployment)\b,title,1.0,1
+inference,"\b(?:mixture[ -]of[ -]experts|moe)\b[^:.]{0,80}\b(?:inference|serving|deployment)\b|\b(?:inference|serving|deployment)\b[^:.]{0,80}\b(?:mixture[ -]of[ -]experts|moe)\b",title,1.0,1
+inference,\b(?:long[ -]context|long[ -]sequence) (?:inference|serving|decoding)\b,title,1.0,1
+inference,\b(?:serving|inference) (?:cluster|infrastructure|workload|latency|slo|qos)\b|\b(?:slo|qos)[ -](?:aware|driven) (?:llm|inference|serving)\b,title,1.0,1
+inference,\b(?:gpu|accelerator) (?:memory|pooling|sharing|virtualization) (?:for|in) (?:llm|inference|serving)\b,title,1.0,1
+inference,\binference offloading\b,title,1.0,1
+inference,"\b(?:int4|int8|fp8|awq|gptq|smoothquant)\b[^:.]{0,80}\b(?:inference|serving|llm|language model|deployment)\b|\b(?:inference|serving|llm|language model|deployment)\b[^:.]{0,80}\b(?:int4|int8|fp8|awq|gptq|smoothquant)\b",title,1.0,1
+inference,"\b(?:parallel|tensor|pipeline|expert|sequence|context) parallelism\b[^:.]{0,80}\b(?:inference|serving|decoding)\b|\b(?:inference|serving|decoding)\b[^:.]{0,80}\b(?:parallel|tensor|pipeline|expert|sequence|context) parallelism\b",title,1.0,1
+inference,(?s)\A(?=.*\b(?:sparse|linear|sliding[ -]window|efficient|flash)[ -]attention\b)(?=.*\b(?:inference|serving|decoding|accelerat\w*|efficien\w*|low[ -]latency|high[ -]throughput|long[ -]context|memory|kv[ -]cache|gpu|hardware|accelerator|fpga|asic|systolic)\b).+,title,1.0,1
+inference,\b(?:online|batch|real[ -]time|low[ -]latency) inference\b,title,1.0,1
+inference,(?s)\A(?=.*\b(?:adaptive|dynamic|input[ -]adaptive|anytime) inference\b)(?=.*\b(?:llm|language model|dnn|cnn|neural|transformer|vision|edge|mobile|gpu|diffusion|gpt|vlm|mllm)\b).+,title,1.0,1
+inference,\b(?:llm|language model|inference|serving) (?:acceleration|efficiency|optimization)\b,title,1.0,1
+specdec,(?s)\A(?=.*\bmulti[ -]token (?:prediction|generation|decoding)\b)(?=.*\b(?:faster|accelerat\w*|efficien\w*|low[ -]latency|latency|throughput|inference|serving|decoding|speculat\w*)\b).+,title,1.0,1
+specdec,(?s)\A(?=.*\b(?:lookahead|parallel|blockwise|multi[ -]draft|draft[ -]tree) decod\w*\b)(?=.*\b(?:llm|language model|autoregressive|diffusion language model|text generation|machine translation|translation)\b).+,title,1.0,1
+specdec,\btoken tree\b,title,1.0,1
+specdec,\bself[ -]speculat\w*,title,1.0,1
+specdec,\bspeculative jacobi(?:[ -]denoising)? decod\w*\b,title,1.0,1
+network,\bdata[ -]?cent(?:er|re) (?:network|networking|transport|traffic|topology|routing|switching)\b,title,1.0,1
+network,\bprogrammable data planes?\b|\bservice function chains?\b|\bsoftware[ -]defined (?:network|networking|data plane)\b,title,1.0,1
+network,\bage of information\b,title,1.0,1
+network,\bnetwork coding\b,title,1.0,1
+network,\b(?:reconfigurable intelligent surface|intelligent reflecting surface|ris[ -]assisted)\b,title,1.0,1
+network,\b(?:datacenter|data center) (?:congestion|load balancing|traffic)\b,title,1.0,1
+network,\b(?:mmwave|millimeter[ -]wave) (?:communication|network|networks|system|systems|mimo|beamforming)\b,title,1.0,1
+network,\btcp/ip\b,title,1.0,1
+network,\b(?:software transport layer|transport layer (?:protocol|scheduling))\b,title,1.0,1
+network,\b(?:network|internet) tomography\b,title,1.0,1
+network,\b(?:delay[ -]tolerant networks?|information[ -]centric networking|named data networking|content[ -]centric networking)\b,title,1.0,1
+systems,\b(?:gpu|cuda|triton|npu|accelerator) (?:kernel|kernels|kernel fusion|operator|operators|memory management|memory allocation|scheduling|sharing|virtualization|interconnect)\b,title,1.0,1
+systems,\b(?:operator fusion|(?<!multiple )kernel fusion|graph compilation|graph compiler|tensor compiler)\b,title,1.0,1
+systems,(?s)\A(?=.*\b(?:ml|machine learning|deep learning) (?:system|systems|infrastructure|platform|platforms)\b)(?=.*\b(?:serving|training (?:system|systems|cluster|clusters|infrastructure|pipeline|pipelines|platform|platforms|workload|workloads|job|jobs|service|services)|inference|deployment|infrastructure|platform|cluster|distributed|scalable|scaling|benchmark\w*|monitoring|runtime|compiler|scheduling|resource|gpu|accelerator|energy|efficiency|latency|throughput|operations?)\b).+,title,1.0,1
+systems,\b(?:model|llm) (?:serving|training) (?:system|systems|platform|platforms|framework|frameworks|engine|engines|cluster|clusters|infrastructure)\b,title,1.0,1
+systems,\b(?:container|vm|virtual machine) (?:scheduling|migration|placement|startup|cold[ -]start|image|runtime)\b,title,1.0,1
+systems,(?s)\A(?=.*\b(?:consensus protocol|distributed consensus|state machine replication|raft consensus|paxos|byzantine fault[ -]toleran\w*)\b)(?=.*\b(?:distributed|blockchain|byzantine|replicated|fault[ -]tolerant|proof[ -]of[ -]authority|ledger|nodes?|servers?|replicas?)\b).+,title,1.0,1
+systems,\b(?:fault[ -]tolerant|fault tolerance) (?:system|systems|distributed|computing|server|cluster|storage|database|service)\b,title,1.0,1
+systems,\b(?:key[ -]value|kv) (?:store|stores|storage|database|engine)\b,title,1.0,1
+systems,\b(?:storage|disk|ssd|nvme) (?:i/o|scheduling|latency|bandwidth|failure|engine)\b,title,1.0,1
+systems,\b(?:hypervisor|unikernel|microkernel|library os|virtual machine monitor)\b,title,1.0,1
+systems,\b(?:datacenter|data center) (?:management|scheduling|resource|energy|power|cooling)\b,title,1.0,1
+systems,\b(?:system call|syscall|page fault|copy[ -]on[ -]write|zero[ -]copy|ioctl)\b,title,1.0,1
+systems,\b(?:kernel|operating system) (?:scheduling|memory|page|file|i/o|isolation|security)\b,title,1.0,1
+systems,\b(?:cgroup|seccomp|apparmor|selinux)\b,title,1.0,1
+systems,\b(?:remote memory|memory pooling|memory disaggregation|resource disaggregation)\b,title,1.0,1
+systems,\b(?:i/o|io) (?:stack|scheduling|path|latency|performance|isolation)\b,title,1.0,1
+systems,\b(?:replica placement|replication protocol|consistency protocol)\b,title,1.0,1
+systems,\bdistributed tracing\b|\bobservability (?:platform|system|infrastructure|tool|pipeline)\b|\bobservability in datacenters?\b,title,1.0,1
+systems,\bservice mesh\b,title,1.0,1
+architecture,\bnetwork[ -]on[ -]chip\b|(?-i:\bNoC\b)|\binterconnection networks?\b,title,1.0,1

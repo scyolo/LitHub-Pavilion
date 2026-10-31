@@ -30,6 +30,12 @@ RULE_REFINEMENTS = {
         r"\b(?:human|value|preference|safety|llm|language[- ]model)[- ]alignment\b",
     ("systems", r"\b(?:operating|distributed|storage|file|cloud|database)[- ]systems?\b"):
         r"\b(?:operating|distributed|(?<!battery )(?<!energy )(?<!power )storage|file|cloud|database)[- ]systems?\b",
+    ("inference", r"\b(?:sparse|linear|sliding[ -]window|efficient|flash)[ -]attention\b"):
+        r"(?s)\A(?=.*\b(?:sparse|linear|sliding[ -]window|efficient|flash)[ -]attention\b)(?=.*\b(?:inference|serving|decoding|accelerat\w*|efficien\w*|low[ -]latency|high[ -]throughput|long[ -]context|memory|kv[ -]cache|gpu|hardware|accelerator|fpga|asic|systolic)\b).+",
+    ("specdec", r"\bmulti[ -]token (?:prediction|generation|decoding)\b"):
+        r"(?s)\A(?=.*\bmulti[ -]token (?:prediction|generation|decoding)\b)(?=.*\b(?:faster|accelerat\w*|efficien\w*|low[ -]latency|latency|throughput|inference|serving|decoding|speculat\w*)\b).+",
+    ("systems", r"(?s)\A(?=.*\b(?:ml|machine learning|deep learning) (?:system|systems|infrastructure|platform|platforms)\b)(?=.*\b(?:serving|training|inference|deployment|infrastructure|platform|cluster|distributed|scalable|scaling|benchmark\w*|monitoring|runtime|compiler|scheduling|resource|gpu|accelerator|energy|efficiency|latency|throughput|operations?)\b).+"):
+        r"(?s)\A(?=.*\b(?:ml|machine learning|deep learning) (?:system|systems|infrastructure|platform|platforms)\b)(?=.*\b(?:serving|training (?:system|systems|cluster|clusters|infrastructure|pipeline|pipelines|platform|platforms|workload|workloads|job|jobs|service|services)|inference|deployment|infrastructure|platform|cluster|distributed|scalable|scaling|benchmark\w*|monitoring|runtime|compiler|scheduling|resource|gpu|accelerator|energy|efficiency|latency|throughput|operations?)\b).+",
     ("network", r"\b(?:computer|communication|data[- ]?cent(?:er|re)|mobile|wireless|cellular|satellite|optical|underwater|sensor|vehicular|mesh|overlay|content[- ]delivery)[- ]networks?\b"):
         r"\b(?:computer|data[- ]?cent(?:er|re)|wireless|cellular|satellite|optical|underwater|sensor|vehicular|mesh|overlay|content[- ]delivery)[- ]networks?\b",
     ("network", r"\b(?:network|networking)[- ](?:protocols?|topolog\w*|measurement|management|slicing|traffic|virtualization|functions?|congestion)\b"):
