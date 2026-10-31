@@ -23,31 +23,13 @@
 
 当前 `seeds/venues.csv` 仅配置 **CCF 2026 第七版中的 338 个 A/B 来源**：58 个 A 类会议、132 个 B 类会议、37 个 A 类期刊、111 个 B 类期刊，覆盖 10 大学科领域；TOMM、DKE 的跨领域重复条目按同一来源去重。**不收集 C 类或目录外来源。** 核验依据和逐来源页码保存在 `seeds/ccf_catalog_provenance.json`，FSE 等同名会议不混为同一来源。
 
-提供 22 个研究方向，优先展示大语言模型、推理优化和投机解码，保留原有全部方向、筛选 URL 和人工标签。2026-10-29 新增“计算机网络”“计算机体系结构”“网络与信息安全”三个方向，并把会议/期刊目录本身作为方向先验：105 个 CCF A/B 网络、系统、体系结构与安全来源的论文即使标题未命中关键词，也会获得对应方向标签（如 SIGCOMM/NSDI→计算机网络，OSDI/SOSP/ATC→系统软件与分布式，ISCA/MICRO/ASPLOS→计算机体系结构，CCS/S&P/USENIX Security→网络与信息安全）。“推理优化”覆盖有语言模型语境的服务加速、KV 缓存、注意力计算、量化和解码优化；“Transformer 架构”覆盖自注意力、视觉 Transformer、高效注意力与 BERT 系预训练模型；“联邦学习”覆盖 federated learning/training 及其横向/纵向/切分/个性化、cross-silo/cross-device、FedAvg 系算法与通信高效/数据异构组合（联邦方向综述仅收录 CCF A/B 来源内的 25+ 篇，Kairouz/Li 等目录外经典综述按边界不入库）；方向标签可重叠。**目录范围不是论文完整率**：新增来源需要后续分批回填；页面单独显示配置数、有论文来源数和正式收录论文数。仓库不附带个人论文数据库或论文 PDF。
-
-2026-10-16 的本地补采、来源／年份对照、去重和数据保留核验见 [论文覆盖更新记录](docs/coverage-refresh-20261016.md)。本地快照更新与线上发布分别记录。
-
-2026-10-17 的 LLM／推理优化／投机解码补齐、中文方向与简称检索、全量标题核对及扩容后性能测量见 [本轮检索与覆盖更新](docs/llm-coverage-20261017.md)。
-
-2026-10-18 填补了 7 个零记录来源／年份，新增 50 篇正式论文并为 9,157 篇既有论文补齐摘要；全部 17 个方向的最终覆盖数均增加。编者按排除、来源证据及统计口径见 [零记录来源与方向覆盖更新](docs/coverage-zero-sources-20261018.md)。
-
-2026-10-19 的数据补充已于 **2026-10-20 完成本地安装与验收**：指定推理优化清单 57/57 篇通过实际浏览器检索，其中 46 篇正式出版记录，11 篇官方已录用、出版待核验记录单列展示。补充 SCA 2025 的 18 篇正式论文、ECSCW 的 24 条会议关联与 57 篇既有摘要，正式快照共 395,397 篇，零记录来源／年份由 96 减至 93。使用 [57 篇逐篇检索清单](docs/inference-priority-checklist-20261019.md) 打开带筛选的本地查询，验证与覆盖边界见 [本轮更新记录](docs/coverage-priority-20261019.md)。出版证据截至 2026-10-19；本轮未提交、推送或上线。
-
-2026-10-21 完成本地覆盖更新：新增 839 篇可公开检索论文和 95 篇摘要，301 条非研究记录仅退出公开统计，原始数据保留；正式快照净增 538 篇至 **395,935 篇**。补齐 CLUSTER 2026、SenSys 2026、NOSSDAV 2025，零记录来源／年份由 93 减至 90，剩余情况逐项附核验状态与依据。17 个方向均增长，全量标题、366 组 API／静态查询和浏览器检查通过；详见 [零记录来源与覆盖验收报告](docs/coverage-zero-sources-20261021.md)。
-
-**2026-10-23 已完成上述内容的仓库推送和网站发布。** 线上正式快照为 395,935 篇，数据生成时间仍为 2026-10-21；远程 Verify／Pages、线上资产哈希、14 组发布查询、移动布局与旧页面恢复均通过。发布体积、历史版本保留和验收证据见 [发布验收记录](docs/release-20261022.md)。
-
-2026-10-25 新增第 18 个方向“联邦学习”（5,052 篇打标、4,980 篇公开，支持中文别名检索），并按 ESWEEK 官方日程将 ACM TECS 22(5s) 特刊 59 篇中的 17 篇关联 CODES+ISSS 2023、21 篇关联 EMSOFT 2023，零记录来源／年份由 90 减至 89。快照已重新导出并验证，本轮未提交、推送或上线；详见 [联邦学习方向与 ESWEEK 关联更新](docs/federated-direction-esweek2023-20261025.md)。
-
-同日完成零记录缺口系统清核：采集 EMNLP/MobiCom/MobileHCI/SIGGRAPH/LICS 2026 共 3,228 篇正式论文（快照 399,163 篇），确认 GROUP/CADE 等为双年无 2026 届次、HiPEAC 官方无 proceedings、44 个 2026 缺口属未开会的预期零计数；剩余 84 个缺口全部附官方证据状态，无未注记项。详见 [零记录缺口清核报告](docs/zero-gap-audit-20261025.md)。
-
-**2026-10-27 已完成上述全部内容的仓库推送和网站发布。** 线上正式快照为 399,163 篇（18 个方向、84 个零记录缺口附证据状态），远程 Verify／Pages 构建部署、线上 manifest 与数据源清单哈希校验、覆盖索引与抽样分片核验均通过；快照沿用 2026-10-22 起的单版本发布策略（上一完整版本保留在 site-data 父提交用于回退）。发布过程与验收证据见 [发布验收记录](docs/release-20261027.md)。
-
-2026-10-28 完成联邦学习方向的覆盖扩充并上线：标签规则由“相邻词”扩展为跨度/上下文/方法名前缀四类匹配，召回率 75.3% → 99.2%（标签 5,052 → 7,452）；同时按逐来源 Crossref 检索与官方卷目录两条路径补采 2019–2022 年 FL 论文 935 篇（含 SCAFFOLD、无线 FL 经典、NeurIPS/ICML/CVPR 早期工作），使该方向公开论文由 4,984 增至 **7,371**。线上快照 revision `4eefc858`、400,099 篇；详见 [联邦学习覆盖扩充记录](docs/federated-coverage-expansion-20261027.md)。
-
-同日完成三项本地扩充：ICLR 2018–2022 按官方日程／virtual-site JSON 补采全部主会接收论文 **3,479 篇**（含 FedBN、FedDyn、HeteroFL、FedMA，零身份冲突）；按官方卷目录补采 2017–2022 年 Transformer／LLM／推理优化／投机解码经典论文 **1,493 篇**，并新增第 19 个方向“Transformer 架构”（11,311 篇）；新增独立的**“大厂技术报告”**页面，静态收录 24 家国内外机构的 97 份技术报告与模型论文，不进入论文库、不计入 CCF 统计。数据库增至 413,803 篇；本轮未提交、推送或上线，边界与验收见 [ICLR／AI 经典／大厂报告扩充记录](docs/coverage-expansion-20261028.md)。
+提供 22 个研究方向，优先展示大语言模型、推理优化和投机解码，保留原有全部方向、筛选 URL 和人工标签。2026-10-29 新增“计算机网络”“计算机体系结构”“网络与信息安全”三个方向，并把会议/期刊目录本身作为方向先验：当前 125 个 CCF A/B 来源映射到方向（网络 22、系统 35、体系结构 23、安全 25、HCI 20），论文即使标题未命中关键词，也会获得对应方向标签（如 SIGCOMM/NSDI→计算机网络，OSDI/SOSP/ATC→系统软件与分布式，ISCA/MICRO/ASPLOS→计算机体系结构，CCS/S&P/USENIX Security→网络与信息安全，CHI/CSCW→人机交互与可视化）。“推理优化”覆盖有语言模型语境的服务加速、KV 缓存、注意力计算、量化、解码与端侧部署；“Transformer 架构”覆盖自注意力、视觉 Transformer、高效注意力与 BERT 系预训练模型；“联邦学习”覆盖 federated learning/training 及其横向/纵向/切分/个性化、cross-silo/cross-device、FedAvg 系算法与通信高效/数据异构组合（联邦方向综述仅收录 CCF A/B 来源内的 25+ 篇，Kairouz/Li 等目录外经典综述按边界不入库）；方向标签可重叠。**目录范围不是论文完整率**：新增来源需要后续分批回填；页面单独显示配置数、有论文来源数和正式收录论文数。仓库不附带个人论文数据库或论文 PDF。
 
 2026-10-29 补全网络与系统方向：新增“计算机网络”“计算机体系结构”“网络与信息安全”三个方向，`systems` 扩展至 12,681 篇公开论文；以 105 个 CCF A/B 来源映射为方向先验，并追加 44 条标题规则，计算机网络、网络与信息安全、计算机体系结构三个 CCF 领域的 A/B 论文实现方向标签全覆盖。本地快照已重新导出并通过数据库一致性校验（revision `2c004928`，405,075 篇、22 个方向）。**同日已完成仓库推送和网站发布**：线上快照 revision `2c004928`、405,075 篇、22 个方向，站点 812,124,305 字节（预算 10 亿）；远程 Verify／Pages 构建部署与线上 manifest、catalog、分片哈希校验均通过，发布过程与验收证据见 [发布验收记录](docs/release-20261029.md)，范围与计数见 [网络与系统方向补全记录](docs/network-systems-directions-20261029.md)。
+
+2026-10-30 已更新本地来源覆盖清单，使其与当前 405,075 篇快照一致，并优化后端全文检索与页面渲染。GitHub 长期分支仅保留 `main`（源码）和 `site-data`（公开数据）；已合并开发分支和完成传输的暂存分支已清理。旧数据库备份和临时目录清理已完成，D 盘可用空间增加约 143.7 GB，当前数据库、最新快照及最近有效备份保留。本轮检查、性能数据、弱网剩余项与清理结果见 [维护复核记录](docs/maintenance-20261030.md)。
+
+2026-10-31 扩充方向覆盖：新增 54 条标题规则和 20 个 HCI 来源先验，并精化 3 条高噪声规则；数据库口径 `inference` 10,900、`specdec` 351、`network` 27,332、`systems` 12,947、`architecture` 18,407、`hci` 17,218，未打标论文降至 162,332 篇。本地快照已重新导出并通过数据库一致性校验（revision `86b2031e`，405,075 篇、22 个方向；公开口径 `inference` 10,383、`specdec` 337、`network` 27,317、`systems` 12,890、`architecture` 18,348、`hci` 17,179）；本轮尚未推送或发布线上站点。范围、计数与验收见 [方向覆盖扩充记录](docs/direction-coverage-expansion-20261031.md)。
 
 ### 开放版本发现与山海封面
 
@@ -265,7 +247,7 @@ python -m scripts.reindex_topics # 先校验备份，再增补方向规则与来
 
 规则升级后运行 `python -m scripts.reindex_topics` 才会应用到既有数据库；仅改 CSV 不会自动覆盖已有规则。该命令只重算已启用方向，保留人工标签、方向名称/阈值/开关与自定义规则，校验前后论文主表内容完全一致，并验证 FTS5。旧版默认 `multimodal` 泛词规则仅在未被本地定制且启用时细化，避免把多峰优化误判为多模态信息。月度补全新增摘要后也会重打方向标签。
 
-维护后需重新运行 `python -m scripts.export_snapshot` 生成带新关联和轻量首页的快照；代码与快照都更新并完成 Pages 部署后，线上网站才会变化。Docker 数据卷与本地库相互独立：容器内对应执行 `python -m scripts.reindex_topics` 和 `python -m scripts.export_snapshot`，不要拿本地数据库覆盖已有卷。方向统计仅说明规则覆盖，不等于补齐未采集论文，也不保证语义标签完全准确。
+维护后需重新运行 `python -m scripts.export_snapshot` 生成带新关联和轻量首页的快照，并从 `backend/` 执行 `python -m scripts.export_source_audit --database data/papers.db --snapshot ../frontend/static/snapshot --output ../frontend/static/data-sources` 同步来源覆盖清单；代码与快照都更新并完成 Pages 部署后，线上网站才会变化。Docker 数据卷与本地库相互独立：容器内对应执行 `python -m scripts.reindex_topics` 和 `python -m scripts.export_snapshot`，不要拿本地数据库覆盖已有卷。方向统计仅说明规则覆盖，不等于补齐未采集论文，也不保证语义标签完全准确。
 
 `DELETE /api/papers/{id}` 仅删除元数据与关联行，不删除文件。人工方向 PATCH 为当前方向集合替换，自动采集仍可重新增加规则命中的标签；人工保留的标签不会被覆盖。
 
@@ -281,6 +263,7 @@ npm test
 npm run build
 # 导出真实快照后再运行（不依赖示例数据，不触发网络发布）：
 node scripts/check-snapshot-home.js
+npm run check:source-coverage
 node scripts/check-snapshot-search.js ../artifacts/snapshot-search.json
 # 真实数据库只读检索检查（PowerShell，从项目根目录执行；不启动 API、不采集、不联网）：
 # $env:PYTHONPATH='backend'; backend/.venv/Scripts/python.exe backend/scripts/check_database_search.py --samples artifacts/snapshot-search.json --output artifacts/database-search.json
@@ -368,9 +351,7 @@ WWW 2026 支持 `--venues WWW --year 2026`：官网 `accepted/research-tracks.ht
 
 现有作者表按规范化姓名去重，同篇论文中两个同名作者不能由当前关联主键无损表达。官方出版导入对此返回 `author_multiplicity_not_representable` 冲突并保留完整作者列表，不静默丢弃作者、不把待核验论文升级为确认。此保护不是完整支持同名作者：已有冲突需通过独立作者位置/身份模型迁移或可靠来源更正解决，不能视为覆盖完成。
 
-### 2026-10-02 来源与性能复核
-
-本轮额外核实 WWW 2025（87 篇）、Middleware 2023（24 篇）、SIGGRAPH 2025（174 篇），新快照共 381,441 条公开论文。336/338 表示来源已有直接记录或逐篇官网关联，**不表示所有论文已收齐**；LISA/VEE 和其余零记录年份继续保留待核验。详见 [验收记录](docs/performance-coverage-20261002.md)。
+### 检索与性能复核
 
 在 `frontend` 下运行 `npm run check:snapshot-home`、`npm run check:snapshot-search`、`npm run check:snapshot-performance`。最后一项同时比较同一完整数据集上新旧引擎的结果、分数和分页，强制执行首屏流量/请求数/处理预算。浏览器复测可启动 `python scripts/benchmark_static_server.py frontend/dist --mbps 4 --latency-ms 80`，再用 Playwright CLI 的 `run-code --filename frontend/scripts/benchmark-browser.js` 测试所打开的预览地址；可在地址参数中设置 `cpu=4` 做主线程慢化和 390px 视口检查。
 

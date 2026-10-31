@@ -47,23 +47,9 @@ artifacts/
 release-artifacts/
 .playwright-cli/
 
-# Local browser QA artifacts; do not publish screenshots with source code.
-output/playwright/
+# Local experiments, logs, screenshots, and release verification output.
+output/
 
 # Public, revision-bound conference association assets (not test coverage).
 !frontend/static/data-sources/coverage/
 !frontend/static/data-sources/coverage/**
-
-# Local link-repair counts and browser/test evidence for this maintenance run.
-output/open-links-20261012/
-
-# Local proof and regenerated snapshot staging (2026-10-15)
-output/links-search-20261015/
-
-# Local cold-search baselines, profiling, and immutable metadata backups.
-output/cold-search-20261015/
-
-# Local ICLR/classics backfill reports and industry-page QA screenshots (2026-10-28).
-output/iclr-history-20261028/
-output/ai-classics-20261028/
-output/industry-20261028/
