@@ -68,6 +68,12 @@ export function validateAssociations(data,source,revision) {
   if (new Set(data.papers.map(p=>p.id)).size !== source.associated_count) fail();
   return data;
 }
+export function validateCoverageSnapshot(data, manifest) {
+  validateCoverage(data);
+  if (data.snapshot_revision !== manifest.revision || data.snapshot_papers !== manifest.paper_count
+      || data.snapshot_generated_at !== manifest.generated_at) fail();
+  return data;
+}
 async function read(path,signal,fetcher) {
   const response=await fetcher(import.meta.env.BASE_URL+'data-sources/'+path,{signal,credentials:'omit',redirect:'error',cache:'no-cache'});
   if (!response.ok) throw new Error('来源覆盖清单暂不可用，请稍后重试。');
