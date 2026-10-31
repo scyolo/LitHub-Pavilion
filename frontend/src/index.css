@@ -243,6 +243,12 @@ input::-webkit-search-cancel-button { display: none; }
 .topic-tile-count { font-variant-numeric: tabular-nums; color: var(--muted); font-size: 12px; margin-left: auto; display: flex; align-items: center; gap: 7px; }
 .topic-tile-count > .icon { color: var(--subtle); }
 .dashboard-bottom { display: grid; grid-template-columns: minmax(0, 1fr) 264px; gap: 21px; }
+/* Keep off-screen overview tables from delaying navigation to cached searches.
+   Content stays in the document and is laid out as it approaches the viewport. */
+.dashboard-page > :is(.dashboard-charts, .topics-section, .coverage-panel, .dashboard-bottom) {
+  content-visibility: auto;
+  contain-intrinsic-block-size: auto 600px;
+}
 .recent-section > .section-heading { padding-top: 2px; }
 .insights-sidebar { display: flex; flex-direction: column; gap: 17px; padding-top: 54px; }
 .venue-ranking { padding: 16px; }

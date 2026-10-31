@@ -42,8 +42,16 @@ export function prioritizeDirections(directions) {
   ).map(row => row.direction);
 }
 
+// Lists and coverage tables format hundreds of cells on each navigation.
+// Reuse fixed-locale formatters instead of initializing ICU for every cell.
+const numberFormatter = new Intl.NumberFormat("zh-CN");
+const dateFormatters = [false, true].map(includeTime => new Intl.DateTimeFormat("zh-CN", {
+  timeZone: "Asia/Shanghai", year: "numeric", month: "2-digit", day: "2-digit",
+  ...(includeTime ? { hour: "2-digit", minute: "2-digit", hour12: false } : {}),
+}));
+
 export function number(value) {
-  return value !== null && value !== undefined && Number.isFinite(Number(value)) ? new Intl.NumberFormat("zh-CN").format(Number(value)) : "—";
+  return value !== null && value !== undefined && Number.isFinite(Number(value)) ? numberFormatter.format(Number(value)) : "—";
 }
 
 export function compact(value) {
@@ -59,10 +67,7 @@ export function formatDate(value, includeTime = false) {
   if (!value) return "暂无记录";
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) return "日期未知";
-  return new Intl.DateTimeFormat("zh-CN", {
-    timeZone: "Asia/Shanghai", year: "numeric", month: "2-digit", day: "2-digit",
-    ...(includeTime ? { hour: "2-digit", minute: "2-digit", hour12: false } : {}),
-  }).format(date);
+  return dateFormatters[Number(Boolean(includeTime))].format(date);
 }
 
 export function safeExternalUrl(value) {

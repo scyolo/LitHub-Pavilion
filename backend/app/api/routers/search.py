@@ -3,7 +3,7 @@ import re
 from typing import Literal
 
 from fastapi import APIRouter, Depends, HTTPException, Query
-from sqlalchemy import literal, or_, text
+from sqlalchemy import Float, Integer, literal, select, text, union
 from sqlalchemy.orm import Session
 
 from app.api.deps import get_db
@@ -49,9 +49,13 @@ def search_predicate(q: str, match_expr: str | None):
         return exact
     # A normalized title index covers scientific Unicode without scanning the
     # entire paper table for every keystroke or weakening token boundaries.
-    return or_(exact,
-               text("papers.id IN (SELECT rowid FROM papers_fts WHERE papers_fts MATCH :match_q)"),
-               text("papers.id IN (SELECT rowid FROM paper_titles_fts WHERE paper_titles_fts MATCH :match_q)"))
+    # Collect unique IDs once. An OR over three indexes makes SQLite recheck
+    # the FTS lists for each candidate after its multi-index scan.
+    return Paper.id.in_(union(
+        select(Paper.id).where(exact),
+        text("SELECT rowid FROM papers_fts WHERE papers_fts MATCH :match_q").columns(rowid=Integer),
+        text("SELECT rowid FROM paper_titles_fts WHERE paper_titles_fts MATCH :match_q").columns(rowid=Integer),
+    ))
 
 
 
@@ -122,7 +126,18 @@ def _search_published(
         score = literal(0.0).label('score')
         order = (Paper.id.desc(),) if sort == 'relevance' else PAPER_SORTS[sort]
     else:
-        score = text("(SELECT bm25(papers_fts, 8.0, 1.0) FROM papers_fts WHERE rowid = papers.id AND papers_fts MATCH :match_q) AS score")
+        # A correlated MATCH reinitializes FTS5 (including corpus-wide BM25
+        # statistics) for every candidate. Materialize the matching scores once
+        # before joining; LEFT JOIN keeps normalized-title-only matches visible.
+        scores = (
+            text("SELECT rowid AS paper_id, bm25(papers_fts, 8.0, 1.0) AS score "
+                 "FROM papers_fts WHERE papers_fts MATCH :match_q")
+            .columns(paper_id=Integer, score=Float)
+            .cte("search_scores")
+            .prefix_with("MATERIALIZED")
+        )
+        query = query.outerjoin(scores, scores.c.paper_id == Paper.id)
+        score = scores.c.score.label("score")
         title_phrase = 'title : "' + " ".join(_TOKEN_RE.findall(exact_title)) + '"'
         title_terms = "title : (" + match_expr + ")"
         priority = text("""CASE

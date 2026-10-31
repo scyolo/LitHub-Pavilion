@@ -6,6 +6,7 @@ that every external link was probed or every configured CCF grade was re-audited
 """
 
 import re
+from functools import lru_cache
 from urllib.parse import urlsplit
 
 from sqlalchemy import func
@@ -93,7 +94,11 @@ def admission_reason(paper, venue):
     return None
 
 
+@lru_cache(maxsize=131072)
 def _eligible_metadata(title, doi, publisher_key, dblp_key, stream):
+    # Count, ranking, and subsequent reads validate the same metadata. Cache the
+    # pure decision with every input in the key; edits and source changes take
+    # effect immediately, and the bounded cache never retains ORM objects.
     return int(
         not nonresearch_title(title)
         and bool(formal_reference(doi, publisher_key, dblp_key, stream))
