@@ -21,6 +21,12 @@ export const TOPICS = {
   transformer: { name: "Transformer 架构", short: "Transformer Architecture", icon: "layers", color: "#a3b8e8" },
   retrieval: { name: "信息检索与 RAG", short: "Retrieval & RAG", icon: "search", color: "#ed9fae" },
   alignment: { name: "安全与对齐", short: "Safety & Alignment", icon: "shield", color: "#86b5c8" },
+  software: { name: "软件工程与形式化方法", short: "Software Engineering & Formal Methods", icon: "list", color: "#8fa9c7" },
+  speech: { name: "语音、音频与声学", short: "Speech, Audio & Acoustics", icon: "radar", color: "#e0a98b" },
+  robotics: { name: "机器人与自动化", short: "Robotics & Automation", icon: "cpu", color: "#9bb8a5" },
+  bioinformatics: { name: "生物信息与医学信息", short: "Bioinformatics & Medical Informatics", icon: "nodes", color: "#a8c79a" },
+  theory: { name: "理论与算法", short: "Theory & Algorithms", icon: "grid", color: "#b7aed6" },
+  graphics: { name: "计算机图形学与虚拟现实", short: "Computer Graphics & VR", icon: "layers", color: "#d3a7b5" },
 };
 
 export const SCOPES = [

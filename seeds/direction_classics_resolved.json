@@ -1,0 +1,2397 @@
+{
+ "resolved": [
+  {
+   "id": "orca",
+   "directions": [
+    "inference",
+    "systems"
+   ],
+   "title": "Orca: A Distributed Serving System for {Transformer-Based} Generative Models",
+   "authors": [
+    "Gyeong-In Yu",
+    "Joo Seong Jeong",
+    "Geon-Woo Kim",
+    "Soojeong Kim",
+    "Byung-Gon Chun"
+   ],
+   "year": 2022,
+   "venue": "OSDI",
+   "doi": null,
+   "official_url": "https://www.usenix.org/conference/osdi22/presentation/yu",
+   "publisher_key": "https://www.usenix.org/conference/osdi22/presentation/yu",
+   "citations": null,
+   "source": "official-meta"
+  },
+  {
+   "id": "alexnet",
+   "directions": [
+    "cv",
+    "dl"
+   ],
+   "title": "ImageNet Classification with Deep Convolutional Neural Networks",
+   "authors": [
+    "Alex Krizhevsky",
+    "Ilya Sutskever",
+    "Geoffrey E. Hinton"
+   ],
+   "year": 2012,
+   "venue": "NeurIPS",
+   "doi": null,
+   "official_url": "https://proceedings.neurips.cc/paper_files/paper/2012/hash/c399862d3b9d6b76c8436e924a68c45b-Abstract.html",
+   "publisher_key": "https://proceedings.neurips.cc/paper_files/paper/2012/hash/c399862d3b9d6b76c8436e924a68c45b-Abstract.html",
+   "citations": null,
+   "source": "neurips-index"
+  },
+  {
+   "id": "resnet",
+   "directions": [
+    "cv",
+    "dl"
+   ],
+   "title": "Deep Residual Learning for Image Recognition",
+   "authors": [
+    "Kaiming He",
+    "Xiangyu Zhang",
+    "Shaoqing Ren",
+    "Jian Sun"
+   ],
+   "year": 2016,
+   "venue": "CVPR",
+   "doi": "10.1109/CVPR.2016.90",
+   "official_url": "https://doi.org/10.1109/CVPR.2016.90",
+   "publisher_key": "https://doi.org/10.1109/CVPR.2016.90",
+   "citations": 235479,
+   "source": "crossref"
+  },
+  {
+   "id": "fasterrcnn",
+   "directions": [
+    "cv"
+   ],
+   "title": "Faster R-CNN: Towards Real-Time Object Detection with Region Proposal Networks",
+   "authors": [
+    "Shaoqing Ren",
+    "Kaiming He",
+    "Ross Girshick",
+    "Jian Sun"
+   ],
+   "year": 2015,
+   "venue": "NeurIPS",
+   "doi": null,
+   "official_url": "https://proceedings.neurips.cc/paper_files/paper/2015/hash/14bfa6bb14875e45bba028a21ed38046-Abstract.html",
+   "publisher_key": "https://proceedings.neurips.cc/paper_files/paper/2015/hash/14bfa6bb14875e45bba028a21ed38046-Abstract.html",
+   "citations": null,
+   "source": "neurips-index"
+  },
+  {
+   "id": "yolo",
+   "directions": [
+    "cv"
+   ],
+   "title": "You Only Look Once: Unified, Real-Time Object Detection",
+   "authors": [
+    "Joseph Redmon",
+    "Santosh Divvala",
+    "Ross Girshick",
+    "Ali Farhadi"
+   ],
+   "year": 2016,
+   "venue": "CVPR",
+   "doi": "10.1109/CVPR.2016.91",
+   "official_url": "https://doi.org/10.1109/CVPR.2016.91",
+   "publisher_key": "https://doi.org/10.1109/CVPR.2016.91",
+   "citations": 53796,
+   "source": "crossref"
+  },
+  {
+   "id": "fcn",
+   "directions": [
+    "cv"
+   ],
+   "title": "Fully convolutional networks for semantic segmentation",
+   "authors": [
+    "Jonathan Long",
+    "Evan Shelhamer",
+    "Trevor Darrell"
+   ],
+   "year": 2015,
+   "venue": "CVPR",
+   "doi": "10.1109/CVPR.2015.7298965",
+   "official_url": "https://doi.org/10.1109/CVPR.2015.7298965",
+   "publisher_key": "https://doi.org/10.1109/CVPR.2015.7298965",
+   "citations": 38840,
+   "source": "crossref"
+  },
+  {
+   "id": "maskrcnn",
+   "directions": [
+    "cv"
+   ],
+   "title": "Mask R-CNN",
+   "authors": [
+    "Kaiming He",
+    "Georgia Gkioxari",
+    "Piotr Dollar",
+    "Ross Girshick"
+   ],
+   "year": 2017,
+   "venue": "ICCV",
+   "doi": "10.1109/ICCV.2017.322",
+   "official_url": "https://doi.org/10.1109/ICCV.2017.322",
+   "publisher_key": "https://doi.org/10.1109/ICCV.2017.322",
+   "citations": 29154,
+   "source": "crossref"
+  },
+  {
+   "id": "hog",
+   "directions": [
+    "cv"
+   ],
+   "title": "Histograms of Oriented Gradients for Human Detection",
+   "authors": [
+    "N. Dalal",
+    "B. Triggs"
+   ],
+   "year": 2005,
+   "venue": "CVPR",
+   "doi": "10.1109/CVPR.2005.177",
+   "official_url": "https://doi.org/10.1109/CVPR.2005.177",
+   "publisher_key": "https://doi.org/10.1109/CVPR.2005.177",
+   "citations": 33584,
+   "source": "crossref"
+  },
+  {
+   "id": "sift",
+   "directions": [
+    "cv"
+   ],
+   "title": "Distinctive Image Features from Scale-Invariant Keypoints",
+   "authors": [
+    "David G. Lowe"
+   ],
+   "year": 2004,
+   "venue": "IJCV",
+   "doi": "10.1023/B:VISI.0000029664.99615.94",
+   "official_url": "https://doi.org/10.1023/B:VISI.0000029664.99615.94",
+   "publisher_key": "https://doi.org/10.1023/B:VISI.0000029664.99615.94",
+   "citations": 55680,
+   "source": "crossref"
+  },
+  {
+   "id": "blip",
+   "directions": [
+    "multimodal"
+   ],
+   "title": "BLIP: Bootstrapping Language-Image Pre-training for Unified Vision-Language Understanding and Generation",
+   "authors": [
+    "Junnan Li",
+    "Dongxu Li",
+    "Caiming Xiong",
+    "Steven Hoi"
+   ],
+   "year": 2022,
+   "venue": "ICML",
+   "doi": null,
+   "official_url": "https://proceedings.mlr.press/v162/li22n.html",
+   "publisher_key": "https://proceedings.mlr.press/v162/li22n.html",
+   "citations": null,
+   "source": "pmlr-index"
+  },
+  {
+   "id": "vilbert",
+   "directions": [
+    "multimodal",
+    "nlp"
+   ],
+   "title": "ViLBERT: Pretraining Task-Agnostic Visiolinguistic Representations for Vision-and-Language Tasks",
+   "authors": [
+    "Jiasen Lu",
+    "Dhruv Batra",
+    "Devi Parikh",
+    "Stefan Lee"
+   ],
+   "year": 2019,
+   "venue": "NeurIPS",
+   "doi": null,
+   "official_url": "https://proceedings.neurips.cc/paper_files/paper/2019/hash/c74d97b01eae257e44aa9d5bade97baf-Abstract.html",
+   "publisher_key": "https://proceedings.neurips.cc/paper_files/paper/2019/hash/c74d97b01eae257e44aa9d5bade97baf-Abstract.html",
+   "citations": null,
+   "source": "neurips-index"
+  },
+  {
+   "id": "showattendtell",
+   "directions": [
+    "multimodal",
+    "cv"
+   ],
+   "title": "Show, Attend and Tell: Neural Image Caption Generation with Visual Attention",
+   "authors": [
+    "Kelvin Xu",
+    "Jimmy Ba",
+    "Ryan Kiros",
+    "Kyunghyun Cho",
+    "Aaron Courville",
+    "Ruslan Salakhudinov",
+    "Rich Zemel",
+    "Yoshua Bengio"
+   ],
+   "year": 2015,
+   "venue": "ICML",
+   "doi": null,
+   "official_url": "https://proceedings.mlr.press/v37/xuc15.html",
+   "publisher_key": "https://proceedings.mlr.press/v37/xuc15.html",
+   "citations": null,
+   "source": "pmlr-index"
+  },
+  {
+   "id": "trpo",
+   "directions": [
+    "rl"
+   ],
+   "title": "Trust Region Policy Optimization",
+   "authors": [
+    "John Schulman",
+    "Sergey Levine",
+    "Pieter Abbeel",
+    "Michael Jordan",
+    "Philipp Moritz"
+   ],
+   "year": 2015,
+   "venue": "ICML",
+   "doi": null,
+   "official_url": "https://proceedings.mlr.press/v37/schulman15.html",
+   "publisher_key": "https://proceedings.mlr.press/v37/schulman15.html",
+   "citations": null,
+   "source": "pmlr-index"
+  },
+  {
+   "id": "a3c",
+   "directions": [
+    "rl"
+   ],
+   "title": "Asynchronous Methods for Deep Reinforcement Learning",
+   "authors": [
+    "Volodymyr Mnih",
+    "Adria Puigdomenech Badia",
+    "Mehdi Mirza",
+    "Alex Graves",
+    "Timothy Lillicrap",
+    "Tim Harley",
+    "David Silver",
+    "Koray Kavukcuoglu"
+   ],
+   "year": 2016,
+   "venue": "ICML",
+   "doi": null,
+   "official_url": "https://proceedings.mlr.press/v48/mniha16.html",
+   "publisher_key": "https://proceedings.mlr.press/v48/mniha16.html",
+   "citations": null,
+   "source": "pmlr-index"
+  },
+  {
+   "id": "sac",
+   "directions": [
+    "rl"
+   ],
+   "title": "Soft Actor-Critic: Off-Policy Maximum Entropy Deep Reinforcement Learning with a Stochastic Actor",
+   "authors": [
+    "Tuomas Haarnoja",
+    "Aurick Zhou",
+    "Pieter Abbeel",
+    "Sergey Levine"
+   ],
+   "year": 2018,
+   "venue": "ICML",
+   "doi": null,
+   "official_url": "https://proceedings.mlr.press/v80/haarnoja18b.html",
+   "publisher_key": "https://proceedings.mlr.press/v80/haarnoja18b.html",
+   "citations": null,
+   "source": "pmlr-index"
+  },
+  {
+   "id": "doubleq",
+   "title": "Double Q-learning",
+   "authors": [
+    "Hado V. Hasselt"
+   ],
+   "year": 2010,
+   "venue": "NeurIPS",
+   "doi": null,
+   "official_url": "https://proceedings.neurips.cc/paper_files/paper/2010/hash/091d584fced301b442654dd8c23b3fc9-Abstract.html",
+   "publisher_key": "https://proceedings.neurips.cc/paper_files/paper/2010/hash/091d584fced301b442654dd8c23b3fc9-Abstract.html",
+   "citations": null,
+   "source": "neurips-index",
+   "directions": [
+    "rl"
+   ]
+  },
+  {
+   "id": "qlearning",
+   "title": "Q-learning",
+   "authors": [
+    "Christopher J. C. H. Watkins",
+    "Peter Dayan"
+   ],
+   "year": 1992,
+   "venue": "Machine Learning",
+   "doi": "10.1007/BF00992698",
+   "official_url": "https://doi.org/10.1007/BF00992698",
+   "publisher_key": "https://doi.org/10.1007/BF00992698",
+   "citations": 9083,
+   "source": "crossref",
+   "directions": [
+    "rl"
+   ]
+  },
+  {
+   "id": "dueling",
+   "title": "Dueling Network Architectures for Deep Reinforcement Learning",
+   "authors": [
+    "Ziyu Wang",
+    "Tom Schaul",
+    "Matteo Hessel",
+    "Hado Hasselt",
+    "Marc Lanctot",
+    "Nando Freitas"
+   ],
+   "year": 2016,
+   "venue": "ICML",
+   "doi": null,
+   "official_url": "https://proceedings.mlr.press/v48/wangf16.html",
+   "publisher_key": "https://proceedings.mlr.press/v48/wangf16.html",
+   "citations": null,
+   "source": "pmlr-index",
+   "directions": [
+    "rl"
+   ]
+  },
+  {
+   "id": "word2vec",
+   "title": "Distributed Representations of Words and Phrases and their Compositionality",
+   "authors": [
+    "Tomas Mikolov",
+    "Ilya Sutskever",
+    "Kai Chen",
+    "Greg S Corrado",
+    "Jeff Dean"
+   ],
+   "year": 2013,
+   "venue": "NeurIPS",
+   "doi": null,
+   "official_url": "https://proceedings.neurips.cc/paper_files/paper/2013/hash/9aa42b31882ec039965f3c4923ce901b-Abstract.html",
+   "publisher_key": "https://proceedings.neurips.cc/paper_files/paper/2013/hash/9aa42b31882ec039965f3c4923ce901b-Abstract.html",
+   "citations": null,
+   "source": "neurips-index",
+   "directions": [
+    "nlp",
+    "dl"
+   ]
+  },
+  {
+   "id": "seq2seq",
+   "title": "Sequence to Sequence Learning with Neural Networks",
+   "authors": [
+    "Ilya Sutskever",
+    "Oriol Vinyals",
+    "Quoc V Le"
+   ],
+   "year": 2014,
+   "venue": "NeurIPS",
+   "doi": null,
+   "official_url": "https://proceedings.neurips.cc/paper_files/paper/2014/hash/5a18e133cbf9f257297f410bb7eca942-Abstract.html",
+   "publisher_key": "https://proceedings.neurips.cc/paper_files/paper/2014/hash/5a18e133cbf9f257297f410bb7eca942-Abstract.html",
+   "citations": null,
+   "source": "neurips-index",
+   "directions": [
+    "nlp",
+    "dl"
+   ]
+  },
+  {
+   "id": "glove",
+   "title": "Glove: Global Vectors for Word Representation",
+   "authors": [
+    "Jeffrey Pennington",
+    "Richard Socher",
+    "Christopher Manning"
+   ],
+   "year": 2014,
+   "venue": "EMNLP",
+   "doi": "10.3115/v1/D14-1162",
+   "official_url": "https://doi.org/10.3115/v1/D14-1162",
+   "publisher_key": "https://doi.org/10.3115/v1/D14-1162",
+   "citations": null,
+   "source": "crossref",
+   "directions": [
+    "nlp"
+   ]
+  },
+  {
+   "id": "bart",
+   "title": "BART: Denoising Sequence-to-Sequence Pre-training for Natural Language Generation, Translation, and Comprehension",
+   "authors": [
+    "Mike Lewis",
+    "Yinhan Liu",
+    "Naman Goyal",
+    "Marjan Ghazvininejad",
+    "Abdelrahman Mohamed",
+    "Omer Levy",
+    "Veselin Stoyanov",
+    "Luke Zettlemoyer"
+   ],
+   "year": 2020,
+   "venue": "ACL",
+   "doi": "10.18653/v1/2020.acl-main.703",
+   "official_url": "https://doi.org/10.18653/v1/2020.acl-main.703",
+   "publisher_key": "https://doi.org/10.18653/v1/2020.acl-main.703",
+   "citations": null,
+   "source": "crossref",
+   "directions": [
+    "nlp",
+    "llm"
+   ]
+  },
+  {
+   "id": "pagerank",
+   "title": "The anatomy of a large-scale hypertextual Web search engine",
+   "authors": [
+    "Sergey Brin",
+    "Lawrence Page"
+   ],
+   "year": 1998,
+   "venue": "WWW",
+   "doi": "10.1016/S0169-7552(98)00110-X",
+   "official_url": "https://doi.org/10.1016/S0169-7552(98)00110-X",
+   "publisher_key": "https://doi.org/10.1016/S0169-7552(98)00110-X",
+   "citations": 16004,
+   "source": "crossref",
+   "directions": [
+    "retrieval"
+   ]
+  },
+  {
+   "id": "hnsw",
+   "title": "Efficient and Robust Approximate Nearest Neighbor Search Using Hierarchical Navigable Small World Graphs",
+   "authors": [
+    "Yu A. Malkov",
+    "D. A. Yashunin"
+   ],
+   "year": 2020,
+   "venue": "TPAMI",
+   "doi": "10.1109/TPAMI.2018.2889473",
+   "official_url": "https://doi.org/10.1109/TPAMI.2018.2889473",
+   "publisher_key": "https://doi.org/10.1109/TPAMI.2018.2889473",
+   "citations": 1910,
+   "source": "crossref",
+   "directions": [
+    "retrieval"
+   ]
+  },
+  {
+   "id": "dpr",
+   "title": "Dense Passage Retrieval for Open-Domain Question Answering",
+   "authors": [
+    "Vladimir Karpukhin",
+    "Barlas Oguz",
+    "Sewon Min",
+    "Patrick Lewis",
+    "Ledell Wu",
+    "Sergey Edunov",
+    "Danqi Chen",
+    "Wen-tau Yih"
+   ],
+   "year": 2020,
+   "venue": "EMNLP",
+   "doi": "10.18653/v1/2020.emnlp-main.550",
+   "official_url": "https://doi.org/10.18653/v1/2020.emnlp-main.550",
+   "publisher_key": "https://doi.org/10.18653/v1/2020.emnlp-main.550",
+   "citations": null,
+   "source": "crossref",
+   "directions": [
+    "retrieval"
+   ]
+  },
+  {
+   "id": "deeprlhf",
+   "title": "Deep Reinforcement Learning from Human Preferences",
+   "authors": [
+    "Paul F Christiano",
+    "Jan Leike",
+    "Tom Brown",
+    "Miljan Martic",
+    "Shane Legg",
+    "Dario Amodei"
+   ],
+   "year": 2017,
+   "venue": "NeurIPS",
+   "doi": null,
+   "official_url": "https://proceedings.neurips.cc/paper_files/paper/2017/hash/d5e2c0adad503c91f91df240d0cd4e49-Abstract.html",
+   "publisher_key": "https://proceedings.neurips.cc/paper_files/paper/2017/hash/d5e2c0adad503c91f91df240d0cd4e49-Abstract.html",
+   "citations": null,
+   "source": "neurips-index",
+   "directions": [
+    "alignment",
+    "rl"
+   ]
+  },
+  {
+   "id": "randomforests",
+   "title": "Random Forests",
+   "authors": [
+    "Leo Breiman"
+   ],
+   "year": 2001,
+   "venue": "Machine Learning",
+   "doi": "10.1023/A:1010933404324",
+   "official_url": "https://doi.org/10.1023/A:1010933404324",
+   "publisher_key": "https://doi.org/10.1023/A:1010933404324",
+   "citations": 133155,
+   "source": "crossref",
+   "directions": [
+    "ml"
+   ]
+  },
+  {
+   "id": "adaboost",
+   "title": "A Decision-Theoretic Generalization of On-Line Learning and an Application to Boosting",
+   "authors": [
+    "Yoav Freund",
+    "Robert E Schapire"
+   ],
+   "year": 1997,
+   "venue": "JCSS",
+   "doi": "10.1006/jcss.1997.1504",
+   "official_url": "https://doi.org/10.1006/jcss.1997.1504",
+   "publisher_key": "https://doi.org/10.1006/jcss.1997.1504",
+   "citations": 20471,
+   "source": "crossref",
+   "directions": [
+    "ml"
+   ]
+  },
+  {
+   "id": "batchnorm",
+   "title": "Batch Normalization: Accelerating Deep Network Training by Reducing Internal Covariate Shift",
+   "authors": [
+    "Sergey Ioffe",
+    "Christian Szegedy"
+   ],
+   "year": 2015,
+   "venue": "ICML",
+   "doi": null,
+   "official_url": "https://proceedings.mlr.press/v37/ioffe15.html",
+   "publisher_key": "https://proceedings.mlr.press/v37/ioffe15.html",
+   "citations": null,
+   "source": "pmlr-index",
+   "directions": [
+    "ml",
+    "dl"
+   ]
+  },
+  {
+   "id": "dropout",
+   "title": "Dropout: A Simple Way to Prevent Neural Networks from Overfitting",
+   "authors": [
+    "Nitish Srivastava",
+    "Geoffrey Hinton",
+    "Alex Krizhevsky",
+    "Ilya Sutskever",
+    "Ruslan Salakhutdinov"
+   ],
+   "year": 2014,
+   "venue": "JMLR",
+   "doi": null,
+   "official_url": "https://jmlr.org/papers/v15/srivastava14a.html",
+   "publisher_key": "https://jmlr.org/papers/v15/srivastava14a.html",
+   "citations": null,
+   "source": "official-meta",
+   "directions": [
+    "ml",
+    "dl"
+   ]
+  },
+  {
+   "id": "rnn",
+   "title": "On the difficulty of training recurrent neural networks",
+   "authors": [
+    "Razvan Pascanu",
+    "Tomas Mikolov",
+    "Yoshua Bengio"
+   ],
+   "year": 2013,
+   "venue": "ICML",
+   "doi": null,
+   "official_url": "https://proceedings.mlr.press/v28/pascanu13.html",
+   "publisher_key": "https://proceedings.mlr.press/v28/pascanu13.html",
+   "citations": null,
+   "source": "pmlr-index",
+   "directions": [
+    "ml",
+    "dl"
+   ]
+  },
+  {
+   "id": "secureml",
+   "title": "SecureML: A System for Scalable Privacy-Preserving Machine Learning",
+   "authors": [
+    "Payman Mohassel",
+    "Yupeng Zhang"
+   ],
+   "year": 2017,
+   "venue": "S&P",
+   "doi": "10.1109/SP.2017.12",
+   "official_url": "https://doi.org/10.1109/SP.2017.12",
+   "publisher_key": "https://doi.org/10.1109/SP.2017.12",
+   "citations": 1937,
+   "source": "crossref",
+   "directions": [
+    "federated",
+    "security"
+   ]
+  },
+  {
+   "id": "secagg",
+   "title": "Practical Secure Aggregation for Privacy-Preserving Machine Learning",
+   "authors": [
+    "Keith Bonawitz",
+    "Vladimir Ivanov",
+    "Ben Kreuter",
+    "Antonio Marcedone",
+    "H. Brendan McMahan",
+    "Sarvar Patel",
+    "Daniel Ramage",
+    "Aaron Segal",
+    "Karn Seth"
+   ],
+   "year": 2017,
+   "venue": "CCS",
+   "doi": "10.1145/3133956.3133982",
+   "official_url": "https://doi.org/10.1145/3133956.3133982",
+   "publisher_key": "https://doi.org/10.1145/3133956.3133982",
+   "citations": 3962,
+   "source": "crossref",
+   "directions": [
+    "federated",
+    "security"
+   ]
+  },
+  {
+   "id": "lenet",
+   "title": "Gradient-based learning applied to document recognition",
+   "authors": [
+    "Y. Lecun",
+    "L. Bottou",
+    "Y. Bengio",
+    "P. Haffner"
+   ],
+   "year": 1998,
+   "venue": "Proc. IEEE",
+   "doi": "10.1109/5.726791",
+   "official_url": "https://doi.org/10.1109/5.726791",
+   "publisher_key": "https://doi.org/10.1109/5.726791",
+   "citations": 58790,
+   "source": "crossref",
+   "directions": [
+    "dl",
+    "cv"
+   ]
+  },
+  {
+   "id": "lstm",
+   "title": "Long Short-Term Memory",
+   "authors": [
+    "Sepp Hochreiter",
+    "Jürgen Schmidhuber"
+   ],
+   "year": 1997,
+   "venue": "Neural Computation",
+   "doi": "10.1162/neco.1997.9.8.1735",
+   "official_url": "https://doi.org/10.1162/neco.1997.9.8.1735",
+   "publisher_key": "https://doi.org/10.1162/neco.1997.9.8.1735",
+   "citations": 102402,
+   "source": "crossref",
+   "directions": [
+    "dl"
+   ]
+  },
+  {
+   "id": "dbn",
+   "title": "A Fast Learning Algorithm for Deep Belief Nets",
+   "authors": [
+    "Geoffrey E. Hinton",
+    "Simon Osindero",
+    "Yee-Whye Teh"
+   ],
+   "year": 2006,
+   "venue": "Neural Computation",
+   "doi": "10.1162/neco.2006.18.7.1527",
+   "official_url": "https://doi.org/10.1162/neco.2006.18.7.1527",
+   "publisher_key": "https://doi.org/10.1162/neco.2006.18.7.1527",
+   "citations": 16335,
+   "source": "crossref",
+   "directions": [
+    "dl"
+   ]
+  },
+  {
+   "id": "strips",
+   "title": "Strips: A new approach to the application of theorem proving to problem solving",
+   "authors": [
+    "Richard E. Fikes",
+    "Nils J. Nilsson"
+   ],
+   "year": 1971,
+   "venue": "AI",
+   "doi": "10.1016/0004-3702(71)90010-5",
+   "official_url": "https://doi.org/10.1016/0004-3702(71)90010-5",
+   "publisher_key": "https://doi.org/10.1016/0004-3702(71)90010-5",
+   "citations": 4880,
+   "source": "crossref",
+   "directions": [
+    "ai"
+   ]
+  },
+  {
+   "id": "tms",
+   "title": "A truth maintenance system",
+   "authors": [
+    "Jon Doyle"
+   ],
+   "year": 1979,
+   "venue": "AI",
+   "doi": "10.1016/0004-3702(79)90008-0",
+   "official_url": "https://doi.org/10.1016/0004-3702(79)90008-0",
+   "publisher_key": "https://doi.org/10.1016/0004-3702(79)90008-0",
+   "citations": 1784,
+   "source": "crossref",
+   "directions": [
+    "ai"
+   ]
+  },
+  {
+   "id": "imagenet",
+   "title": "ImageNet: A large-scale hierarchical image database",
+   "authors": [
+    "Jia Deng",
+    "Wei Dong",
+    "Richard Socher",
+    "Li-Jia Li",
+    "Kai Li",
+    "Li Fei-Fei"
+   ],
+   "year": 2009,
+   "venue": "CVPR",
+   "doi": "10.1109/CVPR.2009.5206848",
+   "official_url": "https://doi.org/10.1109/CVPR.2009.5206848",
+   "publisher_key": "https://doi.org/10.1109/CVPR.2009.5206848",
+   "citations": 65349,
+   "source": "crossref",
+   "directions": [
+    "ai",
+    "cv"
+   ]
+  },
+  {
+   "id": "knowledgelevel",
+   "title": "The knowledge level",
+   "authors": [
+    "Allen Newell"
+   ],
+   "year": 1982,
+   "venue": "AI",
+   "doi": "10.1016/0004-3702(82)90012-1",
+   "official_url": "https://doi.org/10.1016/0004-3702(82)90012-1",
+   "publisher_key": "https://doi.org/10.1016/0004-3702(82)90012-1",
+   "citations": 2589,
+   "source": "crossref",
+   "directions": [
+    "ai"
+   ]
+  },
+  {
+   "id": "tangiblebits",
+   "title": "Tangible bits: towards seamless interfaces between people, bits and atoms",
+   "authors": [
+    "Hiroshi Ishii",
+    "Brygg Ullmer"
+   ],
+   "year": 1997,
+   "venue": "CHI",
+   "doi": "10.1145/258549.258715",
+   "official_url": "https://doi.org/10.1145/258549.258715",
+   "publisher_key": "https://doi.org/10.1145/258549.258715",
+   "citations": 3853,
+   "source": "crossref",
+   "directions": [
+    "hci"
+   ]
+  },
+  {
+   "id": "crowdsourcing",
+   "title": "Crowdsourcing user studies with Mechanical Turk",
+   "authors": [
+    "Aniket Kittur",
+    "Ed H. Chi",
+    "Bongwon Suh"
+   ],
+   "year": 2008,
+   "venue": "CHI",
+   "doi": "10.1145/1357054.1357127",
+   "official_url": "https://doi.org/10.1145/1357054.1357127",
+   "publisher_key": "https://doi.org/10.1145/1357054.1357127",
+   "citations": 1941,
+   "source": "crossref",
+   "directions": [
+    "hci"
+   ]
+  },
+  {
+   "id": "soylent",
+   "title": "Soylent: a word processor with a crowd inside",
+   "authors": [
+    "Michael S. Bernstein",
+    "Greg Little",
+    "Robert C. Miller",
+    "Björn Hartmann",
+    "Mark S. Ackerman",
+    "David R. Karger",
+    "David Crowell",
+    "Katrina Panovich"
+   ],
+   "year": 2010,
+   "venue": "UIST",
+   "doi": "10.1145/1866029.1866078",
+   "official_url": "https://doi.org/10.1145/1866029.1866078",
+   "publisher_key": "https://doi.org/10.1145/1866029.1866078",
+   "citations": 686,
+   "source": "crossref",
+   "directions": [
+    "hci"
+   ]
+  },
+  {
+   "id": "infovis",
+   "title": "The information visualizer, an information workspace",
+   "authors": [
+    "Stuart K. Card",
+    "George G. Robertson",
+    "Jock D. Mackinlay"
+   ],
+   "year": 1991,
+   "venue": "CHI",
+   "doi": "10.1145/108844.108874",
+   "official_url": "https://dl.acm.org/doi/10.1145/108844.108874",
+   "publisher_key": "https://dl.acm.org/doi/10.1145/108844.108874",
+   "citations": 711,
+   "source": "crossref",
+   "directions": [
+    "hci"
+   ]
+  },
+  {
+   "id": "gan",
+   "title": "Generative Adversarial Nets",
+   "authors": [
+    "Ian J. Goodfellow",
+    "Jean Pouget-Abadie",
+    "Mehdi Mirza",
+    "Bing Xu",
+    "David Warde-Farley",
+    "Sherjil Ozair",
+    "Aaron Courville",
+    "Yoshua Bengio"
+   ],
+   "year": 2014,
+   "venue": "NeurIPS",
+   "doi": null,
+   "official_url": "https://proceedings.neurips.cc/paper_files/paper/2014/hash/f033ed80deb0234979a61f95710dbe25-Abstract.html",
+   "publisher_key": "https://proceedings.neurips.cc/paper_files/paper/2014/hash/f033ed80deb0234979a61f95710dbe25-Abstract.html",
+   "citations": null,
+   "source": "neurips-index",
+   "directions": [
+    "generative",
+    "dl"
+   ]
+  },
+  {
+   "id": "pix2pix",
+   "title": "Image-to-Image Translation with Conditional Adversarial Networks",
+   "authors": [
+    "Phillip Isola",
+    "Jun-Yan Zhu",
+    "Tinghui Zhou",
+    "Alexei A. Efros"
+   ],
+   "year": 2017,
+   "venue": "CVPR",
+   "doi": "10.1109/CVPR.2017.632",
+   "official_url": "https://doi.org/10.1109/CVPR.2017.632",
+   "publisher_key": "https://doi.org/10.1109/CVPR.2017.632",
+   "citations": 22943,
+   "source": "crossref",
+   "directions": [
+    "generative",
+    "cv"
+   ]
+  },
+  {
+   "id": "cyclegan",
+   "title": "Unpaired Image-to-Image Translation Using Cycle-Consistent Adversarial Networks",
+   "authors": [
+    "Jun-Yan Zhu",
+    "Taesung Park",
+    "Phillip Isola",
+    "Alexei A. Efros"
+   ],
+   "year": 2017,
+   "venue": "ICCV",
+   "doi": "10.1109/ICCV.2017.244",
+   "official_url": "https://doi.org/10.1109/ICCV.2017.244",
+   "publisher_key": "https://doi.org/10.1109/ICCV.2017.244",
+   "citations": 23608,
+   "source": "crossref",
+   "directions": [
+    "generative",
+    "cv"
+   ]
+  },
+  {
+   "id": "stylegan",
+   "title": "A Style-Based Generator Architecture for Generative Adversarial Networks",
+   "authors": [
+    "Tero Karras",
+    "Samuli Laine",
+    "Timo Aila"
+   ],
+   "year": 2019,
+   "venue": "CVPR",
+   "doi": "10.1109/CVPR.2019.00453",
+   "official_url": "https://doi.org/10.1109/CVPR.2019.00453",
+   "publisher_key": "https://doi.org/10.1109/CVPR.2019.00453",
+   "citations": 11727,
+   "source": "crossref",
+   "directions": [
+    "generative",
+    "cv"
+   ]
+  },
+  {
+   "id": "ldm",
+   "title": "High-Resolution Image Synthesis with Latent Diffusion Models",
+   "authors": [
+    "Robin Rombach",
+    "Andreas Blattmann",
+    "Dominik Lorenz",
+    "Patrick Esser",
+    "Bjorn Ommer"
+   ],
+   "year": 2022,
+   "venue": "CVPR",
+   "doi": "10.1109/CVPR52688.2022.01042",
+   "official_url": "https://doi.org/10.1109/CVPR52688.2022.01042",
+   "publisher_key": "https://doi.org/10.1109/CVPR52688.2022.01042",
+   "citations": 16803,
+   "source": "crossref",
+   "directions": [
+    "generative",
+    "cv"
+   ]
+  },
+  {
+   "id": "gfs",
+   "title": "The Google file system",
+   "authors": [
+    "Sanjay Ghemawat",
+    "Howard Gobioff",
+    "Shun-Tak Leung"
+   ],
+   "year": 2003,
+   "venue": "SOSP",
+   "doi": "10.1145/945445.945450",
+   "official_url": "https://doi.org/10.1145/945445.945450",
+   "publisher_key": "https://doi.org/10.1145/945445.945450",
+   "citations": 1423,
+   "source": "crossref",
+   "directions": [
+    "systems"
+   ]
+  },
+  {
+   "id": "mapreduce",
+   "title": "{MapReduce}: Simplified Data Processing on Large Clusters",
+   "authors": [
+    "Jeffrey Dean",
+    "Sanjay Ghemawat"
+   ],
+   "year": 2004,
+   "venue": "OSDI",
+   "doi": null,
+   "official_url": "https://www.usenix.org/conference/osdi-04/mapreduce-simplified-data-processing-large-clusters",
+   "publisher_key": "https://www.usenix.org/conference/osdi-04/mapreduce-simplified-data-processing-large-clusters",
+   "citations": null,
+   "source": "official-meta",
+   "directions": [
+    "systems"
+   ]
+  },
+  {
+   "id": "bigtable",
+   "title": "Bigtable: A Distributed Storage System for Structured Data",
+   "authors": [
+    "Fay Chang",
+    "Jeffrey Dean",
+    "Sanjay Ghemawat",
+    "Wilson C. Hsieh",
+    "Deborah A. Wallach",
+    "Mike Burrows",
+    "Tushar Chandra",
+    "Andrew Fikes",
+    "Robert E. Gruber"
+   ],
+   "year": 2006,
+   "venue": "OSDI",
+   "doi": null,
+   "official_url": "https://www.usenix.org/conference/osdi-06/bigtable-distributed-storage-system-structured-data",
+   "publisher_key": "https://www.usenix.org/conference/osdi-06/bigtable-distributed-storage-system-structured-data",
+   "citations": null,
+   "source": "official-meta",
+   "directions": [
+    "systems"
+   ]
+  },
+  {
+   "id": "spanner",
+   "title": "Spanner: {Google’s} {Globally-Distributed} Database",
+   "authors": [
+    "James C. Corbett",
+    "Jeffrey Dean",
+    "Michael Epstein",
+    "Andrew Fikes",
+    "Christopher Frost",
+    "JJ Furman",
+    "Sanjay Ghemawat",
+    "Andrey Gubarev",
+    "Christopher Heiser",
+    "Peter Hochschild",
+    "Wilson Hsieh",
+    "Sebastian Kanthak",
+    "Eugene Kogan",
+    "Hongyi Li",
+    "Alexander Lloyd",
+    "Sergey Melnik",
+    "David Mwaura",
+    "David Nagle",
+    "Sean Quinlan",
+    "Rajesh Rao",
+    "Lindsay Rolig",
+    "Yasushi Saito",
+    "Michal Szymaniak",
+    "Christopher Taylor",
+    "Ruth Wang",
+    "Dale Woodford"
+   ],
+   "year": 2012,
+   "venue": "OSDI",
+   "doi": null,
+   "official_url": "https://www.usenix.org/conference/osdi12/technical-sessions/presentation/corbett",
+   "publisher_key": "https://www.usenix.org/conference/osdi12/technical-sessions/presentation/corbett",
+   "citations": null,
+   "source": "official-meta",
+   "directions": [
+    "systems"
+   ]
+  },
+  {
+   "id": "raft",
+   "title": "In Search of an Understandable Consensus Algorithm",
+   "authors": [
+    "Diego Ongaro",
+    "John Ousterhout"
+   ],
+   "year": 2014,
+   "venue": "ACM SIGOPS ATC",
+   "doi": null,
+   "official_url": "https://www.usenix.org/conference/atc14/technical-sessions/presentation/ongaro",
+   "publisher_key": "https://www.usenix.org/conference/atc14/technical-sessions/presentation/ongaro",
+   "citations": null,
+   "source": "official-meta",
+   "directions": [
+    "systems"
+   ]
+  },
+  {
+   "id": "zookeeper",
+   "title": "{ZooKeeper}: Wait-free Coordination for Internet-scale Systems",
+   "authors": [
+    "Patrick Hunt",
+    "Mahadev Konar",
+    "Flavio P. Junqueira",
+    "Benjamin Reed"
+   ],
+   "year": 2010,
+   "venue": "ACM SIGOPS ATC",
+   "doi": null,
+   "official_url": "https://www.usenix.org/conference/usenix-atc-10/zookeeper-wait-free-coordination-internet-scale-systems",
+   "publisher_key": "https://www.usenix.org/conference/usenix-atc-10/zookeeper-wait-free-coordination-internet-scale-systems",
+   "citations": null,
+   "source": "official-meta",
+   "directions": [
+    "systems"
+   ]
+  },
+  {
+   "id": "dynamo",
+   "title": "Dynamo: amazon's highly available key-value store",
+   "authors": [
+    "Giuseppe DeCandia",
+    "Deniz Hastorun",
+    "Madan Jampani",
+    "Gunavardhan Kakulapati",
+    "Avinash Lakshman",
+    "Alex Pilchin",
+    "Swaminathan Sivasubramanian",
+    "Peter Vosshall",
+    "Werner Vogels"
+   ],
+   "year": 2007,
+   "venue": "SOSP",
+   "doi": "10.1145/1294261.1294281",
+   "official_url": "https://doi.org/10.1145/1294261.1294281",
+   "publisher_key": "https://doi.org/10.1145/1294261.1294281",
+   "citations": 3444,
+   "source": "crossref",
+   "directions": [
+    "systems"
+   ]
+  },
+  {
+   "id": "spark",
+   "title": "Resilient Distributed Datasets: A {Fault-Tolerant} Abstraction for {In-Memory} Cluster Computing",
+   "authors": [
+    "Matei Zaharia",
+    "Mosharaf Chowdhury",
+    "Tathagata Das",
+    "Ankur Dave",
+    "Justin Ma",
+    "Murphy McCauly",
+    "Michael J. Franklin",
+    "Scott Shenker",
+    "Ion Stoica"
+   ],
+   "year": 2012,
+   "venue": "NSDI",
+   "doi": null,
+   "official_url": "https://www.usenix.org/conference/nsdi12/technical-sessions/presentation/zaharia",
+   "publisher_key": "https://www.usenix.org/conference/nsdi12/technical-sessions/presentation/zaharia",
+   "citations": null,
+   "source": "official-meta",
+   "directions": [
+    "systems"
+   ]
+  },
+  {
+   "id": "gcn",
+   "title": "Semi-Supervised Classification with Graph Convolutional Networks",
+   "authors": [
+    "Thomas N. Kipf",
+    "Max Welling"
+   ],
+   "year": 2016,
+   "venue": "ICLR",
+   "doi": null,
+   "official_url": "https://openreview.net/forum?id=SJU4ayYgl",
+   "publisher_key": "https://openreview.net/forum?id=SJU4ayYgl",
+   "citations": null,
+   "source": "arxiv",
+   "directions": [
+    "graph"
+   ]
+  },
+  {
+   "id": "graphsage",
+   "title": "Inductive Representation Learning on Large Graphs",
+   "authors": [
+    "Will Hamilton",
+    "Zhitao Ying",
+    "Jure Leskovec"
+   ],
+   "year": 2017,
+   "venue": "NeurIPS",
+   "doi": null,
+   "official_url": "https://proceedings.neurips.cc/paper_files/paper/2017/hash/5dd9db5e033da9c6fb5ba83c7a7ebea9-Abstract.html",
+   "publisher_key": "https://proceedings.neurips.cc/paper_files/paper/2017/hash/5dd9db5e033da9c6fb5ba83c7a7ebea9-Abstract.html",
+   "citations": null,
+   "source": "neurips-index",
+   "directions": [
+    "graph"
+   ]
+  },
+  {
+   "id": "transe",
+   "title": "Translating Embeddings for Modeling Multi-relational Data",
+   "authors": [
+    "Antoine Bordes",
+    "Nicolas Usunier",
+    "Alberto Garcia-Duran",
+    "Jason Weston",
+    "Oksana Yakhnenko"
+   ],
+   "year": 2013,
+   "venue": "NeurIPS",
+   "doi": null,
+   "official_url": "https://proceedings.neurips.cc/paper_files/paper/2013/hash/1cecc7a77928ca8133fa24680a88d2f9-Abstract.html",
+   "publisher_key": "https://proceedings.neurips.cc/paper_files/paper/2013/hash/1cecc7a77928ca8133fa24680a88d2f9-Abstract.html",
+   "citations": null,
+   "source": "neurips-index",
+   "directions": [
+    "graph"
+   ]
+  },
+  {
+   "id": "e2e",
+   "title": "End-to-end arguments in system design",
+   "authors": [
+    "J. H. Saltzer",
+    "D. P. Reed",
+    "D. D. Clark"
+   ],
+   "year": 1984,
+   "venue": "TOCS",
+   "doi": "10.1145/357401.357402",
+   "official_url": "https://doi.org/10.1145/357401.357402",
+   "publisher_key": "https://doi.org/10.1145/357401.357402",
+   "citations": 86,
+   "source": "crossref",
+   "directions": [
+    "network",
+    "systems"
+   ]
+  },
+  {
+   "id": "chord",
+   "title": "Chord: A scalable peer-to-peer lookup service for internet applications",
+   "authors": [
+    "Ion Stoica",
+    "Robert Morris",
+    "David Karger",
+    "M. Frans Kaashoek",
+    "Hari Balakrishnan"
+   ],
+   "year": 2001,
+   "venue": "SIGCOMM",
+   "doi": "10.1145/383059.383071",
+   "official_url": "https://doi.org/10.1145/383059.383071",
+   "publisher_key": "https://doi.org/10.1145/383059.383071",
+   "citations": 9621,
+   "source": "crossref",
+   "directions": [
+    "network"
+   ]
+  },
+  {
+   "id": "dctcp",
+   "title": "Data center TCP (DCTCP)",
+   "authors": [
+    "Mohammad Alizadeh",
+    "Albert Greenberg",
+    "David A. Maltz",
+    "Jitendra Padhye",
+    "Parveen Patel",
+    "Balaji Prabhakar",
+    "Sudipta Sengupta",
+    "Murari Sridharan"
+   ],
+   "year": 2010,
+   "venue": "SIGCOMM",
+   "doi": "10.1145/1851182.1851192",
+   "official_url": "https://doi.org/10.1145/1851182.1851192",
+   "publisher_key": "https://doi.org/10.1145/1851182.1851192",
+   "citations": 1927,
+   "source": "crossref",
+   "directions": [
+    "network"
+   ]
+  },
+  {
+   "id": "vl2",
+   "title": "VL2: a scalable and flexible data center network",
+   "authors": [
+    "Albert Greenberg",
+    "James R. Hamilton",
+    "Navendu Jain",
+    "Srikanth Kandula",
+    "Changhoon Kim",
+    "Parantap Lahiri",
+    "David A. Maltz",
+    "Parveen Patel",
+    "Sudipta Sengupta"
+   ],
+   "year": 2009,
+   "venue": "SIGCOMM",
+   "doi": "10.1145/1592568.1592576",
+   "official_url": "https://doi.org/10.1145/1592568.1592576",
+   "publisher_key": "https://doi.org/10.1145/1592568.1592576",
+   "citations": 2115,
+   "source": "crossref",
+   "directions": [
+    "network"
+   ]
+  },
+  {
+   "id": "raid",
+   "title": "A case for redundant arrays of inexpensive disks (RAID)",
+   "authors": [
+    "David A. Patterson",
+    "Garth Gibson",
+    "Randy H. Katz"
+   ],
+   "year": 1988,
+   "venue": "SIGMOD",
+   "doi": "10.1145/50202.50214",
+   "official_url": "https://doi.org/10.1145/50202.50214",
+   "publisher_key": "https://doi.org/10.1145/50202.50214",
+   "citations": 1444,
+   "source": "crossref",
+   "directions": [
+    "architecture",
+    "systems"
+   ]
+  },
+  {
+   "id": "darksilicon",
+   "title": "Dark silicon and the end of multicore scaling",
+   "authors": [
+    "Hadi Esmaeilzadeh",
+    "Emily Blem",
+    "Renee St. Amant",
+    "Karthikeyan Sankaralingam",
+    "Doug Burger"
+   ],
+   "year": 2011,
+   "venue": "ISCA",
+   "doi": "10.1145/2000064.2000108",
+   "official_url": "https://doi.org/10.1145/2000064.2000108",
+   "publisher_key": "https://doi.org/10.1145/2000064.2000108",
+   "citations": 1633,
+   "source": "crossref",
+   "directions": [
+    "architecture"
+   ]
+  },
+  {
+   "id": "rowhammer",
+   "title": "Flipping bits in memory without accessing them: An experimental study of DRAM disturbance errors",
+   "authors": [
+    "Yoongu Kim",
+    "Ross Daly",
+    "Jeremie Kim",
+    "Chris Fallin",
+    "Ji Hye Lee",
+    "Donghyuk Lee",
+    "Chris Wilkerson",
+    "Konrad Lai",
+    "Onur Mutlu"
+   ],
+   "year": 2014,
+   "venue": "ISCA",
+   "doi": "10.1109/ISCA.2014.6853210",
+   "official_url": "https://doi.org/10.1109/ISCA.2014.6853210",
+   "publisher_key": "https://doi.org/10.1109/ISCA.2014.6853210",
+   "citations": 466,
+   "source": "crossref",
+   "directions": [
+    "architecture",
+    "security"
+   ]
+  },
+  {
+   "id": "tpu",
+   "title": "In-Datacenter Performance Analysis of a Tensor Processing Unit",
+   "authors": [
+    "Norman P. Jouppi",
+    "Cliff Young",
+    "Nishant Patil",
+    "David Patterson",
+    "Gaurav Agrawal",
+    "Raminder Bajwa",
+    "Sarah Bates",
+    "Suresh Bhatia",
+    "Nan Boden",
+    "Al Borchers",
+    "Rick Boyle",
+    "Pierre-luc Cantin",
+    "Clifford Chao",
+    "Chris Clark",
+    "Jeremy Coriell",
+    "Mike Daley",
+    "Matt Dau",
+    "Jeffrey Dean",
+    "Ben Gelb",
+    "Tara Vazir Ghaemmaghami",
+    "Rajendra Gottipati",
+    "William Gulland",
+    "Robert Hagmann",
+    "C. Richard Ho",
+    "Doug Hogberg",
+    "John Hu",
+    "Robert Hundt",
+    "Dan Hurt",
+    "Julian Ibarz",
+    "Aaron Jaffey",
+    "Alek Jaworski",
+    "Alexander Kaplan",
+    "Harshit Khaitan",
+    "Daniel Killebrew",
+    "Andy Koch",
+    "Naveen Kumar",
+    "Steve Lacy",
+    "James Laudon",
+    "James Law",
+    "Diemthu Le",
+    "Chris Leary",
+    "Zhuyuan Liu",
+    "Kyle Lucke",
+    "Alan Lundin",
+    "Gordon MacKean",
+    "Adriana Maggiore",
+    "Maire Mahony",
+    "Kieran Miller",
+    "Rahul Nagarajan",
+    "Ravi Narayanaswami",
+    "Ray Ni",
+    "Kathy Nix",
+    "Thomas Norrie",
+    "Mark Omernick",
+    "Narayana Penukonda",
+    "Andy Phelps",
+    "Jonathan Ross",
+    "Matt Ross",
+    "Amir Salek",
+    "Emad Samadiani",
+    "Chris Severn",
+    "Gregory Sizikov",
+    "Matthew Snelham",
+    "Jed Souter",
+    "Dan Steinberg",
+    "Andy Swing",
+    "Mercedes Tan",
+    "Gregory Thorson",
+    "Bo Tian",
+    "Horia Toma",
+    "Erick Tuttle",
+    "Vijay Vasudevan",
+    "Richard Walter",
+    "Walter Wang",
+    "Eric Wilcox",
+    "Doe Hyun Yoon"
+   ],
+   "year": 2017,
+   "venue": "ISCA",
+   "doi": "10.1145/3079856.3080246",
+   "official_url": "https://doi.org/10.1145/3079856.3080246",
+   "publisher_key": "https://doi.org/10.1145/3079856.3080246",
+   "citations": 4535,
+   "source": "crossref",
+   "directions": [
+    "architecture",
+    "ml"
+   ]
+  },
+  {
+   "id": "newdirections",
+   "title": "New directions in cryptography",
+   "authors": [
+    "W. Diffie",
+    "M. Hellman"
+   ],
+   "year": 1976,
+   "venue": "TIT",
+   "doi": "10.1109/TIT.1976.1055638",
+   "official_url": "https://doi.org/10.1109/TIT.1976.1055638",
+   "publisher_key": "https://doi.org/10.1109/TIT.1976.1055638",
+   "citations": 14713,
+   "source": "crossref",
+   "directions": [
+    "security",
+    "theory"
+   ]
+  },
+  {
+   "id": "diffpriv",
+   "title": "Differential Privacy",
+   "authors": [
+    "Cynthia Dwork"
+   ],
+   "year": 2006,
+   "venue": "ICALP",
+   "doi": "10.1007/11787006_1",
+   "official_url": "https://doi.org/10.1007/11787006_1",
+   "publisher_key": "https://doi.org/10.1007/11787006_1",
+   "citations": 7272,
+   "source": "crossref",
+   "directions": [
+    "security"
+   ]
+  },
+  {
+   "id": "tor",
+   "title": "Tor: The {Second-Generation} Onion Router",
+   "authors": [
+    "Roger Dingledine",
+    "Nick Mathewson",
+    "Paul Syverson"
+   ],
+   "year": 2004,
+   "venue": "USENIX Security",
+   "doi": null,
+   "official_url": "https://www.usenix.org/conference/13th-usenix-security-symposium/tor-second-generation-onion-router",
+   "publisher_key": "https://www.usenix.org/conference/13th-usenix-security-symposium/tor-second-generation-onion-router",
+   "citations": null,
+   "source": "official-meta",
+   "directions": [
+    "security",
+    "network"
+   ]
+  },
+  {
+   "id": "spectre",
+   "title": "Spectre Attacks: Exploiting Speculative Execution",
+   "authors": [
+    "Paul Kocher",
+    "Jann Horn",
+    "Anders Fogh",
+    "Daniel Genkin",
+    "Daniel Gruss",
+    "Werner Haas",
+    "Mike Hamburg",
+    "Moritz Lipp",
+    "Stefan Mangard",
+    "Thomas Prescher",
+    "Michael Schwarz",
+    "Yuval Yarom"
+   ],
+   "year": 2019,
+   "venue": "S&P",
+   "doi": "10.1109/SP.2019.00002",
+   "official_url": "https://doi.org/10.1109/SP.2019.00002",
+   "publisher_key": "https://doi.org/10.1109/SP.2019.00002",
+   "citations": 1846,
+   "source": "crossref",
+   "directions": [
+    "security",
+    "architecture"
+   ]
+  },
+  {
+   "id": "meltdown",
+   "title": "Meltdown: Reading Kernel Memory from User Space",
+   "authors": [
+    "Moritz Lipp",
+    "Michael Schwarz",
+    "Daniel Gruss",
+    "Thomas Prescher",
+    "Werner Haas",
+    "Anders Fogh",
+    "Jann Horn",
+    "Stefan Mangard",
+    "Paul Kocher",
+    "Daniel Genkin",
+    "Yuval Yarom",
+    "Mike Hamburg"
+   ],
+   "year": 2018,
+   "venue": "USENIX Security",
+   "doi": null,
+   "official_url": "https://www.usenix.org/conference/usenixsecurity18/presentation/lipp",
+   "publisher_key": "https://www.usenix.org/conference/usenixsecurity18/presentation/lipp",
+   "citations": null,
+   "source": "official-meta",
+   "directions": [
+    "security",
+    "architecture"
+   ]
+  },
+  {
+   "id": "spin",
+   "title": "The model checker SPIN",
+   "authors": [
+    "G.J. Holzmann"
+   ],
+   "year": 1997,
+   "venue": "TSE",
+   "doi": "10.1109/32.588521",
+   "official_url": "https://doi.org/10.1109/32.588521",
+   "publisher_key": "https://doi.org/10.1109/32.588521",
+   "citations": 3823,
+   "source": "crossref",
+   "directions": [
+    "software"
+   ]
+  },
+  {
+   "id": "sel4",
+   "title": "seL4: formal verification of an OS kernel",
+   "authors": [
+    "Gerwin Klein",
+    "Kevin Elphinstone",
+    "Gernot Heiser",
+    "June Andronick",
+    "David Cock",
+    "Philip Derrin",
+    "Dhammika Elkaduwe",
+    "Kai Engelhardt",
+    "Rafal Kolanski",
+    "Michael Norrish",
+    "Thomas Sewell",
+    "Harvey Tuch",
+    "Simon Winwood"
+   ],
+   "year": 2009,
+   "venue": "SOSP",
+   "doi": "10.1145/1629575.1629596",
+   "official_url": "https://doi.org/10.1145/1629575.1629596",
+   "publisher_key": "https://doi.org/10.1145/1629575.1629596",
+   "citations": 1634,
+   "source": "crossref",
+   "directions": [
+    "software",
+    "systems"
+   ]
+  },
+  {
+   "id": "ironfleet",
+   "title": "IronFleet: proving practical distributed systems correct",
+   "authors": [
+    "Chris Hawblitzel",
+    "Jon Howell",
+    "Manos Kapritsos",
+    "Jacob R. Lorch",
+    "Bryan Parno",
+    "Michael L. Roberts",
+    "Srinath Setty",
+    "Brian Zill"
+   ],
+   "year": 2015,
+   "venue": "SOSP",
+   "doi": "10.1145/2815400.2815428",
+   "official_url": "https://doi.org/10.1145/2815400.2815428",
+   "publisher_key": "https://doi.org/10.1145/2815400.2815428",
+   "citations": 211,
+   "source": "crossref",
+   "directions": [
+    "software",
+    "systems"
+   ]
+  },
+  {
+   "id": "compcert",
+   "title": "Formal certification of a compiler back-end or: programming a compiler with a proof assistant",
+   "authors": [
+    "Xavier Leroy"
+   ],
+   "year": 2006,
+   "venue": "POPL",
+   "doi": "10.1145/1111037.1111042",
+   "official_url": "https://doi.org/10.1145/1111037.1111042",
+   "publisher_key": "https://doi.org/10.1145/1111037.1111042",
+   "citations": 661,
+   "source": "crossref",
+   "directions": [
+    "software"
+   ]
+  },
+  {
+   "id": "klee",
+   "title": "{KLEE}: Unassisted and Automatic Generation of {High-Coverage} Tests for Complex Systems Programs",
+   "authors": [
+    "Cristian Cadar",
+    "Daniel Dunbar",
+    "Dawson Engler"
+   ],
+   "year": 2008,
+   "venue": "OSDI",
+   "doi": null,
+   "official_url": "https://www.usenix.org/conference/osdi-08/klee-unassisted-and-automatic-generation-high-coverage-tests-complex-systems",
+   "publisher_key": "https://www.usenix.org/conference/osdi-08/klee-unassisted-and-automatic-generation-high-coverage-tests-complex-systems",
+   "citations": null,
+   "source": "official-meta",
+   "directions": [
+    "software"
+   ]
+  },
+  {
+   "id": "findingbugs",
+   "title": "Finding bugs is easy",
+   "authors": [
+    "David Hovemeyer",
+    "William Pugh"
+   ],
+   "year": 2004,
+   "venue": "OOPSLA",
+   "doi": "10.1145/1028664.1028717",
+   "official_url": "https://doi.org/10.1145/1028664.1028717",
+   "publisher_key": "https://doi.org/10.1145/1028664.1028717",
+   "citations": null,
+   "source": "crossref",
+   "directions": [
+    "software"
+   ]
+  },
+  {
+   "id": "ctc",
+   "title": "Connectionist temporal classification: labelling unsegmented sequence data with recurrent neural networks",
+   "authors": [
+    "Alex Graves",
+    "Santiago Fernández",
+    "Faustino Gomez",
+    "Jürgen Schmidhuber"
+   ],
+   "year": 2006,
+   "venue": "ICML",
+   "doi": "10.1145/1143844.1143891",
+   "official_url": "https://doi.org/10.1145/1143844.1143891",
+   "publisher_key": "https://doi.org/10.1145/1143844.1143891",
+   "citations": 5364,
+   "source": "crossref",
+   "directions": [
+    "speech",
+    "dl"
+   ]
+  },
+  {
+   "id": "las",
+   "title": "Listen, Attend and Spell",
+   "authors": [
+    "William Chan",
+    "Navdeep Jaitly",
+    "Quoc V. Le",
+    "Oriol Vinyals"
+   ],
+   "year": 2015,
+   "venue": "ICASSP",
+   "doi": "10.1109/ICASSP.2016.7472621",
+   "official_url": "https://doi.org/10.1109/ICASSP.2016.7472621",
+   "publisher_key": "https://doi.org/10.1109/ICASSP.2016.7472621",
+   "citations": 2225,
+   "source": "arxiv",
+   "directions": [
+    "speech"
+   ]
+  },
+  {
+   "id": "deepspeech2",
+   "title": "Deep Speech 2 : End-to-End Speech Recognition in English and Mandarin",
+   "authors": [
+    "Dario Amodei",
+    "Sundaram Ananthanarayanan",
+    "Rishita Anubhai",
+    "Jingliang Bai",
+    "Eric Battenberg",
+    "Carl Case",
+    "Jared Casper",
+    "Bryan Catanzaro",
+    "Qiang Cheng",
+    "Guoliang Chen",
+    "Jie Chen",
+    "Jingdong Chen",
+    "Zhijie Chen",
+    "Mike Chrzanowski",
+    "Adam Coates",
+    "Greg Diamos",
+    "Ke Ding",
+    "Niandong Du",
+    "Erich Elsen",
+    "Jesse Engel",
+    "Weiwei Fang",
+    "Linxi Fan",
+    "Christopher Fougner",
+    "Liang Gao",
+    "Caixia Gong",
+    "Awni Hannun",
+    "Tony Han",
+    "Lappi Johannes",
+    "Bing Jiang",
+    "Cai Ju",
+    "Billy Jun",
+    "Patrick LeGresley",
+    "Libby Lin",
+    "Junjie Liu",
+    "Yang Liu",
+    "Weigao Li",
+    "Xiangang Li",
+    "Dongpeng Ma",
+    "Sharan Narang",
+    "Andrew Ng",
+    "Sherjil Ozair",
+    "Yiping Peng",
+    "Ryan Prenger",
+    "Sheng Qian",
+    "Zongfeng Quan",
+    "Jonathan Raiman",
+    "Vinay Rao",
+    "Sanjeev Satheesh",
+    "David Seetapun",
+    "Shubho Sengupta",
+    "Kavya Srinet",
+    "Anuroop Sriram",
+    "Haiyuan Tang",
+    "Liliang Tang",
+    "Chong Wang",
+    "Jidong Wang",
+    "Kaifu Wang",
+    "Yi Wang",
+    "Zhijian Wang",
+    "Zhiqian Wang",
+    "Shuang Wu",
+    "Likai Wei",
+    "Bo Xiao",
+    "Wen Xie",
+    "Yan Xie",
+    "Dani Yogatama",
+    "Bin Yuan",
+    "Jun Zhan",
+    "Zhenyao Zhu"
+   ],
+   "year": 2016,
+   "venue": "ICML",
+   "doi": null,
+   "official_url": "https://proceedings.mlr.press/v48/amodei16.html",
+   "publisher_key": "https://proceedings.mlr.press/v48/amodei16.html",
+   "citations": null,
+   "source": "pmlr-index",
+   "directions": [
+    "speech",
+    "dl"
+   ]
+  },
+  {
+   "id": "wav2vec2",
+   "title": "wav2vec 2.0: A Framework for Self-Supervised Learning of Speech Representations",
+   "authors": [
+    "Alexei Baevski",
+    "Yuhao Zhou",
+    "Abdelrahman Mohamed",
+    "Michael Auli"
+   ],
+   "year": 2020,
+   "venue": "NeurIPS",
+   "doi": null,
+   "official_url": "https://proceedings.neurips.cc/paper_files/paper/2020/hash/92d1e1eb1cd6f9fba3227870bb6d7f07-Abstract.html",
+   "publisher_key": "https://proceedings.neurips.cc/paper_files/paper/2020/hash/92d1e1eb1cd6f9fba3227870bb6d7f07-Abstract.html",
+   "citations": null,
+   "source": "neurips-index",
+   "directions": [
+    "speech"
+   ]
+  },
+  {
+   "id": "conformer",
+   "title": "Conformer: Convolution-augmented Transformer for Speech Recognition",
+   "authors": [
+    "Anmol Gulati",
+    "James Qin",
+    "Chung-Cheng Chiu",
+    "Niki Parmar",
+    "Yu Zhang",
+    "Jiahui Yu",
+    "Wei Han",
+    "Shibo Wang",
+    "Zhengdong Zhang",
+    "Yonghui Wu",
+    "Ruoming Pang"
+   ],
+   "year": 2020,
+   "venue": "INTER- SPEECH",
+   "doi": "10.21437/Interspeech.2020-3015",
+   "official_url": "https://doi.org/10.21437/Interspeech.2020-3015",
+   "publisher_key": "https://doi.org/10.21437/Interspeech.2020-3015",
+   "citations": 3152,
+   "source": "crossref",
+   "directions": [
+    "speech"
+   ]
+  },
+  {
+   "id": "orbslam",
+   "title": "ORB-SLAM: A Versatile and Accurate Monocular SLAM System",
+   "authors": [
+    "Raul Mur-Artal",
+    "J. M. M. Montiel",
+    "Juan D. Tardos"
+   ],
+   "year": 2015,
+   "venue": "TR",
+   "doi": "10.1109/TRO.2015.2463671",
+   "official_url": "https://doi.org/10.1109/TRO.2015.2463671",
+   "publisher_key": "https://doi.org/10.1109/TRO.2015.2463671",
+   "citations": 6782,
+   "source": "crossref",
+   "directions": [
+    "robotics",
+    "cv"
+   ]
+  },
+  {
+   "id": "orbslam2",
+   "title": "ORB-SLAM2: an Open-Source SLAM System for Monocular, Stereo and RGB-D Cameras",
+   "authors": [
+    "Raul Mur-Artal",
+    "Juan D. Tardos"
+   ],
+   "year": 2016,
+   "venue": "TR",
+   "doi": "10.1109/TRO.2016.2624754",
+   "official_url": "https://doi.org/10.1109/TRO.2016.2624754",
+   "publisher_key": "https://doi.org/10.1109/TRO.2016.2624754",
+   "citations": 3598,
+   "source": "arxiv",
+   "directions": [
+    "robotics",
+    "cv"
+   ]
+  },
+  {
+   "id": "kinectfusion",
+   "title": "KinectFusion: real-time 3D reconstruction and interaction using a moving depth camera",
+   "authors": [
+    "Shahram Izadi",
+    "David Kim",
+    "Otmar Hilliges",
+    "David Molyneaux",
+    "Richard Newcombe",
+    "Pushmeet Kohli",
+    "Jamie Shotton",
+    "Steve Hodges",
+    "Dustin Freeman",
+    "Andrew Davison",
+    "Andrew Fitzgibbon"
+   ],
+   "year": 2011,
+   "venue": "UIST",
+   "doi": "10.1145/2047196.2047270",
+   "official_url": "https://doi.org/10.1145/2047196.2047270",
+   "publisher_key": "https://doi.org/10.1145/2047196.2047270",
+   "citations": 2116,
+   "source": "crossref",
+   "directions": [
+    "robotics",
+    "hci",
+    "cv"
+   ]
+  },
+  {
+   "id": "rrtconnect",
+   "title": "RRT-connect: An efficient approach to single-query path planning",
+   "authors": [
+    "J.J. Kuffner",
+    "S.M. LaValle"
+   ],
+   "year": 2000,
+   "venue": "ICRA",
+   "doi": "10.1109/ROBOT.2000.844730",
+   "official_url": "https://doi.org/10.1109/ROBOT.2000.844730",
+   "publisher_key": "https://doi.org/10.1109/ROBOT.2000.844730",
+   "citations": 3556,
+   "source": "crossref",
+   "directions": [
+    "robotics"
+   ]
+  },
+  {
+   "id": "bwa",
+   "title": "Fast and accurate short read alignment with Burrows–Wheeler transform",
+   "authors": [
+    "Heng Li",
+    "Richard Durbin"
+   ],
+   "year": 2009,
+   "venue": "Bioinformatics",
+   "doi": "10.1093/bioinformatics/btp324",
+   "official_url": "https://doi.org/10.1093/bioinformatics/btp324",
+   "publisher_key": "https://doi.org/10.1093/bioinformatics/btp324",
+   "citations": 58612,
+   "source": "crossref",
+   "directions": [
+    "bioinformatics"
+   ]
+  },
+  {
+   "id": "star",
+   "title": "STAR: ultrafast universal RNA-seq aligner",
+   "authors": [
+    "Alexander Dobin",
+    "Carrie A. Davis",
+    "Felix Schlesinger",
+    "Jorg Drenkow",
+    "Chris Zaleski",
+    "Sonali Jha",
+    "Philippe Batut",
+    "Mark Chaisson",
+    "Thomas R. Gingeras"
+   ],
+   "year": 2013,
+   "venue": "Bioinformatics",
+   "doi": "10.1093/bioinformatics/bts635",
+   "official_url": "https://doi.org/10.1093/bioinformatics/bts635",
+   "publisher_key": "https://doi.org/10.1093/bioinformatics/bts635",
+   "citations": 51647,
+   "source": "crossref",
+   "directions": [
+    "bioinformatics"
+   ]
+  },
+  {
+   "id": "samtools",
+   "title": "The Sequence Alignment/Map format and SAMtools",
+   "authors": [
+    "Heng Li",
+    "Bob Handsaker",
+    "Alec Wysoker",
+    "Tim Fennell",
+    "Jue Ruan",
+    "Nils Homer",
+    "Gabor Marth",
+    "Goncalo Abecasis",
+    "Richard Durbin"
+   ],
+   "year": 2009,
+   "venue": "Bioinformatics",
+   "doi": "10.1093/bioinformatics/btp352",
+   "official_url": "https://doi.org/10.1093/bioinformatics/btp352",
+   "publisher_key": "https://doi.org/10.1093/bioinformatics/btp352",
+   "citations": 62066,
+   "source": "crossref",
+   "directions": [
+    "bioinformatics"
+   ]
+  },
+  {
+   "id": "cook",
+   "title": "The complexity of theorem-proving procedures",
+   "authors": [
+    "Stephen A. Cook"
+   ],
+   "year": 1971,
+   "venue": "STOC",
+   "doi": "10.1145/800157.805047",
+   "official_url": "https://doi.org/10.1145/800157.805047",
+   "publisher_key": "https://doi.org/10.1145/800157.805047",
+   "citations": 6385,
+   "source": "crossref",
+   "directions": [
+    "theory"
+   ]
+  },
+  {
+   "id": "byzantine",
+   "title": "The Byzantine Generals Problem",
+   "authors": [
+    "Leslie Lamport",
+    "Robert Shostak",
+    "Marshall Pease"
+   ],
+   "year": 1982,
+   "venue": "TOPLAS",
+   "doi": "10.1145/357172.357176",
+   "official_url": "https://doi.org/10.1145/357172.357176",
+   "publisher_key": "https://doi.org/10.1145/357172.357176",
+   "citations": 6022,
+   "source": "crossref",
+   "directions": [
+    "theory",
+    "systems"
+   ]
+  },
+  {
+   "id": "snapshots",
+   "title": "Distributed snapshots: determining global states of distributed systems",
+   "authors": [
+    "K. Mani Chandy",
+    "Leslie Lamport"
+   ],
+   "year": 1985,
+   "venue": "TOCS",
+   "doi": "10.1145/214451.214456",
+   "official_url": "https://doi.org/10.1145/214451.214456",
+   "publisher_key": "https://doi.org/10.1145/214451.214456",
+   "citations": 2444,
+   "source": "crossref",
+   "directions": [
+    "theory",
+    "systems"
+   ]
+  },
+  {
+   "id": "paxos",
+   "title": "The part-time parliament",
+   "authors": [
+    "Leslie Lamport"
+   ],
+   "year": 1998,
+   "venue": "TOCS",
+   "doi": "10.1145/279227.279229",
+   "official_url": "https://doi.org/10.1145/279227.279229",
+   "publisher_key": "https://doi.org/10.1145/279227.279229",
+   "citations": 2737,
+   "source": "crossref",
+   "directions": [
+    "theory",
+    "systems"
+   ]
+  },
+  {
+   "id": "zkproofs",
+   "title": "Proofs that yield nothing but their validity or all languages in NP have zero-knowledge proof systems",
+   "authors": [
+    "Oded Goldreich",
+    "Silvio Micali",
+    "Avi Wigderson"
+   ],
+   "year": 1991,
+   "venue": "JACM",
+   "doi": "10.1145/116825.116852",
+   "official_url": "https://doi.org/10.1145/116825.116852",
+   "publisher_key": "https://doi.org/10.1145/116825.116852",
+   "citations": 1350,
+   "source": "crossref",
+   "directions": [
+    "theory",
+    "security"
+   ]
+  },
+  {
+   "id": "rendering",
+   "title": "The rendering equation",
+   "authors": [
+    "James T. Kajiya"
+   ],
+   "year": 1986,
+   "venue": "SIGGRAPH",
+   "doi": "10.1145/15922.15902",
+   "official_url": "https://doi.org/10.1145/15922.15902",
+   "publisher_key": "https://doi.org/10.1145/15922.15902",
+   "citations": 855,
+   "source": "crossref",
+   "directions": [
+    "graphics"
+   ]
+  },
+  {
+   "id": "marchingcubes",
+   "title": "Marching cubes: A high resolution 3D surface construction algorithm",
+   "authors": [
+    "William E. Lorensen",
+    "Harvey E. Cline"
+   ],
+   "year": 1987,
+   "venue": "SIGGRAPH",
+   "doi": "10.1145/37401.37422",
+   "official_url": "https://doi.org/10.1145/37401.37422",
+   "publisher_key": "https://doi.org/10.1145/37401.37422",
+   "citations": 10103,
+   "source": "crossref",
+   "directions": [
+    "graphics"
+   ]
+  },
+  {
+   "id": "poisson",
+   "title": "Poisson image editing",
+   "authors": [
+    "Patrick Pérez",
+    "Michel Gangnet",
+    "Andrew Blake"
+   ],
+   "year": 2003,
+   "venue": "SIGGRAPH",
+   "doi": "10.1145/882262.882269",
+   "official_url": "https://doi.org/10.1145/882262.882269",
+   "publisher_key": "https://doi.org/10.1145/882262.882269",
+   "citations": 1778,
+   "source": "crossref",
+   "directions": [
+    "graphics",
+    "cv"
+   ]
+  },
+  {
+   "id": "quilting",
+   "title": "Image quilting for texture synthesis and transfer",
+   "authors": [
+    "Alexei A. Efros",
+    "William T. Freeman"
+   ],
+   "year": 2001,
+   "venue": "SIGGRAPH",
+   "doi": "10.1145/383259.383296",
+   "official_url": "https://doi.org/10.1145/383259.383296",
+   "publisher_key": "https://doi.org/10.1145/383259.383296",
+   "citations": 2399,
+   "source": "crossref",
+   "directions": [
+    "graphics"
+   ]
+  },
+  {
+   "id": "summarize",
+   "title": "Learning to summarize with human feedback",
+   "authors": [
+    "Nisan Stiennon",
+    "Long Ouyang",
+    "Jeffrey Wu",
+    "Daniel Ziegler",
+    "Ryan Lowe",
+    "Chelsea Voss",
+    "Alec Radford",
+    "Dario Amodei",
+    "Paul F Christiano"
+   ],
+   "year": 2020,
+   "venue": "NeurIPS",
+   "doi": null,
+   "official_url": "https://proceedings.neurips.cc/paper_files/paper/2020/hash/1f89885d556929e98d3ef9b86448f951-Abstract.html",
+   "publisher_key": "https://proceedings.neurips.cc/paper_files/paper/2020/hash/1f89885d556929e98d3ef9b86448f951-Abstract.html",
+   "citations": null,
+   "source": "neurips-index",
+   "directions": [
+    "alignment",
+    "llm"
+   ]
+  },
+  {
+   "id": "beir",
+   "title": "BEIR: A Heterogeneous Benchmark for Zero-shot Evaluation of Information Retrieval Models",
+   "authors": [
+    "Thakur, Nandan",
+    "Reimers, Nils",
+    "Rücklé, Andreas",
+    "Srivastava, Abhishek",
+    "Gurevych, Iryna"
+   ],
+   "year": 2021,
+   "venue": "NeurIPS",
+   "doi": null,
+   "official_url": "https://datasets-benchmarks-proceedings.neurips.cc/paper_files/paper/2021/hash/65b9eea6e1cc6bb9f0cd2a47751a186f-Abstract-round2.html",
+   "publisher_key": "https://datasets-benchmarks-proceedings.neurips.cc/paper_files/paper/2021/hash/65b9eea6e1cc6bb9f0cd2a47751a186f-Abstract-round2.html",
+   "citations": null,
+   "source": "official-meta",
+   "directions": [
+    "retrieval"
+   ]
+  },
+  {
+   "id": "ganleak",
+   "title": "Deep Models Under the GAN: Information Leakage from Collaborative Deep Learning",
+   "authors": [
+    "Briland Hitaj",
+    "Giuseppe Ateniese",
+    "Fernando Perez-Cruz"
+   ],
+   "year": 2017,
+   "venue": "CCS",
+   "doi": "10.1145/3133956.3134012",
+   "official_url": "https://doi.org/10.1145/3133956.3134012",
+   "publisher_key": "https://doi.org/10.1145/3133956.3134012",
+   "citations": 1379,
+   "source": "crossref",
+   "directions": [
+    "federated",
+    "security"
+   ]
+  },
+  {
+   "id": "colbert",
+   "title": "ColBERT: Efficient and Effective Passage Search via Contextualized Late Interaction over BERT",
+   "authors": [
+    "Omar Khattab",
+    "Matei Zaharia"
+   ],
+   "year": 2020,
+   "venue": "SIGIR",
+   "doi": "10.1145/3397271.3401075",
+   "official_url": "https://doi.org/10.1145/3397271.3401075",
+   "publisher_key": "https://doi.org/10.1145/3397271.3401075",
+   "citations": 1276,
+   "source": "crossref",
+   "directions": [
+    "retrieval"
+   ]
+  },
+  {
+   "id": "deepwalk",
+   "title": "DeepWalk: online learning of social representations",
+   "authors": [
+    "Bryan Perozzi",
+    "Rami Al-Rfou",
+    "Steven Skiena"
+   ],
+   "year": 2014,
+   "venue": "SIGKDD",
+   "doi": "10.1145/2623330.2623732",
+   "official_url": "https://doi.org/10.1145/2623330.2623732",
+   "publisher_key": "https://doi.org/10.1145/2623330.2623732",
+   "citations": 10124,
+   "source": "crossref",
+   "directions": [
+    "graph"
+   ]
+  },
+  {
+   "id": "node2vec",
+   "title": "node2vec: Scalable Feature Learning for Networks",
+   "authors": [
+    "Aditya Grover",
+    "Jure Leskovec"
+   ],
+   "year": 2016,
+   "venue": "SIGKDD",
+   "doi": "10.1145/2939672.2939754",
+   "official_url": "https://doi.org/10.1145/2939672.2939754",
+   "publisher_key": "https://doi.org/10.1145/2939672.2939754",
+   "citations": 10778,
+   "source": "crossref",
+   "directions": [
+    "graph"
+   ]
+  },
+  {
+   "id": "xgboost",
+   "title": "XGBoost: A Scalable Tree Boosting System",
+   "authors": [
+    "Tianqi Chen",
+    "Carlos Guestrin"
+   ],
+   "year": 2016,
+   "venue": "SIGKDD",
+   "doi": "10.1145/2939672.2939785",
+   "official_url": "https://doi.org/10.1145/2939672.2939785",
+   "publisher_key": "https://doi.org/10.1145/2939672.2939785",
+   "citations": 54268,
+   "source": "arxiv",
+   "directions": [
+    "ml"
+   ]
+  }
+ ],
+ "unresolved": [
+  {
+   "id": "eyes",
+   "title": "The Eyes Have It: A Task by Data Type Taxonomy for Information Visualizations",
+   "venue": "IEEE VIS",
+   "year": 1996
+  },
+  {
+   "id": "memconsistency",
+   "title": "Memory Consistency and Event Ordering in Scalable Shared-Memory Multiprocessors",
+   "venue": "ISCA",
+   "year": 1990
+  },
+  {
+   "id": "darpa",
+   "title": "The Design Philosophy of the DARPA Internet Protocols",
+   "venue": "SIGCOMM",
+   "year": 1988
+  }
+ ],
+ "total": 110
+}

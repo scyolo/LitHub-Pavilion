@@ -46,6 +46,10 @@ RULE_REFINEMENTS = {
         r"\b(?:quic|ipv6|dns|rdma|roce|infiniband)\b",
     ("network", r"\b(?:5g|6g|lte|wifi|wi[- ]fi|802\.11|massive mimo|spectrum sharing|cognitive radio|radio access networks?)\b"):
         r"\b(?:(?:5g|6g)[- ](?:networks?|nr|new radio|core|ran|wireless|systems?|enabled|iot|mec)|lte[- ](?:networks?|systems?|advanced)|wifi|wi[- ]fi|802\.11|massive mimo|spectrum sharing|cognitive radio|radio access networks?)\b",
+    ("network", r"\bsemantic[- ](?:aware )?communications?\b(?! between (?:large )?language models?)"):
+        r"\bsemantic[- ](?:aware )?communications?\b(?! between (?:large )?language models?)(?!.*\bprocessor verification\b)",
+    ("network", r"(?<!post-)\bquantum (?:networks?|networking|internet|repeaters?)\b"):
+        r"(?<!post-)\bquantum (?:networks?|networking|internet|repeaters?)\b(?! embedding)",
     ("systems", r"\b(?:rdma|nvme|ssds?|solid[- ]state drives?|cxl|disaggregated memory|memory disaggregation|storage disaggregation)\b"):
         r"\b(?:rdma|nvme|solid[- ]state drives?|cxl|disaggregated memory|memory disaggregation|storage disaggregation)\b",
     ("systems", r"\b(?:key[- ]value stores?|kv[- ]?stores?|object storage|block storage|erasure coding|deduplication|lsm[- ]trees?|b[- ]trees?|write amplification)\b"):

@@ -36,7 +36,7 @@ LitHub Pavilion 只维护一套 React 网站。公开阅读端使用静态快照
 | `backend/app/migrations.py` | 备份后迁移 publisher_key，保留主键、关系、人工标签并重建校验 FTS |
 | `backend/scripts/audit_publications.py` | 只读重放目录缓存、核对逐篇覆盖、版本/年份疑点及基线变化 |
 | `backend/app/services/pipeline.py` | 单实例串行采集、完整性记账、历史回填断点及任务退出 |
-| `backend/app/services/topic_index.py` | 22 方向规则与来源映射维护和重算，保留人工标签与本地自定义设置 |
+| `backend/app/services/topic_index.py` | 方向规则与来源映射维护和重算，保留人工标签与本地自定义设置 |
 | `backend/app/services/snapshot*.py` | 快照导出、公开 schema 验证、首页摘要、数据分支上传与部署确认 |
 | `backend/app/services/site_sync.py` | 采集完成后的导出与发布编排、私有回执和失败重试 |
 | `frontend/src/data/` | 快照校验、按需加载、Worker 索引和版本切换 |

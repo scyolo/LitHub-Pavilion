@@ -258,3 +258,89 @@ systems,\b(?:replica placement|replication protocol|consistency protocol)\b,titl
 systems,\bdistributed tracing\b|\bobservability (?:platform|system|infrastructure|tool|pipeline)\b|\bobservability in datacenters?\b,title,1.0,1
 systems,\bservice mesh\b,title,1.0,1
 architecture,\bnetwork[ -]on[ -]chip\b|(?-i:\bNoC\b)|\binterconnection networks?\b,title,1.0,1
+inference,\b(?:overthinking|over[- ]thinking)\b,title,1.0,1
+inference,(?s)\A(?=.*\b(?:reasoning|thinking)\b)(?=.*\b(?:(?:efficient|efficiency|accelerat\w*|fast|faster|low[- ]latency|latency)[- ](?:reasoning|thinking)|(?:reasoning|thinking)[- ](?:efficiency|acceleration|budget|compression|pruning|shortening|latency)|think less|less thinking|concise (?:llm |language model )?reasoning|shorter reasoning|reasoning tokens? (?:reduction|budget)|token[- ]efficient)\b)(?=.*\b(?:llms?|language models?|large reasoning models?|reasoning models?)\b).+,title,1.0,1
+inference,(?s)\A(?=.*\b(?:test[- ]time|inference[- ]time) (?:compute|scaling|scal\w*|reasoning)\b)(?=.*\b(?:llms?|language models?|reasoning models?|chain[- ]of[- ]thought|transformers?)\b).+,title,1.0,1
+inference,\b(?:prompt|context) (?:compression|compressing|pruning|reduction)\b,title,1.0,1
+inference,\b(?:llm|language model|model) (?:routing|cascades?)\b|\b(?:routing|cascades?) (?:for|of|in) (?:llms?|language models?)\b,title,1.0,1
+inference,\b(?:visual|vision|image|video|multimodal) tokens? (?:pruning|merging|compression|reduction|selection|dropping)\b|\b(?:pruning|merging|compressing|selecting) (?:visual|vision|image|video) tokens?\b,title,1.0,1
+inference,(?s)\A(?=.*\btoken (?:pruning|merging|compression|reduction|dropping)\b)(?=.*\b(?:llms?|language models?|vision[- ]language|vlms?|mllms?|multimodal|inference|efficien\w*|latency|faster|accelerat\w*|throughput)\b).+,title,1.0,1
+inference,\b(?:reasoning|thought|chain[- ]of[- ]thought) (?:compression|compress|pruning|shortening)\b,title,1.0,1
+network,\bsemantic[- ](?:aware )?communications?\b(?! between (?:large )?language models?)(?!.*\bprocessor verification\b),title,1.0,1
+network,\b(?:integrated sensing and communication|integrated communication and sensing|joint communication and sensing|joint sensing and communication|communication[- ]sensing)\b,title,1.0,1
+network,(?s)\A(?=.*\bisac\b)(?=.*\b(?:5g|6g|network|wireless|communication|sensing|mimo|beamforming|ofdm|waveform)\b).+,title,1.0,1
+network,(?<!post-)\bquantum (?:networks?|networking|internet|repeaters?)\b(?! embedding),title,1.0,1
+network,(?s)\A(?=.*\b(?:leo|low[- ]earth[- ]orbit) (?:satellites?|constellations?)\b)(?=.*\b(?:communications?|networks?|networking|internet|broadband|backhaul|routing|offload\w*|caching|coverage)\b).+,title,1.0,1
+network,\bnon[- ]terrestrial networks?\b|\bsatellite[- ]terrestrial\b,title,1.0,1
+network,\btime[- ]sensitive (?:networking|networks?)\b|\bdeterministic networking\b,title,1.0,1
+network,\b(?:open|o)[- ]ran\b|\bran intelligent controller\b,title,1.0,1
+network,\bbackscatter (?:communication|communications|networks?|systems?)\b,title,1.0,1
+network,\bvisible light communication\w*\b,title,1.0,1
+network,\bwide[- ]area networks?\b,title,1.0,1
+network,\bin[- ]network (?:aggregation|processing|caching|telemetry)\b,title,1.0,1
+network,\bintent[- ]based (?:networking|networks?)\b|\bnetwork digital twins?\b,title,1.0,1
+network,\bjoint source[- ]channel coding\b,title,1.0,1
+systems,(?s)\A(?=.*\b(?:query|database|dbms) (?:optimization|optimizer|processing|execution|engine|compilation|compiler|scheduling|benchmark\w*)\b)(?=.*\b(?:database|dbms|sql|relational|query plan|storage engine|data management|transaction|index|olap|oltp|htap|column|join|aggregation|view|table|workload)\b).+,title,1.0,1
+systems,(?s)\A(?=.*\b(?:cardinality estimation|learned index(?:es)?|query accelerator)\b)(?=.*\b(?:database|dbms|query|join|index|sql|relational|table|workload|data)\b).+,title,1.0,1
+systems,\b(?:transaction processing|multi[- ]version concurrency|mvcc)\b,title,1.0,1
+systems,(?s)\A(?=.*\bconcurrency control\b)(?=.*\b(?:database|dbms|transaction|blockchain|distributed|storage|inference|serving|scheduling)\b).+,title,1.0,1
+systems,(?s)\A(?=.*\bisolation levels?\b)(?=.*\b(?:database|dbms|transaction|blockchain|sql)\b).+,title,1.0,1
+systems,\bvector databases?\b,title,1.0,1
+systems,\bcompilers? (?:optimization|optimizations|testing|fuzzing|verification|correctness|backend|backends|infrastructure|passes?|auto[- ]tuning|design|implementation)\b|\b(?:jit|just[- ]in[- ]time) compil\w*\b,title,1.0,1
+systems,\b(?:llvm|mlir)\b,title,1.0,1
+systems,(?s)\A(?=.*\breal[- ]time (?:systems?|scheduling|tasks?|operating systems?)\b)(?=.*\b(?:processors?|multicore|embedded|deadline|latency|computer|software|hardware|rtos|gpu|cache|interrupt|network|controller|autonomous|vehic|robot|adas|schedulability|wcet|memory)\b).+,title,1.0,1
+systems,\b(?:worst[- ]case execution time|wcet|schedulability analysis|mixed[- ]criticality)\b,title,1.0,1
+systems,\bkubernetes\b,title,1.0,1
+systems,(?s)\A(?=.*\b(?:root[- ]cause (?:analysis|localization|diagnosis)|failure diagnosis|anomaly localization)\b)(?=.*\b(?:cloud|microservices?|distributed systems?|datacenters?|servers?|kubernetes|containers?|online services?|production|large[- ]scale)\b).+,title,1.0,1
+systems,\bperformance (?:bugs?|regressions?|regression testing|diagnosis|debugging)\b,title,1.0,1
+systems,\baiops\b,title,1.0,1
+systems,\bconfidential (?:computing|containers?|virtual machines?|vms?|execution environments?)\b,title,1.0,1
+specdec,(?s)\A(?=.*\b(?:draft|speculative) (?:tree|trees|verification|verifier|rejection)\b)(?=.*\b(?:llms?|language models?|decod\w*|tokens?|inference|draft\w*)\b).+,title,1.0,1
+retrieval,(?s)\A(?=.*\b(?:re-?ranking|rerankers?)\b)(?=.*\b(?:retriev\w*|passages?|documents?|queries|query|recommendation|rag|search engines?|web search|semantic search|document search|passage search|search ranking)\b).+,title,1.0,1
+retrieval,\b(?:hybrid|multi[- ]stage|two[- ]stage) retrieval\b,title,1.0,1
+retrieval,\b(?:late interaction|colbert)\b,title,1.0,1
+generative,\bdiffusion language models?\b|\bdllms?\b,title,1.0,1
+graph,\bgraph[- ]?(?:rag|retrieval[- ]augmented generation)\b|\bgraphrag\b,title,1.0,1
+alignment,\breward hacking\b|\bsycophan\w*\b,title,1.0,1
+agent,\bcomputer[- ](?:use|using) agents?\b|\bcomputer[- ]use\b,title,1.0,1
+security,\b(?:supply[- ]chain|firmware|iot) (?:attacks?|security|vulnerabilit\w*)\b,title,1.0,1
+specdec,\bspeculative (?:decod\w*|sampl\w*|inferenc\w*|prefill|generation|draft\w*|verification|verifier|token\w*)\b,title,1.0,1
+specdec,\bspeculative (?:kv[- ]cache|key[- ]value cach\w*)\b,title,1.0,1
+specdec,\bspeculative early[- ]exit\w*\b,title,1.0,1
+specdec,(?s)\A(?=.*\b(?:asynchronous|pipelined|parallel) speculation\b)(?=.*\b(?:llms?|language models?|inference|decod\w*|serving)\b).+,title,1.0,1
+specdec,\battention[- ]level speculation\b,title,1.0,1
+specdec,\bspeculative trees?\b,title,1.0,1
+retrieval,\b(?:(?:sequential|session[- ]based|graph[- ]based|personalized|cross[- ]domain|multi[- ]behavior|conversational|context[- ]aware|knowledge[- ]aware) (?:recommendation|recommender)|(?:recommendation|recommender) (?:models?|algorithms?|frameworks?|networks?|systems?|methods?|approaches?))\b,title,1.0,1
+ml,\b(?:time[- ]series|spatio[- ]temporal|multivariate) (?:forecasting|prediction|imputation|classification|clustering|anomaly detection)\b,title,1.0,1
+ml,(?<!magnetic )(?<!geomagnetic )\b(?:anomaly|outlier) detection\b,title,1.0,1
+ml,\bcausal (?:discovery|inference|representation learning|effect estimation|structure learning)\b,title,1.0,1
+ml,\b(?:contrastive|representation|few[- ]shot|zero[- ]shot|active|curriculum|multi[- ]view|metric|imbalanced|weakly[- ]supervised) learning\b,title,1.0,1
+ml,\b(?:multi[- ]view|subspace|spectral|deep|graph|fuzzy) clustering\b,title,1.0,1
+rl,\b(?:multi[- ]armed|contextual|stochastic|linear) bandits?\b|\bimitation learning\b,title,1.0,1
+dl,\b(?:knowledge|self|dataset|model|feature|teacher|multi[- ]teacher|cross[- ]modal) distillation\b,title,1.0,1
+cv,\b(?:person|vehicle|object) re-identification\b|\bgaze estimation\b|\bcrowd counting\b|\bsalient object detection\b|\bfacial expression recognition\b|\bhuman mesh recovery\b|\bhand pose estimation\b,title,1.0,1
+cv,\b(?:defect|lesion|surface) (?:detection|segmentation|inspection)\b,title,1.0,1
+security,\b(?:adversarial|backdoor|poisoning|evasion|membership inference|side[- ]channel|byzantine) attacks?\b,title,1.0,1
+speech,\b(?:speech[- ]to[- ]speech|speech (?:recognition|synthesis|enhancement|separation|translation|understanding|emotion|prosody|coding|quality|intelligibility)|automatic speech recognition|asr|text[- ]to[- ]speech|tts|voice conversion|speaker (?:recognition|verification|diarization|embedding|adaptation)|keyword spotting|voice activity detection|audio captioning|acoustic scene classification|sound event detection|audio deepfake|anti[- ]spoofing|singing voice)\b,title,1.0,1
+robotics,\b(?:robot(?:ic|ics|s)?|slam|dexterous manipulation|robotic manipulation|grasping|legged locomotion|human[- ]robot (?:interaction|collaboration|teaming|coexistence|cooperation)|multi[- ]?robot|swarm robotics|autonomous (?:driving|navigation|flight)|motion planning|embodied ai|vision[- ]language[- ]action|teleoperation|exoskeleton|manipulator|aerial (?:robot|manipulation|vehicle)|underwater (?:robot|vehicle))\b|\b(?:uav|drone)s? (?:navigation|path planning|formation|swarm|perching|landing|manipulation|grasping|autonomous|control|teleoperation|platform|testbed)\b|\bmulti[- ]?(?:uav|uavs|drone|drones)\b|\b(?:control|tracking|navigation|path planning|formation|swarm|coordination) (?:of|for) (?:an? |the |multiple |multi[- ]?)?(?:uav|drone)s?\b,title,1.0,1
+bioinformatics,\b(?:bioinformatics|computational biology|computational genomics|medical informatics|health informatics|genomic(?:s| data| sequence| analysis| medicine)?|genome(?:[- ]wide| rearrangement| assembly| annotation| evolution| sequencing)?|proteomics?|transcriptomics?|metabolomics?|metagenom\w*|microbiom\w*|single[- ]cell(?:ular)?(?: rna| sequencing| analysis| data| atlas| transcriptomics?| genomics?)?|phylogen(?:y|etic|etics)|drug (?:discovery|repurposing)|molecular (?:property|docking|generation|representation)|protein[- ]protein|protein (?:structure|function|folding|stability|interaction|complex|design|engineering|language model|side[- ]chain|backbone|domain)|gene (?:expression|set|regulatory|network|function|prediction|selection|editing|family|ontology)|dna (?:sequence|sequencing|methylation|variant|repair|replication)|rna (?:sequence|sequencing|structure|editing|interference|secondary|modification)|sequence alignment|biomedical (?:informatics|data|text|nlp|knowledge|entity|relation|trigger|event)|electronic health records?|ehrs?|clinical (?:informatics|decision support|notes|text mining))\b,title,1.0,1
+theory,(?<!stochastic )(?<!perturbation )\b(?:np[- ]hard\w*|np[- ]complete|approximation algorithms?|online algorithms?|competitive ratio|parameterized (?:complexity|algorithms?)|fixed[- ]parameter|automata|satisfiability|sat solvers?|proof complexity|computational geometry|graph algorithms?|randomized algorithms?|deterministic algorithms?|streaming algorithms?|sublinear algorithms?|combinatorial optimization|type theory|lambda calculus|formal semantics|circuit complexity|communication complexity|query complexity|submodular|primal[- ]dual)\b,title,1.0,1
+software,(?<!gray )(?<!qr )\b(?:program analysis|static analysis|dynamic analysis|program repair|bug (?:detection|localization|prediction)|code (?:generation|completion|summarization|search|review)|software testing|test (?:generation|case generation|selection|prioritization)|fuzzing|mutation testing|regression testing|program synthesis|model checking|formal verification|refactoring|software architecture|requirements engineering|software maintenance|continuous integration|vulnerability detection|software reliability|software evolution|empirical software engineering|mining software repositories|code smells?|technical debt)\b,title,1.0,1
+graphics,\b(?:global illumination|path tracing|neural rendering|volume rendering|differentiable rendering|real[- ]time rendering|foveated rendering|point[- ]based rendering|mesh rendering|radiance fields?|gaussian splatting|relighting|relightable|light transport|brdf|geometry processing|mesh (?:processing|simplification|segmentation|generation)|computer animation|character animation|physically[- ]based animation|fluid simulation|cloth simulation|texture synthesis|shape modeling|computer graphics|virtual reality|augmented reality|mixed reality|extended reality|level[- ]of[- ]detail|procedural (?:modeling|texture|animation)|motion capture|skinning)\b,title,1.0,1
+ml,\b(?:feature selection|feature subset selection|dimensionality reduction|domain adaptation|domain generalization|ensemble learning|ensemble (?:method|model|classifier)|concept drift|multi[- ]task learning|label noise|noisy labels?|long[- ]tailed|neural architecture search|bayesian optimization|gaussian processes?|data augmentation|class imbalance|imbalanced (?:data|classification)|model selection|time[- ]series (?:analysis|imputation|representation learning|mining|classification|clustering|anomaly detection))\b,title,1.0,1
+retrieval,(?<!clinical )(?<!medical )(?<!policy )(?<!treatment )(?<!practice )(?<!design )(?<!security )(?<!safety )(?<!\bcare )(?<!research )(?<!guideline )(?<!future )(?<!management )(?<!ethical )(?<!legal )\b(?:recommendations?|recommenders?|collaborative filtering|click[- ]through rate|ctr (?:prediction|estimation)|cold[- ]start|item recommendation|next[- ]item recommendation|user modeling|user profiling|basket recommendation)\b(?! for (?:future|further|policy|practice|research|design|analys|clinical)),title,1.0,1
+graph,\b(?:community (?:detection|search)|influence (?:maximization|spread)|network (?:embedding|representation learning)|hypergraph\w*|subgraph (?:matching|isomorphism|mining)|graph (?:mining|clustering|partitioning)|signed networks?|motif (?:mining|discovery))\b,title,1.0,1
+cv,\b(?:(?:sar|polsar|insar)[- ](?:images?|imagery|data)|(?:hyperspectral|multispectral)[- ](?:images?|imagery|data)|(?:satellite|aerial|uav)[- ](?:images?|imagery|data)|infrared small target|small target detection|land (?:cover|use) classification)\b,title,1.0,1
+nlp,\b(?:misinformation|disinformation|fake news|rumou?rs?|hate speech|toxic (?:language|content)|offensive language|stance detection|argument mining|keyphrase extraction|entity linking|discourse (?:parsing|analysis)|readability|authorship attribution|aspect[- ]based sentiment)\b,title,1.0,1
+security,\b(?:watermark(?:ing|ed)?|deepfake (?:detection|identification))\b,title,1.0,1
+robotics,\b(?:autonomous|automated|unmanned) (?:vehicles?|aerial vehicles?|ground vehicles?|surface vehicles?|underwater vehicles?|driving)\b,title,1.0,1
+inference,\b(?:network|model|channel|filter|weight|structured|unstructured) pruning\b,title,1.0,1
+hci,\b(?:affective computing|emotion(?:al)? (?:recognition|classification|analysis|understanding)|mental health|depression (?:detection|recognition|estimation|prediction)|stress (?:detection|recognition|prediction)|physiological (?:signals?|sensing)|wearable (?:devices?|sensing|sensors?))\b,title,1.0,1
+graph,\b(?:gnns?|node classification|graph representation|graph rewiring|graph coarsening|graph structured data)\b,title,1.0,1
+security,\b(?:privacy[- ](?:enhanced|preserving|preservation|protection|aware|leakage|amplification)|location privacy|k[- ]anonymity|anonymi[sz]ation|de[- ]anonymi[sz]ation|geo[- ]indistinguishability)\b,title,1.0,1
+speech,\b(?:(?<!magnetotelluric )audio\b(?![- ](?:frequency[- ])?magnetotelluric)|microphone arrays?|ambisonic\w*|binaural|room impulse response|sound (?:event|source|zone|field)s?|acoustic echo cancellation|active noise control|hearing aids?|auditory attention (?:decoding|detection)|anomalous sound detection|spatial audio|immersive audio|music (?:generation|information retrieval|source separation|classification|tagging|transcription|synthesis|recommendation|understanding|processing|dataset)|symbolic music|speech (?:retrieval|indexing|search|codec|coding)|neural speech (?:models?|representation|encoder|decoder|processing)|(?:self-supervised|large|foundation) speech models?|speaker (?:extraction|separation|localization|counting|tracking)|target speaker (?:extraction|separation|localization)|neural audio)\b,title,1.0,1
+hci,\b(?:visuali[sz]ation|user studies?)\b,title,1.0,1
+ml,\b(?:k[- ]means|multi[- ]label|multi[- ]class|subspace learning|(?:nonnegative )?matrix factorization|discriminant analysis|density peaks?|itemset mining|frequent itemset|frequent pattern mining|association rules?|random forests?|support vector machines?|gradient boosting|adaboost|xgboost)\b,title,1.0,1
+systems,\b(?:cloud[- ]native|cloud databases?|distributed (?:databases?|index(?:es)?|query|key[- ]value)|data management systems?)\b,title,1.0,1
+cv,(?<!concept )(?<!drift )(?<!environmental )(?<!adaptive )\bchange detection\b,title,1.0,1
+ml,\b(?:traffic|travel demand|passenger demand)[- ](?:flow |speed |demand )?(?:prediction|forecasting)\b,title,1.0,1

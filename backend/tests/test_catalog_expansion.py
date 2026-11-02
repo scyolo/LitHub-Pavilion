@@ -86,6 +86,7 @@ def test_multimodal_identity_is_retained_while_label_is_expanded():
         "llm", "inference", "specdec", "agent", "cv", "multimodal", "rl", "nlp",
         "retrieval", "alignment", "ml", "dl", "ai", "hci", "generative", "systems", "graph",
         "federated", "transformer", "network", "architecture", "security",
+        "software", "speech", "robotics", "bioinformatics", "theory", "graphics",
     }
     assert directions["multimodal"]["name"] == "多模态与视觉语言"
     assert directions["hci"]["name"] == "人机交互与可视化"
@@ -93,17 +94,100 @@ def test_multimodal_identity_is_retained_while_label_is_expanded():
     assert directions["transformer"]["name"] == "Transformer 架构"
 
 
+@pytest.mark.parametrize("code,title", [
+    ("software", "Automated Program Repair with Static Analysis and Test Generation"),
+    ("speech", "Streaming Speech Recognition with Speaker Diarization"),
+    ("robotics", "Dexterous Manipulation for Legged Robots with Visual SLAM"),
+    ("bioinformatics", "Single-Cell RNA Sequencing for Protein Structure Prediction"),
+    ("theory", "Parameterized Complexity of Graph Algorithms and Satisfiability"),
+    ("graphics", "Neural Rendering and Global Illumination for Virtual Reality"),
+])
+def test_extended_directions_have_real_matching_rules(code, title):
+    rules = [(1, r["keyword"], float(r["weight"]), r["field"])
+             for r in rows("direction_rules.csv") if r["direction_code"] == code]
+    assert score_text(rules, title, None).get(1, 0) >= 2
+
+
+@pytest.mark.parametrize("code,title", [
+    ("software", "Gray Code Generation for Binary Trees"),
+    ("speech", "Keynote Speech"),
+    ("robotics", "UAV-Assisted Wireless Caching for Edge Networks"),
+    ("bioinformatics", "DNA Data Storage with Merge-Sort Codes"),
+    ("theory", "Stochastic Approximation Algorithm for Active Noise Control"),
+    ("graphics", "Binaural Audio Rendering for Virtual Acoustics"),
+])
+def test_extended_directions_do_not_match_ambiguous_terms(code, title):
+    rules = [(1, r["keyword"], float(r["weight"]), r["field"])
+             for r in rows("direction_rules.csv") if r["direction_code"] == code]
+    assert score_text(rules, title, None).get(1, 0) < 2
+
+
 def test_direction_venue_mappings_only_target_known_ab_papers():
     venues = {v["abbr"]: v for v in rows("venues.csv")}
     directions = {d["code"] for d in rows("directions.csv")}
     mappings = rows("direction_venues.csv")
-    assert len(mappings) == 125
+    assert len(mappings) == 289
     assert len({(m["direction_code"], m["venue_abbr"]) for m in mappings}) == len(mappings)
-    assert {m["direction_code"] for m in mappings} == {"network", "systems", "architecture", "security", "hci"}
+    assert {m["direction_code"] for m in mappings} == {
+        "network", "systems", "architecture", "security", "hci",
+        "nlp", "cv", "ml", "ai", "agent", "retrieval", "multimodal", "graph",
+        "software", "speech", "robotics", "bioinformatics", "theory", "graphics",
+    }
     for mapping in mappings:
         assert mapping["direction_code"] in directions
         assert mapping["venue_abbr"] in venues
         assert venues[mapping["venue_abbr"]]["ccf_level"] in ("A", "B")
+
+
+@pytest.mark.parametrize("code,title", [
+    ("ml", "Feature Selection and Domain Adaptation for Imbalanced Data"),
+    ("retrieval", "Collaborative Filtering with Cold-Start Items"),
+    ("graph", "Community Detection and Influence Maximization in Signed Networks"),
+    ("cv", "Infrared Small Target Detection in Satellite Imagery"),
+    ("nlp", "Fake News and Misinformation Detection with Stance Detection"),
+    ("security", "Deepfake Detection and Neural Watermarking"),
+    ("robotics", "Trajectory Prediction for Autonomous Vehicles"),
+    ("inference", "Structured Pruning for Efficient Language Models"),
+    ("hci", "Emotion Recognition with Wearable Sensors"),
+    ("graph", "GNN-Based Node Classification with Graph Rewiring"),
+    ("security", "K-Anonymity and Location Privacy with Geo-Indistinguishability"),
+    ("speech", "Neural Audio Codec and Spatial Audio Rendering"),
+    ("hci", "Visualization of Large Trajectory Datasets"),
+    ("ml", "K-Means Clustering for Multi-Label Classification"),
+    ("systems", "Cloud-Native Databases with Distributed Query Processing"),
+    ("cv", "Change Detection with RWKV"),
+    ("ml", "Traffic Flow Forecasting with Graph Attention"),
+])
+def test_supplemental_rules_cover_existing_directions(code, title):
+    rules = [(1, r["keyword"], float(r["weight"]), r["field"])
+             for r in rows("direction_rules.csv") if r["direction_code"] == code]
+    assert score_text(rules, title, None).get(1, 0) >= 2
+
+
+@pytest.mark.parametrize("code,title", [
+    ("retrieval", "Design Recommendations for Smart TV Interfaces"),
+    ("retrieval", "Recommendations for Future Research"),
+    ("speech", "Hate Speech Detection in Social Media"),
+    ("speech", "Multi-Target Tracking with Radar"),
+    ("ml", "Boosting Network Performance with Caching"),
+    ("cv", "Concept Drift Change Detection in Data Streams"),
+    ("systems", "Distributed Matrix Completion for Recommendation"),
+    ("security", "Privacy Attitudes in Social Media Communities"),
+    ("graph", "Graphical User Interface Design for Mobile Apps"),
+    ("hci", "Emotional Support in Online Communities"),
+])
+def test_supplemental_rules_do_not_match_ambiguous_terms(code, title):
+    rules = [(1, r["keyword"], float(r["weight"]), r["field"])
+             for r in rows("direction_rules.csv") if r["direction_code"] == code]
+    assert score_text(rules, title, None).get(1, 0) < 2
+
+
+def test_new_venue_priors_are_single_direction_mappings():
+    mappings = rows("direction_venues.csv")
+    pairs = {(m["direction_code"], m["venue_abbr"]) for m in mappings}
+    assert {("hci", "TAC"), ("theory", "CP"), ("systems", "RTSS"), ("systems", "EMSOFT")} <= pairs
+    for abbr in ("TAC", "CP", "RTSS", "EMSOFT"):
+        assert sum(1 for m in mappings if m["venue_abbr"] == abbr) == 1
 
 
 @pytest.mark.parametrize("code,title", [
