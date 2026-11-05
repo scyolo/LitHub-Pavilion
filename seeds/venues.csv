@@ -24,7 +24,7 @@ JMLR,Journal of Machine Learning Research,journals/jmlr,,journal,1533-7928,,,A,�
 JAIR,Journal of Artificial Intelligence Research,journals/jair,,journal,1076-9757,,,B,人工智能,1
 TACL,Transactions of the Association for Computational Linguistics,journals/tacl,,journal,2307-387X,,,B,人工智能,1
 CL,Computational Linguistics,journals/coling,,journal,0891-2017,,,B,人工智能,1
-TASLP,IEEE/ACM Transactions on Audio Speech and Language Processing,journals/taslp,,journal,2329-9290,,,B,人工智能,1
+TASLP,IEEE/ACM Transactions on Audio Speech and Language Processing,journals/taslp,,journal,2329-9290,,,B,人工智能,0
 TNNLS,IEEE Transactions on Neural Networks and Learning Systems,journals/tnn,,journal,2162-237X,,,B,人工智能,1
 PR,Pattern Recognition,journals/pr,,journal,0031-3203,,,B,人工智能,1
 SIGIR,International ACM SIGIR Conference on Research and Development in Information Retrieval,conf/sigir,sigir{year},conf,,,SIGIR,A,数据库/数据挖掘/内容检索,1
@@ -188,7 +188,7 @@ CC,International Conference on Compiler Construction,conf/cc,,conf,,,CC,B,软件
 TODS,ACM Transactions on Database Systems,journals/tods,,journal,0362-5915,,,A,数据库/数据挖掘/内容检索,1
 VLDBJ,The VLDB Journal,journals/vldb,,journal,0949-877X,,,A,数据库/数据挖掘/内容检索,1
 TWEB,ACM Transactions on the Web,journals/tweb,,journal,1559-1131,,,B,数据库/数据挖掘/内容检索,1
-AEI,Advanced Engineering Informatics,journals/aei,,journal,1474-0346,,,B,数据库/数据挖掘/内容检索,1
+AEI,Advanced Engineering Informatics,journals/aei,,journal,1474-0346,,,B,数据库/数据挖掘/内容检索,0
 DKE,Data & Knowledge Engineering,journals/dke,,journal,0169-023X,,,B,数据库/数据挖掘/内容检索,1
 DMKD,Data Mining and Knowledge Discovery,journals/datamine,,journal,1384-5810,,,B,数据库/数据挖掘/内容检索,1
 EJIS,European Journal of Information Systems,journals/ejis,,journal,0960-085X,,,B,数据库/数据挖掘/内容检索,1
@@ -240,7 +240,7 @@ CCC,Conference on Computational Complexity,conf/coco,,conf,,,CCC,B,计算机科�
 ICALP,"International Colloquium on Automata, Languages and Programming",conf/icalp,,conf,,,ICALP,B,计算机科学理论,1
 CADE,Conference on Automated Deduction,conf/cade,,conf,,,CADE,B,计算机科学理论,1
 CONCUR,International Conference on Concurrency Theory,conf/concur,,conf,,,CONCUR,B,计算机科学理论,1
-HSCC,International Conference on Hybrid Systems: Computation and Control,conf/hybrid,,conf,,,HSCC,B,计算机科学理论,1
+HSCC,International Conference on Hybrid Systems: Computation and Control,conf/hybrid,,conf,,,HSCC,B,计算机科学理论,0
 SAT,International Conference on Theory and Applications of Satisfiability Testing,conf/sat,,conf,,,SAT,B,计算机科学理论,1
 COCOON,International Computing and Combinatorics Conference,conf/cocoon,,conf,,,COCOON,B,计算机科学理论,1
 FMCAD,Formal Methods in Computer-Aided Design,conf/fmcad,,conf,,,FMCAD,B,计算机科学理论,1
@@ -251,9 +251,9 @@ CAGD,Computer Aided Geometric Design,journals/cagd,,journal,0167-8396,,,B,计算
 CGF,Computer Graphics Forum,journals/cgf,,journal,0167-7055,,,B,计算机图形学与多媒体,1
 CAD,Computer-Aided Design,journals/cad,,journal,0010-4485,,,B,计算机图形学与多媒体,1
 TCSVT,IEEE Transactions on Circuits and Systems for Video Technology,journals/tcsv,,journal,1051-8215,,,B,计算机图形学与多媒体,1
-JASA,The Journal of the Acoustical Society of America,,,journal,0001-4966,,,B,计算机图形学与多媒体,1
+JASA,The Journal of the Acoustical Society of America,,,journal,0001-4966,,,B,计算机图形学与多媒体,0
 SIIMS,SIAM Journal on Imaging Sciences,journals/siamis,,journal,1936-4954,,,B,计算机图形学与多媒体,1
-SPECOM,Speech Communication,journals/speech,,journal,0167-6393,,,B,计算机图形学与多媒体,1
+SPECOM,Speech Communication,journals/speech,,journal,0167-6393,,,B,计算机图形学与多媒体,0
 CVMJ,Computational Visual Media,journals/cvm,,journal,2096-0433,,,B,计算机图形学与多媒体,1
 SIGGRAPH,ACM Special Interest Group on Computer Graphics,conf/siggraph,,conf,,,SIGGRAPH,A,计算机图形学与多媒体,1
 VR,IEEE Conference on Virtual Reality and 3D User Interfaces,conf/vr,,conf,,,VR,A,计算机图形学与多媒体,1
@@ -266,28 +266,28 @@ Eurographics,Annual Conference of the European Association for Computer Graphics
 EuroVis,Eurographics Conference on Visualization,conf/vissym,,conf,,,EuroVis,B,计算机图形学与多媒体,1
 SGP,Eurographics Symposium on Geometry Processing,conf/sgp,,conf,,,SGP,B,计算机图形学与多媒体,1
 EGSR,Eurographics Symposium on Rendering,conf/rt,,conf,,,EGSR,B,计算机图形学与多媒体,1
-ICASSP,"IEEE International Conference on Acoustics, Speech and Signal Processing",conf/icassp,,conf,,,ICASSP,B,计算机图形学与多媒体,1
+ICASSP,"IEEE International Conference on Acoustics, Speech and Signal Processing",conf/icassp,,conf,,,ICASSP,B,计算机图形学与多媒体,0
 ICME,IEEE International Conference on Multimedia & Expo,conf/icmcs,,conf,,,ICME,B,计算机图形学与多媒体,1
 ISMAR,International Symposium on Mixed and Augmented Reality,conf/ismar,,conf,,,ISMAR,B,计算机图形学与多媒体,1
 PG,Pacific Conference onComputer Graphics and Applications,conf/pg,,conf,,,PG,B,计算机图形学与多媒体,1
 SPM,Symposium on Solid and Physical Modeling,conf/sma,,conf,,,SPM,B,计算机图形学与多媒体,1
-INTER- SPEECH,Conference of the International Speech Communication Association,conf/interspeech,,conf,,,INTER- SPEECH,B,计算机图形学与多媒体,1
+INTER- SPEECH,Conference of the International Speech Communication Association,conf/interspeech,,conf,,,INTER- SPEECH,B,计算机图形学与多媒体,0
 TAP,ACM Transactions on Applied Perception,journals/tap,,journal,1544-3558,,,B,人工智能,1
 JAAMAS,Autonomous Agents and Multi-Agent Systems,journals/aamas,,journal,1387-2532,,,B,人工智能,1
 CVIU,Computer Vision and Image Understanding,journals/cviu,,journal,1077-3142,,,B,人工智能,1
-Evolutionary Computation,Evolutionary Computation,journals/ec,,journal,1063-6560,,,B,人工智能,1
+Evolutionary Computation,Evolutionary Computation,journals/ec,,journal,1063-6560,,,B,人工智能,0
 TAC,IEEE Transactions on Affective Computing,journals/taffco,,journal,1949-3045,,,B,人工智能,1
 IEEE Transactions on Cybernetics,IEEE Transactions on Cybernetics,journals/tcyb,,journal,2168-2267,,,B,人工智能,1
-TEC,IEEE Transactions on Evolutionary Computation,journals/tec,,journal,1089-778X,,,B,人工智能,1
-TFS,IEEE Transactions on Fuzzy Systems,journals/tfs,,journal,1063-6706,,,B,人工智能,1
+TEC,IEEE Transactions on Evolutionary Computation,journals/tec,,journal,1089-778X,,,B,人工智能,0
+TFS,IEEE Transactions on Fuzzy Systems,journals/tfs,,journal,1063-6706,,,B,人工智能,0
 IJAR,International Journal of Approximate Reasoning,journals/ijar,,journal,0888-613X,,,B,人工智能,1
 Journal of Automated Reasoning,Journal of Automated Reasoning,journals/jar,,journal,0168-7433,,,B,人工智能,1
-JSLHR,"Journal of Speech, Language, and Hearing Research",,,journal,1092-4388,,,B,人工智能,1
+JSLHR,"Journal of Speech, Language, and Hearing Research",,,journal,1092-4388,,,B,人工智能,0
 Machine Learning,Machine Learning,journals/ml,,journal,0885-6125,,,B,人工智能,1
 Neural Computation,Neural Computation,journals/neco,,journal,0899-7667,,,B,人工智能,1
 Neural Networks,Neural Networks,journals/nn,,journal,0893-6080,,,B,人工智能,1
 ICCBR,International Conference on Case-Based Reasoning,conf/iccbr,,conf,,,ICCBR,B,人工智能,1
-PPSN,Parallel Problem Solving from Nature,conf/ppsn,,conf,,,PPSN,B,人工智能,1
+PPSN,Parallel Problem Solving from Nature,conf/ppsn,,conf,,,PPSN,B,人工智能,0
 NAACL,North American Chapter of the Association for Computational Linguistics,conf/naacl,,conf,,,NAACL,B,人工智能,1
 TOCHI,ACM Transactions on Computer-Human Interaction,journals/tochi,,journal,1073-0516,,,A,人机交互与普适计算,1
 IJHCS,International Journal of Human-Computer Studies,journals/ijmms,,journal,1071-5819,,,A,人机交互与普适计算,1
@@ -297,7 +297,7 @@ IEEE Transactions on Human-Machine Systems,IEEE Transactions on Human-Machine Sy
 IWC,Interacting with Computers,journals/iwc,,journal,0953-5438,,,B,人机交互与普适计算,1
 IJHCI,International Journal of Human-Computer Interaction,journals/ijhci,,journal,1044-7318,,,B,人机交互与普适计算,1
 UMUAI,User Modeling and User-Adapted Interaction,journals/umuai,,journal,0924-1868,,,B,人机交互与普适计算,1
-TSMC,"IEEE Transactions on Systems, Man,and Cybernetics: Systems",journals/tsmc,,journal,2168-2216,,,B,人机交互与普适计算,1
+TSMC,"IEEE Transactions on Systems, Man,and Cybernetics: Systems",journals/tsmc,,journal,2168-2216,,,B,人机交互与普适计算,0
 CCF TPCI,CCF Transactions on Pervasive Computing and Interaction,journals/ccftpci,,journal,2524-521X,,,B,人机交互与普适计算,1
 CSCW,ACM Conference On Computer-Supported Cooperative Work And Social Computing,conf/cscw,,conf,,,CSCW,A,人机交互与普适计算,1
 CHI,ACM Conference on Human Factors in Computing Systems,conf/chi,,conf,,,CHI,A,人机交互与普适计算,1
@@ -311,29 +311,29 @@ PERCOM,IEEE International Conference on Pervasive Computing and Communications,c
 MobileHCI,ACM International Conference on Mobile Human- Computer Interaction,conf/mhci,,conf,,,MobileHCI,B,人机交互与普适计算,1
 ICWSM,The International AAAI Conference on Web and Social Media,conf/icwsm,,conf,,,ICWSM,B,人机交互与普适计算,1
 JACM,Journal of the ACM,journals/jacm,,journal,0004-5411,,,A,交叉/综合/新兴,1
-Proc. IEEE,Proceedings of the IEEE,journals/pieee,,journal,0018-9219,,,A,交叉/综合/新兴,1
-SCIS,Science China Information Sciences,journals/chinaf,,journal,1674-733X,,,A,交叉/综合/新兴,1
-Bioinformatics,Bioinformatics,journals/bioinformatics,,journal,1367-4803,,,A,交叉/综合/新兴,1
-Briefings in Bioinformatics,Briefings in Bioinformatics,journals/bib,,journal,1467-5463,,,B,交叉/综合/新兴,1
-Cognition,Cognition,,,journal,0010-0277,,,B,交叉/综合/新兴,1
+Proc. IEEE,Proceedings of the IEEE,journals/pieee,,journal,0018-9219,,,A,交叉/综合/新兴,0
+SCIS,Science China Information Sciences,journals/chinaf,,journal,1674-733X,,,A,交叉/综合/新兴,0
+Bioinformatics,Bioinformatics,journals/bioinformatics,,journal,1367-4803,,,A,交叉/综合/新兴,0
+Briefings in Bioinformatics,Briefings in Bioinformatics,journals/bib,,journal,1467-5463,,,B,交叉/综合/新兴,0
+Cognition,Cognition,,,journal,0010-0277,,,B,交叉/综合/新兴,0
 TASAE,IEEE Transactions on Automation Science and Engineering,journals/tase,,journal,1545-5955,,,B,交叉/综合/新兴,1
-TGARS,IEEE Transactions on Geoscience and Remote Sensing,journals/tgrs,,journal,0196-2892,,,B,交叉/综合/新兴,1
-TITS,IEEE Transactions on Intelligent Transportation Systems,journals/tits,,journal,1524-9050,,,B,交叉/综合/新兴,1
+TGARS,IEEE Transactions on Geoscience and Remote Sensing,journals/tgrs,,journal,0196-2892,,,B,交叉/综合/新兴,0
+TITS,IEEE Transactions on Intelligent Transportation Systems,journals/tits,,journal,1524-9050,,,B,交叉/综合/新兴,0
 TMI,IEEE Transactions on Medical Imaging,journals/tmi,,journal,0278-0062,,,B,交叉/综合/新兴,1
 TR,IEEE Transactions on Robotics,journals/trob,,journal,1552-3098,,,B,交叉/综合/新兴,1
-TCBB,IEEE/ACM Transactions on Computational Biology and Bioinformatics,journals/tcbb,,journal,1545-5963,,,B,交叉/综合/新兴,1
-JCST,Journal of Computer Science and Technology,journals/jcst,,journal,1000-9000,,,B,交叉/综合/新兴,1
-JAMIA,Journal of the American Medical Informatics Association,journals/jamia,,journal,1067-5027,,,B,交叉/综合/新兴,1
-PLOS Computational Biology,PLOS Computational Biology,journals/ploscb,,journal,1553-7358,,,B,交叉/综合/新兴,1
-The Computer Journal,The Computer Journal,journals/cj,,journal,0010-4620,,,B,交叉/综合/新兴,1
+TCBB,IEEE/ACM Transactions on Computational Biology and Bioinformatics,journals/tcbb,,journal,1545-5963,,,B,交叉/综合/新兴,0
+JCST,Journal of Computer Science and Technology,journals/jcst,,journal,1000-9000,,,B,交叉/综合/新兴,0
+JAMIA,Journal of the American Medical Informatics Association,journals/jamia,,journal,1067-5027,,,B,交叉/综合/新兴,0
+PLOS Computational Biology,PLOS Computational Biology,journals/ploscb,,journal,1553-7358,,,B,交叉/综合/新兴,0
+The Computer Journal,The Computer Journal,journals/cj,,journal,0010-4620,,,B,交叉/综合/新兴,0
 WWW Journal,World Wide Web,journals/www,,journal,1386-145X,,,B,交叉/综合/新兴,1
-FCS,Frontiers of Computer Science,journals/fcsc,,journal,2095-2228,,,B,交叉/综合/新兴,1
+FCS,Frontiers of Computer Science,journals/fcsc,,journal,2095-2228,,,B,交叉/综合/新兴,0
 BCRA,Blockchain: Research and Applications,journals/bcra,,journal,2096-7209,,,B,交叉/综合/新兴,1
 RTSS,IEEE Real-Time Systems Symposium,conf/rtss,,conf,,,RTSS,A,交叉/综合/新兴,1
-CogSci,Annual Meeting of the Cognitive Science Society,conf/cogsci,,conf,,,CogSci,B,交叉/综合/新兴,1
-BIBM,IEEE International Conference on Bioinformatics and Biomedicine,conf/bibm,,conf,,,BIBM,B,交叉/综合/新兴,1
+CogSci,Annual Meeting of the Cognitive Science Society,conf/cogsci,,conf,,,CogSci,B,交叉/综合/新兴,0
+BIBM,IEEE International Conference on Bioinformatics and Biomedicine,conf/bibm,,conf,,,BIBM,B,交叉/综合/新兴,0
 EMSOFT,International Conference on Embedded Software,conf/emsoft,,conf,,,EMSOFT,B,交叉/综合/新兴,1
-ISMB,International conference on Intelligent Systems for Molecular Biology,conf/ismb,,conf,,,ISMB,B,交叉/综合/新兴,1
-RECOMB,Annual International Conference on Research in Computational Molecular Biology,conf/recomb,,conf,,,RECOMB,B,交叉/综合/新兴,1
+ISMB,International conference on Intelligent Systems for Molecular Biology,conf/ismb,,conf,,,ISMB,B,交叉/综合/新兴,0
+RECOMB,Annual International Conference on Research in Computational Molecular Biology,conf/recomb,,conf,,,RECOMB,B,交叉/综合/新兴,0
 MICCAI,International Conference on Medical Image Computing and Computer-Assisted Intervention,conf/miccai,,conf,,,MICCAI,B,交叉/综合/新兴,1
 WINE,Conference on Web and Internet Economics,conf/wine,,conf,,,WINE,B,交叉/综合/新兴,1

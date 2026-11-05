@@ -86,7 +86,7 @@ def test_multimodal_identity_is_retained_while_label_is_expanded():
         "llm", "inference", "specdec", "agent", "cv", "multimodal", "rl", "nlp",
         "retrieval", "alignment", "ml", "dl", "ai", "hci", "generative", "systems", "graph",
         "federated", "transformer", "network", "architecture", "security",
-        "software", "speech", "robotics", "bioinformatics", "theory", "graphics",
+        "software", "robotics", "theory", "graphics",
     }
     assert directions["multimodal"]["name"] == "多模态与视觉语言"
     assert directions["hci"]["name"] == "人机交互与可视化"
@@ -96,9 +96,7 @@ def test_multimodal_identity_is_retained_while_label_is_expanded():
 
 @pytest.mark.parametrize("code,title", [
     ("software", "Automated Program Repair with Static Analysis and Test Generation"),
-    ("speech", "Streaming Speech Recognition with Speaker Diarization"),
     ("robotics", "Dexterous Manipulation for Legged Robots with Visual SLAM"),
-    ("bioinformatics", "Single-Cell RNA Sequencing for Protein Structure Prediction"),
     ("theory", "Parameterized Complexity of Graph Algorithms and Satisfiability"),
     ("graphics", "Neural Rendering and Global Illumination for Virtual Reality"),
 ])
@@ -126,13 +124,9 @@ def test_direction_venue_mappings_only_target_known_ab_papers():
     venues = {v["abbr"]: v for v in rows("venues.csv")}
     directions = {d["code"] for d in rows("directions.csv")}
     mappings = rows("direction_venues.csv")
-    assert len(mappings) == 289
+    assert len(mappings) == 394
     assert len({(m["direction_code"], m["venue_abbr"]) for m in mappings}) == len(mappings)
-    assert {m["direction_code"] for m in mappings} == {
-        "network", "systems", "architecture", "security", "hci",
-        "nlp", "cv", "ml", "ai", "agent", "retrieval", "multimodal", "graph",
-        "software", "speech", "robotics", "bioinformatics", "theory", "graphics",
-    }
+    assert {m["direction_code"] for m in mappings} == directions
     for mapping in mappings:
         assert mapping["direction_code"] in directions
         assert mapping["venue_abbr"] in venues
@@ -151,7 +145,6 @@ def test_direction_venue_mappings_only_target_known_ab_papers():
     ("hci", "Emotion Recognition with Wearable Sensors"),
     ("graph", "GNN-Based Node Classification with Graph Rewiring"),
     ("security", "K-Anonymity and Location Privacy with Geo-Indistinguishability"),
-    ("speech", "Neural Audio Codec and Spatial Audio Rendering"),
     ("hci", "Visualization of Large Trajectory Datasets"),
     ("ml", "K-Means Clustering for Multi-Label Classification"),
     ("systems", "Cloud-Native Databases with Distributed Query Processing"),
@@ -188,6 +181,27 @@ def test_new_venue_priors_are_single_direction_mappings():
     assert {("hci", "TAC"), ("theory", "CP"), ("systems", "RTSS"), ("systems", "EMSOFT")} <= pairs
     for abbr in ("TAC", "CP", "RTSS", "EMSOFT"):
         assert sum(1 for m in mappings if m["venue_abbr"] == abbr) == 1
+
+
+CROSS_CUTTING = {
+    "llm", "inference", "specdec", "transformer", "generative",
+    "rl", "federated", "alignment", "dl",
+}
+
+
+def test_every_direction_has_venue_anchors():
+    directions = {d["code"] for d in rows("directions.csv")}
+    anchors = {m["direction_code"] for m in rows("direction_venues.csv")}
+    assert directions - anchors == set()
+
+
+def test_cross_cutting_anchors_do_not_assign_directions_alone():
+    """A 1.0 anchor alone reaches min_score, so broad venues would mislabel every paper."""
+    for mapping in rows("direction_venues.csv"):
+        if mapping["direction_code"] in CROSS_CUTTING:
+            assert float(mapping["weight"]) < 1.0, mapping
+        else:
+            assert 0.5 <= float(mapping["weight"]) <= 1.0, mapping
 
 
 @pytest.mark.parametrize("code,title", [

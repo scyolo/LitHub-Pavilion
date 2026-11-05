@@ -121,7 +121,9 @@ def test_reindex_tags_venue_mapped_papers_once(db, sample_paper, sample_directio
     result = reindex_topics(db, SEEDS)
     systems = db.query(Direction).filter(Direction.code == "systems").one()
     link = db.get(PaperDirection, (paper.id, systems.id))
-    assert result["venue_rules_added"] == 2
+    # OSDI is a systems home anchor (1.0) and an inference support anchor (0.5);
+    # the seeded NeurIPS sample venue carries the ten cross-cutting anchors.
+    assert result["venue_rules_added"] == 12
     assert link is not None and link.score == 2.0 and link.source == "rule"
     again = reindex_topics(db, SEEDS)
     assert again["venue_rules_added"] == 0
