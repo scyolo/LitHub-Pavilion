@@ -15,11 +15,13 @@ from app.services.snapshot import (
 )
 
 
-def prepare_snapshot(source: Path, target: Path) -> dict:
+def prepare_snapshot(source: Path, target: Path, *, expected_revision: str = "") -> dict:
     source, target = Path(source), Path(target)
     if source.resolve() == target.resolve():
         raise ValueError("Pages staging must not modify its source snapshot")
     manifest = validate_snapshot(source)
+    if expected_revision and manifest["revision"] != expected_revision:
+        raise ValueError("Dispatched revision does not match checked-out snapshot")
     if not manifest["paper_count"]:
         raise ValueError("Refusing to deploy an empty public paper library")
     if target.is_symlink():
@@ -36,10 +38,12 @@ def prepare_snapshot(source: Path, target: Path) -> dict:
         except (KeyError, TypeError, AttributeError) as exc:
             raise ValueError("Invalid previous public snapshot") from exc
         entries.update({entry["path"]: entry["sha256"] for entry in [previous["catalog"], *previous["chunks"]]})
-    from app.services.snapshot_reader import reader_entries, read_compressed_asset
+    from app.services.snapshot_reader import reader_entries, read_compressed_asset, load_reader_descriptor
+    catalogs = {}
     compressed = {}
     for retained_manifest in [manifest, *([previous] if previous else [])]:
         catalog, _ = _load_entry(source, retained_manifest["catalog"], "catalog")
+        catalogs[retained_manifest["revision"]] = catalog
         for entry in reader_entries(catalog, source):
             compressed[entry["path"]] = entry
             entries[entry["path"]] = entry["sha256"]
@@ -68,12 +72,17 @@ def prepare_snapshot(source: Path, target: Path) -> dict:
         if not destination.exists():
             shutil.copyfile(path, destination)
     if previous is not None:
-        upgraded_previous = ensure_snapshot_overview(target, previous)
+        upgraded_previous = (previous if "overview" in catalogs[previous["revision"]]
+                             else ensure_snapshot_overview(target, previous))
         if upgraded_previous["catalog"] != previous["catalog"]:
             total += (target / upgraded_previous["catalog"]["path"]).stat().st_size
-    upgraded = ensure_snapshot_overview(target, manifest)
+    # Source validation already checked existing summaries and reader bytes.
+    catalog = catalogs[manifest["revision"]]
+    upgraded = manifest if "overview" in catalog else ensure_snapshot_overview(target, manifest)
     from app.services.snapshot_reader import ensure_snapshot_reader
-    upgraded = ensure_snapshot_reader(target, upgraded)
+    if (catalog.get("reader", {}).get("version") != 6
+            or load_reader_descriptor(source, catalog).get("browse_chunk_size") != 128):
+        upgraded = ensure_snapshot_reader(target, upgraded)
     if upgraded["catalog"] != manifest["catalog"]:
         total += (target / upgraded["catalog"]["path"]).stat().st_size
     retained_names = set(entries)
@@ -105,10 +114,7 @@ def main():
     parser.add_argument("target", type=Path)
     parser.add_argument("--expected-revision", default="")
     args = parser.parse_args()
-    source_manifest = validate_snapshot(args.source)
-    if args.expected_revision and source_manifest["revision"] != args.expected_revision:
-        raise ValueError("Dispatched revision does not match checked-out snapshot")
-    manifest = prepare_snapshot(args.source, args.target)
+    manifest = prepare_snapshot(args.source, args.target, expected_revision=args.expected_revision)
     print(f"Validated {manifest['paper_count']} papers; revision {manifest['revision']}")
     if output := os.environ.get("GITHUB_OUTPUT"):
         with open(output, "a", encoding="utf-8") as stream:

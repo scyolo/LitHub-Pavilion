@@ -2,6 +2,7 @@
 import hashlib
 import importlib.util
 import json
+import sys
 from pathlib import Path
 
 import pytest
@@ -132,3 +133,109 @@ def test_failed_overview_upgrade_does_not_replace_active_target(session_factory,
     with pytest.raises(ValueError, match="overview"):
         MODULE.prepare_snapshot(source, target)
     assert validate_snapshot(target) == first
+
+
+@pytest.mark.parametrize("with_previous", [False, True])
+def test_current_pages_cli_verifies_source_and_target_without_regenerating_reader(
+    session_factory, sample_paper, db, tmp_path, monkeypatch, with_previous,
+):
+    from app.services import snapshot_reader
+
+    source, target = tmp_path / "source", tmp_path / "target"
+    manifest = export_snapshot(session_factory, source)
+    if with_previous:
+        sample_paper.title = "A new snapshot revision"
+        db.commit()
+        manifest = export_snapshot(session_factory, source)
+    before = {path.name: path.read_bytes() for path in source.iterdir()}
+    computations = []
+    original = snapshot_reader.build_reader_assets
+
+    def build(directory, manifest, **kwargs):
+        computations.append((Path(directory), kwargs.get("write", True)))
+        return original(directory, manifest, **kwargs)
+
+    def unnecessary_overview(*args):
+        raise AssertionError("An already verified overview must be reused")
+
+    monkeypatch.setattr(snapshot_reader, "build_reader_assets", build)
+    monkeypatch.setattr(MODULE, "ensure_snapshot_overview", unnecessary_overview)
+    monkeypatch.setattr(sys, "argv", [
+        "prepare_pages", str(source), str(target), "--expected-revision", manifest["revision"],
+    ])
+    MODULE.main()
+    assert computations == [(source, False)] * (2 if with_previous else 1) + [(target, False)]
+    assert json.loads((target / "manifest.json").read_bytes()) == manifest
+    assert before == {path.name: path.read_bytes() for path in source.iterdir()}
+
+
+@pytest.mark.parametrize("existing_target", [False, True])
+def test_wrong_expected_revision_does_not_modify_destination(
+    session_factory, sample_paper, tmp_path, monkeypatch, existing_target,
+):
+    source, target = tmp_path / "source", tmp_path / "target"
+    export_snapshot(session_factory, source)
+    if existing_target:
+        target.mkdir()
+        (target / "keep.txt").write_bytes(b"Existing content")
+    before = {path.name: path.read_bytes() for path in target.iterdir()} if existing_target else None
+    with pytest.raises(ValueError, match="revision"):
+        MODULE.prepare_snapshot(source, target, expected_revision="0" * 64)
+    if existing_target:
+        assert before == {path.name: path.read_bytes() for path in target.iterdir()}
+    else:
+        assert not target.exists()
+
+
+def test_current_reader_staging_still_checks_final_copied_rows(
+    session_factory, sample_paper, tmp_path, monkeypatch,
+):
+    source, target = tmp_path / "source", tmp_path / "target"
+    manifest = export_snapshot(session_factory, source)
+    original_copy = MODULE.shutil.copyfile
+    original_validate = MODULE._validate_contents
+    validations = []
+
+    def corrupt_copy(source_path, destination):
+        result = original_copy(source_path, destination)
+        if Path(destination).name == manifest["chunks"][0]["path"]:
+            Path(destination).write_bytes(b"[]")
+        return result
+
+    def validate(directory, candidate):
+        validations.append(Path(directory))
+        return original_validate(directory, candidate)
+
+    monkeypatch.setattr(MODULE.shutil, "copyfile", corrupt_copy)
+    monkeypatch.setattr(MODULE, "_validate_contents", validate)
+    with pytest.raises(ValueError, match="hash"):
+        MODULE.prepare_snapshot(source, target)
+    assert validations == [target]
+    assert not (target / "manifest.json").exists()
+    assert validate_snapshot(source) == manifest
+
+
+@pytest.mark.parametrize("version,packing", [(4, None), (6, None), (6, 256)])
+def test_legacy_reader_packing_still_upgrades_without_changing_source(
+    session_factory, sample_paper, tmp_path, version, packing,
+):
+    from app.services.snapshot_reader import build_reader_assets, load_reader_descriptor
+
+    source, target = tmp_path / "source", tmp_path / "target"
+    manifest = export_snapshot(session_factory, source)
+    catalog = json.loads((source / manifest["catalog"]["path"]).read_bytes())
+    catalog["reader"] = build_reader_assets(source, manifest, version=version, browse_chunk_size=packing)
+    manifest["catalog"] = _write_content(source, "catalog", _json_bytes(catalog))
+    manifest["revision"] = manifest_revision(manifest)
+    (source / "manifest.json").write_bytes(_json_bytes(manifest))
+    before = {path.name: path.read_bytes() for path in source.iterdir()}
+    upgraded = MODULE.prepare_snapshot(source, target)
+    deployed = json.loads((target / upgraded["catalog"]["path"]).read_bytes())
+    assert deployed["reader"]["version"] == 6
+    assert load_reader_descriptor(target, deployed)["browse_chunk_size"] == 128
+    assert upgraded["paper_count"] == manifest["paper_count"]
+    assert upgraded["generated_at"] == manifest["generated_at"]
+    assert upgraded["chunks"] == manifest["chunks"]
+    assert upgraded["revision"] != manifest["revision"]
+    assert validate_snapshot(target) == upgraded
+    assert before == {path.name: path.read_bytes() for path in source.iterdir()}

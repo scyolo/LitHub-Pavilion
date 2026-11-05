@@ -1754,28 +1754,7 @@
    "citations": 5364,
    "source": "crossref",
    "directions": [
-    "speech",
     "dl"
-   ]
-  },
-  {
-   "id": "las",
-   "title": "Listen, Attend and Spell",
-   "authors": [
-    "William Chan",
-    "Navdeep Jaitly",
-    "Quoc V. Le",
-    "Oriol Vinyals"
-   ],
-   "year": 2015,
-   "venue": "ICASSP",
-   "doi": "10.1109/ICASSP.2016.7472621",
-   "official_url": "https://doi.org/10.1109/ICASSP.2016.7472621",
-   "publisher_key": "https://doi.org/10.1109/ICASSP.2016.7472621",
-   "citations": 2225,
-   "source": "arxiv",
-   "directions": [
-    "speech"
    ]
   },
   {
@@ -1860,55 +1839,7 @@
    "citations": null,
    "source": "pmlr-index",
    "directions": [
-    "speech",
     "dl"
-   ]
-  },
-  {
-   "id": "wav2vec2",
-   "title": "wav2vec 2.0: A Framework for Self-Supervised Learning of Speech Representations",
-   "authors": [
-    "Alexei Baevski",
-    "Yuhao Zhou",
-    "Abdelrahman Mohamed",
-    "Michael Auli"
-   ],
-   "year": 2020,
-   "venue": "NeurIPS",
-   "doi": null,
-   "official_url": "https://proceedings.neurips.cc/paper_files/paper/2020/hash/92d1e1eb1cd6f9fba3227870bb6d7f07-Abstract.html",
-   "publisher_key": "https://proceedings.neurips.cc/paper_files/paper/2020/hash/92d1e1eb1cd6f9fba3227870bb6d7f07-Abstract.html",
-   "citations": null,
-   "source": "neurips-index",
-   "directions": [
-    "speech"
-   ]
-  },
-  {
-   "id": "conformer",
-   "title": "Conformer: Convolution-augmented Transformer for Speech Recognition",
-   "authors": [
-    "Anmol Gulati",
-    "James Qin",
-    "Chung-Cheng Chiu",
-    "Niki Parmar",
-    "Yu Zhang",
-    "Jiahui Yu",
-    "Wei Han",
-    "Shibo Wang",
-    "Zhengdong Zhang",
-    "Yonghui Wu",
-    "Ruoming Pang"
-   ],
-   "year": 2020,
-   "venue": "INTER- SPEECH",
-   "doi": "10.21437/Interspeech.2020-3015",
-   "official_url": "https://doi.org/10.21437/Interspeech.2020-3015",
-   "publisher_key": "https://doi.org/10.21437/Interspeech.2020-3015",
-   "citations": 3152,
-   "source": "crossref",
-   "directions": [
-    "speech"
    ]
   },
   {
@@ -1995,74 +1926,6 @@
    "source": "crossref",
    "directions": [
     "robotics"
-   ]
-  },
-  {
-   "id": "bwa",
-   "title": "Fast and accurate short read alignment with Burrows–Wheeler transform",
-   "authors": [
-    "Heng Li",
-    "Richard Durbin"
-   ],
-   "year": 2009,
-   "venue": "Bioinformatics",
-   "doi": "10.1093/bioinformatics/btp324",
-   "official_url": "https://doi.org/10.1093/bioinformatics/btp324",
-   "publisher_key": "https://doi.org/10.1093/bioinformatics/btp324",
-   "citations": 58612,
-   "source": "crossref",
-   "directions": [
-    "bioinformatics"
-   ]
-  },
-  {
-   "id": "star",
-   "title": "STAR: ultrafast universal RNA-seq aligner",
-   "authors": [
-    "Alexander Dobin",
-    "Carrie A. Davis",
-    "Felix Schlesinger",
-    "Jorg Drenkow",
-    "Chris Zaleski",
-    "Sonali Jha",
-    "Philippe Batut",
-    "Mark Chaisson",
-    "Thomas R. Gingeras"
-   ],
-   "year": 2013,
-   "venue": "Bioinformatics",
-   "doi": "10.1093/bioinformatics/bts635",
-   "official_url": "https://doi.org/10.1093/bioinformatics/bts635",
-   "publisher_key": "https://doi.org/10.1093/bioinformatics/bts635",
-   "citations": 51647,
-   "source": "crossref",
-   "directions": [
-    "bioinformatics"
-   ]
-  },
-  {
-   "id": "samtools",
-   "title": "The Sequence Alignment/Map format and SAMtools",
-   "authors": [
-    "Heng Li",
-    "Bob Handsaker",
-    "Alec Wysoker",
-    "Tim Fennell",
-    "Jue Ruan",
-    "Nils Homer",
-    "Gabor Marth",
-    "Goncalo Abecasis",
-    "Richard Durbin"
-   ],
-   "year": 2009,
-   "venue": "Bioinformatics",
-   "doi": "10.1093/bioinformatics/btp352",
-   "official_url": "https://doi.org/10.1093/bioinformatics/btp352",
-   "publisher_key": "https://doi.org/10.1093/bioinformatics/btp352",
-   "citations": 62066,
-   "source": "crossref",
-   "directions": [
-    "bioinformatics"
    ]
   },
   {
@@ -2393,5 +2256,5 @@
    "year": 1988
   }
  ],
- "total": 110
+ "total": 104
 }
