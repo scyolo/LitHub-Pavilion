@@ -75,9 +75,11 @@
 - 重打标自动备份：`backend/data/backups/before-topic-reindex-20261104T072546573586Z.db`。
 - 迁移脚本保留在 `backend/scripts/prune_directions.py`，默认试运行，`--apply` 才写入。
 
-## 待办
+## 方向调整完成时的发布状态
 
 本次只更新本地数据库与快照，尚未推送到 `site-data` 分支或触发 Pages 部署；线上站点仍是 2026-11-02 的 405,161 篇版本。
+
+2026-11-05 的最终推送、部署验收与清理结果见 [release-20261105.md](release-20261105.md)。
 
 ## 补充：方向来源锚点补全（同日）
 
