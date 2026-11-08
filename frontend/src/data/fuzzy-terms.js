@@ -27,8 +27,13 @@ function lowerBound(terms, value) {
   return low;
 }
 
+export function prepareVocabulary(rows) {
+  const frequencies = new Map(rows);
+  return { frequencies, terms: [...frequencies.keys()].sort() };
+}
+
 export function expandTokens(tokens, vocabulary, limit = 4, rawTokens = []) {
-  const frequencies = new Map(vocabulary), terms = [...frequencies.keys()].sort();
+  const { frequencies, terms } = vocabulary?.frequencies instanceof Map ? vocabulary : prepareVocabulary(vocabulary);
   const rawByStem = new Map();
   for (const raw of rawTokens) {
     const stem = stemmer(raw);

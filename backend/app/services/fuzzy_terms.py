@@ -1,10 +1,42 @@
 """Bounded title-token typo/prefix expansion, shared contract with the reader."""
 import bisect
 import re
+from dataclasses import dataclass
 
 from app.services.search_tokens import stemmer
 
 ALPHABET = 'abcdefghijklmnopqrstuvwxyz0123456789'
+
+
+@dataclass(frozen=True)
+class TitleVocabulary:
+    frequencies: dict[str, int]
+    terms: tuple[str, ...]
+
+
+def title_vocabulary(db):
+    """Reuse one index per pooled connection; every database edit invalidates it.
+
+    data_version detects other connections' commits, total_changes detects our
+    own. Never retain a vocabulary read inside a transaction: a later rollback
+    does not reset total_changes and must not leave uncommitted terms cached.
+    """
+    if db.autoflush:
+        db.flush()
+    connection = db.connection()
+    driver = connection.connection.driver_connection
+    cache_key = 'search_title_vocabulary'
+    version = (connection.exec_driver_sql('PRAGMA data_version').scalar_one(), driver.total_changes)
+    cached = connection.info.get(cache_key)
+    if not driver.in_transaction and cached and cached[0] == version:
+        return cached[1]
+    connection.info.pop(cache_key, None)
+    frequencies = dict(connection.exec_driver_sql(
+        'SELECT term, doc FROM paper_titles_vocab ORDER BY term').all())
+    vocabulary = TitleVocabulary(frequencies, tuple(frequencies))
+    if not driver.in_transaction:
+        connection.info[cache_key] = (version, vocabulary)
+    return vocabulary
 
 
 def edit_one_variants(token):
@@ -24,8 +56,11 @@ def edit_one_variants(token):
 
 
 def expand_tokens(tokens, vocabulary, *, limit=4, raw_tokens=()):
-    frequencies = dict(vocabulary)
-    terms = sorted(frequencies)
+    if isinstance(vocabulary, TitleVocabulary):
+        frequencies, terms = vocabulary.frequencies, vocabulary.terms
+    else:
+        frequencies = dict(vocabulary)
+        terms = sorted(frequencies)
     raw_by_stem = {}
     for raw in raw_tokens:
         raw_by_stem.setdefault(stemmer(raw), set()).add(raw)

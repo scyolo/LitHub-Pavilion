@@ -245,6 +245,46 @@ describe("atomic static snapshot loading", () => {
     await expect(abandoned).rejects.toMatchObject({ name: "AbortError" });
     expect((await store.call("papers", {})).total).toBe(3);
   });
+  it("forwards streamed initialization progress only while each reader is waiting", async () => {
+    const { createSnapshotStore } = await import("./snapshot-store.js");
+    const data = bundle(withOverview()), streams = new Map();
+    const fetcher = vi.fn(async (url, options) => {
+      const path = new URL(url).pathname.split("/").pop();
+      return new Response(new ReadableStream({ start(controller) {
+        streams.set(path, { controller, signal: options.signal });
+      } }));
+    });
+    const store = createSnapshotStore({ baseUrl: "https://reader.example/snapshot/", fetcher });
+    const controller = new AbortController(), abandonedProgress = vi.fn(), nextProgress = vi.fn();
+    const abandoned = store.call("directions", undefined, controller.signal, abandonedProgress);
+    const rejection = expect(abandoned).rejects.toMatchObject({ name: "AbortError" });
+    const next = store.call("dashboard", {}, undefined, nextProgress);
+    const manifest = streams.get("manifest.json");
+    const manifestBytes = new TextEncoder().encode(data.files["manifest.json"]);
+    manifest.controller.enqueue(manifestBytes.slice(0, 20));
+    await vi.waitFor(() => expect(nextProgress).toHaveBeenCalledWith({ bytes: 20 }));
+    expect(abandonedProgress).toHaveBeenCalledWith({ bytes: 20 });
+    controller.abort(); await rejection;
+    const before = abandonedProgress.mock.calls.length;
+    manifest.controller.enqueue(manifestBytes.slice(20)); manifest.controller.close();
+    await vi.waitFor(() => expect(streams.has(data.manifest.catalog.path)).toBe(true));
+    const catalog = streams.get(data.manifest.catalog.path);
+    const catalogBytes = new TextEncoder().encode(data.files[data.manifest.catalog.path]);
+    catalog.controller.enqueue(catalogBytes.slice(0, 30));
+    await vi.waitFor(() => expect(nextProgress).toHaveBeenCalledWith({ bytes: 30 }));
+    expect(abandonedProgress).toHaveBeenCalledTimes(before);
+    expect(manifest.signal.aborted).toBe(false);
+    expect(catalog.signal.aborted).toBe(false);
+    catalog.controller.enqueue(catalogBytes.slice(30)); catalog.controller.close();
+    expect((await next).total).toBe(3);
+    const finished = nextProgress.mock.calls.length;
+    const refresh = store.refresh();
+    const refreshed = streams.get("manifest.json");
+    refreshed.controller.enqueue(manifestBytes); refreshed.controller.close();
+    expect(await refresh).toBe(false);
+    expect(nextProgress).toHaveBeenCalledTimes(finished);
+    expect(fetcher).toHaveBeenCalledTimes(3);
+  });
 });
 
 function detailReaderBundle(fixture) {
@@ -276,6 +316,33 @@ it('recovers once when a deployment removed a verified older catalog\'s shards',
   expect((await store.call('paper', 11)).title).toBe('Newly deployed paper title');
   expect(store.getState().revision).toBe(next.manifest.revision);
   expect(fetcher.mock.calls.filter(([url]) => url.endsWith(first.detailPath))).toHaveLength(1);
+  expect(fetcher.mock.calls.filter(([url]) => url.endsWith('manifest.json'))).toHaveLength(2);
+});
+
+it('reports real refresh bytes to a reader recovering a removed shard', async () => {
+  vi.stubGlobal('DecompressionStream', DecompressionStream);
+  const first = detailReaderBundle(snapshotFixture()), fixture = snapshotFixture();
+  fixture.papers[0].title = 'Refreshed paper';
+  const next = detailReaderBundle(fixture), progress = vi.fn();
+  let active = first, stream;
+  const fetcher = vi.fn(async url => {
+    const path = new URL(url).pathname.split('/').at(-1);
+    if (active === next && path === 'manifest.json') {
+      return new Response(new ReadableStream({ start(controller) { stream = controller; } }));
+    }
+    return active.files[path] ? new Response(active.files[path]) : new Response('removed', { status: 404 });
+  });
+  const { createSnapshotStore } = await import('./snapshot-store.js');
+  const store = createSnapshotStore({ baseUrl: 'https://reader.example/snapshot/', fetcher });
+  await store.call('directions'); active = next;
+  const paper = store.call('paper', 11, undefined, progress);
+  await vi.waitFor(() => expect(stream).toBeDefined());
+  progress.mockClear();
+  const bytes = new TextEncoder().encode(next.files['manifest.json']);
+  stream.enqueue(bytes.slice(0, 25));
+  await vi.waitFor(() => expect(progress).toHaveBeenCalledWith({ bytes: 25 }));
+  stream.enqueue(bytes.slice(25)); stream.close();
+  expect((await paper).title).toBe('Refreshed paper');
   expect(fetcher.mock.calls.filter(([url]) => url.endsWith('manifest.json'))).toHaveLength(2);
 });
 

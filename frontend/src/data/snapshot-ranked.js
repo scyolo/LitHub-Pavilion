@@ -1,6 +1,6 @@
 import { createSharedTasks, throwIfAborted } from "./shared-tasks.js";
 import { stemmer } from "stemmer";
-import { expandTokens } from "./fuzzy-terms.js";
+import { expandTokens, prepareVocabulary } from "./fuzzy-terms.js";
 import { normalizedTitle, parseParams, queryTokens, readerError } from "./snapshot-engine.js";
 import { queryTopic } from "./query-aliases.js";
 import { createConferenceScope } from './conference-scope.js';
@@ -127,7 +127,7 @@ export function createRankedReader({ descriptor, manifest, catalog, batches, car
         const rows = await batches(descriptor.search.vocabulary, shared);
         if (rows.some(row => !Array.isArray(row) || row.length !== 2 || !/^[a-z0-9]+$/.test(row[0])
             || !Number.isSafeInteger(row[1]) || row[1] < 1)) throw invalid();
-        return rows;
+        return prepareVocabulary(rows);
       }, context);
       tokenGroups = expandTokens(tokens, terms, 4, title.match(/[a-z0-9]+/g) || []);
     }
@@ -151,25 +151,43 @@ export function createRankedReader({ descriptor, manifest, catalog, batches, car
     ]);
     if (tokenError) tokens = queryTokens(params.q, exact.size > 0);
     const scores = new Map(), priorities = new Map();
-    const postings=new Map(expanded.map(t=>[t,new Map()])),positions=new Map(expanded.map(t=>[t,new Map()])),lengths=new Map();
-    for(const row of rows){
-      if(!Array.isArray(row)||row.length!==5||typeof row[0]!=='string'||!row.slice(1,4).every(Number.isSafeInteger)
-          ||row[1]<1||row[2]<1||row[3]<0||!Array.isArray(row[4])||row[4].some((p,i)=>!Number.isSafeInteger(p)||p<0||(i&&p<=row[4][i-1])))throw invalid();
-      if(postings.has(row[0])){postings.get(row[0]).set(row[1],row[2]);positions.get(row[0]).set(row[1],row[4]);lengths.set(row[1],row[3]);}
+    // Keep one reference to each verified posting. Separate frequency, length,
+    // position and single-term merge maps duplicated the same document IDs.
+    const postings = new Map(expanded.map(token => [token, new Map()]));
+    for (const row of rows) {
+      if (!Array.isArray(row) || row.length !== 5 || typeof row[0] !== 'string'
+          || !Number.isSafeInteger(row[1]) || !Number.isSafeInteger(row[2]) || !Number.isSafeInteger(row[3])
+          || row[1] < 1 || row[2] < 1 || row[3] < 0 || !Array.isArray(row[4])
+          || row[4].some((p, i) => !Number.isSafeInteger(p) || p < 0 || (i && p <= row[4][i - 1]))) throw invalid();
+      postings.get(row[0])?.set(row[1], row);
     }
-    const groups=tokenGroups.map(terms=>{
-      const merged=new Map();for(const term of terms)for(const [id,frequency]of postings.get(term)||[])merged.set(id,Math.max(merged.get(id)||0,frequency));return merged;
-    }).sort((a,b)=>a.size-b.size);
+    const groups = tokenGroups.map(terms => {
+      if (terms.length === 1) return postings.get(terms[0]);
+      const merged = new Map();
+      for (const term of terms) for (const [id, row] of postings.get(term)) {
+        if (!merged.has(id) || merged.get(id)[2] < row[2]) merged.set(id, row);
+      }
+      return merged;
+    }).sort((a, b) => a.size - b.size);
     const idfs=groups.map(group=>Math.max(1e-6,Math.log((manifest.paper_count-group.size+0.5)/(group.size+0.5))));
     const phrase=(title.match(/[a-z0-9]+/g)||[]).map(t=>stemmer(t)),ids=new Set(exact);
-    for(const id of groups[0]?.keys()||[]){
-      if(groups.length>1&&!groups.every(g=>g.has(id)))continue;
-      ids.add(id);let score=0;
-      for(let index=0;index<groups.length;index++){const frequency=groups[index].get(id);score-=idfs[index]*frequency*2.2/(frequency+1.2*(0.25+0.75*lengths.get(id)/descriptor.search.average_length));}
-      const titlePositions=positions.get(phrase[0])?.get(id)||[];
-      const phraseMatch=phrase.length===1?titlePositions.length>0:titlePositions.some(start=>phrase.every((token,i)=>positions.get(token)?.get(id)?.includes(start+i)));
-      priorities.set(id,exact.has(id)?0:phraseMatch?1:tokens.every(t=>positions.get(t)?.get(id)?.length)?2:tokens.every(t=>postings.get(t)?.has(id))?3:4);
-      scores.set(id,score);
+    for (const [id, first] of groups[0] || []) {
+      let score = 0, matches = true;
+      const normalization = 1.2 * (0.25 + 0.75 * first[3] / descriptor.search.average_length);
+      for (let index = 0; index < groups.length; index++) {
+        const row = index === 0 ? first : groups[index].get(id);
+        if (!row) { matches = false; break; }
+        score -= idfs[index] * row[2] * 2.2 / (row[2] + normalization);
+      }
+      if (!matches) continue;
+      ids.add(id);
+      const titlePositions = postings.get(phrase[0])?.get(id)?.[4] || [];
+      const phraseMatch = phrase.length === 1 ? titlePositions.length > 0
+        : titlePositions.some(start => phrase.every((token, i) => postings.get(token)?.get(id)?.[4].includes(start + i)));
+      priorities.set(id, exact.has(id) ? 0 : phraseMatch ? 1
+        : tokens.every(token => postings.get(token)?.get(id)?.[4].length) ? 2
+        : tokens.every(token => postings.get(token)?.has(id)) ? 3 : 4);
+      scores.set(id, score);
     }
     for(const id of exact){if(!scores.has(id))scores.set(id,0);priorities.set(id,0);}
     return {ids,scores,priorities,mode:fuzzy?'fuzzy':'keywords',expansions:fuzzy?tokenGroups.map((terms,i)=>({token:tokens[i],alternatives:terms.slice(1)})).filter(r=>r.alternatives.length):[]};

@@ -1,4 +1,4 @@
-import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
+import { act, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { MemoryRouter } from 'react-router-dom';
 import { beforeEach, expect, it, vi } from 'vitest';
@@ -8,6 +8,7 @@ import { api } from '../api.js';
 vi.mock('../api.js', () => ({ api: { isSnapshot: true, dashboard: vi.fn(), papers: vi.fn(), search: vi.fn() } }));
 const venues = Array.from({ length: 200 }, (_, i) => ({ abbr: `V${String(i).padStart(3, '0')}`, name: `Venue ${i}`, paper_count: 1 }));
 beforeEach(() => {
+  vi.clearAllMocks();
   api.dashboard.mockResolvedValue({ directions: [], annual: [], venues, configured_venues: venues.length });
   api.papers.mockResolvedValue({ total: 0, items: [], page: 1, size: 20 });
 });
@@ -15,6 +16,24 @@ function show(url = '/papers') {
   const client = new QueryClient({ defaultOptions: { queries: { retry: false } } });
   render(<MemoryRouter initialEntries={[url]}><QueryClientProvider client={client}><PaperList /></QueryClientProvider></MemoryRouter>);
 }
+
+it('runs only the submitted search, avoiding partial queries during typing pauses', async () => {
+  api.search.mockResolvedValue({total: 0, items: [], page: 1, size: 20});
+  show();
+  await screen.findByRole('button', {name: /^V000/});
+  vi.useFakeTimers();
+  try {
+    const input = screen.getByRole('searchbox', {name: '搜索论文'});
+    fireEvent.change(input, {target: {value: 'speculative'}});
+    await act(async () => { vi.advanceTimersByTime(800); });
+    expect(api.search).not.toHaveBeenCalled();
+    fireEvent.change(input, {target: {value: 'speculative decoding'}});
+    fireEvent.click(screen.getByRole('button', {name: '搜索', exact: true}));
+    await act(async () => { vi.advanceTimersByTime(800); });
+    expect(api.search).toHaveBeenCalledTimes(1);
+    expect(api.search.mock.calls[0][0]).toMatchObject({q: 'speculative decoding'});
+  } finally { vi.useRealTimers(); }
+});
 
 it('bounds first-page venue DOM while keeping the complete directory reachable', async () => {
   show();

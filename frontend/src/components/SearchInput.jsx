@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import Icon from "./Icon.jsx";
 
-export default function SearchInput({ value = "", onCommit, label = "搜索论文", placeholder, automatic = true, autoFocus = false, descriptionId }) {
+export default function SearchInput({ value = "", onCommit, label = "搜索论文", placeholder, automatic = true, autoFocus = false, descriptionId, submitLabel }) {
   const [draft, setDraft] = useState(value);
   const timer = useRef(null);
   const composing = useRef(false);
@@ -34,6 +34,7 @@ export default function SearchInput({ value = "", onCommit, label = "搜索论�
         }} />
       {draft ? <button className="icon-button" type="button" aria-label="清空搜索" onClick={() => { setDraft(""); submit(""); }}><Icon name="close" size={15} /></button>
         : <kbd aria-hidden="true">↵</kbd>}
+      {submitLabel && <button className="button secondary small-button" type="submit">{submitLabel}</button>}
     </form>
   );
 }

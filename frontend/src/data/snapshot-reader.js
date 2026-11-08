@@ -1,7 +1,7 @@
 import { createSharedTasks, throwIfAborted } from "./shared-tasks.js";
 import { createRankedReader } from "./snapshot-ranked.js";
 import { createReaderCache } from "./reader-cache.js";
-import { expandTokens } from "./fuzzy-terms.js";
+import { expandTokens, prepareVocabulary } from "./fuzzy-terms.js";
 import { keywordQuery, queryTopic } from "./query-aliases.js";
 import { createConferenceScope } from './conference-scope.js';
 import { acceptedTitleParams, validateAcceptedReferences } from './accepted-publications.js';
@@ -130,7 +130,7 @@ export function createLazyReader({ manifest, catalog, download, onProgress = () 
       const terms = await vocabulary.run("terms", async shared => {
         const rows = await batches(descriptor.search.vocabulary, shared);
         if (rows.some(row => !Array.isArray(row) || row.length !== 2 || !/^[a-z0-9]+$/.test(row[0]) || !Number.isSafeInteger(row[1]) || row[1] < 1)) throw invalid();
-        return rows;
+        return prepareVocabulary(rows);
       }, context);
       tokenGroups = expandTokens(tokens, terms, 4, title.match(/[a-z0-9]+/g) || []);
     }

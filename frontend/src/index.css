@@ -567,6 +567,8 @@ fieldset.filter-group { padding-top: 10px; margin-top: 15px; }
   .page-heading h1 { font-size: 22px; }
   .page-heading p { font-size: 10px; }
   .eyebrow { font-size: 8px; }
+  .explorer-searchbar { flex-wrap: wrap; }
+  .explorer-searchbar > .search-input { flex-basis: 100%; min-width: 0; }
   .dashboard-heading .heading-actions { display: none; }
   .metrics-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .metric-value { font-size: 28px; }

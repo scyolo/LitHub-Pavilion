@@ -1,11 +1,28 @@
 """清洗工具测试：标题、作者、DOI、arXiv 标识和摘要重建。"""
+import pytest
+
 from app.cleaning import (
     clean_author_name,
     clean_title,
     normalize_arxiv_id,
     normalize_doi,
+    normalize_title,
     rebuild_abstract,
 )
+
+
+@pytest.mark.parametrize("title,expected", [
+    ("  Fast---Inference\tvia\nDecoding!  ", "fast inference via decoding"),
+    ("Cafe\u0301Net: naïve retrieval", "cafenet naive retrieval"),
+    ("ＦｌａｓｈAttention 𝟚", "flashattention 2"),
+    ("𝔹-based ﬂow Kernels", "b based flow kernels"),
+    ("α-model 中文检索", "model"),
+    ("x\u034fy", "x y"),
+    ("\u0301\u0308", ""),
+    ("", ""),
+])
+def test_title_normalization_preserves_unicode_and_token_boundaries(title, expected):
+    assert normalize_title(title) == expected
 
 
 def test_clean_title_strips_trailing_dot():

@@ -37,6 +37,17 @@ _NOISE_SUFFIXES = (
     "aims and scope",
     "table of contents",
 )
+_NOISE_ENDINGS = tuple(" " + suffix for suffix in _NOISE_SUFFIXES)
+_CONFERENCE_COMMENTARY = re.compile(r"icra 20\d{2} commentary")
+_CONFERENCE_FRONT_MATTER = re.compile(
+    r"(?:program committee|steering committee|organizing committee|"
+    r"message from (?:the )?(?:general|program|conference|technical program) chairs?)"
+    r"(?: [a-z][a-z0-9]{0,19} 20\d{2})?"
+)
+_JOURNAL_EDITORIAL = re.compile(r"pacmhci .+\b20\d{2} editorial")
+_EDITORIAL_INTRODUCTION = re.compile(
+    r"^(?:guest )?editorial introduction(?: (?:to|for)\b| supporting group work$|$)"
+)
 
 
 def is_noise_title(title_norm: str) -> bool:
@@ -48,34 +59,30 @@ def is_noise_title(title_norm: str) -> bool:
         return True
     # IEEE deposits these conference front-matter records as proceedings
     # articles. Exact edition headings are not research-paper titles.
-    if re.fullmatch(r"icra 20\d{2} commentary", norm):
+    if _CONFERENCE_COMMENTARY.fullmatch(norm):
         return True
     # IEEE also registers committee lists and chair messages as articles.
     # Limit suffixes to an explicit short conference acronym and year; papers
     # about committee selection or message protocols retain normal admission.
-    if re.fullmatch(
-        r"(?:program committee|steering committee|organizing committee|"
-        r"message from (?:the )?(?:general|program|conference|technical program) chairs?)"
-        r"(?: [a-z][a-z0-9]{0,19} 20\d{2})?",
-        norm,
-    ):
+    if _CONFERENCE_FRONT_MATTER.fullmatch(norm):
         return True
     # Journal issue introductions are deposited with article DOIs as well.
     # Keep papers studying editorial work; match only the observed headings.
-    if re.fullmatch(r'pacmhci .+\b20\d{2} editorial', norm) or re.match(
-        r'^(?:guest )?editorial introduction(?: (?:to|for)\b| supporting group work$|$)',
-        norm,
-    ):
+    if _JOURNAL_EDITORIAL.fullmatch(norm) or _EDITORIAL_INTRODUCTION.match(norm):
         return True
-    return any(norm.endswith(" " + suffix) or norm == suffix for suffix in _NOISE_SUFFIXES)
+    return norm.endswith(_NOISE_ENDINGS) or norm in _NOISE_SUFFIXES
 
 
 def normalize_title(title: str) -> str:
     """title_norm：lowercase + NFKD 去变音符 + 去标点/空白，用于模糊匹配与去重。"""
-    text = unicodedata.normalize("NFKD", title or "")
-    text = "".join(ch for ch in text if not unicodedata.combining(ch))
-    text = re.sub(r"[^a-z0-9]+", " ", text.lower()).strip()
-    return _WS.sub(" ", text)
+    text = title or ""
+    # ASCII has no decomposition or combining marks. Most indexed titles can
+    # skip a Python-level loop over every character during reader admission.
+    if not text.isascii():
+        text = unicodedata.normalize("NFKD", text)
+        text = "".join(ch for ch in text if not unicodedata.combining(ch))
+    # This already collapses all whitespace and punctuation into one space.
+    return _NON_ALNUM.sub(" ", text.lower()).strip()
 
 
 def clean_title(title: str) -> str:

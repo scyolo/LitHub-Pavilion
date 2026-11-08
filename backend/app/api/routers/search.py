@@ -3,7 +3,7 @@ import re
 from typing import Literal
 
 from fastapi import APIRouter, Depends, HTTPException, Query
-from sqlalchemy import Float, Integer, literal, select, text, union
+from sqlalchemy import Float, Integer, bindparam, func, literal, select, text, union
 from sqlalchemy.orm import Session
 
 from app.api.deps import get_db
@@ -11,7 +11,7 @@ from app.api.filtering import PAPER_SORTS, PaperFilters, bad_request, paper_filt
 from app.api.serializers import authors_for, directions_for, paper_card
 from app.models import Direction, Paper, PaperDirection
 from app.cleaning import normalize_title
-from app.services.fuzzy_terms import expand_tokens
+from app.services.fuzzy_terms import expand_tokens, title_vocabulary
 from app.services.search_tokens import stemmer
 from app.services.query_aliases import keyword_query, query_topic
 
@@ -59,6 +59,58 @@ def search_predicate(q: str, match_expr: str | None):
 
 
 
+def _search_page(db, filters, q, match_expr, sort, page, size):
+    query = paper_query(db, filters).filter(search_predicate(q, match_expr))
+    if match_expr is not None:
+        query = query.params(match_q=match_expr)
+    candidates = query
+    score = literal(0.0).label('score')
+    if match_expr is None:
+        order = (Paper.id.desc(),) if sort == 'relevance' else PAPER_SORTS[sort]
+    elif sort != 'relevance':
+        order = PAPER_SORTS[sort]
+    else:
+        # Materialize once: a correlated MATCH would restart corpus-wide BM25
+        # statistics for each candidate. Keep normalized-title-only matches.
+        scores = (
+            text('SELECT rowid AS paper_id, bm25(papers_fts, 8.0, 1.0) AS score '
+                 'FROM papers_fts WHERE papers_fts MATCH :match_q')
+            .columns(paper_id=Integer, score=Float)
+            .cte('search_scores').prefix_with('MATERIALIZED')
+        )
+        query = query.outerjoin(scores, scores.c.paper_id == Paper.id)
+        score = scores.c.score.label('score')
+        exact_title = normalize_title(q)
+        title_phrase = 'title : "' + ' '.join(_TOKEN_RE.findall(exact_title)) + '"'
+        title_terms = 'title : (' + match_expr + ')'
+        priority = text('''CASE
+            WHEN papers.title_norm = :exact_title THEN 0
+            WHEN (' ' || papers.title_norm || ' ') LIKE :normalized_phrase THEN 1
+            WHEN papers.id IN (SELECT rowid FROM papers_fts WHERE papers_fts MATCH :title_phrase) THEN 1
+            WHEN papers.id IN (SELECT rowid FROM paper_titles_fts WHERE paper_titles_fts MATCH :match_q) THEN 2
+            WHEN papers.id IN (SELECT rowid FROM papers_fts WHERE papers_fts MATCH :title_terms) THEN 2
+            ELSE 3 END''')
+        query = query.params(exact_title=exact_title, normalized_phrase='% ' + exact_title + ' %',
+                             title_phrase=title_phrase, title_terms=title_terms)
+        order = (priority, text('score ASC'), Paper.id.desc())
+    # The total and page share one eligibility/filter pass. An empty later page
+    # still needs a count so it cannot be mistaken for a missing keyword match.
+    rows = (query.with_entities(Paper.id, score, func.count().over().label('total'))
+            .order_by(*order).offset((page - 1) * size).limit(size).all())
+    total = rows[0][2] if rows else candidates.count() if page > 1 else 0
+    ids = [row[0] for row in rows]
+    page_scores = {row[0]: row[1] for row in rows}
+    if ids and match_expr is not None and sort != 'relevance':
+        # BM25 uses global term statistics even when rowid limits the output.
+        # Date/year/citation sorting needs scores only for the displayed page.
+        statement = text(
+            'SELECT rowid, bm25(papers_fts, 8.0, 1.0) FROM papers_fts '
+            'WHERE papers_fts MATCH :match_q AND rowid IN :page_ids'
+        ).bindparams(bindparam('page_ids', expanding=True))
+        page_scores.update(db.execute(statement, {'match_q': match_expr, 'page_ids': ids}).all())
+    return total, ids, page_scores
+
+
 def _search_published(
     q: str = Query(..., max_length=MAX_TITLE_QUERY),
     filters: PaperFilters = Depends(paper_filters),
@@ -83,16 +135,19 @@ def _search_published(
             original = None
         if original and original['total']:
             return original
-        result = _search_published(q=rewritten, filters=filters, sort=sort, page=page, size=size, db=db, match='auto')
+        result = _search_published(q=rewritten, filters=filters, sort=sort, page=page, size=size, db=db, match='fuzzy')
         return {**result, 'query_rewrite': rewritten}
     selected_topic = query_topic(q, match, db.query(Direction).filter(Direction.enabled == 1).all()) if _CJK_RE.search(q) else None
     if selected_topic is not None:
         query = paper_query(db, filters).filter(Paper.id.in_(
             db.query(PaperDirection.paper_id).filter(PaperDirection.direction_id == selected_topic.id)))
         actual_sort = 'publication_desc' if sort == 'relevance' else sort
-        total = query.count()
-        papers = query.order_by(*PAPER_SORTS[actual_sort]).offset((page-1)*size).limit(size).all()
-        ids = [p.id for p in papers]
+        rows = (query.with_entities(Paper.id, func.count().over().label('total'))
+                .order_by(*PAPER_SORTS[actual_sort]).offset((page-1)*size).limit(size).all())
+        total = rows[0][1] if rows else query.count() if page > 1 else 0
+        ids = [row[0] for row in rows]
+        by_id = {p.id: p for p in db.query(Paper).filter(Paper.id.in_(ids)).all()} if ids else {}
+        papers = [by_id[pid] for pid in ids if pid in by_id]
         directions, authors = directions_for(db, ids), authors_for(db, ids)
         return {'total':total, 'page':page, 'size':size,
                 'items':[{**paper_card(p, directions, authors), 'score':0.0} for p in papers],
@@ -107,57 +162,19 @@ def _search_published(
     match_expr = _build_match_expr(q, exact_title=exists or match == 'exact')
     if match == 'exact':
         match_expr = None
-    query = paper_query(db, filters).filter(search_predicate(q, match_expr))
-    if match_expr is not None:
-        query = query.params(match_q=match_expr)
-    total = query.count()
     match_mode = 'exact' if match == 'exact' else 'keywords'
     expansions = []
+    total, ids, scores = 0, [], {}
+    if match != 'fuzzy' or match_expr is None:
+        total, ids, scores = _search_page(db, filters, q, match_expr, sort, page, size)
     if match_expr is not None and (match == 'fuzzy' or (match == 'auto' and total == 0)):
-        vocabulary = db.connection().exec_driver_sql('SELECT term, doc FROM paper_titles_vocab ORDER BY term').all()
+        vocabulary = title_vocabulary(db)
         tokens = list(dict.fromkeys(stemmer(token) for token in _TOKEN_RE.findall(exact_title)))
         groups = expand_tokens(tokens, vocabulary, raw_tokens=_TOKEN_RE.findall(exact_title))
         expansions = [{'token': token, 'alternatives': terms[1:]} for token, terms in zip(tokens, groups, strict=True) if len(terms) > 1]
         match_expr = ' AND '.join('(' + ' OR '.join('"' + term + '"' for term in terms) + ')' for terms in groups)
-        query = paper_query(db, filters).filter(search_predicate(q, match_expr)).params(match_q=match_expr)
-        total = query.count()
+        total, ids, scores = _search_page(db, filters, q, match_expr, sort, page, size)
         match_mode = 'fuzzy'
-    if match_expr is None:
-        score = literal(0.0).label('score')
-        order = (Paper.id.desc(),) if sort == 'relevance' else PAPER_SORTS[sort]
-    else:
-        # A correlated MATCH reinitializes FTS5 (including corpus-wide BM25
-        # statistics) for every candidate. Materialize the matching scores once
-        # before joining; LEFT JOIN keeps normalized-title-only matches visible.
-        scores = (
-            text("SELECT rowid AS paper_id, bm25(papers_fts, 8.0, 1.0) AS score "
-                 "FROM papers_fts WHERE papers_fts MATCH :match_q")
-            .columns(paper_id=Integer, score=Float)
-            .cte("search_scores")
-            .prefix_with("MATERIALIZED")
-        )
-        query = query.outerjoin(scores, scores.c.paper_id == Paper.id)
-        score = scores.c.score.label("score")
-        title_phrase = 'title : "' + " ".join(_TOKEN_RE.findall(exact_title)) + '"'
-        title_terms = "title : (" + match_expr + ")"
-        priority = text("""CASE
-            WHEN papers.title_norm = :exact_title THEN 0
-            WHEN (' ' || papers.title_norm || ' ') LIKE :normalized_phrase THEN 1
-            WHEN papers.id IN (SELECT rowid FROM papers_fts WHERE papers_fts MATCH :title_phrase) THEN 1
-            WHEN papers.id IN (SELECT rowid FROM paper_titles_fts WHERE paper_titles_fts MATCH :match_q) THEN 2
-            WHEN papers.id IN (SELECT rowid FROM papers_fts WHERE papers_fts MATCH :title_terms) THEN 2
-            ELSE 3 END""")
-        query = query.params(exact_title=exact_title, normalized_phrase='% ' + exact_title + ' %', title_phrase=title_phrase, title_terms=title_terms)
-        order = (priority, text("score ASC"), Paper.id.desc()) if sort == "relevance" else PAPER_SORTS[sort]
-    rows = (
-        query.with_entities(Paper.id, score)
-        .order_by(*order)
-        .offset((page - 1) * size)
-        .limit(size)
-        .all()
-    )
-    ids = [row[0] for row in rows]
-    scores = {row[0]: row[1] for row in rows}
     papers = db.query(Paper).filter(Paper.id.in_(ids)).all() if ids else []
     by_id = {p.id: p for p in papers}
     dirs = directions_for(db, ids)

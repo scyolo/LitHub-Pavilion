@@ -50,8 +50,28 @@ async function readLimitedBytes(body, maxBytes, onProgress) {
 export function createSnapshotStore({ baseUrl, fetcher = globalThis.fetch.bind(globalThis), onState = () => {}, overviewCache = null }) {
   const base = new URL(baseUrl);
   let active = null, pending = null, wantFull = false, initializing = null;
+  // Shared manifest/catalog reads outlive one reader; only their current
+  // waiters receive transfer progress and extend their own idle deadlines.
+  const waitingReaders = new Set();
   let state = { status: "idle", revision: null, generation: 0, verification: null, generated_at: null, paper_count: null, loaded: 0, total: 0, error: null };
   function update(values) { state = { ...state, ...values }; onState(state); }
+  function waitingProgress(value) {
+    for (const reader of waitingReaders) if (!reader.signal?.aborted) reader.onProgress(value);
+  }
+  async function waitForOperation(operation, signal, onProgress) {
+    throwIfAborted(signal);
+    const reader = onProgress ? { signal, onProgress } : null;
+    const remove = () => waitingReaders.delete(reader);
+    if (reader) {
+      waitingReaders.add(reader);
+      signal?.addEventListener("abort", remove, { once: true });
+    }
+    try { return await waitFor(operation(), signal); }
+    finally {
+      remove();
+      signal?.removeEventListener("abort", remove);
+    }
+  }
   async function download(path, digest, cache, maxBytes = MAX_FILE_BYTES, batchSignal, onProgress) {
     const controller = new AbortController();
     const abort = () => controller.abort();
@@ -131,10 +151,10 @@ export function createSnapshotStore({ baseUrl, fetcher = globalThis.fetch.bind(g
   function refresh() {
     return run(async () => {
       update({ status: active ? "updating" : "loading", error: null, loaded: 0, total: 1 });
-      const { data: manifest } = await download("manifest.json", null, "no-cache", 1024 * 1024);
+      const { data: manifest } = await download("manifest.json", null, "no-cache", 1024 * 1024, undefined, waitingProgress);
       await validateManifest(manifest);
       if (active?.manifest.revision === manifest.revision) { update({ status: "ready", from_cache: false }); return false; }
-      const { data: catalog, size, text: catalogText } = await download(manifest.catalog.path, manifest.catalog.sha256, "default");
+      const { data: catalog, size, text: catalogText } = await download(manifest.catalog.path, manifest.catalog.sha256, "default", undefined, undefined, waitingProgress);
       let candidate = { manifest, catalog, bytes: size, overview: createOverview({ manifest, catalog }), engine: null };
       candidate.reader = createLazyReader({ manifest, catalog, download, onProgress: (progress) => { if (active?.manifest.revision === manifest.revision) update(progress); } });
       if (!candidate.overview || wantFull || active?.engine) candidate = await complete(candidate);
@@ -188,7 +208,7 @@ export function createSnapshotStore({ baseUrl, fetcher = globalThis.fetch.bind(g
   async function call(method, params, signal, onProgress) {
     if (signal?.aborted) throw new DOMException("Request aborted", "AbortError");
     const lightweight = ["dashboard", "latest", "directions", "venues", "venueTopics", "stats", "crawlLogs", "crawlStatus"].includes(method);
-    if (!active) await waitFor(ensureActive(), signal);
+    if (!active) await waitForOperation(ensureActive, signal, onProgress);
     throwIfAborted(signal);
     if (active.reader && ["papers", "paper", "search"].includes(method)) {
       const candidate = active;
@@ -201,7 +221,7 @@ export function createSnapshotStore({ baseUrl, fetcher = globalThis.fetch.bind(g
         // A returning tab may hold a verified catalog whose immutable shards
         // were removed by a deployment. Recheck once, never treat 404 as no hits.
         if (error.httpStatus !== 404) throw error;
-        await waitFor(refresh(), signal);
+        await waitForOperation(refresh, signal, onProgress);
         if (active.manifest.revision === candidate.manifest.revision || !active.reader) throw error;
         return active.reader.call(method, params, { signal, onProgress });
       }
