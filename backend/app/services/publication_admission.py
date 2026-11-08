@@ -106,10 +106,16 @@ def _eligible_metadata(title, doi, publisher_key, dblp_key, stream):
 
 
 def reader_admission(db):
-    connection = db.connection().connection.driver_connection
-    connection.create_function(
-        "reader_eligible_metadata", 5, _eligible_metadata, deterministic=True
-    )
+    pooled = db.connection()
+    connection = pooled.connection.driver_connection
+    # SQLite forbids replacing a function while a transaction retains an
+    # active statement. Register once per pooled connection and only replace
+    # it when tests or application setup actually provide a new callable.
+    if pooled.info.get('reader_eligible_metadata_function') is not _eligible_metadata:
+        connection.create_function(
+            "reader_eligible_metadata", 5, _eligible_metadata, deterministic=True
+        )
+        pooled.info['reader_eligible_metadata_function'] = _eligible_metadata
     return (
         Paper.venue_confirmed == 1,
         Paper.ccf_level == Venue.ccf_level,
