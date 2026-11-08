@@ -15,6 +15,21 @@ MODULE = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(MODULE)
 
 
+def test_single_version_stage_validates_current_and_does_not_publish_old_assets(session_factory,sample_paper,db,tmp_path):
+    source,target=tmp_path/'source',tmp_path/'target'
+    first=export_snapshot(session_factory,source)
+    sample_paper.title='New version searchable title';db.commit()
+    second=export_snapshot(session_factory,source)
+    before={p.name:p.read_bytes() for p in source.iterdir()}
+    result=MODULE.prepare_snapshot(source,target,single_version=True)
+    assert result==second
+    assert validate_snapshot(target)==second
+    assert not (target/'previous-manifest.json').exists()
+    assert not (target/first['catalog']['path']).exists()
+    assert (target/'bootstrap.json.gz').is_file()
+    assert before=={p.name:p.read_bytes() for p in source.iterdir()}
+
+
 def test_pages_stages_only_validated_public_assets(session_factory, sample_paper, tmp_path):
     source, target = tmp_path / "source", tmp_path / "target"
     manifest = export_snapshot(session_factory, source)

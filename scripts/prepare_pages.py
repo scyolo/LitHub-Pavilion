@@ -15,7 +15,7 @@ from app.services.snapshot import (
 )
 
 
-def prepare_snapshot(source: Path, target: Path, *, expected_revision: str = "") -> dict:
+def prepare_snapshot(source: Path, target: Path, *, expected_revision: str = "", single_version=False) -> dict:
     source, target = Path(source), Path(target)
     if source.resolve() == target.resolve():
         raise ValueError("Pages staging must not modify its source snapshot")
@@ -31,7 +31,7 @@ def prepare_snapshot(source: Path, target: Path, *, expected_revision: str = "")
     entries = {entry["path"]: entry["sha256"] for entry in [manifest["catalog"], *manifest["chunks"]]}
     previous = None
     previous_path = source / "previous-manifest.json"
-    if previous_path.exists() or previous_path.is_symlink():
+    if not single_version and (previous_path.exists() or previous_path.is_symlink()):
         previous, _ = _read_json(previous_path, max_bytes=1024 * 1024)
         try:
             _validate_contents(source, previous)
@@ -89,6 +89,8 @@ def prepare_snapshot(source: Path, target: Path, *, expected_revision: str = "")
     # history; stage only current output plus an explicit previous revision.
     retained_names = {entry['path'] for retained_manifest in [upgraded,*([upgraded_previous] if previous else [])]
                       for entry in [retained_manifest['catalog'],*retained_manifest['chunks']]} if upgraded != manifest and previous is None else set(entries)
+    if single_version:
+        retained_names={entry['path'] for entry in [upgraded['catalog'],*upgraded['chunks']]}
     for retained_manifest in [upgraded, *([upgraded_previous] if previous else [])]:
         retained_names.add(retained_manifest["catalog"]["path"])
         retained_catalog, _ = _load_entry(target, retained_manifest["catalog"], "catalog")
@@ -103,7 +105,11 @@ def prepare_snapshot(source: Path, target: Path, *, expected_revision: str = "")
     if source_current != manifest:
         raise ValueError("Source snapshot changed during Pages staging")
     _validate_contents(target, upgraded)
-    retained = manifest if upgraded != manifest else previous
+    if single_version:
+        for path in files:
+            if path.name not in retained_names:
+                (target/path.name).unlink()
+    retained = None if single_version else manifest if upgraded != manifest else previous
     if retained is not None:
         _atomic_write(target / "previous-manifest.json", _json_bytes(retained))
     destination = target / "manifest.json"
@@ -118,8 +124,9 @@ def main():
     parser.add_argument("source", type=Path)
     parser.add_argument("target", type=Path)
     parser.add_argument("--expected-revision", default="")
+    parser.add_argument('--single-version',action='store_true',help='Keep one fully verified site version; source Git history remains the rollback point')
     args = parser.parse_args()
-    manifest = prepare_snapshot(args.source, args.target, expected_revision=args.expected_revision)
+    manifest = prepare_snapshot(args.source, args.target, expected_revision=args.expected_revision,single_version=args.single_version)
     print(f"Validated {manifest['paper_count']} papers; revision {manifest['revision']}")
     if output := os.environ.get("GITHUB_OUTPUT"):
         with open(output, "a", encoding="utf-8") as stream:

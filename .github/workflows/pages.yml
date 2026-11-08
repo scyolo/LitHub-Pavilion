@@ -64,7 +64,7 @@ jobs:
           python -m pip install -r backend/requirements-maintenance.txt
           python backend/scripts/sync_deadlines.py --keep-existing-on-error
       - name: Validate and stage only public metadata
-        run: python scripts/prepare_pages.py snapshot-source/snapshot frontend/static/snapshot
+        run: python scripts/prepare_pages.py snapshot-source/snapshot frontend/static/snapshot --single-version
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
