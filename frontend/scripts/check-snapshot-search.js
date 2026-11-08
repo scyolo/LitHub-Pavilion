@@ -54,6 +54,7 @@ if (descriptor.search.authors) {
 const assets = [...([4, 6, 8, 10].includes(catalog.reader.version) ? [catalog.reader.index] : []), ...lookupAssets, manifest.catalog, ...manifest.chunks, ...descriptor.browse, ...descriptor.details, ...Object.values(descriptor.search.terms).flat(), ...Object.values(descriptor.search.titles).flat(), ...(descriptor.search.vocabulary || []), ...(descriptor.ranking?.parts || []), ...(authors ? [descriptor.search.authors.index, ...Object.values(authors.terms).flat()] : []), ...Object.values(descriptor.search.metadata?.terms || {}).flat()];
 const allowed = new Set(["manifest.json", ...assets.map((entry) => entry.path)]);
 for(const entry of Object.values(descriptor.search.hints?.terms||{}).flat())allowed.add(entry.path);
+for(const value of Object.values(descriptor.search.direct||{}))for(const entries of Object.values(value))for(const entry of entries)allowed.add(entry.path);
 const identities = new Map(), samples = new Map();
 let unicodeSample;
 for (const entry of manifest.chunks) {

@@ -11,6 +11,58 @@ import re
 from app.services.search_tokens import normalized_title, search_terms, stemmer
 
 
+def compact_vocabulary_parts(vocabulary, emit, json_bytes, max_bytes):
+    """Lossless sorted vocabulary front coding, with part-local prefixes.
+
+    One file contains one marker row: [$vocab, prefixCodes, joinedSuffixes, DF].
+    A prefix is encoded by a Unicode codepoint length+32. Each suffix is ASCII
+    alphanumeric and separated by one space, so decoding has no escaping work.
+    """
+    parts = []
+    codes, suffixes, frequencies = [], [], []
+    previous = ''
+    conservative_size = 32
+
+    def payload():
+        return [['$vocab', ''.join(codes), ' '.join(suffixes), frequencies]]
+
+    for term, frequency in sorted(vocabulary.items()):
+        if (not isinstance(term, str) or not re.fullmatch('[a-z0-9]+', term)
+                or type(frequency) is not int or frequency < 1):
+            raise ValueError('Invalid compact vocabulary record')
+        common = 0
+        while common < min(len(previous), len(term)) and previous[common] == term[common]:
+            common += 1
+        if common > 0x10ffff - 32:
+            raise ValueError('Vocabulary prefix exceeds encoding limit')
+        suffix = term[common:]
+        # Full-word size bounds any suffix. A JSON-escaped codepoint can use
+        # twelve ASCII bytes, while UTF-8 encoding requires no more than four.
+        added = len(term) + len(str(frequency)) + 15
+        if conservative_size + added > max_bytes and codes:
+            content = json_bytes(payload())
+            if len(content) > max_bytes:
+                raise ValueError('Compact vocabulary exceeds asset limit')
+            parts.append(emit('vocabulary', content, 1))
+            codes, suffixes, frequencies, previous, conservative_size = [], [], [], '', 32
+            common, suffix = 0, term
+        if conservative_size + added > max_bytes:
+            raise ValueError('Vocabulary record exceeds asset size limit')
+        if not suffix:
+            raise ValueError('Vocabulary records must be strictly sorted and unique')
+        codes.append(chr(common + 32))
+        suffixes.append(suffix)
+        frequencies.append(frequency)
+        conservative_size += added
+        previous = term
+    if codes:
+        content = json_bytes(payload())
+        if len(content) > max_bytes:
+            raise ValueError('Compact vocabulary exceeds asset limit')
+        parts.append(emit('vocabulary', content, 1))
+    return parts
+
+
 def build_search_assets(directory, manifest, emit, *, version=1, ranking=None):
     from app.services.snapshot import _load_entry, _json_bytes, MAX_FILE_BYTES
 
@@ -88,6 +140,9 @@ def build_search_assets(directory, manifest, emit, *, version=1, ranking=None):
     index["average_length"] = total_length / max(1, manifest["paper_count"]) or 1
     if version >= 2:
         index['vocabulary'] = []
+        if version >= 5:
+            index['vocabulary'] = compact_vocabulary_parts(vocabulary, emit, _json_bytes, MAX_FILE_BYTES)
+            return index
         rows, size = [], 2
         for row in sorted(vocabulary.items()):
             added = len(_json_bytes(row)) + 1

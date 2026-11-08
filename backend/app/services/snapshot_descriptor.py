@@ -39,18 +39,22 @@ def detach_search_lookup(index, manifest, emit):
 
     result = copy.deepcopy(index)
     # Re-detachment is a no-op; the original full maps are intentionally gone.
-    if result.get('search', {}).get('lookup') is not None:
+    if result.get('search', {}).get('lookup') is not None and not any(result['search'].get(key) for key in ('terms','titles')):
         return result
     search = result['search']
     sections = {'terms': search['terms'], 'titles': search['titles'],
                 'metadata': search.get('metadata', {}).get('terms', {}),
                 'hints': search.get('hints', {}).get('terms', {})}
+    direct=search.pop('direct',{})
     parts = {}
     for prefix in '0123456789abcdef':
         directory = {'version': 1, **{
             section: {key: entries for key, entries in buckets.items() if key.startswith(prefix)}
             for section, buckets in sections.items()
         }}
+        if direct:
+            directory['direct']={token:value for token,value in direct.items()
+                                 if __import__('hashlib').sha256(token.encode()).hexdigest().startswith(prefix)}
         if any(directory[section] for section in sections):
             parts[prefix] = emit('lookup', _json_bytes(pack_descriptor(directory)), manifest['paper_count'])
     search['lookup'] = {'version': 1, 'bucket_chars': 1, 'parts': parts}
@@ -70,7 +74,8 @@ def decode_lookup_descriptor(raw, prefix, entry, paper_count):
             or type(entry['count']) is not int or entry['count'] != paper_count):
         raise ValueError('Invalid detached lookup entry')
     value = unpack_descriptor(json.loads(raw))
-    if (not isinstance(value, dict) or set(value) != {'version', 'terms', 'titles', 'metadata', 'hints'}
+    if (not isinstance(value, dict) or set(value) not in ({'version', 'terms', 'titles', 'metadata', 'hints'},
+                                                        {'version', 'terms', 'titles', 'metadata', 'hints','direct'})
             or type(value['version']) is not int or value['version'] != 1):
         raise ValueError('Invalid detached lookup fields')
     for section, filename_prefix, width in [('terms', 'search', 3), ('titles', 'titles', 2),
@@ -88,4 +93,16 @@ def decode_lookup_descriptor(raw, prefix, entry, paper_count):
                         or part['path'] != f"{filename_prefix}-{part['sha256']}.json.gz"
                         or type(part['count']) is not int or part['count'] < 1):
                     raise ValueError('Invalid detached lookup asset')
+    direct=value.get('direct',{})
+    if not isinstance(direct,dict) or len(direct)>4096:
+        raise ValueError('Invalid direct token lookup')
+    for token,sections in direct.items():
+        if not isinstance(token,str) or not sections or __import__('hashlib').sha256(token.encode()).hexdigest()[0]!=prefix:
+            raise ValueError('Invalid direct token scope')
+        for section,entries in sections.items():
+            label={'terms':'search','metadata':'matchrank','hints':'cardhint'}.get(section)
+            if label is None or not isinstance(entries,list) or not entries:raise ValueError('Invalid direct token section')
+            for entry in entries:
+                if set(entry)!= {'path','sha256','count'} or not re.fullmatch('[0-9a-f]{64}',entry['sha256']) or entry['path']!=f"{label}-{entry['sha256']}.json.gz" or type(entry['count']) is not int or entry['count']<1:
+                    raise ValueError('Invalid direct token entry')
     return value

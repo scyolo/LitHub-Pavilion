@@ -18,3 +18,11 @@ it('reuses a prepared vocabulary across different queries with identical expansi
   }
   expect(rows).toEqual([['specul', 12], ['decod', 9], ['decode', 2], ['spectral', 4], ['learn', 20]]);
 });
+
+it('losslessly restores a front-coded vocabulary before expanding prefixes and typos',()=>{
+  const rows=[['decode',9],['decoding',4],['learn',2]];
+  const encoded=[['$vocab',String.fromCodePoint(32,37,32),'decode ing learn',[9,4,2]]];
+  const prepared=prepareVocabulary(encoded);
+  expect([...prepared.frequencies]).toEqual(rows);
+  expect(expandTokens(['dec'],prepared)).toEqual(expandTokens(['dec'],rows));
+});

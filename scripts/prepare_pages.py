@@ -85,7 +85,10 @@ def prepare_snapshot(source: Path, target: Path, *, expected_revision: str = "")
         upgraded = ensure_snapshot_reader(target, upgraded)
     if upgraded["catalog"] != manifest["catalog"]:
         total += (target / upgraded["catalog"]["path"]).stat().st_size
-    retained_names = set(entries)
+    # During a format upgrade the source assets remain in the data branch's
+    # history; stage only current output plus an explicit previous revision.
+    retained_names = {entry['path'] for retained_manifest in [upgraded,*([upgraded_previous] if previous else [])]
+                      for entry in [retained_manifest['catalog'],*retained_manifest['chunks']]} if upgraded != manifest and previous is None else set(entries)
     for retained_manifest in [upgraded, *([upgraded_previous] if previous else [])]:
         retained_names.add(retained_manifest["catalog"]["path"])
         retained_catalog, _ = _load_entry(target, retained_manifest["catalog"], "catalog")

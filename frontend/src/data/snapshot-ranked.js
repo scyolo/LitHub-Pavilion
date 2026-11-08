@@ -36,12 +36,23 @@ export function createRankedReader({ descriptor, manifest, catalog, batches, car
     if(!descriptor.search.hints||!terms?.length||!prepared.ids.size)return new Map();
     return cardHints.run(JSON.stringify([...terms].sort()),async shared=>{
       const keys=new Set(await Promise.all(terms.map(term=>bucket(term,3))));
-      const groups=await batches(await lookupEntries('hints',keys,shared),shared);
+      const groups=await batches(await lookupEntries('hints',keys,shared,terms),shared);
       const result=new Map();
+      let sharedCards;
+      if(groups.some(group=>group?.[0]==='$cards')) {
+        sharedCards=new Map();
+        for(const group of groups)if(group?.[0]==='$cards')for(const card of cards(group[1])) {
+          const previous=sharedCards.get(card.id);
+          if(previous&&JSON.stringify(previous)!==JSON.stringify(card))throw invalid();
+          sharedCards.set(card.id,card);
+        }
+      }
       for(const group of groups) {
+        if(group[0]==='$cards')continue;
         if(!Array.isArray(group)||group.length!==2||typeof group[0]!=='string'||!Array.isArray(group[1]))throw invalid();
         if(!terms.includes(group[0]))continue;
-        for(const card of cards(group[1])) {
+        const selected=sharedCards?group[1].map(id=>{const card=sharedCards.get(id);if(!card)throw invalid();return card;}):cards(group[1]);
+        for(const card of selected) {
           const previous=result.get(card.id);
           if(previous&&JSON.stringify(previous)!==JSON.stringify(card))throw invalid();
           result.set(card.id,card);
@@ -64,7 +75,7 @@ export function createRankedReader({ descriptor, manifest, catalog, batches, car
     if(!descriptor.search.metadata || !terms?.length)return rankRows(prepared.ids,filters,context);
     const ranks=await candidateRanks.run(JSON.stringify([...terms].sort()),async shared=>{
       const keys=new Set(await Promise.all(terms.map(term=>bucket(term,3))));
-      const groups=await batches(await lookupEntries('metadata',keys,shared),shared);
+      const groups=await batches(await lookupEntries('metadata',keys,shared,terms),shared);
       const result=new Map();
       for(const group of groups) {
         if(!Array.isArray(group)||group.length!==2||typeof group[0]!=='string')throw invalid();
@@ -246,15 +257,15 @@ export function createRankedReader({ descriptor, manifest, catalog, batches, car
     if (fuzzy && tokens.length) {
       const terms = await vocabulary.run("terms", async shared => {
         const rows = await batches(descriptor.search.vocabulary, shared);
-        if (rows.some(row => !Array.isArray(row) || row.length !== 2 || !/^[a-z0-9]+$/.test(row[0])
+        if(rows[0]?.[0]!=='$vocab'&&rows.some(row => !Array.isArray(row) || row.length !== 2 || !/^[a-z0-9]+$/.test(row[0])
             || !Number.isSafeInteger(row[1]) || row[1] < 1)) throw invalid();
-        return prepareVocabulary(rows);
+        try{return prepareVocabulary(rows);}catch{throw invalid();}
       }, context);
       tokenGroups = expandTokens(tokens, terms, 4, title.match(/[a-z0-9]+/g) || []);
     }
     const expanded = [...new Set(tokenGroups.flat())];
     const keys = new Set(await Promise.all(expanded.map(t => bucket(t, 3))));
-    let rows = await batches(await lookupEntries('terms',keys,context), context);
+    let rows = await batches(await lookupEntries('terms',keys,context,expanded), context);
     if (descriptor.search.version >= 5) rows = decodePostingGroups(rows);
     return { tokenGroups, expanded, rows };
   }
@@ -313,7 +324,14 @@ export function createRankedReader({ descriptor, manifest, catalog, batches, car
       scores.set(id, score);
     }
     for(const id of exact){if(!scores.has(id))scores.set(id,0);priorities.set(id,0);}
-    const anchorTerms = grouped[0]?.terms;
+    // A single alternative supplying all AND candidates is enough for their
+    // immutable metadata/cards; don't read companions for unused expansions.
+    let anchorTerms = grouped[0]?.terms;
+    if(fuzzy&&anchorTerms?.length>1) {
+      const candidateIds=[...ids].filter(id=>!exact.has(id));
+      const covering=anchorTerms.find(term=>candidateIds.every(id=>postings.get(term)?.has(id)));
+      if(covering)anchorTerms=[covering];
+    }
     return {ids,scores,priorities,anchorTerms,exactIds:exact,mode:fuzzy?'fuzzy':'keywords',expansions:fuzzy?tokenGroups.map((terms,i)=>({token:tokens[i],alternatives:terms.slice(1)})).filter(r=>r.alternatives.length):[]};
   }
   function query(params, fuzzy, context) {

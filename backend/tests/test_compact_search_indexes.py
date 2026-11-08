@@ -89,7 +89,9 @@ def test_compact_postings_and_candidate_metadata_preserve_full_old_rows(corpus, 
                      for row in decode_postings(json.loads(files[entry["path"]])))
     assert compact == old_rows
     assert old["titles"] == new["titles"]
-    assert old["vocabulary"] == new["vocabulary"]
+    from test_compact_vocabulary import decoded
+    assert [row for entry in old['vocabulary'] for row in json.loads(files[entry['path']])] == decoded(
+        [files[entry['path']] for entry in new['vocabulary']])
     assert old["average_length"] == new["average_length"]
     global_rows = {row[0]: row for entry in ranking["parts"]
                    for row in decode_rank(json.loads(files[entry["path"]]))}

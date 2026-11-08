@@ -101,10 +101,14 @@ def reader_entries(catalog, directory=None, *, descriptor=None, author_descripto
             for section in ('terms', 'titles', 'metadata', 'hints'):
                 for parts in content[section].values():
                     entries.extend(parts)
+            for token in content.get('direct',{}).values():
+                for parts in token.values():entries.extend(parts)
     for parts in reader.get('search', {}).get('metadata', {}).get('terms', {}).values():
         entries.extend(parts)
     for parts in reader.get('search', {}).get('hints', {}).get('terms', {}).values():
         entries.extend(parts)
+    for token in reader.get('search',{}).get('direct',{}).values():
+        for parts in token.values():entries.extend(parts)
     authors = reader.get('search', {}).get('authors')
     if authors is not None:
         if not isinstance(authors, dict) or 'index' not in authors:
@@ -237,6 +241,8 @@ def build_reader_assets(directory: Path, manifest: dict, *, write=True, version=
         index["version"] = version - 1
         if version==10:
             from app.services.snapshot_descriptor import pack_descriptor, detach_search_lookup
+            from app.services.snapshot_direct_tokens import direct_token_assets
+            index['search']['direct']=direct_token_assets(directory,index['search'],emit)
             index = detach_search_lookup(index, manifest, emit)
             content=_json_bytes(pack_descriptor(index))
         else:

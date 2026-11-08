@@ -28,6 +28,22 @@ function lowerBound(terms, value) {
 }
 
 export function prepareVocabulary(rows) {
+  if(rows[0]?.[0]==='$vocab') {
+    const decoded=[];
+    for(const row of rows) {
+      if(!Array.isArray(row)||row.length!==4||row[0]!=='$vocab'||typeof row[1]!=='string'||typeof row[2]!=='string'||!Array.isArray(row[3]))throw new Error('Invalid compact vocabulary');
+      const codes=[...row[1]],suffixes=row[2].split(' ');let previous='';
+      if(codes.length!==suffixes.length||codes.length!==row[3].length)throw new Error('Invalid compact vocabulary');
+      for(let index=0;index<codes.length;index++) {
+        const length=codes[index].codePointAt(0)-32;
+        if(length<0||length>previous.length||!Number.isSafeInteger(row[3][index])||row[3][index]<1)throw new Error('Invalid compact vocabulary');
+        const word=previous.slice(0,length)+suffixes[index];
+        if(!/^[a-z0-9]+$/.test(word)||(index&&word<=previous))throw new Error('Invalid compact vocabulary');
+        decoded.push([word,row[3][index]]);previous=word;
+      }
+    }
+    rows=decoded;
+  }
   const frequencies = new Map(rows);
   return { frequencies, terms: [...frequencies.keys()].sort() };
 }

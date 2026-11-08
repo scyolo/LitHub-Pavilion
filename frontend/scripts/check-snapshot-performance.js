@@ -6,6 +6,7 @@ import { createSnapshotStore } from '../src/data/snapshot-store.js';
 import { createLazyReader } from '../src/data/snapshot-reader.js';
 import { gunzipSync } from 'node:zlib';
 import { decodePostingGroups,unpackDescriptor } from '../src/data/compact-index.js';
+import {prepareVocabulary} from '../src/data/fuzzy-terms.js';
 
 const directory=process.env.SNAPSHOT_DIR?pathToFileURL(resolve(process.env.SNAPSHOT_DIR)+'/'):new URL('../static/snapshot/',import.meta.url);
 const manifest=JSON.parse(await readFile(new URL('manifest.json',directory)));
@@ -33,6 +34,7 @@ for(const [key,entries] of Object.entries(paged.search.terms))(legacy.search.ter
 const reference=createLazyReader({manifest,catalog:{...catalog,reader:legacy},download:async path=>{
   let data=JSON.parse(gunzipSync(await readFile(new URL(path,directory))));
   const storedCount=data.length;
+  if(path.startsWith('vocabulary-')&&data[0]?.[0]==='$vocab')data=[...prepareVocabulary(data).frequencies];
   if(path.startsWith('search-')) {
     data=(paged.search.version >= 5 ? decodePostingGroups(data) : data).map(row=>row.slice(0,4));
     data=Array.from(new Map(data.map(row=>[row[0]+':'+row[1],row])).values());

@@ -38,7 +38,10 @@ def all_hints(index,payloads):
     groups={}
     for parts in index['terms'].values():
         for entry in parts:
-            for token,rows in payloads[entry['path']]:groups.setdefault(token,[]).extend(rows)
+            payload=payloads[entry['path']]
+            dictionary={row[0]:row for token,rows in payload if token=='$cards' for row in rows}
+            for token,rows in payload:
+                if token!='$cards':groups.setdefault(token,[]).extend(dictionary[pid] for pid in rows)
     return groups
 
 
@@ -61,6 +64,7 @@ def test_common_hints_preserve_base_top_page_and_are_bounded_across_raw_variants
     for pid in range(1,7):add(database,'learn',pid,frequency=pid*8,positions=[0] if pid!=5 else [])
     monkeypatch.setattr(hints,'RARE_CARD_LIMIT',2);monkeypatch.setattr(hints,'PAGE_HINT_SIZE',2)
     monkeypatch.setattr(hints,'COMMON_CARD_LIMIT',4)
+    monkeypatch.setattr(hints,'EXPANDED_CARD_LIMIT',4)
     groups=all_hints(hints.build_card_hints(database,tmp_path,manifest,emit,10),payloads)
     ids=[row[0] for row in groups['learn']]
     assert ids[:2]==[6,4]
@@ -91,3 +95,53 @@ def test_oversized_token_card_hints_split_at_record_boundaries_without_loss(tmp_
     assert groups['learn']==[[paper[field] for field in FIELDS] for paper in papers]
     assert max(sizes)<=600
     database.close()
+
+
+def test_each_split_contains_its_referenced_cards_and_shared_cards_are_deduplicated(tmp_path):
+    database,manifest,papers,payloads,emit=fixture(tmp_path,[(1,'Learning model'),(2,'Learning model')])
+    for pid in (1,2):
+        add(database,'learn',pid,positions=[0]);add(database,'model',pid,positions=[1])
+    index=hints.build_card_hints(database,tmp_path,manifest,emit,10)
+    # Force both different tokens into one synthetic bucket to test dictionary
+    # reuse even though their SHA buckets would ordinarily be separate files.
+    database.execute("UPDATE postings SET bucket='000'")
+    database.execute('DROP TABLE card_hint_tokens')
+    index=hints.build_card_hints(database,tmp_path,manifest,emit,10)
+    entry=index['terms']['000'][0];payload=payloads[entry['path']]
+    assert payload[0][0]=='$cards' and len(payload[0][1])==2
+    assert len(payload)==entry['count']==3
+    assert all_hints(index,payloads)=={
+        'learn':[[paper[field] for field in FIELDS] for paper in papers],
+        'model':[[paper[field] for field in FIELDS] for paper in papers],
+    }
+    database.close()
+
+
+def test_generic_common_title_phrases_and_venue_years_extend_hint_coverage(tmp_path,monkeypatch):
+    rows=[(pid,'Large language model') for pid in range(1,111)]
+    rows.extend((pid,'Large study') for pid in range(111,171))
+    database,manifest,_papers,payloads,emit=fixture(tmp_path,rows)
+    for pid in range(1,171):add(database,'larg',pid,frequency=pid*8,positions=[0])
+    monkeypatch.setattr(hints,'RARE_CARD_LIMIT',2)
+    monkeypatch.setattr(hints,'PAGE_HINT_SIZE',2)
+    monkeypatch.setattr(hints,'PHRASE_HINT_SIZE',100)
+    groups=all_hints(hints.build_card_hints(database,tmp_path,manifest,emit,10),payloads)
+    ids=[row[0] for row in groups['larg']]
+    assert {170,169}.issubset(ids)
+    assert len(set(ids)&set(range(1,111)))==100
+    assert len(ids)<=hints.EXPANDED_CARD_LIMIT
+    database.close()
+
+
+def test_common_source_neighborhood_is_reserved_before_phrase_family_exhausts_cap(monkeypatch):
+    postings=[(pid,pid*8,10,[0]) for pid in range(1,211)]
+    titles={pid:'large language model' if pid<=100 else 'large study' for pid in range(1,211)}
+    words={pid:set(title.split()) for pid,title in titles.items()}
+    cards={pid:[pid,titles[pid],'A' if pid<=100 else 'B',2025] for pid in range(1,211)}
+    phrases={'larg':[(('larg','languag','model'),set(range(1,101)))]}
+    monkeypatch.setattr(hints,'RARE_CARD_LIMIT',2);monkeypatch.setattr(hints,'PAGE_HINT_SIZE',20)
+    monkeypatch.setattr(hints,'COMMON_CARD_LIMIT',20);monkeypatch.setattr(hints,'EXPANDED_CARD_LIMIT',110)
+    monkeypatch.setattr(hints,'SCOPE_HINT_GROUPS',1)
+    selected=hints._hint_ids('larg',postings,titles,words,{'larg':{'large'}},211,10,cards,phrases)
+    assert set(range(191,211)).issubset(selected)
+    assert len(selected)==110

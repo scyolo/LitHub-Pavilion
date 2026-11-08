@@ -56,6 +56,18 @@ export function createLazyReader({ manifest, catalog, download, onProgress = () 
     for (const entry of descriptor.browse) if (!Number.isSafeInteger(entry.min_id) || !Number.isSafeInteger(entry.max_id) || entry.min_id < 1 || entry.min_id > entry.max_id) throw invalid();
   }
   if (descriptor.version >= 9) {
+    const direct=descriptor.search.direct;
+    if(direct) {
+      if(typeof direct!=='object'||Array.isArray(direct)||Object.keys(direct).length>4096)throw invalid();
+      for(const [term,value] of Object.entries(direct)) {
+        if(!/^[\p{L}\p{N}]+$/u.test(term)||!value||typeof value!=='object')throw invalid();
+        for(const [section,entries] of Object.entries(value)) {
+          const prefix={terms:'search',metadata:'matchrank',hints:'cardhint'}[section];
+          if(!prefix||!Array.isArray(entries)||entries.length>4096)throw invalid();
+          for(const entry of entries)if(!/^[0-9a-f]{64}$/.test(entry.sha256)||entry.path!==`${prefix}-${entry.sha256}.json.gz`||!Number.isSafeInteger(entry.count)||entry.count<1)throw invalid();
+        }
+      }
+    }
     const lookup=descriptor.search.lookup;
     if(lookup) {
       if(lookup.version!==1||lookup.bucket_chars!==1||!lookup.parts||typeof lookup.parts!=='object'||Array.isArray(lookup.parts)||Object.keys(lookup.parts).length>16)throw invalid();
@@ -99,7 +111,9 @@ export function createLazyReader({ manifest, catalog, download, onProgress = () 
   const scopedBrowsing = createSharedTasks({ maxCached: 2 });
   const legacySearches = createSharedTasks({ maxCached: 1 });
   const searchLookups = createSharedTasks({maxCached:16});
-  async function lookupEntries(section,keys,context) {
+  async function lookupEntries(section,keys,context,tokens) {
+    const direct=descriptor.search.direct;
+    if(tokens?.length&&direct&&tokens.every(token=>direct[token]?.[section]))return tokens.flatMap(token=>direct[token][section]);
     const lookup=descriptor.search.lookup;
     if(!lookup) {
       const table=section==='terms'||section==='titles'?descriptor.search[section]:descriptor.search[section]?.terms;
@@ -110,7 +124,7 @@ export function createLazyReader({ manifest, catalog, download, onProgress = () 
       const entry=lookup.parts[prefix];if(!entry)return {terms:{},titles:{},metadata:{},hints:{}};
       let {data}=await download(entry.path,entry.sha256,'force-cache',undefined,shared.signal,shared.onProgress);
       data=unpackDescriptor(data);
-      if(!data||data.version!==1||Object.keys(data).sort().join()!=='hints,metadata,terms,titles,version')throw invalid();
+      if(!data||data.version!==1||!['hints,metadata,terms,titles,version','direct,hints,metadata,terms,titles,version'].includes(Object.keys(data).sort().join()))throw invalid();
       for(const [kind,prefixName] of [['terms','search'],['titles','titles'],['metadata','matchrank'],['hints','cardhint']]) {
         const table=data[kind];if(!table||typeof table!=='object'||Array.isArray(table)||Object.keys(table).length>4096)throw invalid();
         for(const [key,parts] of Object.entries(table)) {
@@ -118,8 +132,20 @@ export function createLazyReader({ manifest, catalog, download, onProgress = () 
           for(const part of parts)if(!/^[0-9a-f]{64}$/.test(part.sha256)||part.path!==`${prefixName}-${part.sha256}.json.gz`||!Number.isSafeInteger(part.count)||part.count<1)throw invalid();
         }
       }
+      if(data.direct)for(const [token,sections] of Object.entries(data.direct)) {
+        if((await bucket(token,1))!==prefix||!sections||typeof sections!=='object')throw invalid();
+        for(const [kind,entries] of Object.entries(sections)) {
+          const name={terms:'search',metadata:'matchrank',hints:'cardhint'}[kind];
+          if(!name||!Array.isArray(entries)||!entries.length)throw invalid();
+          for(const part of entries)if(!/^[0-9a-f]{64}$/.test(part.sha256)||part.path!==`${name}-${part.sha256}.json.gz`||!Number.isSafeInteger(part.count)||part.count<1)throw invalid();
+        }
+      }
       return data;
     },context)));
+    if(tokens?.length) {
+      const direct=Object.assign({},...sources.map(source=>source.direct||{}));
+      if(tokens.every(token=>direct[token]?.[section]))return tokens.flatMap(token=>direct[token][section]);
+    }
     return [...keys].flatMap(key=>sources.flatMap(source=>source[section]?.[key]||[]));
   }
   function engine(papers, preparedIndex) {
@@ -190,8 +216,8 @@ export function createLazyReader({ manifest, catalog, download, onProgress = () 
     if (fuzzy && descriptor.version >= 3 && tokens.length) {
       const terms = await vocabulary.run("terms", async shared => {
         const rows = await batches(descriptor.search.vocabulary, shared);
-        if (rows.some(row => !Array.isArray(row) || row.length !== 2 || !/^[a-z0-9]+$/.test(row[0]) || !Number.isSafeInteger(row[1]) || row[1] < 1)) throw invalid();
-        return prepareVocabulary(rows);
+        if(rows[0]?.[0]!=='$vocab'&&rows.some(row => !Array.isArray(row) || row.length !== 2 || !/^[a-z0-9]+$/.test(row[0]) || !Number.isSafeInteger(row[1]) || row[1] < 1)) throw invalid();
+        try{return prepareVocabulary(rows);}catch{throw invalid();}
       }, context);
       tokenGroups = expandTokens(tokens, terms, 4, title.match(/[a-z0-9]+/g) || []);
     }
