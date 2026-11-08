@@ -115,9 +115,14 @@ def _search_authors(db, filters, q, sort, page, size):
     from app.services.author_search import author_match_expression, author_tokens
 
     expression = author_match_expression(author_tokens(q))
-    if db.connection().exec_driver_sql(
+    availability = db.connection().exec_driver_sql(
         "SELECT 1 FROM sqlite_master WHERE type='table' AND name='authors_search_fts'"
-    ).first() is None:
+    )
+    try:
+        available=availability.first() is not None
+    finally:
+        availability.close()
+    if not available:
         raise HTTPException(status_code=503, detail={
             'code': 'AUTHOR_INDEX_UNAVAILABLE', 'message': '作者索引尚未建立，请启用数据库初始化后重启本地后端'})
     matched = text("SELECT rowid FROM authors_search_fts WHERE authors_search_fts MATCH :author_match").columns(rowid=Integer)
