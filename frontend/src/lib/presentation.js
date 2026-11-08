@@ -185,9 +185,11 @@ export function parseFilters(search) {
   const size = Number(params.get("size"));
   const allowedSorts = ["relevance", "publication_desc", "created_desc", "year_desc", "citation_desc"];
   const sort = params.get("sort");
+  const match = ["exact", "fuzzy", "keywords", "author"].includes(params.get("match")) ? params.get("match") : "auto";
+  const defaultSort = params.get("q")?.trim() && match !== "author" ? "relevance" : "publication_desc";
   return {
     q: params.get("q") || "",
-    match: ["exact", "fuzzy", "keywords"].includes(params.get("match")) ? params.get("match") : "auto",
+    match,
     level: ["A", "B"].includes(params.get("level")) ? params.get("level") : "",
     type: ["conf", "journal"].includes(params.get("type")) ? params.get("type") : "",
     direction: params.get("direction") || "",
@@ -195,7 +197,7 @@ export function parseFilters(search) {
     ...(params.has('include_associated') ? {include_associated: ['1', 'true'].includes(params.get('include_associated')) ? '1' : ''} : {}),
     year: params.get("year") || "",
     access: ["oa", "official"].includes(params.get("access")) ? params.get("access") : "",
-    sort: allowedSorts.includes(sort) && (sort !== "relevance" || params.get("q")?.trim()) ? sort : (params.get("q")?.trim() ? "relevance" : "publication_desc"),
+    sort: allowedSorts.includes(sort) && (sort !== "relevance" || params.get("q")?.trim() && match !== "author") ? sort : defaultSort,
     page: Number.isSafeInteger(page) && page > 0 ? page : 1,
     size: [10, 20, 50].includes(size) ? size : 20,
   };

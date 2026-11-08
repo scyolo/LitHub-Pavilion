@@ -26,7 +26,7 @@ def test_pages_stages_only_validated_public_assets(session_factory, sample_paper
     assert MODULE.prepare_snapshot(source, target) == manifest
     assert not (target / disguised).exists()
     catalog = json.loads((target / manifest["catalog"]["path"]).read_text(encoding="utf-8"))
-    expected = {"manifest.json", manifest["catalog"]["path"]}
+    expected = {"manifest.json", 'bootstrap.json.gz', manifest["catalog"]["path"]}
     expected.update(entry["path"] for entry in manifest["chunks"])
     expected.update(entry["path"] for entry in reader_entries(catalog, target))
     assert {path.name for path in target.iterdir()} == expected
@@ -231,7 +231,7 @@ def test_legacy_reader_packing_still_upgrades_without_changing_source(
     before = {path.name: path.read_bytes() for path in source.iterdir()}
     upgraded = MODULE.prepare_snapshot(source, target)
     deployed = json.loads((target / upgraded["catalog"]["path"]).read_bytes())
-    assert deployed["reader"]["version"] == 6
+    assert deployed["reader"]["version"] == 10
     assert load_reader_descriptor(target, deployed)["browse_chunk_size"] == 128
     assert upgraded["paper_count"] == manifest["paper_count"]
     assert upgraded["generated_at"] == manifest["generated_at"]

@@ -38,7 +38,19 @@ def test_reader_rejects_corrupt_assets(session_factory, sample_paper, tmp_path, 
     manifest = export_snapshot(session_factory, tmp_path)
     catalog = json.loads((tmp_path / manifest["catalog"]["path"] ).read_bytes())
     reader = load_reader_descriptor(tmp_path, catalog)
-    entries = reader[kind] if kind in ("browse", "details") else next(iter(reader["search"][kind].values()))
+    if kind in ('browse', 'details'):
+        entries = reader[kind]
+    elif reader['search'].get('lookup'):
+        from app.services.snapshot_descriptor import decode_lookup_descriptor
+        from app.services.snapshot_reader import read_compressed_asset
+
+        entries = []
+        for prefix, entry in reader['search']['lookup']['parts'].items():
+            _, raw = read_compressed_asset(tmp_path, entry)
+            value = decode_lookup_descriptor(raw, prefix, entry, manifest['paper_count'])
+            entries.extend(part for parts in value[kind].values() for part in parts)
+    else:
+        entries = next(iter(reader['search'][kind].values()))
     (tmp_path / entries[0]["path"]).write_bytes(gzip.compress(b"[]"))
     with pytest.raises(ValueError, match="digest|match"):
         validate_snapshot(tmp_path)

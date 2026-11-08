@@ -9,7 +9,7 @@ from sqlalchemy.orm import Session
 from app.api.deps import get_db
 from app.api.filtering import PAPER_SORTS, PaperFilters, bad_request, paper_filters, paper_query
 from app.api.serializers import authors_for, directions_for, paper_card
-from app.models import Direction, Paper, PaperDirection
+from app.models import Author, Direction, Paper, PaperAuthor, PaperDirection
 from app.cleaning import normalize_title
 from app.services.fuzzy_terms import expand_tokens, title_vocabulary
 from app.services.search_tokens import stemmer
@@ -111,6 +111,39 @@ def _search_page(db, filters, q, match_expr, sort, page, size):
     return total, ids, page_scores
 
 
+def _search_authors(db, filters, q, sort, page, size):
+    from app.services.author_search import author_match_expression, author_tokens
+
+    expression = author_match_expression(author_tokens(q))
+    if db.connection().exec_driver_sql(
+        "SELECT 1 FROM sqlite_master WHERE type='table' AND name='authors_search_fts'"
+    ).first() is None:
+        raise HTTPException(status_code=503, detail={
+            'code': 'AUTHOR_INDEX_UNAVAILABLE', 'message': '作者索引尚未建立，请启用数据库初始化后重启本地后端'})
+    matched = text("SELECT rowid FROM authors_search_fts WHERE authors_search_fts MATCH :author_match").columns(rowid=Integer)
+    authorship = select(PaperAuthor.paper_id).where(PaperAuthor.author_id.in_(matched))
+    query = paper_query(db, filters).filter(Paper.id.in_(authorship)).params(author_match=expression)
+    actual_sort = "publication_desc" if sort == "relevance" else sort
+    rows = (query.with_entities(Paper.id, func.count().over().label("total"))
+            .order_by(*PAPER_SORTS[actual_sort]).offset((page - 1) * size).limit(size).all())
+    total = rows[0][1] if rows else query.count() if page > 1 else 0
+    ids = [row[0] for row in rows]
+    by_id = {paper.id: paper for paper in db.query(Paper).filter(Paper.id.in_(ids)).all()} if ids else {}
+    matched_names = {}
+    if ids:
+        names = (db.query(PaperAuthor.paper_id, Author.name).join(Author, Author.id == PaperAuthor.author_id)
+                 .filter(PaperAuthor.paper_id.in_(ids), Author.id.in_(matched)).params(author_match=expression)
+                 .order_by(PaperAuthor.paper_id, PaperAuthor.author_order, Author.id).all())
+        for pid, name in names:
+            if name not in matched_names.setdefault(pid, []):
+                matched_names[pid].append(name)
+    dirs, authors = directions_for(db, ids), authors_for(db, ids)
+    return {"total": total, "page": page, "size": size,
+            "items": [{**paper_card(by_id[pid], dirs, authors), "score": 0.0,
+                       "matched_authors": sorted(matched_names.get(pid, []))} for pid in ids if pid in by_id],
+            "match_mode": "author", "query_expansions": [], "effective_sort": actual_sort}
+
+
 def _search_published(
     q: str = Query(..., max_length=MAX_TITLE_QUERY),
     filters: PaperFilters = Depends(paper_filters),
@@ -118,10 +151,12 @@ def _search_published(
     page: int = 1,
     size: int = 20,
     db: Session = Depends(get_db),
-    match: Literal['auto', 'keywords', 'exact', 'fuzzy'] = 'auto',
+    match: Literal['auto', 'keywords', 'exact', 'fuzzy', 'author'] = 'auto',
 ):
     if page < 1 or not 1 <= size <= 100:
         raise bad_request("page>=1 且 1<=size<=100")
+    if match == 'author':
+        return _search_authors(db, filters, q, sort, page, size)
     rewritten = keyword_query(q)
     if match == 'auto' and rewritten != q:
         canonical = _search_published(q=rewritten, filters=filters, sort=sort, page=page, size=size, db=db, match='keywords')
@@ -196,7 +231,7 @@ def search(
     page: int = 1,
     size: int = 20,
     db: Session = Depends(get_db),
-    match: Literal['auto', 'keywords', 'exact', 'fuzzy'] = 'auto',
+    match: Literal['auto', 'keywords', 'exact', 'fuzzy', 'author'] = 'auto',
 ):
     from app.services.accepted_publications import REFERENCE_ROWS, accepted_references, match_accepted_references
 

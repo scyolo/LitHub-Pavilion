@@ -38,3 +38,12 @@ it('rejects forged publication status and unsafe or unknown reference sources', 
     expect(() => validateAcceptedReferences([{...reference, ...changes}], fixture.catalog.venues)).toThrow();
   }
 });
+
+it('matches acceptance authors separately with the same name-token semantics', () => {
+  const fixture=snapshotFixture(), reference=acceptedFixture();fixture.catalog.accepted_papers=[reference];
+  const full=createSnapshotEngine(fixture);
+  expect(full.search({q:'Ada Lee',match:'author'})).toMatchObject({total:0,items:[],match_mode:'author',accepted_items:[reference]});
+  expect(full.search({q:reference.title,match:'author'}).accepted_items).toBeUndefined();
+  fixture.catalog.accepted_papers=[{...reference,authors:['Sam Lee','Ada Smith']}];
+  expect(attachAcceptedReferences(fixture.catalog,{total:0,items:[]},'Ada Lee',{match:'author'}).accepted_items).toBeUndefined();
+});

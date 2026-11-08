@@ -9,7 +9,7 @@ export function keywordQuery(value) {
 }
 
 export function queryTopic(value, mode, directions = []) {
-  if (typeof value !== "string" || value.length > 300 || mode === "exact" || !/[\u3400-\u4dbf\u4e00-\u9fff]/u.test(value)) return null;
+  if (typeof value !== "string" || value.length > 300 || mode === "exact" || mode === 'author' || !/[\u3400-\u4dbf\u4e00-\u9fff]/u.test(value)) return null;
   const key = queryKey(value), code = aliases.topics[key];
   return directions.find(d => d.enabled !== 0 && d.enabled !== false && (d.code === code || queryKey(d.name || "") === key)) || null;
 }

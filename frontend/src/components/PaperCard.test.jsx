@@ -12,6 +12,12 @@ it('shows distinct official and open access resources together', () => {
   expect(resources.map((link) => link.href)).toEqual([paper.official_url, paper.oa_url]);
 });
 
+it('shows a matching coauthor even when the author preview omits them', () => {
+  render(<MemoryRouter><PaperCard paper={{...paper, first_author:'First Writer', authors_preview:['First Writer'],
+    authors_count:8, matched_authors:['Bengio, Yoshua']}} /></MemoryRouter>);
+  expect(screen.getByText('匹配作者：Bengio, Yoshua')).toBeInTheDocument();
+});
+
 it('does not duplicate the same official and open access resource', () => {
   render(<MemoryRouter><PaperCard paper={{ ...paper, oa_url: paper.official_url }} /></MemoryRouter>);
   expect(screen.getAllByRole('link').filter((link) => link.target === '_blank')).toHaveLength(1);

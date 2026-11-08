@@ -66,3 +66,13 @@ def test_acceptance_cannot_claim_to_be_a_published_record(acceptance):
         accepted.validate_accepted_references([acceptance | {'status': 'published'}], venues)
     with pytest.raises(ValueError):
         accepted.validate_accepted_references([acceptance | {'official_url': 'javascript:alert(1)'}], venues)
+
+
+def test_author_queries_match_acceptance_authors_without_inflating_published_total(client, acceptance):
+    result = client.get('/api/search', params={'q': 'Ada Lee', 'match': 'author'}).json()
+    assert result['total'] == 0 and result['items'] == []
+    assert result['match_mode'] == 'author' and result['accepted_items'] == [acceptance]
+    assert 'accepted_items' not in client.get('/api/search', params={
+        'q': acceptance['title'], 'match': 'author'}).json()
+    assert not accepted.match_accepted_references(
+        [acceptance | {'authors': ['Sam Lee', 'Ada Smith']}], 'Ada Lee', PaperFilters(), 'author')

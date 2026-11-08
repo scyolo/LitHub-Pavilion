@@ -36,7 +36,7 @@ chunks=[]
 for row in fixture['papers']:
     chunks.append(dict(_write_content(directory,'papers',_json_bytes([row])),count=1))
 manifest=dict(fixture['manifest'],chunks=chunks)
-print(json.dumps(dict(manifest=manifest,reader=build_reader_assets(directory,manifest),paged=load_reader_descriptor(directory,{"reader":build_reader_assets(directory,manifest,version=6)}))))
+print(json.dumps(dict(manifest=manifest,reader=build_reader_assets(directory,manifest),paged=load_reader_descriptor(directory,{"reader":build_reader_assets(directory,manifest,version=6)}),compact=load_reader_descriptor(directory,{"reader":build_reader_assets(directory,manifest,version=10)}))))
 `;
   data = JSON.parse(execFileSync(python, ["-c", script, directory], { encoding: "utf8", input: JSON.stringify(fixture), env: { ...process.env, PYTHONPATH: resolve("../backend"), PYTHONIOENCODING: "utf-8" } }));
 }, 30000);
@@ -245,6 +245,24 @@ it('ranks all candidates before loading only the requested page, preserving filt
       expect(current.download.mock.calls.some(([name])=>/^(compressed|papers)-/.test(name))).toBe(false);
     }
   }
+});
+
+it('compact cold search retains scores, sort, filters, exact titles and fuzzy recall without whole ranking',async()=>{
+  const download=vi.fn(async path=>({data:JSON.parse(gunzipSync(readFileSync(join(directory,path))))}));
+  const current=createLazyReader({manifest:data.manifest,catalog:{...fixture.catalog,reader:data.compact},download});
+  const full=createSnapshotEngine(fixture);
+  for(const q of ['model','retrieval model','onlyabstract','spceulative dec','Speculative model',fixture.papers[3].title]) {
+    for(const match of ['auto','keywords','exact','fuzzy']) for(const filters of [{},{year:2025},{direction:'llm',size:1,page:2},{access:'oa',sort:'citation_desc'}]) {
+      const params={q,match,...filters},actual=await current.call('search',params),expected=full.search(params);
+      expect(actual.total,q+' '+match).toBe(expected.total);
+      expect(actual.items.map(({id,score})=>({id,score})),q+' '+match).toEqual(expected.items.map(({id,score})=>({id,score})));
+    }
+  }
+  const freshDownload=vi.fn(async path=>({data:JSON.parse(gunzipSync(readFileSync(join(directory,path))))}));
+  const fresh=createLazyReader({manifest:data.manifest,catalog:{...fixture.catalog,reader:data.compact},download:freshDownload});
+  expect((await fresh.call('search',{q:'model'})).total).toBe(full.search({q:'model'}).total);
+  expect(freshDownload.mock.calls.some(([path])=>path.startsWith('matchrank-'))).toBe(true);
+  expect(freshDownload.mock.calls.some(([path])=>path.startsWith('ranking-'))).toBe(false);
 });
 
 it('position-aware ranked search preserves exact Unicode, phrase, AND, typo and prefix scores', async () => {

@@ -11,7 +11,11 @@ import httpx
 
 from app.collectors.http_client import make_client
 from app.services.snapshot import MAX_FILE_BYTES, MAX_SNAPSHOT_BYTES, _json_bytes, _load_entry, validate_snapshot
-from app.services.snapshot_reader import reader_entries, read_compressed_asset, decode_compressed_asset, decode_reader_descriptor
+from app.services.snapshot_reader import (
+    reader_entries, read_compressed_asset, decode_compressed_asset,
+    decode_reader_descriptor, decode_author_descriptor,
+)
+from app.services.snapshot_descriptor import decode_lookup_descriptor
 
 _MARKER = b"lithub-public-snapshot-v1\n"
 _REPOSITORY = re.compile(r"[A-Za-z0-9][A-Za-z0-9-]{0,38}/[A-Za-z0-9][A-Za-z0-9_.-]{0,99}")
@@ -236,14 +240,37 @@ async def _publish(client, repository, token, manifest, files):
             try:
                 previous_catalog = json.loads(previous_catalog_raw)
                 descriptor = None
-                if previous_catalog.get("reader", {}).get("version") in (4, 6):
+                author_descriptor = None
+                lookup_descriptors = None
+                if previous_catalog.get("reader", {}).get("version") in (4, 6, 8, 10):
                     index = previous_catalog["reader"]["index"]
                     old_index = old_files.get(index["path"])
                     if not old_index or old_index.get("type") != "blob" or old_index.get("mode") != "100644":
                         raise ValueError("Missing previous reader descriptor")
                     compressed = await blob(old_index["sha"], MAX_FILE_BYTES)
                     descriptor = decode_reader_descriptor(decode_compressed_asset(compressed, index), previous_catalog["reader"])
-                previous_reader = reader_entries(previous_catalog, descriptor=descriptor)
+                previous_descriptor = descriptor or previous_catalog.get("reader", {})
+                lookup = previous_descriptor.get('search', {}).get('lookup')
+                if lookup is not None:
+                    lookup_descriptors = {}
+                    for prefix, index in lookup['parts'].items():
+                        old_index = old_files.get(index['path'])
+                        if not old_index or old_index.get('type') != 'blob' or old_index.get('mode') != '100644':
+                            raise ValueError('Missing previous search lookup')
+                        compressed = await blob(old_index['sha'], MAX_FILE_BYTES)
+                        lookup_descriptors[prefix] = decode_lookup_descriptor(
+                            decode_compressed_asset(compressed, index), prefix, index, previous_descriptor['paper_count'])
+                authors = previous_descriptor.get("search", {}).get("authors")
+                if authors is not None:
+                    index = authors["index"]
+                    old_index = old_files.get(index["path"])
+                    if not old_index or old_index.get("type") != "blob" or old_index.get("mode") != "100644":
+                        raise ValueError("Missing previous author directory")
+                    compressed = await blob(old_index["sha"], MAX_FILE_BYTES)
+                    author_descriptor = decode_author_descriptor(
+                        decode_compressed_asset(compressed, index), authors, previous_descriptor["paper_count"])
+                previous_reader = reader_entries(previous_catalog, descriptor=descriptor,
+                                                 author_descriptor=author_descriptor, lookup_descriptors=lookup_descriptors)
             except (ValueError, TypeError, KeyError, AttributeError):
                 raise SnapshotPublishError("Invalid previous reader catalog") from None
             for asset in previous_reader:

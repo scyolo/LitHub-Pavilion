@@ -4,13 +4,14 @@ import { expandTokens } from "./fuzzy-terms.js";
 import { keywordQuery, queryTopic } from "./query-aliases.js";
 import { createConferenceScope, includesAssociated } from './conference-scope.js';
 import { acceptedTitleParams, attachAcceptedReferences, validateAcceptedReferences } from './accepted-publications.js';
+import { authorTokens, matchingAuthors, compareAuthorNames } from './author-search.js';
 
 import { readerError } from "./reader-errors.js";
 export { readerError } from "./reader-errors.js";
 
 export function parseParams(params = {}, search = false) {
   const values = Object.fromEntries(Object.entries(params).filter(([, value]) => value !== "" && value != null));
-  for (const [key, allowed] of Object.entries({ level: ["A", "B"], type: ["conf", "journal"], access: ["oa", "official"], pdf_status: ["pending", "downloaded", "failed", "closed"], match: ["auto", "keywords", "exact", "fuzzy"] })) {
+  for (const [key, allowed] of Object.entries({ level: ["A", "B"], type: ["conf", "journal"], access: ["oa", "official"], pdf_status: ["pending", "downloaded", "failed", "closed"], match: ["auto", "keywords", "exact", "fuzzy", "author"] })) {
     if (values[key] !== undefined && !allowed.includes(values[key])) throw readerError(`${key} 参数不正确`);
   }
   if (values.year !== undefined && !/^[1-9][0-9]{3}$/.test(String(values.year))) throw readerError("year 必须是四位年份");
@@ -133,7 +134,19 @@ export function createSnapshotEngine({ manifest, catalog, papers, preparedIndex 
     let matchMode = isSearch ? (params.match || "auto") : null;
     let expansions = [];
     const scores = new Map(), priorities = new Map();
-    if (selectedTopic) {
+    const matchedAuthors = new Map();
+    const authorSearch = isSearch && matchMode === 'author';
+    if (authorSearch) {
+      authorTokens(params.q);
+      if (filters.sort === 'relevance') filters.sort = 'publication_desc';
+      candidates = papers.filter(paper => {
+        const names = matchingAuthors(paper.authors, params.q).sort(compareAuthorNames);
+        if (!names.length) return false;
+        matchedAuthors.set(paper.id, names);
+        scores.set(paper.id, 0); priorities.set(paper.id, 0);
+        return true;
+      });
+    } else if (selectedTopic) {
       matchMode='topic';
       for(const paper of papers){scores.set(paper.id,0);priorities.set(paper.id,0);}
     } else if (isSearch) {
@@ -190,9 +203,9 @@ export function createSnapshotEngine({ manifest, catalog, papers, preparedIndex 
       }
     }
     const rows = candidates.filter((paper) => matches(paper, filters)).sort(compare(filters.sort, scores, priorities));
-    return { total: rows.length, page: filters.page, size: filters.size, ...(isSearch ? { match_mode: matchMode, query_expansions: expansions } : {}), ...(selectedTopic?{query_topic:{code:selectedTopic.code,name:selectedTopic.name},effective_sort:filters.sort}:{}), items: rows.slice((filters.page - 1) * filters.size, filters.page * filters.size).map((paper) => {
+    return { total: rows.length, page: filters.page, size: filters.size, ...(isSearch ? { match_mode: matchMode, query_expansions: expansions } : {}), ...(authorSearch ? {effective_sort: filters.sort} : {}), ...(selectedTopic?{query_topic:{code:selectedTopic.code,name:selectedTopic.name},effective_sort:filters.sort}:{}), items: rows.slice((filters.page - 1) * filters.size, filters.page * filters.size).map((paper) => {
       const { abstract, authors, direction_details, arxiv_id, dblp_key, updated_at, ...card } = paper;
-      return isSearch ? { ...card, score: Number(scores.get(paper.id).toFixed(4)) } : card;
+      return isSearch ? { ...card, score: Number(scores.get(paper.id).toFixed(4)), ...(authorSearch ? {matched_authors: matchedAuthors.get(paper.id)} : {}) } : card;
     }) };
   }
   function dashboard(params = {}) {

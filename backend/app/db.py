@@ -30,8 +30,10 @@ def _make_engine(database_url: str) -> Engine:
             cur.execute("PRAGMA foreign_keys=ON")
             cur.close()
             from app.publication import publication_date_key
+            from app.services.author_search import author_search_terms
 
             dbapi_conn.create_function("publication_sort_key", 2, publication_date_key, deterministic=True)
+            dbapi_conn.create_function("api_author_search_terms", 1, author_search_terms, deterministic=True)
 
         return engine
     return create_engine(database_url, pool_pre_ping=True)

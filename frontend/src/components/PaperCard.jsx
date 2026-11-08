@@ -21,6 +21,7 @@ export default function PaperCard({ paper, compactMode = false }) {
         </div>
         <Link className="paper-title" to={`/papers/${paper.id}`} state={{ from: location.pathname + location.search }}>{paper.title}</Link>
         <div className="paper-authors">{authors || "作者信息暂缺"}{paper.authors_count > 3 ? ` 等 ${paper.authors_count} 位作者` : ""}</div>
+        {paper.matched_authors?.length > 0 && <div className="paper-authors">匹配作者：{paper.matched_authors.join(' · ')}</div>}
         {!compactMode && paper.abstract_preview && <p className={`paper-abstract ${expanded ? "expanded" : ""}`}>{paper.abstract_preview}</p>}
         <div className="paper-card-bottom">
           <div className="topic-tags">{(paper.directions || []).map((code) => {

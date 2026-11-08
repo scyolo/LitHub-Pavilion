@@ -35,6 +35,33 @@ it('runs only the submitted search, avoiding partial queries during typing pause
   } finally { vi.useRealTimers(); }
 });
 
+it('submits the selected author mode and keeps author filters in the request', async () => {
+  api.search.mockResolvedValue({total: 0, items: [], page: 1, size: 20, match_mode: 'author', effective_sort: 'publication_desc'});
+  show('/papers?venue=V199&year=2025');
+  await screen.findByRole('button', {name: /^V199/});
+  fireEvent.change(screen.getByRole('combobox', {name: '检索方式'}), {target: {value: 'author'}});
+  const input = screen.getByRole('searchbox', {name: '搜索论文'});
+  expect(input).toHaveAttribute('placeholder', expect.stringContaining('Yoshua Bengio'));
+  expect(screen.getByText(/姓名各部分匹配同一位作者/)).toBeInTheDocument();
+  fireEvent.change(input, {target: {value: 'Yoshua Bengio'}});
+  expect(api.search).not.toHaveBeenCalled();
+  fireEvent.click(screen.getByRole('button', {name: '搜索', exact: true}));
+  await waitFor(() => expect(api.search).toHaveBeenCalledWith(
+    expect.objectContaining({q: 'Yoshua Bengio', match: 'author', sort: 'publication_desc', venue: 'V199', year: '2025'}), expect.anything()));
+  expect(screen.getByRole('combobox', {name: '论文排序'})).toHaveValue('publication_desc');
+  expect(screen.queryByRole('option', {name: '相关性优先'})).not.toBeInTheDocument();
+});
+
+it('restores an author URL and submits by enter without losing the chosen sort', async () => {
+  api.search.mockResolvedValue({total: 0, items: [], page: 1, size: 20, match_mode: 'author', effective_sort: 'citation_desc'});
+  show('/papers?q=Bengio&match=author&sort=citation_desc');
+  await waitFor(() => expect(api.search).toHaveBeenCalledWith(expect.objectContaining({q: 'Bengio', match: 'author', sort: 'citation_desc'}), expect.anything()));
+  expect(screen.getByRole('combobox', {name: '检索方式'})).toHaveValue('author');
+  fireEvent.change(screen.getByRole('searchbox', {name: '搜索论文'}), {target: {value: 'Bengio Yoshua'}});
+  fireEvent.submit(screen.getByRole('search'));
+  await waitFor(() => expect(api.search.mock.calls.at(-1)[0]).toMatchObject({q: 'Bengio Yoshua', match: 'author', sort: 'citation_desc'}));
+});
+
 it('bounds first-page venue DOM while keeping the complete directory reachable', async () => {
   show();
   await screen.findByRole('button', { name: /^V000/ });

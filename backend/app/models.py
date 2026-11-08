@@ -156,6 +156,8 @@ class PaperAuthor(Base):
     author_id: Mapped[int] = mapped_column(ForeignKey("authors.id", ondelete="CASCADE"), primary_key=True)
     author_order: Mapped[int] = mapped_column(Integer)
 
+    __table_args__ = (Index("ix_paper_authors_author", "author_id", "paper_id"),)
+
 
 class CrawlLog(Base):
     __tablename__ = "crawl_logs"
@@ -192,6 +194,32 @@ class CrawlState(Base):
 
 
 FTS_DDL = [
+    """
+    CREATE VIRTUAL TABLE IF NOT EXISTS authors_search_fts USING fts5(
+        name_tokens, tokenize='ascii'
+    )
+    """,
+    """
+    CREATE INDEX IF NOT EXISTS ix_paper_authors_author ON paper_authors(author_id, paper_id)
+    """,
+    """
+    CREATE TRIGGER IF NOT EXISTS authors_search_fts_ai AFTER INSERT ON authors BEGIN
+      INSERT INTO authors_search_fts(rowid, name_tokens)
+      VALUES (new.id, api_author_search_terms(new.name));
+    END
+    """,
+    """
+    CREATE TRIGGER IF NOT EXISTS authors_search_fts_au AFTER UPDATE OF name ON authors BEGIN
+      DELETE FROM authors_search_fts WHERE rowid = old.id;
+      INSERT INTO authors_search_fts(rowid, name_tokens)
+      VALUES (new.id, api_author_search_terms(new.name));
+    END
+    """,
+    """
+    CREATE TRIGGER IF NOT EXISTS authors_search_fts_ad AFTER DELETE ON authors BEGIN
+      DELETE FROM authors_search_fts WHERE rowid = old.id;
+    END
+    """,
     """
     CREATE VIRTUAL TABLE IF NOT EXISTS papers_fts USING fts5(
         title, abstract,

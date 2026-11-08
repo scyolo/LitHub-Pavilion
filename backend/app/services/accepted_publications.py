@@ -58,8 +58,11 @@ def accepted_references(db, candidates=None):
 
 
 def match_accepted_references(rows, q, filters, mode='auto', topic=None):
+    if mode == 'author':
+        from app.services.author_search import author_tokens, matching_author_names
+        author_tokens(q)
     query = normalize_title(q)
-    if not query and not topic and (str(q or '').strip() or not filters.venue):
+    if mode != 'author' and not query and not topic and (str(q or '').strip() or not filters.venue):
         return []
     matched = []
     for row in rows:
@@ -72,6 +75,10 @@ def match_accepted_references(rows, q, filters, mode='auto', topic=None):
                 or (filters.access and (bool(row['preprint_url']) != (filters.access == 'oa')))):
             continue
         values = [normalize_title(row['title']), *map(normalize_title, row['aliases'])]
+        if mode == 'author':
+            if matching_author_names(row['authors'], q):
+                matched.append(dict(row))
+            continue
         if topic or not query or (query == values[0] if mode == 'exact' else all(word in ' '.join(values) for word in query.split())):
             matched.append(dict(row))
     return matched

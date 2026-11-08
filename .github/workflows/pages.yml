@@ -83,6 +83,9 @@ jobs:
       - name: Enforce first-page search transfer and processing budgets
         run: npm run check:snapshot-performance
         working-directory: frontend
+      - name: Verify all-author search recall and bounded asset loading
+        run: npm run check:snapshot-authors
+        working-directory: frontend
       - uses: actions/configure-pages@v5
         id: pages
       - name: Build the backend-free reader

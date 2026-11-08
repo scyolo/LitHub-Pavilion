@@ -47,6 +47,12 @@ describe("filter URL state", () => {
     expect(parseFilters("level=B&type=journal&access=oa&direction=llm,cv&page=3")).toMatchObject({ level: "B", type: "journal", access: "oa", direction: "llm,cv", page: 3 });
   });
   it("defaults search sort to relevance", () => expect(parseFilters("q=agent").sort).toBe("relevance"));
+  it('preserves author mode from the URL and defaults it to publication time', () => {
+    expect(parseFilters('q=Yoshua+Bengio&match=author')).toMatchObject({q: 'Yoshua Bengio', match: 'author', sort: 'publication_desc'});
+    expect(parseFilters('q=Bengio&match=author&sort=relevance').sort).toBe('publication_desc');
+    expect(parseFilters('q=Bengio&match=author&sort=citation_desc').sort).toBe('citation_desc');
+    expect(parseFilters('q=Bengio&match=unknown').match).toBe('auto');
+  });
 });
 
 

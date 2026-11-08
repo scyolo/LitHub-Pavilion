@@ -213,7 +213,7 @@ def export_snapshot(session_factory, directory: Path, *, chunk_size: int = 1000,
             venue: entries[:VENUE_TOPIC_LIMIT] for venue, entries in topics.items()
         }
     from app.services.snapshot_reader import build_reader_assets
-    catalog_value["reader"] = build_reader_assets(directory, {"chunks": chunks, "paper_count": count}, version=6)
+    catalog_value["reader"] = build_reader_assets(directory, {"chunks": chunks, "paper_count": count}, version=10)
     catalog_data = _json_bytes(catalog_value)
     if total_bytes + len(catalog_data) > MAX_SNAPSHOT_BYTES:
         raise ValueError("Snapshot exceeds the total size limit")
@@ -429,7 +429,7 @@ def _validate_contents(directory: Path, manifest: dict) -> None:
         validate_accepted_references(catalog['accepted_papers'], venues)
     if "reader" in catalog:
         from app.services.snapshot_reader import build_reader_assets, load_reader_descriptor, reader_entries
-        if catalog["reader"].get("version") not in (1, 2, 3, 4, 5, 6):
+        if catalog["reader"].get("version") not in range(1, 11):
             raise ValueError("Unsupported reader version")
         descriptor = load_reader_descriptor(directory, catalog)
         if catalog["reader"] != build_reader_assets(directory, manifest, write=False, version=catalog["reader"]["version"],

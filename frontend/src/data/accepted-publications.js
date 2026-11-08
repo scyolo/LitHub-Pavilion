@@ -1,5 +1,6 @@
 import { safeExternalUrl } from '../lib/presentation.js';
 import { readerError } from './reader-errors.js';
+import { matchingAuthors, authorTokens } from './author-search.js';
 
 const normalized = value => String(value || '').normalize('NFKD').replace(/\p{M}/gu, '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
 const keys = ['reference_id', 'title', 'authors', 'venue', 'year', 'level', 'status', 'official_url', 'preprint_url', 'aliases', 'directions', 'evidence_sha256', 'verified_on'].sort();
@@ -24,8 +25,10 @@ export function validateAcceptedReferences(rows, venues) {
 }
 
 export function attachAcceptedReferences(catalog, result, q, params = {}) {
+  const authorSearch = params.match === 'author';
+  if (authorSearch) authorTokens(q);
   const query = normalized(q), topic = result.query_topic?.code;
-  if (!query && !topic && (String(q || '').trim() || !params.venue)) return result;
+  if (!authorSearch && !query && !topic && (String(q || '').trim() || !params.venue)) return result;
   const directions = String(params.direction || '').split(',').filter(Boolean);
   const rows = (catalog.accepted_papers || []).filter(row => {
     if (params.pdf_status || params.level && params.level !== row.level || params.type && params.type !== 'conf'
@@ -33,6 +36,7 @@ export function attachAcceptedReferences(catalog, result, q, params = {}) {
         || directions.length && !directions.some(d => row.directions.includes(d)) || topic && !row.directions.includes(topic)
         || params.access && Boolean(row.preprint_url) !== (params.access === 'oa')) return false;
     const values = [normalized(row.title), ...row.aliases.map(normalized)];
+    if (authorSearch) return matchingAuthors(row.authors, q).length > 0;
     return topic || !query || (params.match === 'exact' ? query === values[0] : query.split(' ').every(word => values.join(' ').includes(word)));
   });
   return rows.length ? {...result, accepted_items: rows} : result;

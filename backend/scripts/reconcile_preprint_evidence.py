@@ -46,7 +46,11 @@ def reconcile_cached(path, inventories, fetched, *, apply=False):
     if apply:
         report['backup'] = str(_backup(path))
     def connect():
-        return sqlite3.connect(path.as_uri() + ('?mode=rw' if apply else '?mode=ro'), uri=True)
+        from app.services.author_search import author_search_terms
+
+        connection = sqlite3.connect(path.as_uri() + ('?mode=rw' if apply else '?mode=ro'), uri=True)
+        connection.create_function('api_author_search_terms', 1, author_search_terms, deterministic=True)
+        return connection
     from sqlalchemy import create_engine
     engine = create_engine('sqlite://', creator=connect)
     try:

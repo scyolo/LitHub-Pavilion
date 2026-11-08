@@ -15,7 +15,7 @@ FIELDS = [
 
 def load_reader_descriptor(directory, catalog):
     reader = catalog.get("reader", {})
-    if reader.get("version") not in (4, 6):
+    if reader.get("version") not in (4, 6, 8, 10):
         return reader
     _, raw = read_compressed_asset(directory, reader["index"])
     return decode_reader_descriptor(raw, reader)
@@ -23,17 +23,50 @@ def load_reader_descriptor(directory, catalog):
 
 def decode_reader_descriptor(raw, reader):
     descriptor = json.loads(raw)
+    if reader.get('version')==10:
+        from app.services.snapshot_descriptor import unpack_descriptor
+        descriptor=unpack_descriptor(descriptor)
     if (set(reader) != {"version", "paper_count", "index"} or reader["index"].get("count") != reader["paper_count"]
-            or not isinstance(descriptor, dict) or descriptor.get("version") != (5 if reader.get("version") == 6 else 3)
+            or not isinstance(descriptor, dict) or descriptor.get("version") != reader["version"] - 1
             or descriptor.get("paper_count") != reader["paper_count"]):
         raise ValueError("Detached reader descriptor mismatch")
     return descriptor
 
 
-def reader_entries(catalog, directory=None, *, descriptor=None):
+def decode_author_descriptor(raw, pointer, paper_count):
+    """Validate an author-only directory against its revision-bound pointer."""
+    if (not isinstance(pointer, dict) or set(pointer) != {"version", "bucket_chars", "index"}
+            or type(pointer["version"]) is not int or pointer["version"] != 1
+            or type(pointer["bucket_chars"]) is not int or pointer["bucket_chars"] != 3):
+        raise ValueError("Author directory pointer mismatch")
+    index = pointer["index"]
+    if (not isinstance(index, dict) or set(index) != {"path", "sha256", "count"}
+            or type(index["count"]) is not int or index["count"] != paper_count
+            or not isinstance(index["sha256"], str) or not re.fullmatch(r"[0-9a-f]{64}", index["sha256"])
+            or index["path"] != f"authors-{index['sha256']}.json.gz"):
+        raise ValueError("Author directory asset mismatch")
+    value = json.loads(raw)
+    if (not isinstance(value, dict) or set(value) != {"version", "bucket_chars", "terms"}
+            or type(value["version"]) is not int or value["version"] != 1
+            or type(value["bucket_chars"]) is not int or value["bucket_chars"] != 3
+            or not isinstance(value["terms"], dict) or len(value["terms"]) > 4096):
+        raise ValueError("Author directory fields mismatch")
+    for key, parts in value["terms"].items():
+        if not re.fullmatch(r"[0-9a-f]{3}", key) or not isinstance(parts, list) or not parts or len(parts) > 4096:
+            raise ValueError("Author directory bucket mismatch")
+        for part in parts:
+            if (not isinstance(part, dict) or set(part) != {"path", "sha256", "count"}
+                    or not isinstance(part["sha256"], str) or not re.fullmatch(r"[0-9a-f]{64}", part["sha256"])
+                    or part["path"] != f"author-{part['sha256']}.json.gz"
+                    or type(part["count"]) is not int or part["count"] < 1):
+                raise ValueError("Author directory posting asset mismatch")
+    return value
+
+
+def reader_entries(catalog, directory=None, *, descriptor=None, author_descriptor=None, lookup_descriptors=None):
     reader = catalog.get("reader", {})
     detached = []
-    if reader.get("version") in (4, 6):
+    if reader.get("version") in (4, 6, 8, 10):
         detached = [reader["index"]]
         if descriptor is None:
             if directory is None:
@@ -45,9 +78,51 @@ def reader_entries(catalog, directory=None, *, descriptor=None):
         for parts in reader.get("search", {}).get(section, {}).values():
             entries.extend(parts)
     entries.extend(reader.get('search', {}).get('vocabulary', []))
+    lookup = reader.get('search', {}).get('lookup')
+    if lookup is not None:
+        from app.services.snapshot_descriptor import decode_lookup_descriptor
+
+        if (not isinstance(lookup, dict) or set(lookup) != {'version', 'bucket_chars', 'parts'}
+                or type(lookup['version']) is not int or lookup['version'] != 1
+                or type(lookup['bucket_chars']) is not int or lookup['bucket_chars'] != 1
+                or not isinstance(lookup['parts'], dict) or len(lookup['parts']) > 16):
+            raise ValueError('Invalid detached search lookup')
+        if lookup_descriptors is not None and set(lookup_descriptors) != set(lookup['parts']):
+            raise ValueError('Detached lookup descriptors do not match the reader')
+        for prefix, entry in lookup['parts'].items():
+            entries.append(entry)
+            if lookup_descriptors is None:
+                if directory is None:
+                    raise ValueError('Detached search lookup requires its verified directory')
+                _, raw = read_compressed_asset(directory, entry)
+            else:
+                raw = json.dumps(lookup_descriptors[prefix]).encode()
+            content = decode_lookup_descriptor(raw, prefix, entry, reader['paper_count'])
+            for section in ('terms', 'titles', 'metadata', 'hints'):
+                for parts in content[section].values():
+                    entries.extend(parts)
+    for parts in reader.get('search', {}).get('metadata', {}).get('terms', {}).values():
+        entries.extend(parts)
+    for parts in reader.get('search', {}).get('hints', {}).get('terms', {}).values():
+        entries.extend(parts)
+    authors = reader.get('search', {}).get('authors')
+    if authors is not None:
+        if not isinstance(authors, dict) or 'index' not in authors:
+            raise ValueError("Author directory requires a verified pointer")
+        entries.append(authors['index'])
+        if author_descriptor is None:
+            if directory is None:
+                raise ValueError("Author directory requires its verified descriptor")
+            _, raw = read_compressed_asset(directory, authors['index'])
+            author_descriptor = decode_author_descriptor(raw, authors, reader['paper_count'])
+        else:
+            author_descriptor = decode_author_descriptor(
+                json.dumps(author_descriptor).encode(), authors, reader['paper_count'])
+        for parts in author_descriptor['terms'].values():
+            entries.extend(parts)
     entries.extend(reader.get('ranking', {}).get('parts', []))
     for entry in entries:
-        if not re.fullmatch(r"(?:reader|browse|compressed|search|titles|vocabulary|ranking)-[0-9a-f]{64}\.json\.gz", entry["path"]) or entry["sha256"] not in entry["path"]:
+        if not re.fullmatch(r"(?:reader|browse|compressed|search|titles|vocabulary|ranking|author|authors|matchrank|cardhint|lookup)-[0-9a-f]{64}\.json\.gz", entry["path"]) or entry["sha256"] not in entry["path"]:
             raise ValueError("Unsafe reader asset path")
     return entries
 
@@ -82,6 +157,8 @@ def build_reader_assets(directory: Path, manifest: dict, *, write=True, version=
     from app.services.snapshot import MAX_FILE_BYTES, _atomic_write, _json_bytes, _load_entry
 
     directory = Path(directory)
+    if version not in range(1, 11):
+        raise ValueError("Unsupported reader version")
     index = {"version": version,
              "paper_count": manifest["paper_count"], "fields": FIELDS, "browse": [], "details": []}
     # None reproduces historical v5/v6 bytes for full verification. New readers
@@ -146,15 +223,25 @@ def build_reader_assets(directory: Path, manifest: dict, *, write=True, version=
             pending = []
     if pending:
         write_browse(pending)
-    if version >= 2:
-        from app.services.snapshot_search import build_search_assets
-        index["search"] = build_search_assets(directory, manifest, emit, version=3 if version >= 5 else 2 if version >= 3 else 1)
     if version >= 5:
         from app.services.snapshot_ranking import build_ranking_assets
-        index["ranking"] = build_ranking_assets(directory, manifest, emit)
-    if version in (4, 6):
-        index["version"] = 5 if version == 6 else 3
-        entry = emit("reader", _json_bytes(index), manifest["paper_count"])
+        index["ranking"] = build_ranking_assets(directory, manifest, emit, version=2 if version >= 9 else 1)
+    if version >= 2:
+        from app.services.snapshot_search import build_search_assets
+        index["search"] = build_search_assets(directory, manifest, emit, version=5 if version >= 9 else 4 if version >= 7 else 3 if version >= 5 else 2 if version >= 3 else 1,
+                                             **({'ranking': index['ranking']} if version >= 9 else {}))
+    if version >= 7:
+        from app.services.snapshot_authors import build_author_assets
+        index["search"]["authors"] = build_author_assets(directory, manifest, emit)
+    if version in (4, 6, 8, 10):
+        index["version"] = version - 1
+        if version==10:
+            from app.services.snapshot_descriptor import pack_descriptor, detach_search_lookup
+            index = detach_search_lookup(index, manifest, emit)
+            content=_json_bytes(pack_descriptor(index))
+        else:
+            content=_json_bytes(index)
+        entry = emit("reader", content, manifest["paper_count"])
         return {"version": version, "paper_count": manifest["paper_count"], "index": entry}
     return index
 
@@ -163,7 +250,7 @@ def ensure_snapshot_reader(directory: Path, manifest: dict) -> dict:
     from app.services.snapshot import _json_bytes, _load_entry, _write_content, manifest_revision
 
     catalog, _ = _load_entry(directory, manifest["catalog"], "catalog")
-    catalog["reader"] = build_reader_assets(directory, manifest, version=6)
+    catalog["reader"] = build_reader_assets(directory, manifest, version=10)
     upgraded = {**manifest, "catalog": _write_content(directory, "catalog", _json_bytes(catalog))}
     upgraded["revision"] = manifest_revision(upgraded)
     return upgraded

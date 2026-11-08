@@ -22,6 +22,29 @@ beforeEach(() => vi.stubGlobal("crypto", webcrypto));
 afterEach(() => vi.unstubAllGlobals());
 
 describe("atomic static snapshot loading", () => {
+  it('verifies manifest and catalog inside a single compressed startup asset',async()=>{
+    vi.stubGlobal('DecompressionStream',DecompressionStream);
+    const data=bundle(withOverview());
+    const packed=gzipSync(JSON.stringify({manifest:data.manifest,catalog_text:data.files[data.manifest.catalog.path]}));
+    const fetcher=vi.fn(async url=>{
+      expect(String(url)).toMatch(/bootstrap\.json\.gz$/);
+      return new Response(packed);
+    });
+    const {createSnapshotStore}=await import('./snapshot-store.js');
+    const store=createSnapshotStore({baseUrl:'https://reader.example/snapshot/',fetcher,preferBootstrap:true});
+    expect((await store.call('dashboard',{})).total).toBe(3);
+    expect(fetcher).toHaveBeenCalledTimes(1);
+  });
+  it('rejects corrupted startup catalog instead of bypassing content validation',async()=>{
+    vi.stubGlobal('DecompressionStream',DecompressionStream);
+    const data=bundle(withOverview());
+    const packed=gzipSync(JSON.stringify({manifest:data.manifest,catalog_text:'{}'}));
+    const fetcher=vi.fn(async()=>new Response(packed));
+    const {createSnapshotStore}=await import('./snapshot-store.js');
+    const store=createSnapshotStore({baseUrl:'https://reader.example/snapshot/',fetcher,preferBootstrap:true});
+    await expect(store.call('dashboard',{})).rejects.toMatchObject({code:'INVALID_SNAPSHOT'});
+    expect(fetcher).toHaveBeenCalledTimes(1);
+  });
   it.each([
     { name: "opaque gzip file", compressed: true, encoding: null },
     { name: "HTTP-decoded JSON", compressed: false, encoding: "gzip" },

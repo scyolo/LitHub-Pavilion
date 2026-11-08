@@ -80,7 +80,7 @@ def prepare_snapshot(source: Path, target: Path, *, expected_revision: str = "")
     catalog = catalogs[manifest["revision"]]
     upgraded = manifest if "overview" in catalog else ensure_snapshot_overview(target, manifest)
     from app.services.snapshot_reader import ensure_snapshot_reader
-    if (catalog.get("reader", {}).get("version") != 6
+    if (catalog.get("reader", {}).get("version") != 10
             or load_reader_descriptor(source, catalog).get("browse_chunk_size") != 128):
         upgraded = ensure_snapshot_reader(target, upgraded)
     if upgraded["catalog"] != manifest["catalog"]:
@@ -104,6 +104,8 @@ def prepare_snapshot(source: Path, target: Path, *, expected_revision: str = "")
     if retained is not None:
         _atomic_write(target / "previous-manifest.json", _json_bytes(retained))
     destination = target / "manifest.json"
+    from app.services.snapshot_bootstrap import write_snapshot_bootstrap
+    write_snapshot_bootstrap(target, upgraded)
     _atomic_write(destination, _json_bytes(upgraded))
     return upgraded
 

@@ -102,6 +102,14 @@ def initialize_database(engine, seeds_dir: Path | None = None) -> None:
             from app.migrations import migrate_optional_dblp_stream
             _backup(engine)
             migrate_optional_dblp_stream(engine)
+    with engine.connect() as connection:
+        authors_exist = existing.has_table("authors")
+        author_index_exists = connection.exec_driver_sql(
+            "SELECT 1 FROM sqlite_master WHERE type='table' AND name='authors_search_fts'").first() is not None
+        reverse_index_exists = connection.exec_driver_sql(
+            "SELECT 1 FROM sqlite_master WHERE type='index' AND name='ix_paper_authors_author'").first() is not None
+    if authors_exist and (not author_index_exists or not reverse_index_exists):
+        _backup(engine)
     Base.metadata.create_all(engine)
     current = inspect(engine)
     for table in Base.metadata.sorted_tables:
@@ -110,10 +118,22 @@ def initialize_database(engine, seeds_dir: Path | None = None) -> None:
         if missing:
             raise RuntimeError(f"Unsupported legacy schema in {table.name}: {', '.join(sorted(missing))}; back up and migrate before startup")
     with engine.begin() as connection:
+        # SQLite's legacy transaction mode does not begin for DDL. Keep new
+        # author tables, triggers and their backfill atomic if rebuilding fails.
+        if not connection.connection.driver_connection.in_transaction:
+            connection.exec_driver_sql("BEGIN IMMEDIATE")
         fts_exists = connection.exec_driver_sql("SELECT 1 FROM sqlite_master WHERE type='table' AND name='papers_fts'").first() is not None
         titles_exist = connection.exec_driver_sql("SELECT 1 FROM sqlite_master WHERE type='table' AND name='paper_titles_fts'").first() is not None
+        from app.services.author_search import author_search_terms
+
+        connection.connection.driver_connection.create_function(
+            "api_author_search_terms", 1, author_search_terms, deterministic=True)
         for statement in FTS_DDL:
             connection.exec_driver_sql(statement)
+        if not author_index_exists:
+            from app.services.author_search import rebuild_author_search
+
+            rebuild_author_search(connection)
         if not fts_exists:
             connection.exec_driver_sql("INSERT INTO papers_fts(papers_fts) VALUES('rebuild')")
         if not titles_exist:

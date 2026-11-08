@@ -2,6 +2,7 @@ import { throwIfAborted, waitFor } from "./shared-tasks.js";
 import { createSnapshotEngine, readerError } from "./snapshot-engine.js";
 import { createOverview } from "./snapshot-overview.js";
 import { createLazyReader } from "./snapshot-reader.js";
+import {unpackDescriptor} from './compact-index.js';
 
 const MAX_FILE_BYTES = 8 * 1024 * 1024;
 const MAX_TOTAL_BYTES = 800 * 1024 * 1024;
@@ -47,7 +48,7 @@ async function readLimitedBytes(body, maxBytes, onProgress) {
   return bytes;
 }
 
-export function createSnapshotStore({ baseUrl, fetcher = globalThis.fetch.bind(globalThis), onState = () => {}, overviewCache = null }) {
+export function createSnapshotStore({ baseUrl, fetcher = globalThis.fetch.bind(globalThis), onState = () => {}, overviewCache = null, preferBootstrap = false }) {
   const base = new URL(baseUrl);
   let active = null, pending = null, wantFull = false, initializing = null;
   // Shared manifest/catalog reads outlive one reader; only their current
@@ -55,6 +56,19 @@ export function createSnapshotStore({ baseUrl, fetcher = globalThis.fetch.bind(g
   const waitingReaders = new Set();
   let state = { status: "idle", revision: null, generation: 0, verification: null, generated_at: null, paper_count: null, loaded: 0, total: 0, error: null };
   function update(values) { state = { ...state, ...values }; onState(state); }
+  async function preloadedReader(manifest,catalog,text) {
+    if(text===undefined)return null;
+    if(typeof text!=='string'||catalog.reader?.version!==10)throw invalid();
+    const pointer=catalog.reader.index;
+    if(catalog.reader.paper_count!==manifest.paper_count||!pointer||pointer.count!==manifest.paper_count
+      ||!/^[0-9a-f]{64}$/.test(pointer.sha256)||pointer.path!==`reader-${pointer.sha256}.json.gz`)throw invalid();
+    const bytes=new TextEncoder().encode(text);if(bytes.byteLength>MAX_FILE_BYTES)throw invalid();
+    await verifyDigest(bytes,catalog.reader.index.sha256);
+    let descriptor;try{descriptor=unpackDescriptor(JSON.parse(text));}catch{throw invalid();}
+    if(descriptor.version!==9||descriptor.paper_count!==manifest.paper_count)throw invalid();
+    return createLazyReader({manifest,catalog:{...catalog,reader:descriptor},download,
+      onProgress:progress=>{if(active?.manifest.revision===manifest.revision)update(progress);}});
+  }
   function waitingProgress(value) {
     for (const reader of waitingReaders) if (!reader.signal?.aborted) reader.onProgress(value);
   }
@@ -151,15 +165,31 @@ export function createSnapshotStore({ baseUrl, fetcher = globalThis.fetch.bind(g
   function refresh() {
     return run(async () => {
       update({ status: active ? "updating" : "loading", error: null, loaded: 0, total: 1 });
-      const { data: manifest } = await download("manifest.json", null, "no-cache", 1024 * 1024, undefined, waitingProgress);
+      let manifest, cachedCatalog,readerText;
+      if (preferBootstrap) {
+        try {
+          const {data} = await download('bootstrap.json.gz', null, 'no-cache', MAX_FILE_BYTES, undefined, waitingProgress);
+          if (!data || !['catalog_text,manifest','catalog_text,manifest,reader_text'].includes(Object.keys(data).sort().join()) || typeof data.catalog_text !== 'string') throw invalid();
+          manifest = data.manifest;
+          const bytes = new TextEncoder().encode(data.catalog_text);
+          if (bytes.byteLength > MAX_FILE_BYTES) throw invalid();
+          await validateManifest(manifest);
+          await verifyDigest(bytes, manifest.catalog.sha256);
+          cachedCatalog = {data: JSON.parse(data.catalog_text), size: bytes.byteLength, text: data.catalog_text};
+          readerText=data.reader_text;
+        } catch (error) {
+          if (error.httpStatus !== 404) throw error;
+        }
+      }
+      if (!manifest) ({data: manifest} = await download("manifest.json", null, "no-cache", 1024 * 1024, undefined, waitingProgress));
       await validateManifest(manifest);
       if (active?.manifest.revision === manifest.revision) { update({ status: "ready", from_cache: false }); return false; }
-      const { data: catalog, size, text: catalogText } = await download(manifest.catalog.path, manifest.catalog.sha256, "default", undefined, undefined, waitingProgress);
+      const { data: catalog, size, text: catalogText } = cachedCatalog || await download(manifest.catalog.path, manifest.catalog.sha256, "default", undefined, undefined, waitingProgress);
       let candidate = { manifest, catalog, bytes: size, overview: createOverview({ manifest, catalog }), engine: null };
-      candidate.reader = createLazyReader({ manifest, catalog, download, onProgress: (progress) => { if (active?.manifest.revision === manifest.revision) update(progress); } });
+      candidate.reader = await preloadedReader(manifest,catalog,readerText) || createLazyReader({ manifest, catalog, download, onProgress: (progress) => { if (active?.manifest.revision === manifest.revision) update(progress); } });
       if (!candidate.overview || wantFull || active?.engine) candidate = await complete(candidate);
       commit(candidate);
-      if (candidate.overview) Promise.resolve(overviewCache?.write?.({ manifest, catalog_text: catalogText })).catch(() => {});
+      if (candidate.overview) Promise.resolve(overviewCache?.write?.({ manifest, catalog_text: catalogText,...(readerText===undefined?{}:{reader_text:readerText}) })).catch(() => {});
       return true;
     });
   }
@@ -180,7 +210,7 @@ export function createSnapshotStore({ baseUrl, fetcher = globalThis.fetch.bind(g
             const restored = { manifest: saved.manifest, catalog: JSON.parse(saved.catalog_text) };
             const candidate = { ...restored, bytes: bytes.byteLength, overview: createOverview(restored), engine: null };
             if (!candidate.overview) throw invalid();
-            candidate.reader = createLazyReader({ ...restored, download, onProgress: progress => {
+            candidate.reader = await preloadedReader(saved.manifest,restored.catalog,saved.reader_text) || createLazyReader({ ...restored, download, onProgress: progress => {
               if (active?.manifest.revision === saved.manifest.revision) update(progress);
             } });
             if (!active) commit(candidate, true);

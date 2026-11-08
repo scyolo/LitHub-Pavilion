@@ -6,6 +6,7 @@ import { pathToFileURL } from "node:url";
 import { dirname, resolve } from "node:path";
 import { createSnapshotStore } from "../src/data/snapshot-store.js";
 import { normalizedTitle } from "../src/data/snapshot-engine.js";
+import {unpackDescriptor} from '../src/data/compact-index.js';
 
 if (!globalThis.crypto?.subtle) globalThis.crypto = webcrypto;
 const directory = process.env.SNAPSHOT_DIR ? pathToFileURL(resolve(process.env.SNAPSHOT_DIR) + "/") : new URL("../static/snapshot/", import.meta.url);
@@ -13,13 +14,46 @@ const manifest = JSON.parse(await readFile(new URL("manifest.json", directory)))
 const catalog = JSON.parse(await readFile(new URL(manifest.catalog.path, directory)));
 assert.ok(catalog.reader?.version >= 2, "Regenerate the snapshot to enable indexed search");
 let descriptor = catalog.reader;
-if ([4, 6].includes(descriptor.version)) {
+if ([4, 6, 8, 10].includes(descriptor.version)) {
   const raw = gunzipSync(await readFile(new URL(descriptor.index.path, directory)));
   assert.equal(createHash("sha256").update(raw).digest("hex"), descriptor.index.sha256);
   descriptor = JSON.parse(raw);
+  if(catalog.reader.version===10)descriptor=unpackDescriptor(descriptor);
 }
-const assets = [...([4, 6].includes(catalog.reader.version) ? [catalog.reader.index] : []), manifest.catalog, ...manifest.chunks, ...descriptor.browse, ...descriptor.details, ...Object.values(descriptor.search.terms).flat(), ...Object.values(descriptor.search.titles).flat(), ...(descriptor.search.vocabulary || []), ...(descriptor.ranking?.parts || [])];
+const lookupAssets=[];
+if(descriptor.search.lookup) {
+  for(const [prefix,entry] of Object.entries(descriptor.search.lookup.parts)) {
+    lookupAssets.push(entry);
+    const raw=gunzipSync(await readFile(new URL(entry.path,directory)));
+    assert.equal(createHash('sha256').update(raw).digest('hex'),entry.sha256);
+    const value=unpackDescriptor(JSON.parse(raw));
+    assert.equal(value.version,1);
+    assert.deepEqual(Object.keys(value).sort(),['hints','metadata','terms','titles','version']);
+    for(const [section,width,prefixName] of [['terms',3,'search'],['titles',2,'titles'],['metadata',3,'matchrank'],['hints',3,'cardhint']]) {
+      const buckets=value[section];
+      assert.ok(buckets&&typeof buckets==='object'&&!Array.isArray(buckets));
+      for(const [key,parts] of Object.entries(buckets)) {
+        assert.ok(new RegExp(`^[0-9a-f]{${width}}$`).test(key)&&key.startsWith(prefix));
+        assert.ok(Array.isArray(parts)&&parts.length>0&&parts.length<=4096);
+        for(const part of parts)assert.ok(part.path===`${prefixName}-${part.sha256}.json.gz`&&/^[0-9a-f]{64}$/.test(part.sha256)&&Number.isSafeInteger(part.count)&&part.count>0);
+      }
+      if(section==='terms'||section==='titles')Object.assign(descriptor.search[section],buckets);
+      else if(descriptor.search[section])Object.assign(descriptor.search[section].terms,buckets);
+    }
+  }
+}
+let authors;
+if (descriptor.search.authors) {
+  const pointer = descriptor.search.authors.index;
+  const raw = gunzipSync(await readFile(new URL(pointer.path, directory)));
+  assert.equal(createHash("sha256").update(raw).digest("hex"), pointer.sha256);
+  authors = JSON.parse(raw);
+  assert.equal(authors.version, 1);
+  assert.equal(authors.bucket_chars, 3);
+}
+const assets = [...([4, 6, 8, 10].includes(catalog.reader.version) ? [catalog.reader.index] : []), ...lookupAssets, manifest.catalog, ...manifest.chunks, ...descriptor.browse, ...descriptor.details, ...Object.values(descriptor.search.terms).flat(), ...Object.values(descriptor.search.titles).flat(), ...(descriptor.search.vocabulary || []), ...(descriptor.ranking?.parts || []), ...(authors ? [descriptor.search.authors.index, ...Object.values(authors.terms).flat()] : []), ...Object.values(descriptor.search.metadata?.terms || {}).flat()];
 const allowed = new Set(["manifest.json", ...assets.map((entry) => entry.path)]);
+for(const entry of Object.values(descriptor.search.hints?.terms||{}).flat())allowed.add(entry.path);
 const identities = new Map(), samples = new Map();
 let unicodeSample;
 for (const entry of manifest.chunks) {

@@ -6,6 +6,7 @@ import { keywordQuery, queryTopic } from "./query-aliases.js";
 import { createConferenceScope } from './conference-scope.js';
 import { acceptedTitleParams, validateAcceptedReferences } from './accepted-publications.js';
 import { createSnapshotEngine, normalizedTitle, queryTokens, parseParams, readerError } from "./snapshot-engine.js";
+import { unpackDescriptor } from './compact-index.js';
 
 const fields = ["id", "title", "venue", "year", "publication_date", "created_at", "citation_count", "directions", "venue_confirmed", "doi", "official_url", "oa_url", "first_author", "authors_count", "pdf_status", "pdf_source"];
 const invalid = () => readerError("轻量索引校验失败，请重新发布快照", 503, "INVALID_SNAPSHOT");
@@ -13,14 +14,15 @@ const invalid = () => readerError("轻量索引校验失败，请重新发布快
 export function createLazyReader({ manifest, catalog, download, onProgress = () => {} }) {
   const descriptor = catalog.reader;
   if (!descriptor || typeof DecompressionStream === "undefined") return null;
-  if ([4, 6].includes(descriptor.version)) {
+  if ([4, 6, 8, 10].includes(descriptor.version)) {
     const entry = descriptor.index;
     if (descriptor.paper_count !== manifest.paper_count || !entry || !/^[0-9a-f]{64}$/.test(entry.sha256) || entry.path !== `reader-${entry.sha256}.json.gz` || entry.count !== manifest.paper_count) throw invalid();
     const loading = createSharedTasks({ maxCached: 1 });
     return { async call(method, params, context = {}) {
       const reader = await loading.run("index", async shared => {
-        const { data } = await download(entry.path, entry.sha256, "force-cache", undefined, shared.signal, shared.onProgress);
-        if (data?.version !== (descriptor.version === 6 ? 5 : 3) || data.paper_count !== manifest.paper_count) throw invalid();
+        let { data } = await download(entry.path, entry.sha256, "force-cache", undefined, shared.signal, shared.onProgress);
+        if(descriptor.version===10)data=unpackDescriptor(data);
+        if (data?.version !== descriptor.version - 1 || data.paper_count !== manifest.paper_count) throw invalid();
         return createLazyReader({ manifest, catalog: { ...catalog, reader: data }, download, onProgress });
       }, context);
       throwIfAborted(context.signal);
@@ -28,7 +30,7 @@ export function createLazyReader({ manifest, catalog, download, onProgress = () 
     } };
   }
 
-  if (![1, 2, 3, 5].includes(descriptor.version) || descriptor.paper_count !== manifest.paper_count || JSON.stringify(descriptor.fields) !== JSON.stringify(fields) || !Array.isArray(descriptor.browse) || !Array.isArray(descriptor.details) || descriptor.details.length !== manifest.chunks.length) throw invalid();
+  if (![1, 2, 3, 5, 7, 9].includes(descriptor.version) || descriptor.paper_count !== manifest.paper_count || JSON.stringify(descriptor.fields) !== JSON.stringify(fields) || !Array.isArray(descriptor.browse) || !Array.isArray(descriptor.details) || descriptor.details.length !== manifest.chunks.length) throw invalid();
   for (const [entries, prefix] of [[descriptor.browse, "browse"], [descriptor.details, "compressed"]]) {
     if (entries.length > 4096 || entries.reduce((sum, entry) => sum + entry.count, 0) !== manifest.paper_count) throw invalid();
     entries.forEach((entry, index) => {
@@ -38,7 +40,7 @@ export function createLazyReader({ manifest, catalog, download, onProgress = () 
   }
   if (descriptor.version >= 2) {
     if (descriptor.version >= 5 && descriptor.search?.bucket_chars !== 3) throw invalid();
-    if (descriptor.search?.version !== (descriptor.version >= 5 ? 3 : descriptor.version >= 3 ? 2 : 1) || !Number.isFinite(descriptor.search.average_length) || descriptor.search.average_length <= 0) throw invalid();
+    if (descriptor.search?.version !== (descriptor.version >= 9 ? 5 : descriptor.version >= 7 ? 4 : descriptor.version >= 5 ? 3 : descriptor.version >= 3 ? 2 : 1) || !Number.isFinite(descriptor.search.average_length) || descriptor.search.average_length <= 0) throw invalid();
     for (const [section, prefix] of [["terms", "search"], ["titles", "titles"]]) {
       const buckets = descriptor.search[section];
       if (!buckets || typeof buckets !== "object" || Array.isArray(buckets) || Object.keys(buckets).length > (section === "terms" && descriptor.version >= 5 ? 4096 : 256)) throw invalid();
@@ -53,32 +55,90 @@ export function createLazyReader({ manifest, catalog, download, onProgress = () 
     }
     for (const entry of descriptor.browse) if (!Number.isSafeInteger(entry.min_id) || !Number.isSafeInteger(entry.max_id) || entry.min_id < 1 || entry.min_id > entry.max_id) throw invalid();
   }
+  if (descriptor.version >= 9) {
+    const lookup=descriptor.search.lookup;
+    if(lookup) {
+      if(lookup.version!==1||lookup.bucket_chars!==1||!lookup.parts||typeof lookup.parts!=='object'||Array.isArray(lookup.parts)||Object.keys(lookup.parts).length>16)throw invalid();
+      for(const [key,entry] of Object.entries(lookup.parts))if(!/^[0-9a-f]$/.test(key)||!entry||!/^[0-9a-f]{64}$/.test(entry.sha256)||entry.path!==`lookup-${entry.sha256}.json.gz`||entry.count!==manifest.paper_count)throw invalid();
+    }
+    const metadata = descriptor.search.metadata;
+    if (!metadata || metadata.bucket_chars !== 3 || !metadata.terms || typeof metadata.terms !== 'object'
+        || Array.isArray(metadata.terms) || Object.keys(metadata.terms).length > 4096) throw invalid();
+    for (const [key, entries] of Object.entries(metadata.terms)) {
+      if (!/^[0-9a-f]{3}$/.test(key) || !Array.isArray(entries) || entries.length > 4096) throw invalid();
+      for (const entry of entries) if (!/^[0-9a-f]{64}$/.test(entry.sha256)
+          || entry.path !== `matchrank-${entry.sha256}.json.gz`
+          || !Number.isSafeInteger(entry.count) || entry.count < 1) throw invalid();
+    }
+    const hints=descriptor.search.hints;
+    if(hints) {
+      if(hints.bucket_chars!==3||!hints.terms||typeof hints.terms!=='object'||Array.isArray(hints.terms)||Object.keys(hints.terms).length>4096)throw invalid();
+      for(const [key,entries] of Object.entries(hints.terms)) {
+        if(!/^[0-9a-f]{3}$/.test(key)||!Array.isArray(entries)||entries.length>4096)throw invalid();
+        for(const entry of entries)if(!/^[0-9a-f]{64}$/.test(entry.sha256)||entry.path!==`cardhint-${entry.sha256}.json.gz`||!Number.isSafeInteger(entry.count)||entry.count<1)throw invalid();
+      }
+    }
+  }
+  if (descriptor.version >= 7) {
+    const authors = descriptor.search.authors;
+    if (!authors || Object.keys(authors).sort().join() !== 'bucket_chars,index,version'
+        || authors.version !== 1 || authors.bucket_chars !== 3 || !authors.index
+        || !/^[0-9a-f]{64}$/.test(authors.index.sha256)
+        || authors.index.path !== `authors-${authors.index.sha256}.json.gz`
+        || authors.index.count !== manifest.paper_count) throw invalid();
+  } else if (descriptor.search?.authors !== undefined) throw invalid();
   if (descriptor.browse_chunk_size !== undefined && (!Number.isSafeInteger(descriptor.browse_chunk_size)
       || descriptor.browse_chunk_size < 1 || descriptor.browse_chunk_size > 4096
       || descriptor.browse.some(entry => entry.count > descriptor.browse_chunk_size))) throw invalid();
   const venues = new Map(catalog.venues.map((venue) => [venue.abbr, venue]));
   const conferenceScope = createConferenceScope(catalog);
   validateAcceptedReferences(catalog.accepted_papers || [], catalog.venues);
-  const cached = createReaderCache(), inflight = createSharedTasks({ concurrency: 6 });
+  const cached = createReaderCache(), inflight = createSharedTasks({ concurrency: 16 });
   const vocabulary = createSharedTasks({ maxCached: 1 });
   const searches = createSharedTasks({ maxCached: 4 });
   const scopedBrowsing = createSharedTasks({ maxCached: 2 });
   const legacySearches = createSharedTasks({ maxCached: 1 });
+  const searchLookups = createSharedTasks({maxCached:16});
+  async function lookupEntries(section,keys,context) {
+    const lookup=descriptor.search.lookup;
+    if(!lookup) {
+      const table=section==='terms'||section==='titles'?descriptor.search[section]:descriptor.search[section]?.terms;
+      return [...keys].flatMap(key=>table?.[key]||[]);
+    }
+    const prefixes=new Set([...keys].map(key=>key[0]));
+    const sources=await Promise.all([...prefixes].map(prefix=>searchLookups.run(prefix,async shared=>{
+      const entry=lookup.parts[prefix];if(!entry)return {terms:{},titles:{},metadata:{},hints:{}};
+      let {data}=await download(entry.path,entry.sha256,'force-cache',undefined,shared.signal,shared.onProgress);
+      data=unpackDescriptor(data);
+      if(!data||data.version!==1||Object.keys(data).sort().join()!=='hints,metadata,terms,titles,version')throw invalid();
+      for(const [kind,prefixName] of [['terms','search'],['titles','titles'],['metadata','matchrank'],['hints','cardhint']]) {
+        const table=data[kind];if(!table||typeof table!=='object'||Array.isArray(table)||Object.keys(table).length>4096)throw invalid();
+        for(const [key,parts] of Object.entries(table)) {
+          if(!(kind==='titles'?/^[0-9a-f]{2}$/:/^[0-9a-f]{3}$/).test(key)||key[0]!==prefix||!Array.isArray(parts)||!parts.length||parts.length>4096)throw invalid();
+          for(const part of parts)if(!/^[0-9a-f]{64}$/.test(part.sha256)||part.path!==`${prefixName}-${part.sha256}.json.gz`||!Number.isSafeInteger(part.count)||part.count<1)throw invalid();
+        }
+      }
+      return data;
+    },context)));
+    return [...keys].flatMap(key=>sources.flatMap(source=>source[section]?.[key]||[]));
+  }
   function engine(papers, preparedIndex) {
     return createSnapshotEngine({ manifest: { ...manifest, paper_count: papers.length }, catalog, papers, preparedIndex });
   }
-  async function chunk(entry, context = {}) {
+  async function chunk(entry, context = {}, format) {
     throwIfAborted(context.signal);
     if (cached.has(entry.path)) return cached.get(entry.path);
     return inflight.run(entry.path, async shared => {
-      const { data, size } = await download(entry.path, entry.sha256, "force-cache", undefined, shared.signal, shared.onProgress);
+      const { data, size, storedCount } = await download(entry.path, entry.sha256, "force-cache", undefined, shared.signal, shared.onProgress);
       throwIfAborted(shared.signal);
-      if (!Array.isArray(data) || data.length !== entry.count) throw invalid();
+      if (!Array.isArray(data) || (format === 'ranking'
+          ? data.length !== 9 || data.some(column => !Array.isArray(column) || column.length !== entry.count)
+          : (storedCount ?? data.length) !== entry.count)) throw invalid();
       cached.set(entry.path, data, size ?? new TextEncoder().encode(JSON.stringify(data)).byteLength);
       return data;
     }, context);
   }
-  async function batches(entries, context = {}) {
+  async function batches(entries, context = {}, concurrency = descriptor.version >= 5 ? 6 : 4) {
     throwIfAborted(context.signal);
     let cursor = 0, loaded = 0;
     const result = new Array(entries.length), batch = new AbortController();
@@ -86,7 +146,7 @@ export function createLazyReader({ manifest, catalog, download, onProgress = () 
     context.signal?.addEventListener("abort", abort, { once: true });
     onProgress({ loaded, total: entries.length });
     try {
-      await Promise.all(Array.from({ length: Math.min(descriptor.version >= 5 ? 6 : 4, entries.length) }, async () => {
+      await Promise.all(Array.from({ length: Math.min(16, concurrency, entries.length) }, async () => {
         while (cursor < entries.length) {
           throwIfAborted(batch.signal);
           const index = cursor++;
@@ -99,6 +159,7 @@ export function createLazyReader({ manifest, catalog, download, onProgress = () 
     } catch (error) { batch.abort(); throw error; }
     finally { context.signal?.removeEventListener("abort", abort); }
   }
+  const cardBatches = (entries, context = {}) => batches(entries, context, 16);
   function cards(rows) {
     return rows.map((values) => {
       if (!Array.isArray(values) || values.length !== fields.length) throw invalid();
@@ -180,7 +241,8 @@ export function createLazyReader({ manifest, catalog, download, onProgress = () 
       && (!filters.year || entry.years.includes(Number(filters.year)))
       && (!filters.directions.length || filters.directions.some((code) => entry.directions.includes(code))));
   }
-  const ranked = descriptor.version >= 5 ? createRankedReader({ descriptor, manifest, catalog, batches, cards, chunk, bucket, selectedEntries }) : null;
+  const downloadAuthorDirectory = (entry, context) => download(entry.path, entry.sha256, 'force-cache', undefined, context.signal, context.onProgress);
+  const ranked = descriptor.version >= 5 ? createRankedReader({ descriptor, manifest, catalog, batches, cardBatches, cards, chunk, bucket, selectedEntries, downloadAuthorDirectory,lookupEntries }) : null;
   const api = {
     async call(method, params = {}, context = {}) {
       throwIfAborted(context.signal);
@@ -207,6 +269,7 @@ export function createLazyReader({ manifest, catalog, download, onProgress = () 
         return engine(await batches(entries, context)).paper(id);
       }
       const filters = parseParams(params, true);
+      if (params.match === 'author') throw readerError('当前快照尚未建立作者索引，请重新导出或发布新版快照', 503, 'AUTHOR_INDEX_UNAVAILABLE');
       const selectedTopic=queryTopic(params.q,params.match||'auto',catalog.directions);
       if(selectedTopic)return (await browse({...filters,directions:[selectedTopic.code]},context)).search(params);
       if (descriptor.version >= 2) {
