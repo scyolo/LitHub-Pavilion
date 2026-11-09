@@ -28,7 +28,7 @@ if(descriptor.search.lookup) {
     assert.equal(createHash('sha256').update(raw).digest('hex'),entry.sha256);
     const value=unpackDescriptor(JSON.parse(raw));
     assert.equal(value.version,1);
-    assert.deepEqual(Object.keys(value).sort(),['hints','metadata','terms','titles','version']);
+    assert.deepEqual(Object.keys(value).sort(),[...(Object.hasOwn(value,'direct')?['direct']:[]),'hints','metadata','terms','titles','version']);
     for(const [section,width,prefixName] of [['terms',3,'search'],['titles',2,'titles'],['metadata',3,'matchrank'],['hints',3,'cardhint']]) {
       const buckets=value[section];
       assert.ok(buckets&&typeof buckets==='object'&&!Array.isArray(buckets));
@@ -39,6 +39,19 @@ if(descriptor.search.lookup) {
       }
       if(section==='terms'||section==='titles')Object.assign(descriptor.search[section],buckets);
       else if(descriptor.search[section])Object.assign(descriptor.search[section].terms,buckets);
+    }
+    if(value.direct) {
+      assert.ok(typeof value.direct==='object'&&!Array.isArray(value.direct));
+      for(const [token,sections] of Object.entries(value.direct)) {
+        assert.equal(createHash('sha256').update(token).digest('hex')[0],prefix);
+        for(const [section,entries] of Object.entries(sections)) {
+          const prefixName={terms:'search',metadata:'matchrank',hints:'cardhint'}[section];
+          assert.ok(prefixName&&Array.isArray(entries)&&entries.length>0);
+          for(const entry of entries)assert.ok(entry.path===`${prefixName}-${entry.sha256}.json.gz`
+            &&/^[0-9a-f]{64}$/.test(entry.sha256)&&Number.isSafeInteger(entry.count)&&entry.count>0);
+        }
+      }
+      Object.assign(descriptor.search.direct??={},value.direct);
     }
   }
 }
