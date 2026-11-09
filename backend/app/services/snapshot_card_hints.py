@@ -11,6 +11,7 @@ from app.services.search_tokens import normalized_title, stemmer
 
 
 RARE_CARD_LIMIT = 1024
+MIN_HINT_DOCUMENTS = 128
 COMMON_CARD_LIMIT = 128
 EXPANDED_CARD_LIMIT = 1024
 PAGE_HINT_SIZE = 20
@@ -159,12 +160,12 @@ def build_card_hints(database, directory, manifest, emit, average_length):
         token, postings = None, []
         for current, pid, frequency, length, positions in database.execute(query, (bucket,)):
             if current != token:
-                if token is not None:
+                if token is not None and len(postings) >= MIN_HINT_DOCUMENTS:
                     append_group(token, _hint_ids(token, postings, titles, words, variants,
                                                  manifest["paper_count"], average_length, cards, phrases))
                 token, postings = current, []
             postings.append((pid, frequency, length, json.loads(positions)))
-        if token is not None:
+        if token is not None and len(postings) >= MIN_HINT_DOCUMENTS:
             append_group(token, _hint_ids(token, postings, titles, words, variants,
                                          manifest["paper_count"], average_length, cards, phrases))
         flush_part()

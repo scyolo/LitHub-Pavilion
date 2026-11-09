@@ -10,6 +10,11 @@ from app.services.snapshot import _json_bytes, _write_content
 from app.services.snapshot_reader import FIELDS
 
 
+@pytest.fixture(autouse=True)
+def small_corpus_hint_threshold(monkeypatch):
+    monkeypatch.setattr(hints, 'MIN_HINT_DOCUMENTS', 1)
+
+
 def fixture(tmp_path, rows):
     papers=[]
     for pid,title in rows:
@@ -77,6 +82,15 @@ def test_invalid_average_length_is_rejected_before_reading_source(tmp_path):
     for value in [0,-1,float('nan'),float('inf')]:
         with pytest.raises(ValueError,match='average'):
             hints.build_card_hints(database,tmp_path,{'paper_count':0,'chunks':[]},lambda *_:None,value)
+    database.close()
+
+
+def test_low_frequency_terms_keep_normal_lookup_without_redundant_display_hints(tmp_path,monkeypatch):
+    database,manifest,_papers,payloads,emit=fixture(tmp_path,[(1,'Learning method'),(2,'Other article')])
+    add(database,'learn',1,positions=[0]);add(database,'learn',2)
+    monkeypatch.setattr(hints,'MIN_HINT_DOCUMENTS',3)
+    index=hints.build_card_hints(database,tmp_path,manifest,emit,10)
+    assert index['terms']=={} and payloads=={}
     database.close()
 
 
