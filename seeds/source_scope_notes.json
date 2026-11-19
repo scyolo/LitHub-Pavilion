@@ -117,9 +117,9 @@
       "year_checks": {
         "2026": {
           "status": "unverified",
-          "note": "本届会议计划于 2026 年 11—12 月 举行（CCFDDL 届次记录），截稿日历时点（2026-10-25）尚未开会，正式 proceedings 尚未出版属预期状态；会后再核验官方目录。",
-          "evidence_url": "https://github.com/ccfddl/ccf-deadlines",
-          "checked_at": "2026-10-25"
+          "note": "2026-11-19 复核：本地已有 135 篇通过出版身份核验的 ATC 2026 论文；抽查 Crossref 记录的容器为正式主会 Proceedings，出版日期为 2026-11-15。尚未核实官方全量目录，完整覆盖仍未确认；有记录的年份按实际计数展示。",
+          "evidence_url": "https://api.crossref.org/works/10.1145/3828523.3857042",
+          "checked_at": "2026-11-19"
         }
       }
     },
@@ -573,9 +573,9 @@
       "year_checks": {
         "2026": {
           "status": "unverified",
-          "note": "本届会议计划于 2026-10-31 举行（CCFDDL 届次记录），截稿日历时点（2026-10-25）尚未开会，正式 proceedings 尚未出版属预期状态；会后再核验官方目录。",
-          "evidence_url": "https://github.com/ccfddl/ccf-deadlines",
-          "checked_at": "2026-10-25"
+          "note": "2026-11-19 复核：MICRO59 官方程序页可取得，本轮未取得可逐篇确认的正式出版目录。程序与录用信息保留为核验线索，不能由此确认正式出版或解释零记录为已完整收录。",
+          "evidence_url": "https://microarch.org/micro59/program/",
+          "checked_at": "2026-11-19"
         }
       }
     },
@@ -720,9 +720,9 @@
       "year_checks": {
         "2026": {
           "status": "unverified",
-          "note": "本届会议计划于 2026-11-15 举行（CCFDDL 届次记录），截稿日历时点（2026-10-25）尚未开会，正式 proceedings 尚未出版属预期状态；会后再核验官方目录。",
-          "evidence_url": "https://github.com/ccfddl/ccf-deadlines",
-          "checked_at": "2026-10-25"
+          "note": "2026-11-19 复核：SC26 官方技术论文档案可取得；抽查条目只有作者、摘要与标为 Presentation 的演示材料，未提供可核实的论文 DOI 或出版落地页。本轮保持正式出版待核验，不把档案条目等同于正式论文全量。",
+          "evidence_url": "https://sc26.supercomputing.org/proceedings/papers/index.html",
+          "checked_at": "2026-11-19"
         }
       }
     },

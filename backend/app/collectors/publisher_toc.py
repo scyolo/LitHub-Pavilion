@@ -11,6 +11,8 @@ from html.parser import HTMLParser
 from datetime import datetime, timezone
 from urllib.parse import urljoin, urlsplit, parse_qs
 
+import httpx
+
 from app.cleaning import clean_author_name, clean_title, normalize_arxiv_id, normalize_doi
 from app.collectors.dblp import RawPaper
 from app.collectors.crossref import metadata_text
@@ -230,7 +232,7 @@ def parse_ijcai(text, year):
         end = starts[index + 1].start() if index + 1 < len(starts) else len(text)
         block = text[match.start():end]
         title_match = re.search(
-            r'<div\b[^>]*\bclass=["\'][^"\']*\btitle\b[^"\']*["\'][^>]*>(.*?)</div>',
+            r'<(?P<tag>div|a)\b(?P<attrs>[^>]*\bclass=["\'][^"\']*\btitle\b[^"\']*["\'][^>]*)>(?P<text>.*?)</(?P=tag)>',
             block, re.I | re.S,
         )
         authors_match = re.search(
@@ -247,15 +249,27 @@ def parse_ijcai(text, year):
             continue
         landing = urljoin('https://www.ijcai.org/', html.unescape(details[0])).rstrip('/')
         parsed = urlsplit(landing)
-        if (parsed.scheme, parsed.hostname) != ('https', 'www.ijcai.org'):
+        if (parsed.scheme != 'https' or parsed.hostname not in ('www.ijcai.org', 'ijcai.org')
+                or parsed.username or parsed.password or parsed.port not in (None, 443)):
             raise ValueError('IJCAI details link points outside the official site')
         if parsed.query or parsed.fragment or not re.fullmatch(rf'/proceedings/{year}/[1-9]\d*', parsed.path):
             raise ValueError('IJCAI details link has an invalid year or paper number')
         number = re.search(r'\bid=["\']paper(\d+)', match.group(0))[1]
         if int(parsed.path.rsplit('/', 1)[1]) != int(number):
             raise ValueError('IJCAI paper block and details identities differ')
+        if title_match['tag'].lower() == 'a':
+            title_href = re.search(r'\bhref=["\']([^"\']+)["\']', title_match['attrs'], re.I)
+            title_url = urlsplit(urljoin('https://www.ijcai.org/', html.unescape(title_href[1]))) if title_href else None
+            if (title_url is None or title_url.path != parsed.path or title_url.scheme != 'https'
+                    or title_url.hostname not in ('www.ijcai.org', 'ijcai.org')
+                    or title_url.username or title_url.password or title_url.port not in (None, 443)
+                    or title_url.query or title_url.fragment):
+                raise ValueError('IJCAI title and details identities differ')
+        # The publisher now redirects www to its apex host. Keep the established
+        # identity so refreshing that official page does not create a new paper.
+        landing = 'https://www.ijcai.org' + parsed.path
         authors = [author for author in re.split(r'\s*,\s*', plain(authors_match[1])) if author]
-        records.append(_raw(landing, plain(title_match[1]), authors, year))
+        records.append(_raw(landing, plain(title_match['text']), authors, year))
     return _validate(records, len(starts))
 
 
@@ -371,7 +385,14 @@ async def fetch_official_inventory(client, limiter, venue, year, *, allow_missin
     if abbr == 'AAMAS':
         return parse_aamas(await read(f'https://www.ifaamas.org/Proceedings/aamas{year}/forms/contents.htm'), year)
     if abbr == 'IJCAI':
-        return parse_ijcai(await read(f'https://www.ijcai.org/proceedings/{year}/'), year)
+        try:
+            body = await read(f'https://www.ijcai.org/proceedings/{year}/')
+        except httpx.HTTPStatusError as exc:
+            target = f'https://ijcai.org/proceedings/{year}/'
+            if exc.response.status_code not in (301, 308) or exc.response.headers.get('location') != target:
+                raise
+            body = await read(target)
+        return parse_ijcai(body, year)
     if abbr == 'KR':
         return parse_kr(await read(f'https://proceedings.kr.org/{year}/'), year)
     if abbr == 'NeurIPS':

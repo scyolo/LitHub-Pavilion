@@ -34,6 +34,54 @@ def test_ijcai_official_details_are_the_publication_identity():
         parse_ijcai(body.replace('/proceedings/2024/2', '/proceedings/2023/2'), 2024)
 
 
+def test_ijcai_link_titles_keep_existing_publication_identity():
+    body = '''<div class="paper_wrapper paper-row" id="paper1">
+      <a class="title" href="/proceedings/2026/1">Reasoning &amp; Planning</a>
+      <div class="authors"><a href="/authors/ada/">Ada Lovelace</a>, Alan Turing</div>
+      <a class="button" href="https://ijcai.org/proceedings/2026/1">Details</a>
+      <a href="/proceedings/2026/0001.pdf">PDF</a></div>'''
+    paper, = parse_ijcai(body, 2026)
+    assert paper.title == 'Reasoning & Planning'
+    assert paper.authors == ['Lovelace, Ada', 'Turing, Alan']
+    assert paper.extra['publisher_key'] == 'https://www.ijcai.org/proceedings/2026/1'
+    with pytest.raises(ValueError):
+        parse_ijcai(body.replace('href="/proceedings/2026/1"', 'href="/proceedings/2026/2"'), 2026)
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize('location', ['https://ijcai.org/proceedings/2026/', 'https://unrelated.example/proceedings/2026/'])
+async def test_ijcai_fetch_only_follows_verified_official_host_redirect(location):
+    import httpx
+    from types import SimpleNamespace
+    from app.collectors.publisher_toc import fetch_official_inventory
+
+    seen = []
+    body = '''<div class="paper_wrapper" id="paper1">
+      <a class="title" href="/proceedings/2026/1">Verified Reasoning</a>
+      <div class="authors">Ada Lovelace</div>
+      <a href="/proceedings/2026/1">Details</a></div>'''
+
+    def respond(request):
+        seen.append(str(request.url))
+        if request.url.host == 'www.ijcai.org':
+            return httpx.Response(301, headers={'Location': location})
+        return httpx.Response(200, text=body, headers={'content-type': 'text/html'})
+
+    class Limiter:
+        async def acquire(self):
+            pass
+
+    async with httpx.AsyncClient(transport=httpx.MockTransport(respond)) as client:
+        if 'unrelated.example' in location:
+            with pytest.raises(httpx.HTTPStatusError):
+                await fetch_official_inventory(client, Limiter(), SimpleNamespace(abbr='IJCAI'), 2026)
+            assert len(seen) == 1
+        else:
+            paper, = await fetch_official_inventory(client, Limiter(), SimpleNamespace(abbr='IJCAI'), 2026)
+            assert paper.extra['publisher_key'] == 'https://www.ijcai.org/proceedings/2026/1'
+            assert seen == ['https://www.ijcai.org/proceedings/2026/', location]
+
+
 def test_kr_official_index_excludes_preface_and_pdf_links():
     body = """<li><div class=\"track_paperinfo__x\"><a href=\"/2024/kr2024-preface.pdf\">Proceedings Preface</a></div></li>
     <li><div class=\"track_paperinfo__x\"><a href=\"/2024/1/\">A KR Paper</a>. <ol class=\"track_authors__x\"><li>Ada Lovelace</li><li>Alan Turing</li></ol></div><div class=\"track_buttons__x\"><a href=\"/2024/1/\">Details</a><a href=\"/2024/1/kr2024-paper.pdf\">PDF</a></div></li>"""

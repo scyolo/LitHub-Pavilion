@@ -62,3 +62,27 @@ def test_homonyms_and_unrelated_inference_do_not_get_llm_efficiency_tags(title):
     actual = scores(title)
     assert actual.get("inference", 0) < 2
     assert actual.get("specdec", 0) < 2
+
+
+@pytest.mark.parametrize(
+    "title",
+    [
+        "BMV: Breaking Monolithic Verification for Fast Speculative LLM Inference",
+        "3D-TokSIM: Stacking 3D Memory with Token-Stationary Compute-in-Memory for Speculative LLM Inference",
+    ],
+)
+def test_speculative_llm_inference_titles_are_recalled_without_abstracts(title):
+    assert scores(title).get("specdec", 0) >= 2
+
+
+@pytest.mark.parametrize(
+    "title",
+    [
+        "Speculative execution for LLM inference acceleration",
+        "Speculative LLM safety assessments",
+        "Speculative model inference for causal graphs",
+        "Predicting LLM inference latency with speculative CPU execution",
+    ],
+)
+def test_llm_context_does_not_make_unrelated_speculation_speculative_decoding(title):
+    assert scores(title).get("specdec", 0) < 2

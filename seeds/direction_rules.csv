@@ -305,6 +305,7 @@ alignment,\breward hacking\b|\bsycophan\w*\b,title,1.0,1
 agent,\bcomputer[- ](?:use|using) agents?\b|\bcomputer[- ]use\b,title,1.0,1
 security,\b(?:supply[- ]chain|firmware|iot) (?:attacks?|security|vulnerabilit\w*)\b,title,1.0,1
 specdec,\bspeculative (?:decod\w*|sampl\w*|inferenc\w*|prefill|generation|draft\w*|verification|verifier|token\w*)\b,title,1.0,1
+specdec,\bspeculative[- ](?:(?:llms?|(?:large[- ])?language[- ]models?)[- ])(?:decoding|sampling|inference|generation)\b,title,1.0,1
 specdec,\bspeculative (?:kv[- ]cache|key[- ]value cach\w*)\b,title,1.0,1
 specdec,\bspeculative early[- ]exit\w*\b,title,1.0,1
 specdec,(?s)\A(?=.*\b(?:asynchronous|pipelined|parallel) speculation\b)(?=.*\b(?:llms?|language models?|inference|decod\w*|serving)\b).+,title,1.0,1
