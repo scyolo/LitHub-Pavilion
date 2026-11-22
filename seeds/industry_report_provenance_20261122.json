@@ -1,0 +1,45 @@
+{
+  "verified_at": "2026-11-22T02:51:44Z",
+  "as_of_date": "2026-11-22",
+  "scope": "One new arXiv technical report for the independent industry catalogue. Its first submission falls on November 20 in Beijing while arXiv's UTC submission date remains November 19.",
+  "entries": [
+    {
+      "id": "beam-model",
+      "org": "reflection",
+      "title": "Beam Model Technical Report",
+      "kind": "tech_report",
+      "published": "2026-11-19",
+      "url": "https://arxiv.org/abs/2611.26358",
+      "metadata_source": "https://arxiv.org/abs/2611.26358",
+      "metadata_sha256": "fb74cf67d48c5b0f7bf6ac2e940c0def86b3a0443ea4a5abea994bd0495cdbb4",
+      "first_submitted_utc": "2026-11-19T16:28:23Z",
+      "first_submitted_beijing": "2026-11-20T00:28:23+08:00",
+      "author_metadata_count": 230,
+      "author_group": "Reflection Team",
+      "affiliation_source": "https://arxiv.org/html/2611.26358",
+      "affiliation_evidence": "The HTML author block identifies Reflection Team and research@reflection.ai.",
+      "html_sha256": "3a4aa62cd68c6d3d8fbf890b6afd633f9974d553aae2338be1e84b53c3ce12ff",
+      "report_evidence": "The official abstract and HTML describe a 501.3B total / 23.4B active parameter MoE model, a 1M-token context window, and DFlash 2 speculative decoding. Performance and scale are reported by the authors and have not been independently validated here.",
+      "status": "Technical report; arXiv preprint; no CCF publication claim",
+      "date_note": "Retain arXiv's UTC first-submission calendar date for published. The exact submission time falls on November 20 in Asia/Shanghai and is included in this local follow-up window.",
+      "catalog_duplicate_check": "No matching arXiv ID or normalized title in seeds/industry_reports.csv before this addition."
+    }
+  ],
+  "organization_evidence": [
+    {
+      "org": "reflection",
+      "country": "美国",
+      "country_sources": [
+        {
+          "url": "https://reflection.ai/legal/terms-of-service",
+          "evidence": "The terms identify Reflection AI, Inc. at a Brooklyn, New York address."
+        },
+        {
+          "url": "https://reflection.ai/legal/privacy-policy",
+          "evidence": "The privacy policy lists a New York, New York address for Reflection AI."
+        }
+      ],
+      "scope_note": "These sources support the country field only; they contain different New York addresses and are not treated as evidence of a current headquarters address."
+    }
+  ]
+}

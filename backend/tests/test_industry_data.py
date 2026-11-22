@@ -38,25 +38,27 @@ def raw_report(**overrides):
 
 def test_seed_catalog_has_expected_shape_and_unique_identities():
     orgs, reports = seeds()
-    assert len(orgs) == 28
-    assert len(reports) == 158
+    assert len(orgs) == 29
+    assert len(reports) == 159
     assert sum(report["org"] == "deepseek" for report in reports) == 29
     assert len({report["id"] for report in reports}) == len(reports)
     assert all(report["url"].startswith("https://") for report in reports)
     assert all((report["arxiv_id"] is not None) == ("arxiv.org" in report["url"]) for report in reports)
     assert all(2000 <= report["year"] <= 2100 for report in reports)
+    beam = next(report for report in reports if report["id"] == "beam-model")
+    assert (beam["arxiv_id"], beam["published"], beam["org"]) == ("2611.26358", "2026-11-19", "reflection")
 
 
 def test_feed_stats_ordering_and_org_counts():
     orgs, reports = seeds()
     feed = build_feed(orgs, reports, generated_at="2026-10-28T00:00:00Z")
     assert feed["generated_at"] == "2026-10-28T00:00:00Z"
-    assert feed["stats"]["reports"] == 158
-    assert feed["stats"]["orgs"] == 28
-    assert feed["stats"]["latest"] == "2026-11-18"
+    assert feed["stats"]["reports"] == 159
+    assert feed["stats"]["orgs"] == 29
+    assert feed["stats"]["latest"] == "2026-11-19"
     assert feed["orgs"][0]["code"] == "deepseek"
     assert feed["orgs"][0]["count"] == 29
-    assert feed["reports"][0]["id"] == "narrowspec"
+    assert feed["reports"][0]["id"] == "beam-model"
     published = [report["published"] for report in feed["reports"]]
     assert published == sorted(published, reverse=True)
     assert sum(org["count"] for org in feed["orgs"]) == len(feed["reports"])
